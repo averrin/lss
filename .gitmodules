@@ -1,6 +1,6 @@
 [submodule "include/Cinder-Pango"]
 	path = include/Cinder-Pango
-	url = git@github.com:kitschpatrol/Cinder-Pango.git
+	url = git@github.com:averrin/Cinder-Pango.git
 [submodule "include/sml"]
 	path = include/sml
 	url = git@github.com:boost-experimental/sml.git
