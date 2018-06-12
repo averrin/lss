@@ -19,6 +19,7 @@
 #include "lss/state.hpp"
 
 #include "lss/game/player.hpp"
+#include "lss/game/enemy.hpp"
 
 #include "lss/ui/statusLine.hpp"
 #include "rang.hpp"
@@ -73,6 +74,10 @@ void LSSApp::setup() {
   hero->currentLocation = std::make_shared<Location>();
   // hero->currentLocation->cells.push_back({})
 
+  auto enemy = std::make_shared<Enemy>();
+  enemy->currentLocation = hero->currentLocation;
+
+
   std::string line;
   std::ifstream dungeon_file("./dungeon.ascii");
   int n, i;
@@ -109,6 +114,9 @@ void LSSApp::setup() {
   state->currentPalette = palettes::DARK;
   hero->currentCell = hero->currentLocation->cells[15][30];
   hero->calcViewField();
+
+  enemy->currentCell = hero->currentLocation->cells[15][36];
+  hero->currentLocation->creatures.push_back(enemy);
 
   state->fragments.assign(n * (i+1), std::make_shared<Unknown>());
 
@@ -149,8 +157,8 @@ void LSSApp::invalidate() {
         }
       } else {
         if (c == cc) {
-          if (!std::dynamic_pointer_cast<Hero>(f)) {
-            state->fragments[index] = std::make_shared<Hero>();
+          if (!std::dynamic_pointer_cast<HeroSign>(f)) {
+            state->fragments[index] = std::make_shared<HeroSign>();
           }
             column++;
             index++;
@@ -179,6 +187,14 @@ void LSSApp::invalidate() {
     index++;
     row++;
   }
+
+  for (auto e : hero->currentLocation->creatures) {
+    auto ec = e->currentCell;
+    if (!hero->canSee(ec)) continue;
+    auto index = ec->y * (hero->currentLocation->cells.front().size() + 1) + ec->x;
+    state->fragments[index] = std::make_shared<EnemySign>();
+  }
+
   state->invalidate();
 
   auto t1 = std::chrono::system_clock::now();

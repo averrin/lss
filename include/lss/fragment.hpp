@@ -46,9 +46,9 @@ public:
         Wall();
 };
 
-class Hero : public Fragment {
+class HeroSign : public Fragment {
 public:
-        Hero();
+        HeroSign();
 };
 
 class Unknown : public Fragment {
@@ -64,6 +64,11 @@ public:
 class WallSeen : public Fragment {
 public:
         WallSeen();
+};
+
+class EnemySign : public Fragment {
+public:
+        EnemySign();
 };
 
 typedef std::vector<std::shared_ptr<Fragment>> Fragments;

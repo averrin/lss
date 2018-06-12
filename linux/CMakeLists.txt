@@ -46,6 +46,7 @@ set( SRC_FILES
 
 	${SRC_DIR}/game/cell.cpp
 	${SRC_DIR}/game/location.cpp
+	${SRC_DIR}/game/creature.cpp
 	${SRC_DIR}/game/player.cpp
 
 	${SRC_DIR}/statusLine.cpp

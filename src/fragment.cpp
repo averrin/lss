@@ -44,7 +44,8 @@ std::string Fragment::render(State* state) {
 
 Floor::Floor() : Fragment("<span color='{{floor_color}}'>⋅</span>"){}
 Wall::Wall() : Fragment("<span color='{{wall_color}}' weight='bold'>#</span>"){}
-Hero::Hero() : Fragment("<span color='{{hero_color}}' weight='bold'>@</span>"){}
+HeroSign::HeroSign() : Fragment("<span color='{{hero_color}}' weight='bold'>@</span>"){}
+EnemySign::EnemySign() : Fragment("<span color='{{red}}' weight='bold'>e</span>"){}
 FloorSeen::FloorSeen() : Fragment("<span color='{{floor_color_seen}}'>⋅</span>"){}
 WallSeen::WallSeen() : Fragment("<span color='{{wall_color_seen}}' weight='bold'>#</span>"){}
 
