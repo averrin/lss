@@ -88,10 +88,10 @@ void LSSApp::setup() {
         switch (ch) {
         case '.':
           c->type = CellType::FLOOR;
-          c->visibilityState = VisibilityState::VISIBLE;
           break;
         case '#':
-          c->visibilityState = VisibilityState::VISIBLE;
+          c->passThrough = false;
+          c->seeThrough = false;
           break;
         case '@':
           break;
@@ -108,6 +108,7 @@ void LSSApp::setup() {
   // state->setContent({std::make_shared<Fragment>(dungeon_str)});
   state->currentPalette = palettes::DARK;
   hero->currentCell = hero->currentLocation->cells[15][30];
+  hero->calcViewField();
 
   state->fragments.assign(n * (i+1), std::make_shared<Unknown>());
 
@@ -122,14 +123,10 @@ void LSSApp::invalidate() {
     auto column = 0;
     for (auto c : r) {
       auto cc = hero->currentCell;
-      auto d = sqrt(pow(cc->x - c->x, 2) + pow(cc->y - c->y, 2));
-      if (d > 10) {
-        c->visibilityState = VisibilityState::UNKNOWN;
-        if (d < 20) {
-          c->visibilityState = VisibilityState::SEEN;
-        }
-      } else {
+      if (hero->canSee(c)) {
         c->visibilityState = VisibilityState::VISIBLE;
+      } else if (c->visibilityState == VisibilityState::VISIBLE) {
+        c->visibilityState = VisibilityState::SEEN;
       }
 
       auto f = state->fragments[index];
@@ -221,19 +218,18 @@ void LSSApp::keyDown(KeyEvent event) {
 
   switch (event.getCode()) {
   case KeyEvent::KEY_k:
-    hero->move(Direction::N);
-    invalidate();
+    if (hero->move(Direction::N)) invalidate();
     break;
   case KeyEvent::KEY_l:
-    hero->move(Direction::E);
+    if (hero->move(Direction::E)) invalidate();
     invalidate();
     break;
   case KeyEvent::KEY_j:
-    hero->move(Direction::S);
+    if (hero->move(Direction::S)) invalidate();
     invalidate();
     break;
   case KeyEvent::KEY_h:
-    hero->move(Direction::W);
+    if (hero->move(Direction::W)) invalidate();
     invalidate();
     break;
   case KeyEvent::KEY_q:

@@ -22,6 +22,9 @@ public:
 
     int x;
     int y;
+
+    bool passThrough = true;
+    bool seeThrough = true;
 };
 
 typedef std::vector<std::shared_ptr<Cell>> CellRow;

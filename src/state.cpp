@@ -54,10 +54,10 @@ void State::render(kp::pango::CinderPangoRef surface) {
     auto t1 = std::chrono::system_clock::now();
     using milliseconds = std::chrono::duration<double, std::milli>;
     milliseconds ms = t1 - t0;
-    // if (ms.count() > 5) {
+    if (ms.count() > 15) {
       std::cout << "template render time taken: " << rang::fg::green
                 << ms.count() << rang::style::reset << '\n';
-    // }
+    }
   cache = "<tt>" + content + "</tt>";
   std::cout << n << std::endl;
 

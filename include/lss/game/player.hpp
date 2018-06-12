@@ -16,6 +16,11 @@ public:
     std::shared_ptr<Cell> currentCell;
 
     bool move(Direction);
+    bool canSee(std::shared_ptr<Cell>);
+    void calcViewField();
+
+    float visibilityDistance = 10.5f;
+    std::vector<std::shared_ptr<Cell>> viewField;
 };
 
 
