@@ -1,6 +1,0 @@
-@startuml
-
-[*] -> src_state
-src_state -> dst_state
-
-@enduml
