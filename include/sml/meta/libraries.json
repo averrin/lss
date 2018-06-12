@@ -1,0 +1,9 @@
+{
+    "key": "sml",
+    "name": "Boost.SML",
+    "authors": [ "Kris Jusiak" ],
+    "maintainers": [ "kris at jusiak dot net" ],
+    "description": "C++14 State Machine Library",
+    "std": [ "14" ],
+    "category": [ "Design Patterns" ]
+}

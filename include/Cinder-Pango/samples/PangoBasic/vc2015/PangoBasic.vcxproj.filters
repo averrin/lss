@@ -1,0 +1,73 @@
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Blocks">
+      <UniqueIdentifier>{671061E1-A399-44A9-A945-64E708D9D70B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\Cairo">
+      <UniqueIdentifier>{664FC8E9-7CA7-4DE6-AA60-99B91B2D7EEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\Cairo\src">
+      <UniqueIdentifier>{B2B5348B-C38D-4559-AFC4-8092F3F9F3C3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\Cairo\include">
+      <UniqueIdentifier>{73353437-922A-40AE-8825-EB7FF54CF646}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\Cairo\include\cinder">
+      <UniqueIdentifier>{4D1C8492-FE9D-41D7-903E-BE6DA62A1B32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\Cairo\include\cinder\cairo">
+      <UniqueIdentifier>{A1C28ED8-A1A3-4FFC-B87F-73C7FEF6EEAC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\Pango">
+      <UniqueIdentifier>{29FD19F7-195D-4042-86FF-2FCFF35BB467}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\Pango\src">
+      <UniqueIdentifier>{7776970E-06FB-444D-A8FF-7DA86E8E0633}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\PangoBasicApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\PangoBasicApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClInclude Include="..\include\Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\..\..\Cairo\src\Cairo.cpp">
+      <Filter>Blocks\Cairo\src</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\..\..\Cairo\include\cinder\cairo\Cairo.h">
+      <Filter>Blocks\Cairo\include\cinder\cairo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\CinderPango.h">
+      <Filter>Blocks\Pango\src</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\..\src\CinderPango.cpp">
+      <Filter>Blocks\Pango\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
