@@ -44,6 +44,10 @@ set( SRC_FILES
 
 	${SRC_DIR}/modes.cpp
 
+	${SRC_DIR}/game/cell.cpp
+	${SRC_DIR}/game/location.cpp
+	${SRC_DIR}/game/player.cpp
+
 	${SRC_DIR}/statusLine.cpp
 	${SRC_DIR}/LSSApp.cpp
     ${PANGO_BLOCK_SRC_DIR}/CinderPango.cpp

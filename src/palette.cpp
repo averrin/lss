@@ -7,7 +7,8 @@ const Palette palettes::DARK = Palette{
     ci::Color(0x1d/255.f, 0x1f/255.f, 0x22/255.f),
     ci::Color(0x0d/255.f, 0x0f/255.f, 0x12/255.f),
     "#81b69d", "#cc6666", "#81a2be",
-    "#555", "#aaa", "#81b69d"
+    "#555", "#aaa", "#81b69d",
+    "#333", "#666"
     
 };
 
@@ -17,7 +18,8 @@ const Palette palettes::LIGHT = Palette{
     ci::Color(0xcc/255.f, 0xcc/255.f, 0xcc/255.f),
     ci::Color(0xbb/255.f, 0xbb/255.f, 0xbb/255.f),
     "#137a63", "#cc6666", "MidnightBlue",
-    "#555", "#111", "#137a63"
+    "#555", "#111", "#137a63",
+    "#777", "#aaa"
 };
 
 

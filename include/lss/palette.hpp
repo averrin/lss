@@ -17,6 +17,9 @@ struct Palette {
     std::string floor_color;
     std::string wall_color;
     std::string hero_color;
+
+    std::string floor_color_seen;
+    std::string wall_color_seen;
 };
 
 class palettes {

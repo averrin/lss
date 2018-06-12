@@ -18,8 +18,9 @@ struct LssEvent {
 class Fragment {
 public:
         Fragment(std::string t, std::map<std::string, tpl_arg> args);
+        Fragment(std::string t, bool needRender);
         Fragment(std::string t);
-        std::string render(State s);
+        std::string render(State* s);
 
         int index;
         int length;
@@ -27,6 +28,8 @@ public:
 
         virtual ~Fragment();
         bool needRender = true;
+        bool damaged = true;
+        std::string cache;
 
 protected:
         std::string template_str;
@@ -36,19 +39,31 @@ protected:
 class Floor : public Fragment {
 public:
         Floor();
-        bool needRender = true;
 };
 
 class Wall : public Fragment {
 public:
         Wall();
-        bool needRender = true;
 };
 
 class Hero : public Fragment {
 public:
         Hero();
-        bool needRender = true;
+};
+
+class Unknown : public Fragment {
+public:
+        Unknown();
+};
+
+class FloorSeen : public Fragment {
+public:
+        FloorSeen();
+};
+
+class WallSeen : public Fragment {
+public:
+        WallSeen();
 };
 
 typedef std::vector<std::shared_ptr<Fragment>> Fragments;
