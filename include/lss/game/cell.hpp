@@ -5,7 +5,8 @@
 
 enum CellType {
     FLOOR,
-    WALL
+    WALL,
+    DOOR
 };
 
 enum VisibilityState {

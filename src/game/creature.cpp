@@ -2,7 +2,13 @@
 
 #include "lss/game/creature.hpp"
 
-Creature::Creature(){}
+Creature::Creature(){
+    passThrough = false;
+}
+
+bool Creature::interact() {
+    return false;
+}
 
 bool Creature::move(Direction d) {
     auto cells = currentLocation->cells;
@@ -21,16 +27,22 @@ bool Creature::move(Direction d) {
             currentCell = cells[cc->y][cc->x-1];
             break;
     }
-    auto hasCreature = std::find_if(currentLocation->creatures.begin(),
-                                    currentLocation->creatures.end(),
-                 [&](std::shared_ptr<Creature> creature){
-                     return creature->currentCell == currentCell;
-                 }) != currentLocation->creatures.end();
-    if (!currentCell->passThrough || hasCreature) {
+    auto obstacle = std::find_if(currentLocation->objects.begin(),
+                                    currentLocation->objects.end(),
+                 [&](std::shared_ptr<Object> o){
+                     return o->currentCell == currentCell && !o->passThrough;
+                 });
+    auto hasObstacles = obstacle != currentLocation->objects.end();
+    if (!currentCell->passThrough || hasObstacles) {
         currentCell = cc;
     } else {
         calcViewField();
     }
+
+    if (hasObstacles) {
+        return !(*obstacle)->interact();
+    }
+
     return true;
 }
 

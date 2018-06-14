@@ -3,7 +3,6 @@
 #include <iostream>
 #include <iterator>
 #include <ostream>
-#include <regex>
 #include <sstream>
 #include <stdio.h>
 #include <string>
@@ -20,6 +19,7 @@
 
 #include "lss/game/player.hpp"
 #include "lss/game/enemy.hpp"
+#include "lss/game/door.hpp"
 
 #include "lss/ui/statusLine.hpp"
 #include "rang.hpp"
@@ -56,8 +56,9 @@ auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 void LSSApp::setup() {
   kp::pango::CinderPango::setTextRenderer(kp::pango::TextRenderer::FREETYPE);
   mPango = kp::pango::CinderPango::create();
-  mPango->setMinSize(100, 100);
+  mPango->setMinSize(800, 600);
   mPango->setMaxSize(getWindowWidth(), getWindowHeight());
+  mPango->setSpacing(mPango->getSpacing() - 4.0);
 
   statusFrame = kp::pango::CinderPango::create();
   statusFrame->setMinSize(getWindowWidth(), StatusLine::HEIGHT);
@@ -98,9 +99,10 @@ void LSSApp::setup() {
           c->passThrough = false;
           c->seeThrough = false;
           break;
-        case '@':
-          break;
-        default:
+        case '+':
+          auto door = std::make_shared<Door>();
+          door->currentCell = c;
+          hero->currentLocation->objects.push_back(door);
           break;
         }
         hero->currentLocation->cells[n].push_back(c);
@@ -116,7 +118,7 @@ void LSSApp::setup() {
   hero->calcViewField();
 
   enemy->currentCell = hero->currentLocation->cells[15][36];
-  hero->currentLocation->creatures.push_back(enemy);
+  hero->currentLocation->objects.push_back(enemy);
 
   state->fragments.assign(n * (i+1), std::make_shared<Unknown>());
 
@@ -156,14 +158,6 @@ void LSSApp::invalidate() {
           break;
         }
       } else {
-        if (c == cc) {
-          if (!std::dynamic_pointer_cast<HeroSign>(f)) {
-            state->fragments[index] = std::make_shared<HeroSign>();
-          }
-            column++;
-            index++;
-          continue;
-        }
         switch (c->type) {
         case CellType::WALL:
           if (!std::dynamic_pointer_cast<Wall>(f)) {
@@ -188,11 +182,22 @@ void LSSApp::invalidate() {
     row++;
   }
 
-  for (auto e : hero->currentLocation->creatures) {
-    auto ec = e->currentCell;
+  for (auto o : hero->currentLocation->objects) {
+    auto ec = o->currentCell;
     if (!hero->canSee(ec)) continue;
     auto index = ec->y * (hero->currentLocation->cells.front().size() + 1) + ec->x;
-    state->fragments[index] = std::make_shared<EnemySign>();
+
+    if (std::dynamic_pointer_cast<Enemy>(o)) {
+        state->fragments[index] = std::make_shared<EnemySign>();
+    } else if (auto d = std::dynamic_pointer_cast<Door>(o)) {
+        state->fragments[index] = std::make_shared<DoorSign>(d->opened);
+    }
+  }
+
+  auto hc = hero->currentCell;
+  index = hc->y * (hero->currentLocation->cells.front().size() + 1) + hc->x;
+  if (!std::dynamic_pointer_cast<HeroSign>(state->fragments[index])) {
+    state->fragments[index] = std::make_shared<HeroSign>();
   }
 
   state->invalidate();

@@ -48,5 +48,6 @@ HeroSign::HeroSign() : Fragment("<span color='{{hero_color}}' weight='bold'>@</s
 EnemySign::EnemySign() : Fragment("<span color='{{red}}' weight='bold'>e</span>"){}
 FloorSeen::FloorSeen() : Fragment("<span color='{{floor_color_seen}}'>⋅</span>"){}
 WallSeen::WallSeen() : Fragment("<span color='{{wall_color_seen}}' weight='bold'>#</span>"){}
+DoorSign::DoorSign(bool opened) : Fragment("<span weight='bold'>{{sign}}</span>", {{"sign", opened ? "/"s : "+"s}}){}
 
 Unknown::Unknown() : Fragment(" ", false){}

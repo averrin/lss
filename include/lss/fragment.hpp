@@ -21,7 +21,6 @@ public:
         Fragment(std::string t, bool needRender);
         Fragment(std::string t);
         std::string render(State* s);
-
         int index;
         int length;
         PangoRectangle rect;
@@ -69,6 +68,11 @@ public:
 class EnemySign : public Fragment {
 public:
         EnemySign();
+};
+
+class DoorSign : public Fragment {
+public:
+        DoorSign(bool);
 };
 
 typedef std::vector<std::shared_ptr<Fragment>> Fragments;
