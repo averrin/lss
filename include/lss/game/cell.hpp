@@ -7,7 +7,6 @@ enum CellType {
     UNKNOWN_CELL,
     FLOOR,
     WALL,
-    DOOR
 };
 
 enum VisibilityState {

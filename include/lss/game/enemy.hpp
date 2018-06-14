@@ -4,6 +4,9 @@
 #include "lss/game/creature.hpp"
 
 class Enemy : public Creature {
+public:
+    Enemy();
+    bool interact();
 };
 
 

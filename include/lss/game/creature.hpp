@@ -20,6 +20,8 @@ public:
     };
     void calcViewField();
     bool interact();
+
+    int hp;
 };
 
 #endif // __CREATURE_H_

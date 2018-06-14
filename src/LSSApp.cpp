@@ -75,10 +75,6 @@ void LSSApp::setup() {
   hero->currentLocation = std::make_shared<Location>();
   // hero->currentLocation->cells.push_back({})
 
-  auto enemy = std::make_shared<Enemy>();
-  enemy->currentLocation = hero->currentLocation;
-
-
   std::string line;
   std::ifstream dungeon_file("./dungeon.ascii");
   int n, i;
@@ -102,11 +98,20 @@ void LSSApp::setup() {
           c->seeThrough = false;
           break;
         case '+':
+        {
           auto door = std::make_shared<Door>();
           door->currentCell = c;
           c->type = CellType::FLOOR;
           c->passThrough = true;
           hero->currentLocation->objects.push_back(door);
+        }
+        break;
+        case 'e':
+          auto enemy = std::make_shared<Enemy>();
+          enemy->currentCell = c;
+          c->type = CellType::FLOOR;
+          c->passThrough = true;
+          hero->currentLocation->objects.push_back(enemy);
           break;
         }
         hero->currentLocation->cells[n].push_back(c);
@@ -119,9 +124,6 @@ void LSSApp::setup() {
   state->currentPalette = palettes::DARK;
   hero->currentCell = hero->currentLocation->cells[15][30];
   hero->calcViewField();
-
-  enemy->currentCell = hero->currentLocation->cells[15][36];
-  hero->currentLocation->objects.push_back(enemy);
 
   state->fragments.assign(n * (i+1), std::make_shared<Unknown>());
 
@@ -200,8 +202,8 @@ void LSSApp::invalidate() {
     if (!hero->canSee(ec)) continue;
     auto index = ec->y * (hero->currentLocation->cells.front().size() + 1) + ec->x;
 
-    if (std::dynamic_pointer_cast<Enemy>(o)) {
-        state->fragments[index] = std::make_shared<EnemySign>();
+    if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
+        state->fragments[index] = std::make_shared<EnemySign>(e->hp > 0);
     } else if (auto d = std::dynamic_pointer_cast<Door>(o)) {
         state->fragments[index] = std::make_shared<DoorSign>(d->opened);
     }

@@ -67,7 +67,7 @@ public:
 
 class EnemySign : public Fragment {
 public:
-        EnemySign();
+        EnemySign(bool);
 };
 
 class DoorSign : public Fragment {
