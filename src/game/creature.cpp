@@ -35,14 +35,13 @@ bool Creature::move(Direction d) {
     auto hasObstacles = obstacle != currentLocation->objects.end();
     if (!currentCell->passThrough || hasObstacles) {
         currentCell = cc;
+        if (hasObstacles) {
+            return !(*obstacle)->interact();
+        }
+        return false;
     } else {
         calcViewField();
     }
-
-    if (hasObstacles) {
-        return !(*obstacle)->interact();
-    }
-
     return true;
 }
 

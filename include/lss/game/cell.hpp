@@ -4,6 +4,7 @@
 #include <memory>
 
 enum CellType {
+    UNKNOWN_CELL,
     FLOOR,
     WALL,
     DOOR

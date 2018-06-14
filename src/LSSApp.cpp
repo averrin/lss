@@ -90,18 +90,22 @@ void LSSApp::setup() {
       for (auto ch : line) {
         auto c = std::make_shared<Cell>(i, n, CellType::WALL);
         c->visibilityState = VisibilityState::UNKNOWN;
+        c->type = CellType::UNKNOWN_CELL;
 
         switch (ch) {
         case '.':
           c->type = CellType::FLOOR;
           break;
         case '#':
+          c->type = CellType::WALL;
           c->passThrough = false;
           c->seeThrough = false;
           break;
         case '+':
           auto door = std::make_shared<Door>();
           door->currentCell = c;
+          c->type = CellType::FLOOR;
+          c->passThrough = true;
           hero->currentLocation->objects.push_back(door);
           break;
         }
@@ -112,7 +116,6 @@ void LSSApp::setup() {
     }
     dungeon_file.close();
   }
-  // state->setContent({std::make_shared<Fragment>(dungeon_str)});
   state->currentPalette = palettes::DARK;
   hero->currentCell = hero->currentLocation->cells[15][30];
   hero->calcViewField();
@@ -146,6 +149,11 @@ void LSSApp::invalidate() {
         }
       } else if (c->visibilityState == VisibilityState::SEEN) {
         switch (c->type) {
+        case CellType::UNKNOWN_CELL:
+          if (!std::dynamic_pointer_cast<Unknown>(f)) {
+            state->fragments[index] = std::make_shared<Unknown>();
+          }
+          break;
         case CellType::WALL:
           if (!std::dynamic_pointer_cast<WallSeen>(f)) {
             state->fragments[index] = std::make_shared<WallSeen>();
@@ -159,6 +167,11 @@ void LSSApp::invalidate() {
         }
       } else {
         switch (c->type) {
+        case CellType::UNKNOWN_CELL:
+          if (!std::dynamic_pointer_cast<Unknown>(f)) {
+            state->fragments[index] = std::make_shared<Unknown>();
+          }
+          break;
         case CellType::WALL:
           if (!std::dynamic_pointer_cast<Wall>(f)) {
             state->fragments[index] = std::make_shared<Wall>();
