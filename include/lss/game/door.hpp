@@ -4,12 +4,12 @@
 
 class Door : public Object {
 public:
-    // Door(bool o = false, bool l = false) : Object(), opened(o), locked(l) {}
-    Door();
-    bool interact();
+  // Door(bool o = false, bool l = false) : Object(), opened(o), locked(l) {}
+  Door();
+  bool interact();
 
-    bool opened;
-    bool locked;
+  bool opened;
+  bool locked;
 };
 
 #endif // __DOOR_H_

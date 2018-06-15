@@ -3,16 +3,15 @@
 #include "lss/game/object.hpp"
 
 enum ItemType {
-    CORPSE,
+  CORPSE,
 };
 
 class Item : public Object {
 public:
-    Item(ItemType);
-    ItemType type;
+  Item(ItemType);
+  ItemType type;
 
-    bool interact();
+  bool interact();
 };
-
 
 #endif // __ITEM_H_

@@ -4,26 +4,26 @@
 
 class Object;
 class Item;
-class DoorOpenedEvent: public eb::Event {
+class DoorOpenedEvent : public eb::Event {
 public:
-    DoorOpenedEvent(eb::ObjectPtr);
+  DoorOpenedEvent(eb::ObjectPtr);
 };
 
-class EnemyTakeDamageEvent: public eb::Event {
+class EnemyTakeDamageEvent : public eb::Event {
 public:
-    EnemyTakeDamageEvent(eb::ObjectPtr, int);
-    int damage;
+  EnemyTakeDamageEvent(eb::ObjectPtr, int);
+  int damage;
 };
 
-class EnemyDiedEvent: public eb::Event {
+class EnemyDiedEvent : public eb::Event {
 public:
-    EnemyDiedEvent(eb::ObjectPtr);
+  EnemyDiedEvent(eb::ObjectPtr);
 };
 
-class ItemTakenEvent: public eb::Event {
+class ItemTakenEvent : public eb::Event {
 public:
-    ItemTakenEvent(eb::ObjectPtr, std::shared_ptr<Item>);
-    std::shared_ptr<Item> item;
+  ItemTakenEvent(eb::ObjectPtr, std::shared_ptr<Item>);
+  std::shared_ptr<Item> item;
 };
 
 #endif // __EVENTS_H_

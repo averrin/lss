@@ -17,17 +17,17 @@
 #include "lss/modes.hpp"
 #include "lss/state.hpp"
 
-#include "lss/game/player.hpp"
-#include "lss/game/enemy.hpp"
 #include "lss/game/door.hpp"
+#include "lss/game/enemy.hpp"
 #include "lss/game/events.hpp"
+#include "lss/game/player.hpp"
 
+#include "format.h"
 #include "lss/ui/statusLine.hpp"
 #include "rang.hpp"
-#include "format.h"
 
-#include "EventHandler.hpp"
 #include "EventBus.hpp"
+#include "EventHandler.hpp"
 
 using namespace ci;
 using namespace ci::app;
@@ -39,9 +39,7 @@ int VOffset = 24;
 std::string DEFAULT_FONT = "FiraCode 12";
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 
-class LSSApp : public App
-             , public eb::EventHandler<eb::Event>
-{
+class LSSApp : public App, public eb::EventHandler<eb::Event> {
 public:
   void setup() override;
   void mouseDown(MouseEvent event) override;
@@ -58,12 +56,10 @@ public:
   std::shared_ptr<State> state;
   std::shared_ptr<Player> hero;
 
-    virtual void onEvent(eb::Event & e) override;
+  virtual void onEvent(eb::Event &e) override;
 };
 
-void LSSApp::onEvent(eb::Event & e) {
-    invalidate();
-}
+void LSSApp::onEvent(eb::Event &e) { invalidate(); }
 
 void LSSApp::setup() {
   kp::pango::CinderPango::setTextRenderer(kp::pango::TextRenderer::FREETYPE);
@@ -109,15 +105,13 @@ void LSSApp::setup() {
           c->passThrough = false;
           c->seeThrough = false;
           break;
-        case '+':
-        {
+        case '+': {
           auto door = std::make_shared<Door>();
           door->currentCell = c;
           c->type = CellType::FLOOR;
           c->passThrough = true;
           hero->currentLocation->objects.push_back(door);
-        }
-        break;
+        } break;
         case 'e':
           auto enemy = std::make_shared<Enemy>();
           enemy->currentCell = c;
@@ -137,7 +131,7 @@ void LSSApp::setup() {
   hero->currentCell = hero->currentLocation->cells[15][30];
   hero->calcViewField();
 
-  state->fragments.assign(n * (i+1), std::make_shared<Unknown>());
+  state->fragments.assign(n * (i + 1), std::make_shared<Unknown>());
 
   invalidate();
 
@@ -211,9 +205,9 @@ void LSSApp::invalidate() {
       column++;
       index++;
     }
-      auto f = state->fragments[index];
+    auto f = state->fragments[index];
     if (f != State::END_LINE[0]) {
-        state->fragments[index] = State::END_LINE[0];
+      state->fragments[index] = State::END_LINE[0];
     }
     index++;
     row++;
@@ -221,15 +215,17 @@ void LSSApp::invalidate() {
 
   for (auto o : hero->currentLocation->objects) {
     auto ec = o->currentCell;
-    if (!hero->canSee(ec)) continue;
-    auto index = ec->y * (hero->currentLocation->cells.front().size() + 1) + ec->x;
+    if (!hero->canSee(ec))
+      continue;
+    auto index =
+        ec->y * (hero->currentLocation->cells.front().size() + 1) + ec->x;
 
     if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
-        state->fragments[index] = std::make_shared<EnemySign>();
+      state->fragments[index] = std::make_shared<EnemySign>();
     } else if (auto d = std::dynamic_pointer_cast<Door>(o)) {
-        state->fragments[index] = std::make_shared<DoorSign>(d->opened);
+      state->fragments[index] = std::make_shared<DoorSign>(d->opened);
     } else if (auto i = std::dynamic_pointer_cast<Item>(o)) {
-        state->fragments[index] = std::make_shared<ItemSign>(i->type);
+      state->fragments[index] = std::make_shared<ItemSign>(i->type);
     }
   }
 
@@ -278,36 +274,38 @@ void LSSApp::keyDown(KeyEvent event) {
 
   switch (event.getCode()) {
   case KeyEvent::KEY_k:
-    if (hero->move(Direction::N)) invalidate();
+    if (hero->move(Direction::N))
+      invalidate();
     break;
   case KeyEvent::KEY_l:
-    if (hero->move(Direction::E)) invalidate();
+    if (hero->move(Direction::E))
+      invalidate();
     invalidate();
     break;
   case KeyEvent::KEY_j:
-    if (hero->move(Direction::S)) invalidate();
+    if (hero->move(Direction::S))
+      invalidate();
     invalidate();
     break;
   case KeyEvent::KEY_h:
-    if (hero->move(Direction::W)) invalidate();
+    if (hero->move(Direction::W))
+      invalidate();
     invalidate();
     break;
   case KeyEvent::KEY_q:
     exit(0);
     break;
-  case KeyEvent::KEY_t:
-  {
-      
+  case KeyEvent::KEY_t: {
+
     auto item = std::find_if(hero->currentLocation->objects.begin(),
-                                    hero->currentLocation->objects.end(),
-                 [&](std::shared_ptr<Object> o){
-                     return dynamic_pointer_cast<Item>(o);
-                 });
+                             hero->currentLocation->objects.end(),
+                             [&](std::shared_ptr<Object> o) {
+                               return dynamic_pointer_cast<Item>(o);
+                             });
     if (item != hero->currentLocation->objects.end()) {
-        hero->take(dynamic_pointer_cast<Item>(*item));
+      hero->take(dynamic_pointer_cast<Item>(*item));
     }
-  }
-    break;
+  } break;
   default:
     break;
   }
@@ -326,7 +324,7 @@ void LSSApp::update() {
     milliseconds ms = t1 - t0;
     if (ms.count() > 5) {
       // std::cout << "render time taken: " << rang::fg::green << ms.count()
-                // << rang::style::reset << '\n';
+      // << rang::style::reset << '\n';
     }
   }
 

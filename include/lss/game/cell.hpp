@@ -1,31 +1,27 @@
 #ifndef __CELL_H_
 #define __CELL_H_
-#include <vector>
 #include <memory>
+#include <vector>
 
 enum CellType {
-    UNKNOWN_CELL,
-    FLOOR,
-    WALL,
+  UNKNOWN_CELL,
+  FLOOR,
+  WALL,
 };
 
-enum VisibilityState {
-    UNKNOWN,
-    SEEN,
-    VISIBLE
-};
+enum VisibilityState { UNKNOWN, SEEN, VISIBLE };
 
 class Cell {
 public:
-    Cell(int, int, CellType);
-    CellType type;
-    VisibilityState visibilityState;
+  Cell(int, int, CellType);
+  CellType type;
+  VisibilityState visibilityState;
 
-    int x;
-    int y;
+  int x;
+  int y;
 
-    bool passThrough = true;
-    bool seeThrough = true;
+  bool passThrough = true;
+  bool seeThrough = true;
 };
 
 typedef std::vector<std::shared_ptr<Cell>> CellRow;

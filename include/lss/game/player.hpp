@@ -7,9 +7,8 @@ typedef std::vector<std::shared_ptr<Item>> Inventory;
 
 class Player : public Creature {
 public:
-        Inventory inventory;
-        bool take(std::shared_ptr<Item>);
+  Inventory inventory;
+  bool take(std::shared_ptr<Item>);
 };
-
 
 #endif // __PLAYER_H_

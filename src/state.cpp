@@ -42,22 +42,22 @@ void State::render(kp::pango::CinderPangoRef surface) {
 
   std::string content;
   auto n = 0;
-    auto t0 = std::chrono::system_clock::now();
-    for (auto f : fragments) {
-      if (!f->damaged) {
-          content.append(f->cache);
-      } else {
-        content.append(f->render(this));
-        n++;
-      }
+  auto t0 = std::chrono::system_clock::now();
+  for (auto f : fragments) {
+    if (!f->damaged) {
+      content.append(f->cache);
+    } else {
+      content.append(f->render(this));
+      n++;
+    }
   }
-    auto t1 = std::chrono::system_clock::now();
-    using milliseconds = std::chrono::duration<double, std::milli>;
-    milliseconds ms = t1 - t0;
-    // if (ms.count() > 15) {
-    //   std::cout << "template render time taken: " << rang::fg::green
-    //             << ms.count() << rang::style::reset << '\n';
-    // }
+  auto t1 = std::chrono::system_clock::now();
+  using milliseconds = std::chrono::duration<double, std::milli>;
+  milliseconds ms = t1 - t0;
+  // if (ms.count() > 15) {
+  //   std::cout << "template render time taken: " << rang::fg::green
+  //             << ms.count() << rang::style::reset << '\n';
+  // }
   cache = "<tt>" + content + "</tt>";
 
   damaged = false;
