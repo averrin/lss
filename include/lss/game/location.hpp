@@ -7,13 +7,17 @@
 #include "EventHandler.hpp"
 
 // class Object;
-class Location : public eb::EventHandler<EnemyDiedEvent> {
+class Location :
+    public eb::EventHandler<EnemyDiedEvent>
+   ,public eb::EventHandler<ItemTakenEvent>
+{
 public:
   Location();
   Cells cells;  
   std::vector<std::shared_ptr<Object>> objects;
 
   virtual void onEvent(EnemyDiedEvent & e) override;
+  virtual void onEvent(ItemTakenEvent & e) override;
 };
 
 

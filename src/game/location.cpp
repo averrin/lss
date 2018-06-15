@@ -13,3 +13,7 @@ void Location::onEvent(EnemyDiedEvent & e) {
     }
     objects.erase(std::remove(objects.begin(), objects.end(), sender), objects.end());   
 }
+
+void Location::onEvent(ItemTakenEvent & e) {
+    objects.erase(std::remove(objects.begin(), objects.end(), e.item), objects.end());   
+}

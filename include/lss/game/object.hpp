@@ -15,7 +15,9 @@ public:
 
     std::shared_ptr<Cell> currentCell;
 
-    virtual bool interact() = 0;
+    virtual bool interact() {
+        return false;
+    };
 };
 
 

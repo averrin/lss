@@ -43,6 +43,7 @@ class LSSApp : public App
              , public eb::EventHandler<DoorOpenedEvent>
              , public eb::EventHandler<EnemyTakeDamageEvent>
              , public eb::EventHandler<EnemyDiedEvent>
+             , public eb::EventHandler<ItemTakenEvent>
 {
 public:
   void setup() override;
@@ -63,6 +64,7 @@ public:
     virtual void onEvent(DoorOpenedEvent & e) override;
     virtual void onEvent(EnemyTakeDamageEvent & e) override;
     virtual void onEvent(EnemyDiedEvent & e) override;
+    virtual void onEvent(ItemTakenEvent & e) override;
 };
 
 
@@ -70,11 +72,16 @@ void LSSApp::onEvent(DoorOpenedEvent & e) {
     statusLine->setContent({std::make_shared<Fragment>("Door opened")});
 }
 void LSSApp::onEvent(EnemyTakeDamageEvent & e) {
-    statusLine->setContent({std::make_shared<Fragment>(fmt::format("You hit enemy: {} dmg", e.damage))});
+    statusLine->setContent({F(fmt::format("You hit enemy: {} dmg", e.damage))});
 }
 void LSSApp::onEvent(EnemyDiedEvent & e) {
     invalidate();
-    statusLine->setContent({std::make_shared<Fragment>("Enemy died")});
+    statusLine->setContent({F("Enemy died")});
+}
+
+void LSSApp::onEvent(ItemTakenEvent & e) {
+    auto itemName = e.item->type == ItemType::CORPSE ? "enemy corpse" : "unknown thing";
+    statusLine->setContent({F(fmt::format("You take {}", itemName))});
 }
 
 void LSSApp::setup() {
@@ -158,6 +165,8 @@ void LSSApp::setup() {
   eb::EventBus::AddHandler<EnemyTakeDamageEvent>(*this);
 
   eb::EventBus::AddHandler<EnemyDiedEvent>(*hero->currentLocation);
+  eb::EventBus::AddHandler<ItemTakenEvent>(*hero->currentLocation);
+  eb::EventBus::AddHandler<ItemTakenEvent>(*this);
 }
 
 void LSSApp::invalidate() {
@@ -303,14 +312,18 @@ void LSSApp::keyDown(KeyEvent event) {
   case KeyEvent::KEY_q:
     exit(0);
     break;
-  case KeyEvent::KEY_r:
-    // State::greeting[0]->template_str = "!!!";
-    break;
   case KeyEvent::KEY_t:
-    state->currentPalette = state->currentPalette.name == palettes::DARK.name
-                                ? palettes::LIGHT
-                                : palettes::DARK;
-    state->invalidate();
+  {
+      
+    auto item = std::find_if(hero->currentLocation->objects.begin(),
+                                    hero->currentLocation->objects.end(),
+                 [&](std::shared_ptr<Object> o){
+                     return dynamic_pointer_cast<Item>(o);
+                 });
+    if (item != hero->currentLocation->objects.end()) {
+        hero->take(dynamic_pointer_cast<Item>(*item));
+    }
+  }
     break;
   default:
     break;

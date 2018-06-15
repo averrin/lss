@@ -3,6 +3,7 @@
 #include "Event.hpp"
 
 class Object;
+class Item;
 class DoorOpenedEvent: public eb::Event {
 public:
     DoorOpenedEvent(eb::ObjectPtr);
@@ -19,5 +20,10 @@ public:
     EnemyDiedEvent(eb::ObjectPtr);
 };
 
+class ItemTakenEvent: public eb::Event {
+public:
+    ItemTakenEvent(eb::ObjectPtr, std::shared_ptr<Item>);
+    std::shared_ptr<Item> item;
+};
 
 #endif // __EVENTS_H_

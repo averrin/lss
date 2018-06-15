@@ -45,9 +45,9 @@ bool Creature::move(Direction d) {
                      return o->currentCell == currentCell && !o->passThrough;
                  });
     auto hasObstacles = obstacle != currentLocation->objects.end();
-    if (!currentCell->passThrough || hasObstacles) {
+    if (!currentCell->passThrough || hasObstacles ) {
         currentCell = cc;
-        if (hasObstacles) {
+        if (hasObstacles && !(*obstacle)->passThrough) {
             return !(*obstacle)->interact();
         }
         return false;
