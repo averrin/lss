@@ -40,10 +40,7 @@ std::string DEFAULT_FONT = "FiraCode 12";
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 
 class LSSApp : public App
-             , public eb::EventHandler<DoorOpenedEvent>
-             , public eb::EventHandler<EnemyTakeDamageEvent>
-             , public eb::EventHandler<EnemyDiedEvent>
-             , public eb::EventHandler<ItemTakenEvent>
+             , public eb::EventHandler<eb::Event>
 {
 public:
   void setup() override;
@@ -61,27 +58,11 @@ public:
   std::shared_ptr<State> state;
   std::shared_ptr<Player> hero;
 
-    virtual void onEvent(DoorOpenedEvent & e) override;
-    virtual void onEvent(EnemyTakeDamageEvent & e) override;
-    virtual void onEvent(EnemyDiedEvent & e) override;
-    virtual void onEvent(ItemTakenEvent & e) override;
+    virtual void onEvent(eb::Event & e) override;
 };
 
-
-void LSSApp::onEvent(DoorOpenedEvent & e) {
-    statusLine->setContent({std::make_shared<Fragment>("Door opened")});
-}
-void LSSApp::onEvent(EnemyTakeDamageEvent & e) {
-    statusLine->setContent({F(fmt::format("You hit enemy: {} dmg", e.damage))});
-}
-void LSSApp::onEvent(EnemyDiedEvent & e) {
+void LSSApp::onEvent(eb::Event & e) {
     invalidate();
-    statusLine->setContent({F("Enemy died")});
-}
-
-void LSSApp::onEvent(ItemTakenEvent & e) {
-    auto itemName = e.item->type == ItemType::CORPSE ? "enemy corpse" : "unknown thing";
-    statusLine->setContent({F(fmt::format("You take {}", itemName))});
 }
 
 void LSSApp::setup() {
@@ -160,13 +141,15 @@ void LSSApp::setup() {
 
   invalidate();
 
-  eb::EventBus::AddHandler<DoorOpenedEvent>(*this);
-  eb::EventBus::AddHandler<EnemyDiedEvent>(*this);
-  eb::EventBus::AddHandler<EnemyTakeDamageEvent>(*this);
+  eb::EventBus::AddHandler<DoorOpenedEvent>(*statusLine);
+  eb::EventBus::AddHandler<EnemyDiedEvent>(*statusLine);
+  eb::EventBus::AddHandler<EnemyTakeDamageEvent>(*statusLine);
 
   eb::EventBus::AddHandler<EnemyDiedEvent>(*hero->currentLocation);
   eb::EventBus::AddHandler<ItemTakenEvent>(*hero->currentLocation);
-  eb::EventBus::AddHandler<ItemTakenEvent>(*this);
+  eb::EventBus::AddHandler<ItemTakenEvent>(*statusLine);
+
+  eb::EventBus::AddHandler<eb::Event>(*this);
 }
 
 void LSSApp::invalidate() {
