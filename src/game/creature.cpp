@@ -26,6 +26,18 @@ bool Creature::move(Direction d) {
         case W:
             currentCell = cells[cc->y][cc->x-1];
             break;
+        case NW:
+            currentCell = cells[cc->y-1][cc->x-1];
+            break;
+        case NE:
+            currentCell = cells[cc->y+1][cc->x+1];
+            break;
+        case SW:
+            currentCell = cells[cc->y+1][cc->x-1];
+            break;
+        case SE:
+            currentCell = cells[cc->y+1][cc->x+1];
+            break;
     }
     auto obstacle = std::find_if(currentLocation->objects.begin(),
                                     currentLocation->objects.end(),

@@ -2,6 +2,7 @@
 #define __DOOR_H_
 #include "lss/game/object.hpp"
 
+#include "Event.hpp"
 
 class Door : public Object {
 public:
@@ -13,5 +14,9 @@ public:
     bool locked;
 };
 
+class DoorOpenedEvent: public eb::Event {
+public:
+    DoorOpenedEvent(eb::ObjectPtr);
+};
 
 #endif // __DOOR_H_

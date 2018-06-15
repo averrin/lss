@@ -1,4 +1,5 @@
 #include "lss/game/enemy.hpp"
+#include "EventBus.hpp"
 
 Enemy::Enemy(): Creature() {
     hp = 10;
@@ -7,10 +8,17 @@ Enemy::Enemy(): Creature() {
 bool Enemy::interact() {
     if (hp > 0) {
         hp -= 5;
-        return true;
+        EnemyTakeDamageEvent e(shared_from_this(), 5);
+		eb::EventBus::FireEvent(e);
     }
-    passThrough = true;
-    return false;
+    if (hp <= 0) {
+        passThrough = true;
+        EnemyDiedEvent e2(shared_from_this());
+		eb::EventBus::FireEvent(e2);
+    }
+    return hp > 0;
 }
 
 
+EnemyTakeDamageEvent::EnemyTakeDamageEvent(eb::ObjectPtr s, int d): eb::Event(s), damage(d) {}
+EnemyDiedEvent::EnemyDiedEvent(eb::ObjectPtr s): eb::Event(s) {}

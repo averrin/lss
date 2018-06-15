@@ -23,6 +23,11 @@
 
 #include "lss/ui/statusLine.hpp"
 #include "rang.hpp"
+#include "format.h"
+
+
+#include "EventHandler.hpp"
+#include "EventBus.hpp"
 
 using namespace ci;
 using namespace ci::app;
@@ -32,8 +37,13 @@ int HOffset = 24;
 int VOffset = 24;
 // std::string DEFAULT_FONT = "Iosevka 14";
 std::string DEFAULT_FONT = "FiraCode 12";
+auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 
-class LSSApp : public App {
+class LSSApp : public App
+             , public eb::EventHandler<DoorOpenedEvent>
+             , public eb::EventHandler<EnemyTakeDamageEvent>
+             , public eb::EventHandler<EnemyDiedEvent>
+{
 public:
   void setup() override;
   void mouseDown(MouseEvent event) override;
@@ -49,9 +59,22 @@ public:
   std::shared_ptr<StatusLine> statusLine;
   std::shared_ptr<State> state;
   std::shared_ptr<Player> hero;
+
+    virtual void onEvent(DoorOpenedEvent & e) override;
+    virtual void onEvent(EnemyTakeDamageEvent & e) override;
+    virtual void onEvent(EnemyDiedEvent & e) override;
 };
 
-auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
+
+void LSSApp::onEvent(DoorOpenedEvent & e) {
+    statusLine->setContent({std::make_shared<Fragment>("Door opened")});
+}
+void LSSApp::onEvent(EnemyTakeDamageEvent & e) {
+    statusLine->setContent({std::make_shared<Fragment>(fmt::format("You hit enemy: {} dmg", e.damage))});
+}
+void LSSApp::onEvent(EnemyDiedEvent & e) {
+    statusLine->setContent({std::make_shared<Fragment>("Enemy died")});
+}
 
 void LSSApp::setup() {
   kp::pango::CinderPango::setTextRenderer(kp::pango::TextRenderer::FREETYPE);
@@ -128,6 +151,10 @@ void LSSApp::setup() {
   state->fragments.assign(n * (i+1), std::make_shared<Unknown>());
 
   invalidate();
+
+  eb::EventBus::AddHandler<DoorOpenedEvent>(*this);
+  eb::EventBus::AddHandler<EnemyDiedEvent>(*this);
+  eb::EventBus::AddHandler<EnemyTakeDamageEvent>(*this);
 }
 
 void LSSApp::invalidate() {
@@ -220,10 +247,10 @@ void LSSApp::invalidate() {
   auto t1 = std::chrono::system_clock::now();
   using milliseconds = std::chrono::duration<double, std::milli>;
   milliseconds ms = t1 - t0;
-  if (ms.count() > 5) {
-    std::cout << "invalidate time taken: " << rang::fg::green << ms.count()
-              << rang::style::reset << '\n';
-  }
+  // if (ms.count() > 5) {
+  //   std::cout << "invalidate time taken: " << rang::fg::green << ms.count()
+  //             << rang::style::reset << '\n';
+  // }
 }
 
 void LSSApp::mouseDown(MouseEvent event) {}

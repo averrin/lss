@@ -10,3 +10,6 @@
 [submodule "include/Jinja2CppLight"]
 	path = include/Jinja2CppLight
 	url = git@github.com:hughperkins/Jinja2CppLight.git
+[submodule "include/EventBus"]
+	path = include/EventBus
+	url = git@github.com:averrin/EventBus.git

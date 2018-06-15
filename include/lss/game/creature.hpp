@@ -5,7 +5,8 @@
 #include "lss/game/object.hpp"
 
 enum Direction {
-    N, E, S, W
+    N, E, S, W,
+    NW, NE, SW, SE
 };
 
 class Creature : public Object {
