@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "CinderPango.h"
+#include "lss/game/item.hpp"
 
 typedef std::variant<int, float, bool, std::string> tpl_arg;
 
@@ -67,12 +68,17 @@ public:
 
 class EnemySign : public Fragment {
 public:
-        EnemySign(bool);
+        EnemySign();
 };
 
 class DoorSign : public Fragment {
 public:
         DoorSign(bool);
+};
+
+class ItemSign : public Fragment {
+public:
+        ItemSign(ItemType);
 };
 
 typedef std::vector<std::shared_ptr<Fragment>> Fragments;

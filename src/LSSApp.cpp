@@ -20,11 +20,11 @@
 #include "lss/game/player.hpp"
 #include "lss/game/enemy.hpp"
 #include "lss/game/door.hpp"
+#include "lss/game/events.hpp"
 
 #include "lss/ui/statusLine.hpp"
 #include "rang.hpp"
 #include "format.h"
-
 
 #include "EventHandler.hpp"
 #include "EventBus.hpp"
@@ -73,6 +73,7 @@ void LSSApp::onEvent(EnemyTakeDamageEvent & e) {
     statusLine->setContent({std::make_shared<Fragment>(fmt::format("You hit enemy: {} dmg", e.damage))});
 }
 void LSSApp::onEvent(EnemyDiedEvent & e) {
+    invalidate();
     statusLine->setContent({std::make_shared<Fragment>("Enemy died")});
 }
 
@@ -155,6 +156,8 @@ void LSSApp::setup() {
   eb::EventBus::AddHandler<DoorOpenedEvent>(*this);
   eb::EventBus::AddHandler<EnemyDiedEvent>(*this);
   eb::EventBus::AddHandler<EnemyTakeDamageEvent>(*this);
+
+  eb::EventBus::AddHandler<EnemyDiedEvent>(*hero->currentLocation);
 }
 
 void LSSApp::invalidate() {
@@ -230,9 +233,11 @@ void LSSApp::invalidate() {
     auto index = ec->y * (hero->currentLocation->cells.front().size() + 1) + ec->x;
 
     if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
-        state->fragments[index] = std::make_shared<EnemySign>(e->hp > 0);
+        state->fragments[index] = std::make_shared<EnemySign>();
     } else if (auto d = std::dynamic_pointer_cast<Door>(o)) {
         state->fragments[index] = std::make_shared<DoorSign>(d->opened);
+    } else if (auto i = std::dynamic_pointer_cast<Item>(o)) {
+        state->fragments[index] = std::make_shared<ItemSign>(i->type);
     }
   }
 

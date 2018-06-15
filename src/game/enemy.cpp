@@ -5,15 +5,22 @@ Enemy::Enemy(): Creature() {
     hp = 10;
 }
 
+std::shared_ptr<Item> Enemy::drop() {
+    auto item = std::make_shared<Item>(ItemType::CORPSE);
+    item->currentCell = currentCell;
+    return item;
+}
+
 bool Enemy::interact() {
+    auto ptr = shared_from_this();
     if (hp > 0) {
         hp -= 5;
-        EnemyTakeDamageEvent e(shared_from_this(), 5);
+        EnemyTakeDamageEvent e(ptr, 5);
 		eb::EventBus::FireEvent(e);
     }
     if (hp <= 0) {
         passThrough = true;
-        EnemyDiedEvent e2(shared_from_this());
+        EnemyDiedEvent e2(ptr);
 		eb::EventBus::FireEvent(e2);
     }
     return hp > 0;
