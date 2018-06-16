@@ -16,6 +16,7 @@
 #include "CinderPango.h"
 #include "lss/modes.hpp"
 #include "lss/state.hpp"
+#include "lss/command.hpp"
 
 #include "lss/game/door.hpp"
 #include "lss/game/enemy.hpp"
@@ -47,6 +48,7 @@ public:
   void keyDown(KeyEvent event) override;
   void draw() override;
   void invalidate();
+  bool processCommand(std::string);
 
   kp::pango::CinderPangoRef mPango;
   kp::pango::CinderPangoRef statusFrame;
@@ -78,10 +80,7 @@ void LSSApp::setup() {
   statusLine->setContent(State::normal_mode);
 
   hero = std::make_shared<Player>();
-  // hero->currentCell = std::make_shared<Cell>(CellType::FLOOR);
-  // hero->currentCell->visibilityState = VisibilityState::VISIBLE;
   hero->currentLocation = std::make_shared<Location>();
-  // hero->currentLocation->cells.push_back({})
 
   std::string line;
   std::ifstream dungeon_file("./dungeon.ascii");
@@ -141,7 +140,9 @@ void LSSApp::setup() {
 
   eb::EventBus::AddHandler<EnemyDiedEvent>(*hero->currentLocation);
   eb::EventBus::AddHandler<ItemTakenEvent>(*hero->currentLocation);
+  eb::EventBus::AddHandler<EnterCellEvent>(*hero->currentLocation, hero);
   eb::EventBus::AddHandler<ItemTakenEvent>(*statusLine);
+  eb::EventBus::AddHandler<ItemsFoundEvent>(*statusLine);
 
   eb::EventBus::AddHandler<eb::Event>(*this);
 }
@@ -273,42 +274,48 @@ void LSSApp::keyDown(KeyEvent event) {
   }
 
   switch (event.getCode()) {
+  // case KeyEvent::KEY_k:
+  //   if (hero->move(Direction::N))
+  //     invalidate();
+  //   break;
   case KeyEvent::KEY_k:
-    if (hero->move(Direction::N))
-      invalidate();
+    processCommand("move n");
     break;
   case KeyEvent::KEY_l:
-    if (hero->move(Direction::E))
-      invalidate();
-    invalidate();
+    processCommand("e");
     break;
   case KeyEvent::KEY_j:
-    if (hero->move(Direction::S))
-      invalidate();
-    invalidate();
+    processCommand("m s");
     break;
   case KeyEvent::KEY_h:
-    if (hero->move(Direction::W))
-      invalidate();
-    invalidate();
+    processCommand("w");
     break;
   case KeyEvent::KEY_q:
     exit(0);
     break;
-  case KeyEvent::KEY_t: {
+  case KeyEvent::KEY_p: {
 
     auto item = std::find_if(hero->currentLocation->objects.begin(),
                              hero->currentLocation->objects.end(),
-                             [&](std::shared_ptr<Object> o) {
+                             [](std::shared_ptr<Object> o) {
                                return dynamic_pointer_cast<Item>(o);
                              });
     if (item != hero->currentLocation->objects.end()) {
-      hero->take(dynamic_pointer_cast<Item>(*item));
+      hero->pick(dynamic_pointer_cast<Item>(*item));
     }
   } break;
   default:
     break;
   }
+}
+
+bool LSSApp::processCommand(std::string cmd) {
+    //TODO: split, find command, create event, emit it and handle
+    auto c = MoveCommand();
+    auto e = dynamic_pointer_cast<MoveCommandEvent>(c.getEvent(cmd));
+    eb::EventBus::FireEvent(*e);
+    invalidate();
+    return true;
 }
 
 void LSSApp::update() {

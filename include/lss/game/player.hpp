@@ -5,10 +5,15 @@
 
 typedef std::vector<std::shared_ptr<Item>> Inventory;
 
-class Player : public Creature {
+class Player : public Creature
+             , public eb::EventHandler<MoveCommandEvent>
+{
 public:
+    Player();
   Inventory inventory;
-  bool take(std::shared_ptr<Item>);
+  bool pick(std::shared_ptr<Item>);
+
+  virtual void onEvent(MoveCommandEvent &e) override;
 };
 
 #endif // __PLAYER_H_

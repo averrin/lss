@@ -48,6 +48,7 @@ set( SRC_FILES
 	${SRC_DIR}/state.cpp
 
 	${SRC_DIR}/modes.cpp
+	${SRC_DIR}/commands.cpp
 
 	${SRC_DIR}/game/cell.cpp
 	${SRC_DIR}/game/location.cpp

@@ -18,4 +18,6 @@ public:
   virtual bool interact() { return false; };
 };
 
+typedef std::vector<std::shared_ptr<Object>> Objects;
+
 #endif // __OBJECT_H_

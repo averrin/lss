@@ -1,6 +1,9 @@
 #include <cmath>
 
 #include "lss/game/creature.hpp"
+#include "lss/game/events.hpp"
+
+#include "EventBus.hpp"
 
 Creature::Creature(){
     passThrough = false;
@@ -9,6 +12,9 @@ Creature::Creature(){
 bool Creature::interact() {
     return false;
 }
+
+LeaveCellEvent::LeaveCellEvent(eb::ObjectPtr s, std::shared_ptr<Cell> c): eb::Event(s), cell(c) {}
+EnterCellEvent::EnterCellEvent(eb::ObjectPtr s, std::shared_ptr<Cell> c): eb::Event(s), cell(c) {}
 
 bool Creature::move(Direction d) {
     auto cells = currentLocation->cells;
@@ -54,6 +60,11 @@ bool Creature::move(Direction d) {
     } else {
         calcViewField();
     }
+    
+    LeaveCellEvent le(shared_from_this(), cc);
+    eb::EventBus::FireEvent(le);
+    EnterCellEvent ee(shared_from_this(), currentCell);
+    eb::EventBus::FireEvent(ee);
     return true;
 }
 

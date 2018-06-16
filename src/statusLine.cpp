@@ -22,3 +22,5 @@ void StatusLine::onEvent(ItemTakenEvent &e) {
       e.item->type == ItemType::CORPSE ? "enemy corpse" : "unknown thing";
   setContent({F(fmt::format("You take {}", itemName))});
 }
+
+void StatusLine::onEvent(ItemsFoundEvent &e) { setContent({F(fmt::format("Here lies {} items", e.items.size()))}); }

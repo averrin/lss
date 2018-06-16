@@ -9,10 +9,12 @@
 
 #include "EventHandler.hpp"
 
-class StatusLine : public eb::EventHandler<DoorOpenedEvent>,
-                   public eb::EventHandler<EnemyTakeDamageEvent>,
-                   public eb::EventHandler<EnemyDiedEvent>,
-                   public eb::EventHandler<ItemTakenEvent> {
+class StatusLine : public eb::EventHandler<DoorOpenedEvent>
+                 , public eb::EventHandler<EnemyTakeDamageEvent>
+                 , public eb::EventHandler<EnemyDiedEvent>
+                 , public eb::EventHandler<ItemTakenEvent>
+                 , public eb::EventHandler<ItemsFoundEvent>
+{
 public:
   StatusLine(std::shared_ptr<State> state);
   void setContent(Fragments content);
@@ -24,6 +26,7 @@ public:
   virtual void onEvent(EnemyTakeDamageEvent &e) override;
   virtual void onEvent(EnemyDiedEvent &e) override;
   virtual void onEvent(ItemTakenEvent &e) override;
+  virtual void onEvent(ItemsFoundEvent &e) override;
 
 private:
   std::shared_ptr<State> state;
