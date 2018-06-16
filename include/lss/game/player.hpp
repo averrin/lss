@@ -5,12 +5,11 @@
 
 typedef std::vector<std::shared_ptr<Item>> Inventory;
 
-class Player : public Creature
-             , public eb::EventHandler<MoveCommandEvent>
-             , public eb::EventHandler<PickCommandEvent>
-{
+class Player : public Creature,
+               public eb::EventHandler<MoveCommandEvent>,
+               public eb::EventHandler<PickCommandEvent> {
 public:
-    Player();
+  Player();
   Inventory inventory;
   bool pick(std::shared_ptr<Item>);
 

@@ -3,5 +3,4 @@
 
 enum Direction { N, E, S, W, NW, NE, SW, SE };
 
-
 #endif // __DIRECTION_H_

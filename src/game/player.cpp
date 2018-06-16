@@ -1,9 +1,9 @@
 #include <memory>
 #include "lss/game/player.hpp"
+#include "lss/command.hpp"
 #include "EventBus.hpp"
 
 Player::Player() : Creature() {
-    std::cout << "player constructor" << std::endl;
   eb::EventBus::AddHandler<MoveCommandEvent>(*this);
 }
 
@@ -17,6 +17,12 @@ bool Player::pick(std::shared_ptr<Item> item) {
 
 ItemTakenEvent::ItemTakenEvent(eb::ObjectPtr s, std::shared_ptr<Item> i): eb::Event(s), item(i) {}
 MoveCommandEvent::MoveCommandEvent(Direction d): CommandEvent(nullptr), direction(d) {}
+
+PickCommandEvent::PickCommandEvent(): CommandEvent(nullptr){}
+std::shared_ptr<CommandEvent> PickCommand::getEvent(std::string s) {
+  return std::make_shared<PickCommandEvent>();
+}
+
 
 void Player::onEvent(MoveCommandEvent &e) {
     std::cout << "player onEvent" << std::endl;

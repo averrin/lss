@@ -23,11 +23,9 @@ CommandEvent::CommandEvent(eb::ObjectPtr s) : eb::Event(s) {}
 MoveCommand::MoveCommand()
     : Command({"move", "m"s, "n"s, "e"s, "s"s, "w"s, "nw", "ne", "se", "sw"}) {}
 
-QuitCommand::QuitCommand()
-    : Command({"quit", "q"s}) {}
+QuitCommand::QuitCommand() : Command({"quit", "q"s}) {}
 
-PickCommand::PickCommand()
-    : Command({"pick", "p"s}) {}
+PickCommand::PickCommand() : Command({"pick", "p"s}) {}
 
 std::shared_ptr<CommandEvent> MoveCommand::getEvent(std::string cmd) {
   auto tokens = split(cmd, ' ');

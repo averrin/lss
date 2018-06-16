@@ -7,11 +7,9 @@
 #include "EventHandler.hpp"
 
 // class Object;
-class Location :
-                 public eb::EventHandler<EnemyDiedEvent>
-               , public eb::EventHandler<ItemTakenEvent>
-               , public eb::EventHandler<EnterCellEvent>
-{
+class Location : public eb::EventHandler<EnemyDiedEvent>,
+                 public eb::EventHandler<ItemTakenEvent>,
+                 public eb::EventHandler<EnterCellEvent> {
 public:
   Location();
   Cells cells;

@@ -5,7 +5,6 @@
 
 #include "Event.hpp"
 
-
 class Object;
 typedef std::vector<std::shared_ptr<Object>> Objects;
 
@@ -33,7 +32,6 @@ public:
   std::shared_ptr<Item> item;
 };
 
-
 class LeaveCellEvent : public eb::Event {
 public:
   LeaveCellEvent(eb::ObjectPtr, std::shared_ptr<Cell>);
@@ -52,28 +50,27 @@ public:
   Objects items;
 };
 
-
 /**********/
 
-class CommandEvent: public eb::Event {
+class CommandEvent : public eb::Event {
 public:
   CommandEvent(eb::ObjectPtr);
 };
 
-class MoveCommandEvent: public CommandEvent {
+class MoveCommandEvent : public CommandEvent {
 public:
-    MoveCommandEvent(Direction);
-    Direction direction;
+  MoveCommandEvent(Direction);
+  Direction direction;
 };
 
-class QuitCommandEvent: public CommandEvent {
+class QuitCommandEvent : public CommandEvent {
 public:
-    QuitCommandEvent();
+  QuitCommandEvent();
 };
 
-class PickCommandEvent: public CommandEvent {
+class PickCommandEvent : public CommandEvent {
 public:
-    PickCommandEvent();
+  PickCommandEvent();
 };
 
 #endif // __EVENTS_H_

@@ -40,20 +40,14 @@ int VOffset = 24;
 std::string DEFAULT_FONT = "FiraCode 12";
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 
-QuitCommandEvent::QuitCommandEvent(): CommandEvent(nullptr){}
+QuitCommandEvent::QuitCommandEvent() : CommandEvent(nullptr) {}
 std::shared_ptr<CommandEvent> QuitCommand::getEvent(std::string s) {
   return std::make_shared<QuitCommandEvent>();
 }
 
-PickCommandEvent::PickCommandEvent(): CommandEvent(nullptr){}
-std::shared_ptr<CommandEvent> PickCommand::getEvent(std::string s) {
-  return std::make_shared<PickCommandEvent>();
-}
-
-class LSSApp : public App
-             , public eb::EventHandler<eb::Event>
-             , public eb::EventHandler<QuitCommandEvent>
-{
+class LSSApp : public App,
+               public eb::EventHandler<eb::Event>,
+               public eb::EventHandler<QuitCommandEvent> {
 public:
   void setup() override;
   void mouseDown(MouseEvent event) override;
@@ -62,6 +56,8 @@ public:
   void draw() override;
   void invalidate();
   bool processCommand(std::string);
+  void setListeners();
+  void loadMap();
 
   kp::pango::CinderPangoRef mPango;
   kp::pango::CinderPangoRef statusFrame;
@@ -98,6 +94,17 @@ void LSSApp::setup() {
   statusLine = std::make_shared<StatusLine>(state);
   statusLine->setContent(State::normal_mode);
 
+  loadMap();
+  invalidate();
+
+  setListeners();
+
+  commands.push_back(std::make_shared<MoveCommand>());
+  commands.push_back(std::make_shared<QuitCommand>());
+  commands.push_back(std::make_shared<PickCommand>());
+}
+
+void LSSApp::loadMap() {
   hero = std::make_shared<Player>();
   hero->currentLocation = std::make_shared<Location>();
 
@@ -150,9 +157,9 @@ void LSSApp::setup() {
   hero->calcViewField();
 
   state->fragments.assign(n * (i + 1), std::make_shared<Unknown>());
+}
 
-  invalidate();
-
+void LSSApp::setListeners() {
   eb::EventBus::AddHandler<EnemyDiedEvent>(*hero->currentLocation);
   eb::EventBus::AddHandler<ItemTakenEvent>(*hero->currentLocation);
   eb::EventBus::AddHandler<EnterCellEvent>(*hero->currentLocation, hero);
@@ -166,10 +173,6 @@ void LSSApp::setup() {
   eb::EventBus::AddHandler<DoorOpenedEvent>(*statusLine);
   eb::EventBus::AddHandler<EnemyDiedEvent>(*statusLine);
   eb::EventBus::AddHandler<EnemyTakeDamageEvent>(*statusLine);
-
-  commands.push_back(std::make_shared<MoveCommand>());
-  commands.push_back(std::make_shared<QuitCommand>());
-  commands.push_back(std::make_shared<PickCommand>());
 }
 
 void LSSApp::invalidate() {
@@ -262,30 +265,11 @@ void LSSApp::invalidate() {
   }
 
   state->invalidate();
-
-  auto t1 = std::chrono::system_clock::now();
-  using milliseconds = std::chrono::duration<double, std::milli>;
-  milliseconds ms = t1 - t0;
-  // if (ms.count() > 5) {
-  //   std::cout << "invalidate time taken: " << rang::fg::green << ms.count()
-  //             << rang::style::reset << '\n';
-  // }
 }
 
 void LSSApp::mouseDown(MouseEvent event) {}
 
 void LSSApp::keyDown(KeyEvent event) {
-
-  // if (modeManager.modeFlags->isHints) {
-  //     auto handled = hints->processKey(event);
-  //     if (handled) {
-  //         if (!hints->activated) {
-  //             modeManager.toNormal();
-  //             statusLine->setContent(State::normal_mode);
-  //         }
-  //         return;
-  //     }
-  // }
 
   modeManager.processKey(event);
   if (!modeManager.modeFlags->isInsert) {
@@ -356,22 +340,23 @@ std::vector<std::string> split_command(std::string strToSplit, char delimeter) {
 bool LSSApp::processCommand(std::string cmd) {
   // TODO: split, find command, create event, emit it and handle
   auto s = split_command(cmd, ' ').front();
-  auto c = std::find_if(commands.begin(), commands.end(), [s](std::shared_ptr<Command> c) {
-    return std::find(c->aliases.begin(), c->aliases.end(), s) != c->aliases.end();
-  });
+  auto c = std::find_if(commands.begin(), commands.end(),
+                        [s](std::shared_ptr<Command> c) {
+                          return std::find(c->aliases.begin(), c->aliases.end(),
+                                           s) != c->aliases.end();
+                        });
   if (c == commands.end()) {
     statusLine->setContent(State::unknown_command);
     return false;
   }
   auto command = *c;
-  if(auto e = dynamic_pointer_cast<MoveCommandEvent>(command->getEvent(cmd))) {
-    std::cout << "fire move" << std::endl;
+  if (auto e = dynamic_pointer_cast<MoveCommandEvent>(command->getEvent(cmd))) {
     eb::EventBus::FireEvent(*e);
-  } else if(auto e = dynamic_pointer_cast<QuitCommandEvent>(command->getEvent(cmd))) {
-    std::cout << "fire quit" << std::endl;
+  } else if (auto e = dynamic_pointer_cast<QuitCommandEvent>(
+                 command->getEvent(cmd))) {
     eb::EventBus::FireEvent(*e);
-  } else if(auto e = dynamic_pointer_cast<PickCommandEvent>(command->getEvent(cmd))) {
-    std::cout << "fire pick" << std::endl;
+  } else if (auto e = dynamic_pointer_cast<PickCommandEvent>(
+                 command->getEvent(cmd))) {
     eb::EventBus::FireEvent(*e);
   }
   invalidate();
@@ -383,19 +368,9 @@ void LSSApp::update() {
   gl::enableAlphaBlendingPremult();
 
   if (mPango != nullptr) {
-
-    auto t0 = std::chrono::system_clock::now();
     state->render(mPango);
-    auto t1 = std::chrono::system_clock::now();
-    using milliseconds = std::chrono::duration<double, std::milli>;
-    milliseconds ms = t1 - t0;
-    if (ms.count() > 5) {
-      // std::cout << "render time taken: " << rang::fg::green << ms.count()
-      // << rang::style::reset << '\n';
-    }
   }
 
-  // TODO: hide into statusBar. Implement padding
   if (statusFrame != nullptr) {
 
     statusFrame->setText(state->renderStatus());
