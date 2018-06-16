@@ -23,6 +23,7 @@ public:
   static const Fragments normal_mode;
   static const Fragments hints_mode;
   static const Fragments leader_mode;
+  static const Fragments insert_mode;
 
   static const Fragments START;
   static const Fragments END;

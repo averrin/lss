@@ -14,9 +14,9 @@
 #include "cinder/gl/gl.h"
 
 #include "CinderPango.h"
+#include "lss/command.hpp"
 #include "lss/modes.hpp"
 #include "lss/state.hpp"
-#include "lss/command.hpp"
 
 #include "lss/game/door.hpp"
 #include "lss/game/enemy.hpp"
@@ -57,6 +57,8 @@ public:
   std::shared_ptr<StatusLine> statusLine;
   std::shared_ptr<State> state;
   std::shared_ptr<Player> hero;
+
+  std::string typedCommand;
 
   virtual void onEvent(eb::Event &e) override;
 };
@@ -263,6 +265,9 @@ void LSSApp::keyDown(KeyEvent event) {
   // }
 
   modeManager.processKey(event);
+  if (!modeManager.modeFlags->isInsert) {
+    typedCommand = "";
+  }
 
   if (modeManager.modeFlags->isNormal) {
     statusLine->setContent(State::normal_mode);
@@ -271,13 +276,26 @@ void LSSApp::keyDown(KeyEvent event) {
     statusLine->setContent(State::hints_mode);
   } else if (modeManager.modeFlags->isLeader) {
     statusLine->setContent(State::leader_mode);
+  } else if (modeManager.modeFlags->isInsert) {
+    if (event.getCode() != KeyEvent::KEY_SLASH &&
+        event.getCode() != KeyEvent::KEY_RETURN) {
+      typedCommand += event.getChar();
+    } else if (event.getCode() == KeyEvent::KEY_RETURN) {
+      processCommand(typedCommand);
+      modeManager.toNormal();
+      statusLine->setContent(State::normal_mode);
+      typedCommand = "";
+      return;
+    }
+    if (typedCommand.length() == 0) {
+      statusLine->setContent(State::insert_mode);
+    } else {
+      statusLine->setContent({State::insert_mode.front(), F(typedCommand)});
+    }
+    return;
   }
 
   switch (event.getCode()) {
-  // case KeyEvent::KEY_k:
-  //   if (hero->move(Direction::N))
-  //     invalidate();
-  //   break;
   case KeyEvent::KEY_k:
     processCommand("move n");
     break;
@@ -310,12 +328,12 @@ void LSSApp::keyDown(KeyEvent event) {
 }
 
 bool LSSApp::processCommand(std::string cmd) {
-    //TODO: split, find command, create event, emit it and handle
-    auto c = MoveCommand();
-    auto e = dynamic_pointer_cast<MoveCommandEvent>(c.getEvent(cmd));
-    eb::EventBus::FireEvent(*e);
-    invalidate();
-    return true;
+  // TODO: split, find command, create event, emit it and handle
+  auto c = MoveCommand();
+  auto e = dynamic_pointer_cast<MoveCommandEvent>(c.getEvent(cmd));
+  eb::EventBus::FireEvent(*e);
+  invalidate();
+  return true;
 }
 
 void LSSApp::update() {

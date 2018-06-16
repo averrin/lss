@@ -23,4 +23,6 @@ void StatusLine::onEvent(ItemTakenEvent &e) {
   setContent({F(fmt::format("You take {}", itemName))});
 }
 
-void StatusLine::onEvent(ItemsFoundEvent &e) { setContent({F(fmt::format("Here lies {} items", e.items.size()))}); }
+void StatusLine::onEvent(ItemsFoundEvent &e) {
+  setContent({F(fmt::format("Here lies {} items", e.items.size()))});
+}
