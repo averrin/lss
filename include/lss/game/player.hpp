@@ -7,6 +7,7 @@ typedef std::vector<std::shared_ptr<Item>> Inventory;
 
 class Player : public Creature
              , public eb::EventHandler<MoveCommandEvent>
+             , public eb::EventHandler<PickCommandEvent>
 {
 public:
     Player();
@@ -14,6 +15,7 @@ public:
   bool pick(std::shared_ptr<Item>);
 
   virtual void onEvent(MoveCommandEvent &e) override;
+  virtual void onEvent(PickCommandEvent &e) override;
 };
 
 #endif // __PLAYER_H_

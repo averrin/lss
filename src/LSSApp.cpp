@@ -40,7 +40,20 @@ int VOffset = 24;
 std::string DEFAULT_FONT = "FiraCode 12";
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 
-class LSSApp : public App, public eb::EventHandler<eb::Event> {
+QuitCommandEvent::QuitCommandEvent(): CommandEvent(nullptr){}
+std::shared_ptr<CommandEvent> QuitCommand::getEvent(std::string s) {
+  return std::make_shared<QuitCommandEvent>();
+}
+
+PickCommandEvent::PickCommandEvent(): CommandEvent(nullptr){}
+std::shared_ptr<CommandEvent> PickCommand::getEvent(std::string s) {
+  return std::make_shared<PickCommandEvent>();
+}
+
+class LSSApp : public App
+             , public eb::EventHandler<eb::Event>
+             , public eb::EventHandler<QuitCommandEvent>
+{
 public:
   void setup() override;
   void mouseDown(MouseEvent event) override;
@@ -58,12 +71,16 @@ public:
   std::shared_ptr<State> state;
   std::shared_ptr<Player> hero;
 
+  std::vector<std::shared_ptr<Command>> commands;
+
   std::string typedCommand;
 
   virtual void onEvent(eb::Event &e) override;
+  virtual void onEvent(QuitCommandEvent &e) override;
 };
 
 void LSSApp::onEvent(eb::Event &e) { invalidate(); }
+void LSSApp::onEvent(QuitCommandEvent &e) { exit(0); }
 
 void LSSApp::setup() {
   kp::pango::CinderPango::setTextRenderer(kp::pango::TextRenderer::FREETYPE);
@@ -136,10 +153,6 @@ void LSSApp::setup() {
 
   invalidate();
 
-  eb::EventBus::AddHandler<DoorOpenedEvent>(*statusLine);
-  eb::EventBus::AddHandler<EnemyDiedEvent>(*statusLine);
-  eb::EventBus::AddHandler<EnemyTakeDamageEvent>(*statusLine);
-
   eb::EventBus::AddHandler<EnemyDiedEvent>(*hero->currentLocation);
   eb::EventBus::AddHandler<ItemTakenEvent>(*hero->currentLocation);
   eb::EventBus::AddHandler<EnterCellEvent>(*hero->currentLocation, hero);
@@ -147,6 +160,16 @@ void LSSApp::setup() {
   eb::EventBus::AddHandler<ItemsFoundEvent>(*statusLine);
 
   eb::EventBus::AddHandler<eb::Event>(*this);
+  eb::EventBus::AddHandler<QuitCommandEvent>(*this);
+  eb::EventBus::AddHandler<PickCommandEvent>(*hero);
+
+  eb::EventBus::AddHandler<DoorOpenedEvent>(*statusLine);
+  eb::EventBus::AddHandler<EnemyDiedEvent>(*statusLine);
+  eb::EventBus::AddHandler<EnemyTakeDamageEvent>(*statusLine);
+
+  commands.push_back(std::make_shared<MoveCommand>());
+  commands.push_back(std::make_shared<QuitCommand>());
+  commands.push_back(std::make_shared<PickCommand>());
 }
 
 void LSSApp::invalidate() {
@@ -281,9 +304,9 @@ void LSSApp::keyDown(KeyEvent event) {
         event.getCode() != KeyEvent::KEY_RETURN) {
       typedCommand += event.getChar();
     } else if (event.getCode() == KeyEvent::KEY_RETURN) {
-      processCommand(typedCommand);
       modeManager.toNormal();
       statusLine->setContent(State::normal_mode);
+      processCommand(typedCommand);
       typedCommand = "";
       return;
     }
@@ -309,29 +332,48 @@ void LSSApp::keyDown(KeyEvent event) {
     processCommand("w");
     break;
   case KeyEvent::KEY_q:
-    exit(0);
+    processCommand("q");
     break;
-  case KeyEvent::KEY_p: {
-
-    auto item = std::find_if(hero->currentLocation->objects.begin(),
-                             hero->currentLocation->objects.end(),
-                             [](std::shared_ptr<Object> o) {
-                               return dynamic_pointer_cast<Item>(o);
-                             });
-    if (item != hero->currentLocation->objects.end()) {
-      hero->pick(dynamic_pointer_cast<Item>(*item));
-    }
-  } break;
+  case KeyEvent::KEY_p:
+    processCommand("p");
+    break;
   default:
     break;
   }
 }
 
+// TODO: to utils
+std::vector<std::string> split_command(std::string strToSplit, char delimeter) {
+  std::stringstream ss(strToSplit);
+  std::string item;
+  std::vector<std::string> splittedStrings;
+  while (std::getline(ss, item, delimeter)) {
+    splittedStrings.push_back(item);
+  }
+  return splittedStrings;
+}
+
 bool LSSApp::processCommand(std::string cmd) {
   // TODO: split, find command, create event, emit it and handle
-  auto c = MoveCommand();
-  auto e = dynamic_pointer_cast<MoveCommandEvent>(c.getEvent(cmd));
-  eb::EventBus::FireEvent(*e);
+  auto s = split_command(cmd, ' ').front();
+  auto c = std::find_if(commands.begin(), commands.end(), [s](std::shared_ptr<Command> c) {
+    return std::find(c->aliases.begin(), c->aliases.end(), s) != c->aliases.end();
+  });
+  if (c == commands.end()) {
+    statusLine->setContent(State::unknown_command);
+    return false;
+  }
+  auto command = *c;
+  if(auto e = dynamic_pointer_cast<MoveCommandEvent>(command->getEvent(cmd))) {
+    std::cout << "fire move" << std::endl;
+    eb::EventBus::FireEvent(*e);
+  } else if(auto e = dynamic_pointer_cast<QuitCommandEvent>(command->getEvent(cmd))) {
+    std::cout << "fire quit" << std::endl;
+    eb::EventBus::FireEvent(*e);
+  } else if(auto e = dynamic_pointer_cast<PickCommandEvent>(command->getEvent(cmd))) {
+    std::cout << "fire pick" << std::endl;
+    eb::EventBus::FireEvent(*e);
+  }
   invalidate();
   return true;
 }
@@ -368,7 +410,6 @@ void LSSApp::draw() {
 
     mPango->setDefaultTextColor(state->currentPalette.fgColor);
     mPango->setBackgroundColor(ColorA(0, 0, 0, 0));
-    // gl::color(ColorA(0,0,0,0));
     gl::draw(mPango->getTexture(), vec2(HOffset, VOffset));
   }
   if (statusFrame != nullptr) {

@@ -25,6 +25,8 @@ public:
   static const Fragments leader_mode;
   static const Fragments insert_mode;
 
+  static const Fragments unknown_command;
+
   static const Fragments START;
   static const Fragments END;
   static const Fragments END_LINE;

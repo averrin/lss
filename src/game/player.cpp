@@ -22,3 +22,14 @@ void Player::onEvent(MoveCommandEvent &e) {
     std::cout << "player onEvent" << std::endl;
         move(e.direction);
 }
+
+void Player::onEvent(PickCommandEvent &e) {
+    auto item = std::find_if(currentLocation->objects.begin(),
+                             currentLocation->objects.end(),
+                             [](std::shared_ptr<Object> o) {
+                               return std::dynamic_pointer_cast<Item>(o);
+                             });
+    if (item != currentLocation->objects.end()) {
+      pick(std::dynamic_pointer_cast<Item>(*item));
+    }
+}

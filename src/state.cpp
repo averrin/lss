@@ -87,3 +87,5 @@ const Fragments State::insert_mode = {
     F("<span color='{{red}}' weight='bold'>/</span>")};
 const Fragments State::leader_mode = {
     F("<span color='{{blue}}'>LEADER</span>")};
+const Fragments State::unknown_command = {
+    F("<span color='{{red}}' weight='bold'>Unknown command</span>")};

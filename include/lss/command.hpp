@@ -20,5 +20,16 @@ public:
   std::shared_ptr<CommandEvent> getEvent(std::string);
 };
 
+class QuitCommand: public Command {
+public:
+  QuitCommand();
+  std::shared_ptr<CommandEvent> getEvent(std::string);
+};
+
+class PickCommand: public Command {
+public:
+  PickCommand();
+  std::shared_ptr<CommandEvent> getEvent(std::string);
+};
 
 #endif // __COMMAND_H_

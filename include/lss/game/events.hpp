@@ -66,4 +66,14 @@ public:
     Direction direction;
 };
 
+class QuitCommandEvent: public CommandEvent {
+public:
+    QuitCommandEvent();
+};
+
+class PickCommandEvent: public CommandEvent {
+public:
+    PickCommandEvent();
+};
+
 #endif // __EVENTS_H_
