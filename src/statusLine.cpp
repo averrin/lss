@@ -18,9 +18,7 @@ void StatusLine::onEvent(EnemyTakeDamageEvent &e) {
 void StatusLine::onEvent(EnemyDiedEvent &e) { setContent({F("Enemy died")}); }
 
 void StatusLine::onEvent(ItemTakenEvent &e) {
-  auto itemName =
-      e.item->type == ItemType::CORPSE ? "enemy corpse" : "unknown thing";
-  setContent({F(fmt::format("You take {}", itemName))});
+  setContent({F(fmt::format("You take {}", e.item->name))});
 }
 
 void StatusLine::onEvent(ItemsFoundEvent &e) {

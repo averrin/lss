@@ -20,11 +20,13 @@ void Location::onEvent(ItemTakenEvent & e) {
 }
 
 void Location::onEvent(DigEvent & e) {
-    std::cout << "location dig onEvent" << std::endl;
-
     e.cell->type = CellType::FLOOR;
     e.cell->passThrough = true;
     e.cell->seeThrough = true;
+
+    auto rock = std::make_shared<Item>(ItemType::ROCK, "rock");
+    rock->currentCell = e.cell;
+    objects.push_back(rock);
 
     if(auto cell = cells[e.cell->y-1][e.cell->x]; cell->type == CellType::UNKNOWN_CELL) cell->type = CellType::WALL;
     if(auto cell = cells[e.cell->y][e.cell->x+1]; cell->type == CellType::UNKNOWN_CELL) cell->type = CellType::WALL;

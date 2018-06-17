@@ -4,12 +4,15 @@
 
 enum ItemType {
   CORPSE,
+  ROCK,
+  PICK_AXE,
 };
 
 class Item : public Object {
 public:
-  Item(ItemType);
+  Item(ItemType, std::string);
   ItemType type;
+  std::string name;
 
   bool interact();
 };

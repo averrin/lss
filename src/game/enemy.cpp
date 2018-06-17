@@ -6,7 +6,7 @@ Enemy::Enemy(): Creature() {
 }
 
 std::shared_ptr<Item> Enemy::drop() {
-    auto item = std::make_shared<Item>(ItemType::CORPSE);
+    auto item = std::make_shared<Item>(ItemType::CORPSE, "enemy corpse");
     item->currentCell = currentCell;
     return item;
 }

@@ -43,6 +43,19 @@ std::string Fragment::render(State *state) {
   return cache;
 }
 
+std::string getItemSign(ItemType type){
+  std::string sign;
+  switch (type){
+    case CORPSE:
+      sign = "%"s;
+      break;
+    case ROCK:
+      sign = "*"s;
+      break;
+  }
+  return sign;
+}
+
 Floor::Floor() : Fragment("<span color='{{floor_color}}'>⋅</span>") {}
 Wall::Wall()
     : Fragment("<span color='{{wall_color}}' weight='bold'>#</span>") {}
@@ -60,6 +73,6 @@ DoorSign::DoorSign(bool opened)
                {{"sign", opened ? "/"s : "+"s}}) {}
 ItemSign::ItemSign(ItemType type)
     : Fragment("<span>{{sign}}</span>",
-               {{"sign", type == ItemType::CORPSE ? "%"s : " "s}}) {}
+               {{"sign", getItemSign(type)}}) {}
 
 Unknown::Unknown() : Fragment(" ", false) {}
