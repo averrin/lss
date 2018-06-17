@@ -43,20 +43,14 @@ std::string Fragment::render(State *state) {
   return cache;
 }
 
+//TODO: make map
+std::map<ItemType, std::string> itemSigns = {
+  {CORPSE, "%"},
+  {ROCK, "*"},
+  {PICK_AXE, "("},
+};
 std::string getItemSign(ItemType type){
-  std::string sign;
-  switch (type){
-    case CORPSE:
-      sign = "%"s;
-      break;
-    case ROCK:
-      sign = "*"s;
-      break;
-    case PICK_AXE:
-      sign = "("s;
-      break;
-  }
-  return sign;
+  return itemSigns[type];
 }
 
 Floor::Floor() : Fragment("<span color='{{floor_color}}'>⋅</span>") {}
