@@ -19,6 +19,8 @@ public:
   bool interact();
 
   int hp;
+
+  std::shared_ptr<Cell> getCell(Direction);
 };
 
 #endif // __CREATURE_H_

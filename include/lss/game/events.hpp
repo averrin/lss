@@ -50,6 +50,12 @@ public:
   Objects items;
 };
 
+class DigEvent : public eb::Event {
+public:
+  DigEvent(eb::ObjectPtr, std::shared_ptr<Cell>);
+  std::shared_ptr<Cell> cell;
+};
+
 /**********/
 
 class CommandEvent : public eb::Event {
@@ -71,6 +77,12 @@ public:
 class PickCommandEvent : public CommandEvent {
 public:
   PickCommandEvent();
+};
+
+class DigCommandEvent : public CommandEvent {
+public:
+  DigCommandEvent(Direction);
+  Direction direction;
 };
 
 #endif // __EVENTS_H_

@@ -16,35 +16,42 @@ bool Creature::interact() {
 LeaveCellEvent::LeaveCellEvent(eb::ObjectPtr s, std::shared_ptr<Cell> c): eb::Event(s), cell(c) {}
 EnterCellEvent::EnterCellEvent(eb::ObjectPtr s, std::shared_ptr<Cell> c): eb::Event(s), cell(c) {}
 
-bool Creature::move(Direction d) {
+std::shared_ptr<Cell> Creature::getCell(Direction d) {
     auto cells = currentLocation->cells;
     auto cc = currentCell;
+    std::shared_ptr<Cell> cell;
     switch (d) {
         case N:
-            currentCell = cells[cc->y-1][cc->x];
+            cell = cells[cc->y-1][cc->x];
             break;
         case E:
-            currentCell = cells[cc->y][cc->x+1];
+            cell = cells[cc->y][cc->x+1];
             break;
         case S:
-            currentCell = cells[cc->y+1][cc->x];
+            cell = cells[cc->y+1][cc->x];
             break;
         case W:
-            currentCell = cells[cc->y][cc->x-1];
+            cell = cells[cc->y][cc->x-1];
             break;
         case NW:
-            currentCell = cells[cc->y-1][cc->x-1];
+            cell = cells[cc->y-1][cc->x-1];
             break;
         case NE:
-            currentCell = cells[cc->y+1][cc->x+1];
+            cell = cells[cc->y+1][cc->x+1];
             break;
         case SW:
-            currentCell = cells[cc->y+1][cc->x-1];
+            cell = cells[cc->y+1][cc->x-1];
             break;
         case SE:
-            currentCell = cells[cc->y+1][cc->x+1];
+            cell = cells[cc->y+1][cc->x+1];
             break;
     }
+    return cell;
+}
+
+bool Creature::move(Direction d) {
+    auto cc = currentCell;
+    currentCell = getCell(d);
     auto obstacle = std::find_if(currentLocation->objects.begin(),
                                     currentLocation->objects.end(),
                  [&](std::shared_ptr<Object> o){

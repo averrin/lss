@@ -102,6 +102,7 @@ void LSSApp::setup() {
   commands.push_back(std::make_shared<MoveCommand>());
   commands.push_back(std::make_shared<QuitCommand>());
   commands.push_back(std::make_shared<PickCommand>());
+  commands.push_back(std::make_shared<DigCommand>());
 }
 
 void LSSApp::loadMap() {
@@ -120,10 +121,14 @@ void LSSApp::loadMap() {
         auto c = std::make_shared<Cell>(i, n, CellType::WALL);
         c->visibilityState = VisibilityState::UNKNOWN;
         c->type = CellType::UNKNOWN_CELL;
+        c->passThrough = false;
+        c->seeThrough = false;
 
         switch (ch) {
         case '.':
           c->type = CellType::FLOOR;
+            c->passThrough = true;
+            c->seeThrough = true;
           break;
         case '#':
           c->type = CellType::WALL;
@@ -163,12 +168,14 @@ void LSSApp::setListeners() {
   eb::EventBus::AddHandler<EnemyDiedEvent>(*hero->currentLocation);
   eb::EventBus::AddHandler<ItemTakenEvent>(*hero->currentLocation);
   eb::EventBus::AddHandler<EnterCellEvent>(*hero->currentLocation, hero);
+  eb::EventBus::AddHandler<DigEvent>(*hero->currentLocation, hero);
   eb::EventBus::AddHandler<ItemTakenEvent>(*statusLine);
   eb::EventBus::AddHandler<ItemsFoundEvent>(*statusLine);
 
   eb::EventBus::AddHandler<eb::Event>(*this);
   eb::EventBus::AddHandler<QuitCommandEvent>(*this);
   eb::EventBus::AddHandler<PickCommandEvent>(*hero);
+  eb::EventBus::AddHandler<DigCommandEvent>(*hero);
 
   eb::EventBus::AddHandler<DoorOpenedEvent>(*statusLine);
   eb::EventBus::AddHandler<EnemyDiedEvent>(*statusLine);
@@ -285,8 +292,20 @@ void LSSApp::keyDown(KeyEvent event) {
     statusLine->setContent(State::leader_mode);
   } else if (modeManager.modeFlags->isInsert) {
     if (event.getCode() != KeyEvent::KEY_SLASH &&
-        event.getCode() != KeyEvent::KEY_RETURN) {
+        event.getCode() != KeyEvent::KEY_RETURN &&
+        event.getCode() != KeyEvent::KEY_BACKSPACE
+    ) {
       typedCommand += event.getChar();
+    } else if (event.getCode() == KeyEvent::KEY_BACKSPACE) {
+      std::cout << typedCommand.length() << std::endl;
+      if (typedCommand.length() > 0) {
+        typedCommand.erase(typedCommand.length() - 1, typedCommand.length());
+      } else {
+        modeManager.toNormal();
+        statusLine->setContent(State::normal_mode);
+        typedCommand = "";
+        return;
+      }
     } else if (event.getCode() == KeyEvent::KEY_RETURN) {
       modeManager.toNormal();
       statusLine->setContent(State::normal_mode);
@@ -356,6 +375,9 @@ bool LSSApp::processCommand(std::string cmd) {
                  command->getEvent(cmd))) {
     eb::EventBus::FireEvent(*e);
   } else if (auto e = dynamic_pointer_cast<PickCommandEvent>(
+                 command->getEvent(cmd))) {
+    eb::EventBus::FireEvent(*e);
+  } else if (auto e = dynamic_pointer_cast<DigCommandEvent>(
                  command->getEvent(cmd))) {
     eb::EventBus::FireEvent(*e);
   }

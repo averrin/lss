@@ -17,22 +17,7 @@ std::vector<std::string> split(std::string strToSplit, char delimeter) {
   return splittedStrings;
 }
 
-Command::Command(std::vector<std::string> a) : aliases(a) {}
-CommandEvent::CommandEvent(eb::ObjectPtr s) : eb::Event(s) {}
-
-MoveCommand::MoveCommand()
-    : Command({"move", "m"s, "n"s, "e"s, "s"s, "w"s, "nw", "ne", "se", "sw"}) {}
-
-QuitCommand::QuitCommand() : Command({"quit", "q"s}) {}
-
-PickCommand::PickCommand() : Command({"pick", "p"s}) {}
-
-std::shared_ptr<CommandEvent> MoveCommand::getEvent(std::string cmd) {
-  auto tokens = split(cmd, ' ');
-  std::string dirString = tokens.front();
-  if (tokens.size() > 1) {
-    dirString = tokens[1];
-  }
+Direction getDirection(std::string dirString) {
   Direction direction;
   if (dirString == "n"s) {
     direction = Direction::N;
@@ -51,5 +36,38 @@ std::shared_ptr<CommandEvent> MoveCommand::getEvent(std::string cmd) {
   } else if (dirString == "se"s) {
     direction = Direction::SE;
   }
+  return direction;
+}
+
+Command::Command(std::vector<std::string> a) : aliases(a) {}
+CommandEvent::CommandEvent(eb::ObjectPtr s) : eb::Event(s) {}
+
+MoveCommand::MoveCommand()
+    : Command({"move", "m"s, "n"s, "e"s, "s"s, "w"s, "nw", "ne", "se", "sw"}) {}
+
+QuitCommand::QuitCommand() : Command({"quit", "q"s}) {}
+
+PickCommand::PickCommand() : Command({"pick", "p"s}) {}
+
+DigCommand::DigCommand() : Command({"dig", "d"s}) {}
+
+DigCommandEvent::DigCommandEvent(Direction d) : CommandEvent(nullptr), direction(d) {}
+std::shared_ptr<CommandEvent> DigCommand::getEvent(std::string cmd) {
+  auto tokens = split(cmd, ' ');
+  std::string dirString = tokens.front();
+  if (tokens.size() > 1) {
+    dirString = tokens[1];
+  }
+  auto direction = getDirection(dirString);
+  return std::make_shared<DigCommandEvent>(direction);
+}
+
+std::shared_ptr<CommandEvent> MoveCommand::getEvent(std::string cmd) {
+  auto tokens = split(cmd, ' ');
+  std::string dirString = tokens.front();
+  if (tokens.size() > 1) {
+    dirString = tokens[1];
+  }
+  auto direction = getDirection(dirString);
   return std::make_shared<MoveCommandEvent>(direction);
 }

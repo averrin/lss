@@ -32,4 +32,10 @@ public:
   std::shared_ptr<CommandEvent> getEvent(std::string);
 };
 
+class DigCommand : public Command {
+public:
+  DigCommand();
+  std::shared_ptr<CommandEvent> getEvent(std::string);
+};
+
 #endif // __COMMAND_H_

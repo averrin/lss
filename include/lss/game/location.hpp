@@ -9,6 +9,7 @@
 // class Object;
 class Location : public eb::EventHandler<EnemyDiedEvent>,
                  public eb::EventHandler<ItemTakenEvent>,
+                 public eb::EventHandler<DigEvent>,
                  public eb::EventHandler<EnterCellEvent> {
 public:
   Location();
@@ -18,6 +19,7 @@ public:
   virtual void onEvent(EnemyDiedEvent &e) override;
   virtual void onEvent(ItemTakenEvent &e) override;
   virtual void onEvent(EnterCellEvent &e) override;
+  virtual void onEvent(DigEvent &e) override;
 };
 
 #endif // __LOCATION_H_

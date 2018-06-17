@@ -25,10 +25,18 @@ std::shared_ptr<CommandEvent> PickCommand::getEvent(std::string s) {
 
 
 void Player::onEvent(MoveCommandEvent &e) {
-    std::cout << "player onEvent" << std::endl;
-        move(e.direction);
+    move(e.direction);
 }
 
+
+void Player::onEvent(DigCommandEvent &e) {
+  auto cell = getCell(e.direction);
+  
+  DigEvent de(shared_from_this(), cell);
+  eb::EventBus::FireEvent(de);
+}
+
+DigEvent::DigEvent(eb::ObjectPtr s, std::shared_ptr<Cell> c): eb::Event(s), cell(c) {}
 void Player::onEvent(PickCommandEvent &e) {
     auto item = std::find_if(currentLocation->objects.begin(),
                              currentLocation->objects.end(),

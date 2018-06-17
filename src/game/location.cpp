@@ -19,6 +19,23 @@ void Location::onEvent(ItemTakenEvent & e) {
     objects.erase(std::remove(objects.begin(), objects.end(), e.item), objects.end());   
 }
 
+void Location::onEvent(DigEvent & e) {
+    std::cout << "location dig onEvent" << std::endl;
+
+    e.cell->type = CellType::FLOOR;
+    e.cell->passThrough = true;
+    e.cell->seeThrough = true;
+
+    if(auto cell = cells[e.cell->y-1][e.cell->x]; cell->type == CellType::UNKNOWN_CELL) cell->type = CellType::WALL;
+    if(auto cell = cells[e.cell->y][e.cell->x+1]; cell->type == CellType::UNKNOWN_CELL) cell->type = CellType::WALL;
+    if(auto cell = cells[e.cell->y+1][e.cell->x]; cell->type == CellType::UNKNOWN_CELL) cell->type = CellType::WALL;
+    if(auto cell = cells[e.cell->y][e.cell->x-1]; cell->type == CellType::UNKNOWN_CELL) cell->type = CellType::WALL;
+    if(auto cell = cells[e.cell->y-1][e.cell->x-1]; cell->type == CellType::UNKNOWN_CELL) cell->type = CellType::WALL;
+    if(auto cell = cells[e.cell->y+1][e.cell->x+1]; cell->type == CellType::UNKNOWN_CELL) cell->type = CellType::WALL;
+    if(auto cell = cells[e.cell->y+1][e.cell->x-1]; cell->type == CellType::UNKNOWN_CELL) cell->type = CellType::WALL;
+    if(auto cell = cells[e.cell->y+1][e.cell->x+1]; cell->type == CellType::UNKNOWN_CELL) cell->type = CellType::WALL;
+}
+
 ItemsFoundEvent::ItemsFoundEvent(eb::ObjectPtr s, Objects i): eb::Event(s), items(i) {}
 void Location::onEvent(EnterCellEvent & e) {
     Objects items(objects.size());
