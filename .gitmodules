@@ -13,3 +13,6 @@
 [submodule "include/EventBus"]
 	path = include/EventBus
 	url = git@github.com:averrin/EventBus.git
+[submodule "include/fmt"]
+	path = include/fmt
+	url = git@github.com:fmtlib/fmt.git

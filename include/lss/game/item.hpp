@@ -2,6 +2,8 @@
 #define __ITEM_H_
 #include "lss/game/object.hpp"
 
+#include "fmt/ostream.h"
+
 enum ItemType {
   CORPSE,
   ROCK,
@@ -15,6 +17,12 @@ public:
   std::string name;
 
   bool interact();
+
+	friend std::ostream& operator<<(std::ostream& os, const Item& item)
+	{
+		os << item.name;
+		return os;
+	}
 };
 
 #endif // __ITEM_H_

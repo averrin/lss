@@ -1,8 +1,25 @@
 #include "lss/ui/statusLine.hpp"
-#include "format.h"
+#include "fmt/format.h"
 
 StatusLine::StatusLine(std::shared_ptr<State> s) : state(s){};
 MessageEvent::MessageEvent(eb::ObjectPtr s, std::string m): eb::Event(s), message(m) {}
+
+template <typename T>
+std::string join(const T& array, const std::string &delimiter)
+{
+    std::string res;
+    for (auto &element : array)
+    {
+        if (!res.empty())
+        {
+            res += delimiter;
+        }
+
+        res += element;
+    }
+
+    return res;
+}
 
 void StatusLine::setContent(Fragments content) {
   state->statusFragments = content;
@@ -23,7 +40,12 @@ void StatusLine::onEvent(ItemTakenEvent &e) {
 }
 
 void StatusLine::onEvent(ItemsFoundEvent &e) {
-  setContent({F(fmt::format("Here lies {} items", e.items.size()))});
+  std::vector<std::string> itemNames;
+  for (auto o : e.items){
+    auto item = std::dynamic_pointer_cast<Item>(o);
+    itemNames.push_back(item->name);
+  }
+  setContent({F(fmt::format("Here lies {} items: {}", e.items.size(), join(itemNames, std::string(", "))))});
 }
 
 void StatusLine::onEvent(MessageEvent &e) {

@@ -23,7 +23,7 @@
 #include "lss/game/events.hpp"
 #include "lss/game/player.hpp"
 
-#include "format.h"
+#include "fmt/format.h"
 #include "lss/ui/statusLine.hpp"
 #include "rang.hpp"
 

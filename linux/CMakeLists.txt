@@ -15,6 +15,7 @@ get_filename_component( INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../include" ABSOLUT
 get_filename_component( SMLINC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../include/sml/include" ABSOLUTE )
 get_filename_component( JNJ_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../include/Jinja2CppLight/src" ABSOLUTE )
 get_filename_component( BUS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../include/EventBus/src/event" ABSOLUTE )
+get_filename_component( FMT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../include/fmt" ABSOLUTE )
 
 if( NOT TARGET cinder${CINDER_LIB_SUFFIX} )
     find_package( cinder REQUIRED
@@ -41,7 +42,7 @@ set( SRC_FILES
     "${JNJ_DIR}/stringhelper.cpp"
     "${JNJ_DIR}/Jinja2CppLight.cpp"
 
-	${SRC_DIR}/format.cc
+	${FMT_DIR}/src/format.cc
 
 	${SRC_DIR}/fragment.cpp
 	${SRC_DIR}/palette.cpp
@@ -77,6 +78,7 @@ target_include_directories(
     PUBLIC ${JNJ_DIR}
     PUBLIC ${FOV_DIR}
     PUBLIC ${BUS_DIR}
+    PUBLIC ${FMT_DIR}/include
            ${PANGO_BLOCK_SRC_DIR}
            ${HARFBUZZ_INCLUDE_DIRS}
            ${CAIRO_INCLUDE_DIRS}
