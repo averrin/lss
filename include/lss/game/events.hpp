@@ -57,6 +57,13 @@ public:
 };
 
 /**********/
+class MessageEvent : public eb::Event {
+public:
+  MessageEvent(eb::ObjectPtr, std::string);
+  std::string message;
+};
+
+/**********/
 
 class CommandEvent : public eb::Event {
 public:

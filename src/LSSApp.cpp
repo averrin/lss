@@ -161,6 +161,10 @@ void LSSApp::loadMap() {
   hero->currentCell = hero->currentLocation->cells[15][30];
   hero->calcViewField();
 
+  auto axe = std::make_shared<Item>(ItemType::PICK_AXE, "pick axe");
+  axe->currentCell = hero->currentLocation->cells[16][31];
+hero->currentLocation->objects.push_back(axe);
+
   state->fragments.assign(n * (i + 1), std::make_shared<Unknown>());
 }
 
@@ -171,6 +175,7 @@ void LSSApp::setListeners() {
   eb::EventBus::AddHandler<DigEvent>(*hero->currentLocation, hero);
   eb::EventBus::AddHandler<ItemTakenEvent>(*statusLine);
   eb::EventBus::AddHandler<ItemsFoundEvent>(*statusLine);
+  eb::EventBus::AddHandler<MessageEvent>(*statusLine);
 
   eb::EventBus::AddHandler<eb::Event>(*this);
   eb::EventBus::AddHandler<QuitCommandEvent>(*this);

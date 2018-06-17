@@ -29,14 +29,22 @@ void Player::onEvent(MoveCommandEvent &e) {
 }
 
 
+DigEvent::DigEvent(eb::ObjectPtr s, std::shared_ptr<Cell> c): eb::Event(s), cell(c) {}
 void Player::onEvent(DigCommandEvent &e) {
+  if (std::find_if(inventory.begin(), inventory.end(), [](std::shared_ptr<Item> item) {
+    return item->type == ItemType::PICK_AXE;
+  }) == inventory.end()) {
+    MessageEvent me(shared_from_this(), "You have no pick axe");
+    eb::EventBus::FireEvent(me);
+    return;
+  }
+
   auto cell = getCell(e.direction);
   
   DigEvent de(shared_from_this(), cell);
   eb::EventBus::FireEvent(de);
 }
 
-DigEvent::DigEvent(eb::ObjectPtr s, std::shared_ptr<Cell> c): eb::Event(s), cell(c) {}
 void Player::onEvent(PickCommandEvent &e) {
     auto item = std::find_if(currentLocation->objects.begin(),
                              currentLocation->objects.end(),

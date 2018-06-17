@@ -2,6 +2,7 @@
 #include "format.h"
 
 StatusLine::StatusLine(std::shared_ptr<State> s) : state(s){};
+MessageEvent::MessageEvent(eb::ObjectPtr s, std::string m): eb::Event(s), message(m) {}
 
 void StatusLine::setContent(Fragments content) {
   state->statusFragments = content;
@@ -23,4 +24,8 @@ void StatusLine::onEvent(ItemTakenEvent &e) {
 
 void StatusLine::onEvent(ItemsFoundEvent &e) {
   setContent({F(fmt::format("Here lies {} items", e.items.size()))});
+}
+
+void StatusLine::onEvent(MessageEvent &e) {
+  setContent({F(e.message)});
 }

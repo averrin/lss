@@ -52,6 +52,9 @@ std::string getItemSign(ItemType type){
     case ROCK:
       sign = "*"s;
       break;
+    case PICK_AXE:
+      sign = "("s;
+      break;
   }
   return sign;
 }
