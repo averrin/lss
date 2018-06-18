@@ -13,13 +13,6 @@ namespace sml = boost::sml;
 #include "lss/actions.hpp"
 #include "lss/state.hpp"
 
-struct Modes {
-  bool isNormal = true;
-  bool isHints = false;
-  bool isLeader = false;
-  bool isInsert = false;
-};
-
 struct modes {
   auto operator()() const noexcept {
     using namespace sml;
@@ -35,34 +28,30 @@ struct modes {
     auto is_insert = [](KeyPressedEvent e) {
       return e.key.getCode() == KeyEvent::KEY_SLASH;
     };
+    auto is_direction_event = [](EnableModeEvent e) {
+      std::cout << std::string{e.mode == Modes::DIRECTION} << std::endl;
+      return e.mode == Modes::DIRECTION;
+    };
 
     auto set_hints = [](std::shared_ptr<Modes> m) {
       std::cout << "Set HINTS mode" << std::endl;
-      m->isNormal = false;
-      m->isHints = true;
-      m->isLeader = false;
-      m->isInsert = false;
+      m->currentMode = Modes::HINTS;
     };
     auto set_leader = [](std::shared_ptr<Modes> m) {
       std::cout << "Set LEADER mode" << std::endl;
-      m->isNormal = false;
-      m->isHints = false;
-      m->isLeader = true;
-      m->isInsert = false;
+      m->currentMode = Modes::LEADER;
     };
     auto set_normal = [](std::shared_ptr<Modes> m) {
       std::cout << "Set NORMAL mode" << std::endl;
-      m->isNormal = true;
-      m->isHints = false;
-      m->isLeader = false;
-      m->isInsert = false;
+      m->currentMode = Modes::NORMAL;
     };
     auto set_insert = [](std::shared_ptr<Modes> m) {
       std::cout << "Set INSERT mode" << std::endl;
-      m->isNormal = false;
-      m->isHints = false;
-      m->isLeader = false;
-      m->isInsert = true;
+      m->currentMode = Modes::INSERT;
+    };
+    auto set_direction = [](std::shared_ptr<Modes> m) {
+      std::cout << "Set DIRECTION mode" << std::endl;
+      m->currentMode = Modes::DIRECTION;
     };
 
     // clang-format off
@@ -70,13 +59,19 @@ struct modes {
             * "normal"_s + event<KeyPressedEvent> [is_hints] / set_hints  = "hints"_s
             , "normal"_s + event<KeyPressedEvent> [is_leader] / set_leader  = "leader"_s
             , "normal"_s + event<KeyPressedEvent> [is_insert] / set_insert  = "insert"_s
+            , "normal"_s + event<EnableModeEvent> [is_direction_event] / set_direction  = "direction"_s
+
             , "hints"_s + event<KeyPressedEvent> [is_esc] / set_normal = "normal"_s
             , "leader"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
             , "insert"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
+            , "direction"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
+
             , "insert"_s + event<KeyPressedEvent> [is_insert] / set_normal  = "normal"_s
+
             , "hints"_s + event<ModeExitedEvent> / set_normal = "normal"_s
             , "leader"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
             , "insert"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
+            , "direction"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
         );
     // clang-format on
   }
@@ -88,6 +83,7 @@ public:
   void processKey(KeyEvent e);
   void processEvent(std::shared_ptr<LssEvent> e);
   void toNormal();
+  void toDirection();
   std::shared_ptr<Modes> modeFlags = std::make_shared<Modes>();
 
 private:

@@ -8,6 +8,14 @@
 using namespace ci;
 using namespace ci::app;
 
+struct Modes {
+  enum ModeName {
+    NORMAL, HINTS, LEADER, INSERT, DIRECTION,
+  };
+  ModeName currentMode = ModeName::NORMAL;
+};
+
+
 struct SetContentEvent : LssEvent {
   Fragments content;
   SetContentEvent(Fragments c) : LssEvent(), content(c){};
@@ -30,6 +38,11 @@ struct ChangePaletteEvent : LssEvent {
 
 struct ModeExitedEvent : LssEvent {
   ModeExitedEvent() : LssEvent(){};
+};
+
+struct EnableModeEvent : LssEvent {
+  Modes::ModeName mode;
+  EnableModeEvent(Modes::ModeName m) : LssEvent(), mode(m){};
 };
 
 #endif // __ACTIONS_H_

@@ -284,18 +284,45 @@ void LSSApp::mouseDown(MouseEvent event) {}
 void LSSApp::keyDown(KeyEvent event) {
 
   modeManager.processKey(event);
-  if (!modeManager.modeFlags->isInsert) {
+  if (!modeManager.modeFlags->currentMode == Modes::INSERT) {
     typedCommand = "";
   }
 
-  if (modeManager.modeFlags->isNormal) {
+  if (modeManager.modeFlags->currentMode == Modes::NORMAL) {
     statusLine->setContent(State::normal_mode);
-  } else if (modeManager.modeFlags->isHints) {
+  } else if (modeManager.modeFlags->currentMode == Modes::HINTS) {
     hints->activated = true;
     statusLine->setContent(State::hints_mode);
-  } else if (modeManager.modeFlags->isLeader) {
+  } else if (modeManager.modeFlags->currentMode == Modes::LEADER) {
     statusLine->setContent(State::leader_mode);
-  } else if (modeManager.modeFlags->isInsert) {
+  } else if (modeManager.modeFlags->currentMode == Modes::DIRECTION) {
+    auto isDir = false;
+    std::string dirName;
+    switch (event.getCode()) {
+      case KeyEvent::KEY_j:
+        dirName = "s";
+        isDir = true;
+        break;
+      case KeyEvent::KEY_h:
+        dirName = "w";
+        isDir = true;
+        break;
+      case KeyEvent::KEY_l:
+        dirName = "e";
+        isDir = true;
+        break;
+      case KeyEvent::KEY_k:
+        dirName = "n";
+        isDir = true;
+        break;
+    }
+    if(isDir) {
+      modeManager.toNormal();
+      statusLine->setContent(State::normal_mode);
+      processCommand("dig "+dirName);
+    }
+    return;
+  } else if (modeManager.modeFlags->currentMode == Modes::INSERT) {
     if (event.getCode() != KeyEvent::KEY_SLASH &&
         event.getCode() != KeyEvent::KEY_RETURN &&
         event.getCode() != KeyEvent::KEY_BACKSPACE
@@ -344,6 +371,10 @@ void LSSApp::keyDown(KeyEvent event) {
     break;
   case KeyEvent::KEY_p:
     processCommand("p");
+    break;
+  case KeyEvent::KEY_d:
+    modeManager.toDirection();
+    statusLine->setContent(State::direction_mode);
     break;
   default:
     break;

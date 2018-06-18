@@ -14,8 +14,11 @@ void ModeManager::processEvent(std::shared_ptr<LssEvent> event) {
 }
 
 void ModeManager::toNormal() {
-  // processEvent(std::make_shared<ModeExitedEvent>());
   state_machine.process_event(ModeExitedEvent{});
+}
+
+void ModeManager::toDirection() {
+  state_machine.process_event(EnableModeEvent{Modes::DIRECTION});
 }
 
 void HintsMode::processEvent(std::shared_ptr<LssEvent> event) {}
