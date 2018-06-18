@@ -6,7 +6,7 @@
 
 #include "EventHandler.hpp"
 
-// class Object;
+class Player;
 class Location : public eb::EventHandler<EnemyDiedEvent>,
                  public eb::EventHandler<ItemTakenEvent>,
                  public eb::EventHandler<DigEvent>,
@@ -15,6 +15,8 @@ public:
   Location();
   Cells cells;
   Objects objects;
+
+  void updateView(std::shared_ptr<Player>);
 
   virtual void onEvent(EnemyDiedEvent &e) override;
   virtual void onEvent(ItemTakenEvent &e) override;

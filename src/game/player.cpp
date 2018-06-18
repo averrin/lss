@@ -5,6 +5,7 @@
 
 Player::Player() : Creature() {
   eb::EventBus::AddHandler<MoveCommandEvent>(*this);
+  eb::EventBus::AddHandler<WalkCommandEvent>(*this);
 }
 
 bool Player::pick(std::shared_ptr<Item> item) {
@@ -43,6 +44,12 @@ void Player::onEvent(DigCommandEvent &e) {
   
   DigEvent de(shared_from_this(), cell);
   eb::EventBus::FireEvent(de);
+}
+
+void Player::onEvent(WalkCommandEvent &e) {
+  while(move(e.direction)) {
+    move(e.direction);
+  }
 }
 
 void Player::onEvent(PickCommandEvent &e) {

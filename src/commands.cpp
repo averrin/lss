@@ -17,6 +17,7 @@ std::vector<std::string> split(std::string strToSplit, char delimeter) {
   return splittedStrings;
 }
 
+// TODO: to utils
 Direction getDirection(std::string dirString) {
   Direction direction;
   if (dirString == "n"s) {
@@ -50,6 +51,18 @@ QuitCommand::QuitCommand() : Command({"quit", "q"s}) {}
 PickCommand::PickCommand() : Command({"pick", "p"s}) {}
 
 DigCommand::DigCommand() : Command({"dig", "d"s}) {}
+
+WalkCommandEvent::WalkCommandEvent(Direction d) : CommandEvent(nullptr), direction(d) {}
+WalkCommand::WalkCommand() : Command({"walk", "w"s}) {}
+std::shared_ptr<CommandEvent> WalkCommand::getEvent(std::string cmd) {
+  auto tokens = split(cmd, ' ');
+  std::string dirString = tokens.front();
+  if (tokens.size() > 1) {
+    dirString = tokens[1];
+  }
+  auto direction = getDirection(dirString);
+  return std::make_shared<WalkCommandEvent>(direction);
+}
 
 DigCommandEvent::DigCommandEvent(Direction d) : CommandEvent(nullptr), direction(d) {}
 std::shared_ptr<CommandEvent> DigCommand::getEvent(std::string cmd) {

@@ -92,4 +92,10 @@ public:
   Direction direction;
 };
 
+class WalkCommandEvent : public CommandEvent {
+public:
+  WalkCommandEvent(Direction);
+  Direction direction;
+};
+
 #endif // __EVENTS_H_

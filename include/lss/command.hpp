@@ -38,4 +38,10 @@ public:
   std::shared_ptr<CommandEvent> getEvent(std::string);
 };
 
+class WalkCommand : public Command {
+public:
+  WalkCommand();
+  std::shared_ptr<CommandEvent> getEvent(std::string);
+};
+
 #endif // __COMMAND_H_

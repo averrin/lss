@@ -3,6 +3,7 @@
 
 #include "lss/game/location.hpp"
 #include "lss/game/enemy.hpp"
+#include "lss/game/player.hpp"
 #include "EventBus.hpp"
 
 Location::Location() {}
@@ -48,5 +49,19 @@ void Location::onEvent(EnterCellEvent & e) {
     if (items.size() > 0) {
         ItemsFoundEvent ie(nullptr, items);
         eb::EventBus::FireEvent(ie);
+    }
+    auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
+    updateView(hero);
+}
+
+void Location::updateView(std::shared_ptr<Player> hero) {
+    for (auto r : cells) {
+        for (auto c : r) {
+            if (hero->canSee(c)) {
+                c->visibilityState = VisibilityState::VISIBLE;
+            } else if (c->visibilityState == VisibilityState::VISIBLE) {
+                c->visibilityState = VisibilityState::SEEN;
+            }
+        }
     }
 }

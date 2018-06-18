@@ -70,6 +70,7 @@ public:
   std::vector<std::shared_ptr<Command>> commands;
 
   std::string typedCommand;
+  std::string pendingCommand;
 
   virtual void onEvent(eb::Event &e) override;
   virtual void onEvent(QuitCommandEvent &e) override;
@@ -103,6 +104,7 @@ void LSSApp::setup() {
   commands.push_back(std::make_shared<QuitCommand>());
   commands.push_back(std::make_shared<PickCommand>());
   commands.push_back(std::make_shared<DigCommand>());
+  commands.push_back(std::make_shared<WalkCommand>());
 }
 
 void LSSApp::loadMap() {
@@ -160,6 +162,7 @@ void LSSApp::loadMap() {
   state->currentPalette = palettes::DARK;
   hero->currentCell = hero->currentLocation->cells[15][30];
   hero->calcViewField();
+  hero->currentLocation->updateView(hero);
 
   auto axe = std::make_shared<Item>(ItemType::PICK_AXE, "pick axe");
   axe->currentCell = hero->currentLocation->cells[16][31];
@@ -195,12 +198,6 @@ void LSSApp::invalidate() {
     auto column = 0;
     for (auto c : r) {
       auto cc = hero->currentCell;
-      if (hero->canSee(c)) {
-        c->visibilityState = VisibilityState::VISIBLE;
-      } else if (c->visibilityState == VisibilityState::VISIBLE) {
-        c->visibilityState = VisibilityState::SEEN;
-      }
-
       auto f = state->fragments[index];
       if (c->visibilityState == VisibilityState::UNKNOWN) {
         if (!std::dynamic_pointer_cast<Unknown>(f)) {
@@ -281,6 +278,21 @@ void LSSApp::invalidate() {
 
 void LSSApp::mouseDown(MouseEvent event) {}
 
+// TODO: to utils
+std::optional<std::string> getDir(int code) {
+    switch (code) {
+      case KeyEvent::KEY_j:
+        return "s";
+      case KeyEvent::KEY_h:
+        return "w";
+      case KeyEvent::KEY_l:
+        return "e";
+      case KeyEvent::KEY_k:
+        return "n";
+    }
+    return std::nullopt;
+}
+
 void LSSApp::keyDown(KeyEvent event) {
 
   modeManager.processKey(event);
@@ -297,29 +309,11 @@ void LSSApp::keyDown(KeyEvent event) {
     statusLine->setContent(State::leader_mode);
   } else if (modeManager.modeFlags->currentMode == Modes::DIRECTION) {
     auto isDir = false;
-    std::string dirName;
-    switch (event.getCode()) {
-      case KeyEvent::KEY_j:
-        dirName = "s";
-        isDir = true;
-        break;
-      case KeyEvent::KEY_h:
-        dirName = "w";
-        isDir = true;
-        break;
-      case KeyEvent::KEY_l:
-        dirName = "e";
-        isDir = true;
-        break;
-      case KeyEvent::KEY_k:
-        dirName = "n";
-        isDir = true;
-        break;
-    }
-    if(isDir) {
+    std::optional<std::string> dirName = getDir(event.getCode());
+    if(dirName != std::nullopt) {
       modeManager.toNormal();
       statusLine->setContent(State::normal_mode);
-      processCommand("dig "+dirName);
+      processCommand(pendingCommand+" "+*dirName);
     }
     return;
   } else if (modeManager.modeFlags->currentMode == Modes::INSERT) {
@@ -374,7 +368,13 @@ void LSSApp::keyDown(KeyEvent event) {
     break;
   case KeyEvent::KEY_d:
     modeManager.toDirection();
-    statusLine->setContent(State::direction_mode);
+    pendingCommand = DigCommand().aliases.front();
+    statusLine->setContent({F("Dig: "), State::direction_mode.front()});
+    break;
+  case KeyEvent::KEY_w:
+    modeManager.toDirection();
+    pendingCommand = "walk";
+    statusLine->setContent({F("Walk: "), State::direction_mode.front()});
     break;
   default:
     break;
@@ -414,6 +414,9 @@ bool LSSApp::processCommand(std::string cmd) {
                  command->getEvent(cmd))) {
     eb::EventBus::FireEvent(*e);
   } else if (auto e = dynamic_pointer_cast<DigCommandEvent>(
+                 command->getEvent(cmd))) {
+    eb::EventBus::FireEvent(*e);
+  } else if (auto e = dynamic_pointer_cast<WalkCommandEvent>(
                  command->getEvent(cmd))) {
     eb::EventBus::FireEvent(*e);
   }
