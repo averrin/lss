@@ -48,15 +48,20 @@ void Player::onEvent(DigCommandEvent &e) {
 
 void Player::onEvent(WalkCommandEvent &e) {
   while(move(e.direction)) {
-    move(e.direction);
+    auto item = std::find_if(currentLocation->objects.begin(),
+                             currentLocation->objects.end(),
+                             [&](std::shared_ptr<Object> o) {
+                               return std::dynamic_pointer_cast<Item>(o) && o->currentCell == currentCell;
+                             });
+    if (item != currentLocation->objects.end()) break;
   }
 }
 
 void Player::onEvent(PickCommandEvent &e) {
     auto item = std::find_if(currentLocation->objects.begin(),
                              currentLocation->objects.end(),
-                             [](std::shared_ptr<Object> o) {
-                               return std::dynamic_pointer_cast<Item>(o);
+                             [&](std::shared_ptr<Object> o) {
+                               return std::dynamic_pointer_cast<Item>(o) && o->currentCell == currentCell;
                              });
     if (item != currentLocation->objects.end()) {
       pick(std::dynamic_pointer_cast<Item>(*item));
