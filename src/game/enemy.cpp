@@ -31,11 +31,20 @@ bool Enemy::interact() {
 }
 
 void Enemy::onEvent(CommitEvent &e) {
-    if (!move(cd)) {
-        if (cd == Direction::W) {
-            cd = Direction::E;
+    actionPoints += e.actionPoints;
+    auto stepCost = 500;
+
+    // fmt::print("{}\n", actionPoints);
+
+    while (actionPoints >= stepCost) {
+        if (!move(cd)) {
+            if (cd == Direction::W) {
+                cd = Direction::E;
+            } else {
+                cd = Direction::W;
+            }
         } else {
-            cd = Direction::W;
+            actionPoints -= stepCost;
         }
     }
 }

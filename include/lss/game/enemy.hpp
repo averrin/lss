@@ -17,6 +17,7 @@ public:
   std::shared_ptr<Item> drop();
 
     Direction cd = Direction::W;
+    int actionPoints = 0;
 
   virtual void onEvent(CommitEvent &e) override;
 };
