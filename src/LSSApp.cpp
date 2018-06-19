@@ -150,6 +150,8 @@ void LSSApp::loadMap() {
           c->type = CellType::FLOOR;
           c->passThrough = true;
           hero->currentLocation->objects.push_back(enemy);
+          enemy->currentLocation = hero->currentLocation;
+          enemy->registration = eb::EventBus::AddHandler<CommitEvent>(*enemy, hero);
           break;
         }
         hero->currentLocation->cells[n].push_back(c);

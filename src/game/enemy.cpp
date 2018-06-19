@@ -5,6 +5,10 @@ Enemy::Enemy(): Creature() {
     hp = 10;
 }
 
+Enemy::~Enemy() {
+    registration->removeHandler();
+}
+
 std::shared_ptr<Item> Enemy::drop() {
     auto item = std::make_shared<Item>(ItemType::CORPSE, "enemy corpse");
     item->currentCell = currentCell;
@@ -24,6 +28,16 @@ bool Enemy::interact() {
 		eb::EventBus::FireEvent(e2);
     }
     return hp > 0;
+}
+
+void Enemy::onEvent(CommitEvent &e) {
+    if (!move(cd)) {
+        if (cd == Direction::W) {
+            cd = Direction::E;
+        } else {
+            cd = Direction::W;
+        }
+    }
 }
 
 

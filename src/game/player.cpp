@@ -3,9 +3,17 @@
 #include "lss/command.hpp"
 #include "EventBus.hpp"
 
+CommitEvent::CommitEvent(eb::ObjectPtr s, int ap): eb::Event(s), actionPoints(ap) {}
+
 Player::Player() : Creature() {
   eb::EventBus::AddHandler<MoveCommandEvent>(*this);
   eb::EventBus::AddHandler<WalkCommandEvent>(*this);
+}
+
+void Player::commit(int ap) {
+    auto ptr = shared_from_this();
+    CommitEvent e(ptr, ap);
+    eb::EventBus::FireEvent(e);
 }
 
 bool Player::pick(std::shared_ptr<Item> item) {
@@ -13,6 +21,7 @@ bool Player::pick(std::shared_ptr<Item> item) {
     inventory.push_back(item);
     ItemTakenEvent e(ptr, item);
     eb::EventBus::FireEvent(e);
+    commit(1000);
     return true;
 }
 
@@ -26,7 +35,9 @@ std::shared_ptr<CommandEvent> PickCommand::getEvent(std::string s) {
 
 
 void Player::onEvent(MoveCommandEvent &e) {
-    move(e.direction);
+  if (move(e.direction)) {
+    commit(1000);
+  }
 }
 
 
@@ -48,6 +59,7 @@ void Player::onEvent(DigCommandEvent &e) {
 
 void Player::onEvent(WalkCommandEvent &e) {
   while(move(e.direction)) {
+    commit(1000);
     auto item = std::find_if(currentLocation->objects.begin(),
                              currentLocation->objects.end(),
                              [&](std::shared_ptr<Object> o) {

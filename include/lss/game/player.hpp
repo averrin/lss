@@ -14,6 +14,7 @@ public:
   Player();
   Inventory inventory;
   bool pick(std::shared_ptr<Item>);
+  void commit(int ap);
 
   virtual void onEvent(MoveCommandEvent &e) override;
   virtual void onEvent(PickCommandEvent &e) override;

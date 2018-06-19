@@ -4,6 +4,7 @@
 #include "lss/game/events.hpp"
 
 #include "EventBus.hpp"
+#include "fmt/format.h"
 
 Creature::Creature(){
     passThrough = false;
@@ -51,22 +52,23 @@ std::shared_ptr<Cell> Creature::getCell(Direction d) {
 
 bool Creature::move(Direction d) {
     auto cc = currentCell;
-    currentCell = getCell(d);
+    auto nc = getCell(d);
     auto obstacle = std::find_if(currentLocation->objects.begin(),
                                     currentLocation->objects.end(),
                  [&](std::shared_ptr<Object> o){
-                     return o->currentCell == currentCell && !o->passThrough;
+                     return o->currentCell == nc && !o->passThrough;
                  });
     auto hasObstacles = obstacle != currentLocation->objects.end();
-    if (!currentCell->passThrough || hasObstacles ) {
-        currentCell = cc;
+    // fmt::print("{} - {} - {}.{} -> {}.{}\n", d, hasObstacles, cc->x, cc->y, nc->x, nc->y);
+    if (!nc->passThrough || hasObstacles ) {
         if (hasObstacles && !(*obstacle)->passThrough) {
             return !(*obstacle)->interact();
         }
         return false;
-    } else {
-        calcViewField();
     }
+
+    currentCell = nc;
+    calcViewField();
     
     LeaveCellEvent le(shared_from_this(), cc);
     eb::EventBus::FireEvent(le);
