@@ -19,6 +19,7 @@ public:
   bool interact();
 
   int hp;
+  float speed = 1.f;
 
   std::shared_ptr<Cell> getCell(Direction);
 };

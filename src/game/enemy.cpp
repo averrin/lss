@@ -1,7 +1,7 @@
 #include "lss/game/enemy.hpp"
 #include "EventBus.hpp"
 
-Enemy::Enemy(): Creature() {
+Enemy::Enemy(EnemyType t): Creature(), type(t) {
     hp = 10;
 }
 
@@ -32,10 +32,11 @@ bool Enemy::interact() {
 
 void Enemy::onEvent(CommitEvent &e) {
     actionPoints += e.actionPoints;
-    auto stepCost = 500;
+    auto stepCost = 1000 / speed;
 
     // fmt::print("{}\n", actionPoints);
 
+    //TODO: solve endless cycle
     while (actionPoints >= stepCost) {
         if (!move(cd)) {
             if (cd == Direction::W) {

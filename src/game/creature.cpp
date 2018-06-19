@@ -2,6 +2,7 @@
 
 #include "lss/game/creature.hpp"
 #include "lss/game/events.hpp"
+#include "lss/game/player.hpp"
 
 #include "EventBus.hpp"
 #include "fmt/format.h"
@@ -59,8 +60,9 @@ bool Creature::move(Direction d) {
                      return o->currentCell == nc && !o->passThrough;
                  });
     auto hasObstacles = obstacle != currentLocation->objects.end();
+    auto hasPlayer = currentLocation->player->currentCell == nc;
     // fmt::print("{} - {} - {}.{} -> {}.{}\n", d, hasObstacles, cc->x, cc->y, nc->x, nc->y);
-    if (!nc->passThrough || hasObstacles ) {
+    if (!nc->passThrough || hasObstacles || hasPlayer) {
         if (hasObstacles && !(*obstacle)->passThrough) {
             return !(*obstacle)->interact();
         }

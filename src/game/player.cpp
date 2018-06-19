@@ -21,7 +21,7 @@ bool Player::pick(std::shared_ptr<Item> item) {
     inventory.push_back(item);
     ItemTakenEvent e(ptr, item);
     eb::EventBus::FireEvent(e);
-    commit(1000);
+    commit(1000 / speed);
     return true;
 }
 
@@ -36,7 +36,7 @@ std::shared_ptr<CommandEvent> PickCommand::getEvent(std::string s) {
 
 void Player::onEvent(MoveCommandEvent &e) {
   if (move(e.direction)) {
-    commit(1000);
+    commit(1000 / speed);
   }
 }
 
@@ -59,7 +59,7 @@ void Player::onEvent(DigCommandEvent &e) {
 
 void Player::onEvent(WalkCommandEvent &e) {
   while(move(e.direction)) {
-    commit(1000);
+    commit(1000 / speed);
     auto item = std::find_if(currentLocation->objects.begin(),
                              currentLocation->objects.end(),
                              [&](std::shared_ptr<Object> o) {

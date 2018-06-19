@@ -110,6 +110,7 @@ void LSSApp::setup() {
 void LSSApp::loadMap() {
   hero = std::make_shared<Player>();
   hero->currentLocation = std::make_shared<Location>();
+  hero->currentLocation->player = hero;
 
   std::string line;
   std::ifstream dungeon_file("./dungeon.ascii");
@@ -144,15 +145,35 @@ void LSSApp::loadMap() {
           c->passThrough = true;
           hero->currentLocation->objects.push_back(door);
         } break;
-        case 'e':
-          auto enemy = std::make_shared<Enemy>();
+        case 'o':{
+          auto enemy = std::make_shared<Enemy>(EnemyType::ORK);
           enemy->currentCell = c;
           c->type = CellType::FLOOR;
           c->passThrough = true;
           hero->currentLocation->objects.push_back(enemy);
           enemy->currentLocation = hero->currentLocation;
           enemy->registration = eb::EventBus::AddHandler<CommitEvent>(*enemy, hero);
-          break;
+          }break;
+        case 'g':{
+          auto enemy = std::make_shared<Enemy>(EnemyType::GOBLIN);
+          enemy->speed = 0.5f;
+          enemy->currentCell = c;
+          c->type = CellType::FLOOR;
+          c->passThrough = true;
+          hero->currentLocation->objects.push_back(enemy);
+          enemy->currentLocation = hero->currentLocation;
+          enemy->registration = eb::EventBus::AddHandler<CommitEvent>(*enemy, hero);
+          }break;
+        case 'p': {
+          auto enemy = std::make_shared<Enemy>(EnemyType::PIXI);
+          enemy->speed = 2;
+          enemy->currentCell = c;
+          c->type = CellType::FLOOR;
+          c->passThrough = true;
+          hero->currentLocation->objects.push_back(enemy);
+          enemy->currentLocation = hero->currentLocation;
+          enemy->registration = eb::EventBus::AddHandler<CommitEvent>(*enemy, hero);
+          }break;
         }
         hero->currentLocation->cells[n].push_back(c);
         i++;
@@ -261,7 +282,7 @@ void LSSApp::invalidate() {
         ec->y * (hero->currentLocation->cells.front().size() + 1) + ec->x;
 
     if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
-      state->fragments[index] = std::make_shared<EnemySign>();
+      state->fragments[index] = std::make_shared<EnemySign>(e->type);
     } else if (auto d = std::dynamic_pointer_cast<Door>(o)) {
       state->fragments[index] = std::make_shared<DoorSign>(d->opened);
     } else if (auto i = std::dynamic_pointer_cast<Item>(o)) {

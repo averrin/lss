@@ -43,7 +43,6 @@ std::string Fragment::render(State *state) {
   return cache;
 }
 
-//TODO: make map
 std::map<ItemType, std::string> itemSigns = {
   {CORPSE, "%"},
   {ROCK, "*"},
@@ -53,14 +52,23 @@ std::string getItemSign(ItemType type){
   return itemSigns[type];
 }
 
+std::map<EnemyType, std::string> enemySigns = {
+  {GOBLIN, "g"},
+  {ORK, "o"},
+  {PIXI, "p"},
+};
+std::string getEnemySign(EnemyType type){
+  return enemySigns[type];
+}
+
 Floor::Floor() : Fragment("<span color='{{floor_color}}'>⋅</span>") {}
 Wall::Wall()
     : Fragment("<span color='{{wall_color}}' weight='bold'>#</span>") {}
 HeroSign::HeroSign()
     : Fragment("<span color='{{hero_color}}' weight='bold'>@</span>") {}
-EnemySign::EnemySign()
+EnemySign::EnemySign(EnemyType type)
     : Fragment("<span color='{{red}}' weight='bold'>{{sign}}</span>",
-               {{"sign", "e"s}}) {}
+               {{"sign", getEnemySign(type)}}) {}
 FloorSeen::FloorSeen()
     : Fragment("<span color='{{floor_color_seen}}'>⋅</span>") {}
 WallSeen::WallSeen()

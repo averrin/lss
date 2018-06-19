@@ -15,6 +15,7 @@ public:
   Location();
   Cells cells;
   Objects objects;
+  std::shared_ptr<Player> player;
 
   void updateView(std::shared_ptr<Player>);
 

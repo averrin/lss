@@ -9,6 +9,7 @@
 
 #include "CinderPango.h"
 #include "lss/game/item.hpp"
+#include "lss/game/enemy.hpp"
 
 typedef std::variant<int, float, bool, std::string> tpl_arg;
 
@@ -68,7 +69,7 @@ public:
 
 class EnemySign : public Fragment {
 public:
-  EnemySign();
+  EnemySign(EnemyType);
 };
 
 class DoorSign : public Fragment {
