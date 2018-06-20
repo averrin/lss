@@ -34,6 +34,8 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
+std::string VERSION = "0.0.4 by Averrin";
+
 int HOffset = 24;
 int VOffset = 24;
 // std::string DEFAULT_FONT = "Iosevka 14";
@@ -156,7 +158,6 @@ void LSSApp::loadMap() {
           }break;
         case 'g':{
           auto enemy = std::make_shared<Enemy>(EnemyType::GOBLIN);
-          enemy->speed = 0.5f;
           enemy->currentCell = c;
           c->type = CellType::FLOOR;
           c->passThrough = true;
@@ -166,7 +167,6 @@ void LSSApp::loadMap() {
           }break;
         case 'p': {
           auto enemy = std::make_shared<Enemy>(EnemyType::PIXI);
-          enemy->speed = 2;
           enemy->currentCell = c;
           c->type = CellType::FLOOR;
           c->passThrough = true;

@@ -1,8 +1,9 @@
 #include "lss/game/enemy.hpp"
 #include "EventBus.hpp"
 
-Enemy::Enemy(EnemyType t): Creature(), type(t) {
-    hp = 10;
+Enemy::Enemy(EnemySpec t): Creature(), type(t) {
+    hp = type.baseHP;
+    speed = type.baseSpeed;
 }
 
 Enemy::~Enemy() {

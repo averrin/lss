@@ -31,7 +31,8 @@ void StatusLine::onEvent(DoorOpenedEvent &e) {
   setContent({std::make_shared<Fragment>("Door opened")});
 }
 void StatusLine::onEvent(EnemyTakeDamageEvent &e) {
-  setContent({F(fmt::format("You hit enemy: {} dmg", e.damage))});
+  auto enemy = std::dynamic_pointer_cast<Enemy>(e.getSender());
+  setContent({F(fmt::format("You hit {}: {} dmg", enemy->type.name, e.damage))});
 }
 void StatusLine::onEvent(EnemyDiedEvent &e) { setContent({F("Enemy died")}); }
 

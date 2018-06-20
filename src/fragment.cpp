@@ -38,7 +38,7 @@ std::string Fragment::render(State *state) {
     std::visit([&](auto const &val) { tpl.setValue(key, val); }, value);
   }
 
-  cache = tpl.render();
+  cache = "<span>" + tpl.render() + "</span>";
   damaged = false;
   return cache;
 }
@@ -52,13 +52,23 @@ std::string getItemSign(ItemType type){
   return itemSigns[type];
 }
 
-std::map<EnemyType, std::string> enemySigns = {
-  {GOBLIN, "g"},
-  {ORK, "o"},
-  {PIXI, "p"},
+std::map<EnemySpec, std::string> enemySigns = {
+  {EnemyType::GOBLIN, "g"},
+  {EnemyType::ORK, "o"},
+  {EnemyType::PIXI, "p"},
 };
-std::string getEnemySign(EnemyType type){
+
+std::map<EnemySpec, std::string> enemyColors = {
+  {EnemyType::GOBLIN, "green"},
+  {EnemyType::ORK, "#22cc22"},
+  {EnemyType::PIXI, "pink"},
+};
+std::string getEnemySign(EnemySpec type){
   return enemySigns[type];
+}
+
+std::string getEnemyColor(EnemySpec type){
+  return enemyColors[type];
 }
 
 Floor::Floor() : Fragment("<span color='{{floor_color}}'>⋅</span>") {}
@@ -66,9 +76,9 @@ Wall::Wall()
     : Fragment("<span color='{{wall_color}}' weight='bold'>#</span>") {}
 HeroSign::HeroSign()
     : Fragment("<span color='{{hero_color}}' weight='bold'>@</span>") {}
-EnemySign::EnemySign(EnemyType type)
-    : Fragment("<span color='{{red}}' weight='bold'>{{sign}}</span>",
-               {{"sign", getEnemySign(type)}}) {}
+EnemySign::EnemySign(EnemySpec type)
+    : Fragment("<span color='{{color}}' weight='bold'>{{sign}}</span>",
+               {{"sign", getEnemySign(type)}, {"color", getEnemyColor(type)}}) {}
 FloorSeen::FloorSeen()
     : Fragment("<span color='{{floor_color_seen}}'>⋅</span>") {}
 WallSeen::WallSeen()

@@ -69,7 +69,7 @@ public:
 
 class EnemySign : public Fragment {
 public:
-  EnemySign(EnemyType);
+  EnemySign(EnemySpec);
 };
 
 class DoorSign : public Fragment {
