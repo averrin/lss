@@ -1,5 +1,14 @@
 # Long Story Short
 
+## Build
+* git clone --recursive git@github.com:cinder/Cinder.git
+* cd ./Cinder; mkdir build; cd ./build; cmake ..; make -j4
+* cd ../..
+* git clone --recursive git@github.com:averrin/lss.git
+* cd ./lss; mkdir build; cd ./build
+* export cinder_DIR=../../Cinder/lib/linux/x86_64/ogl/Debug
+* cmake ../linux; make -j4
+
 ## Controls
 * hjkl — move [/m, /move, /n, /e, /s, /w, /nw, /ne, /se, /sw]
 * / — insert mode
