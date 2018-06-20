@@ -105,4 +105,10 @@ public:
   Direction direction;
 };
 
+class AttackCommandEvent : public CommandEvent {
+public:
+  AttackCommandEvent(Direction);
+  Direction direction;
+};
+
 #endif // __EVENTS_H_

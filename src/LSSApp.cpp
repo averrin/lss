@@ -107,6 +107,7 @@ void LSSApp::setup() {
   commands.push_back(std::make_shared<PickCommand>());
   commands.push_back(std::make_shared<DigCommand>());
   commands.push_back(std::make_shared<WalkCommand>());
+  commands.push_back(std::make_shared<AttackCommand>());
 }
 
 void LSSApp::loadMap() {
@@ -207,6 +208,7 @@ void LSSApp::setListeners() {
   eb::EventBus::AddHandler<QuitCommandEvent>(*this);
   eb::EventBus::AddHandler<PickCommandEvent>(*hero);
   eb::EventBus::AddHandler<DigCommandEvent>(*hero);
+  eb::EventBus::AddHandler<AttackCommandEvent>(*hero);
 
   eb::EventBus::AddHandler<DoorOpenedEvent>(*statusLine);
   eb::EventBus::AddHandler<EnemyDiedEvent>(*statusLine);
@@ -394,6 +396,11 @@ void LSSApp::keyDown(KeyEvent event) {
     pendingCommand = DigCommand().aliases.front();
     statusLine->setContent({F("Dig: "), State::direction_mode.front()});
     break;
+  case KeyEvent::KEY_a:
+    modeManager.toDirection();
+    pendingCommand = AttackCommand().aliases.front();
+    statusLine->setContent({F("Attack: "), State::direction_mode.front()});
+    break;
   case KeyEvent::KEY_w:
     modeManager.toDirection();
     pendingCommand = "walk";
@@ -440,6 +447,9 @@ bool LSSApp::processCommand(std::string cmd) {
                  command->getEvent(cmd))) {
     eb::EventBus::FireEvent(*e);
   } else if (auto e = dynamic_pointer_cast<WalkCommandEvent>(
+                 command->getEvent(cmd))) {
+    eb::EventBus::FireEvent(*e);
+  } else if (auto e = dynamic_pointer_cast<AttackCommandEvent>(
                  command->getEvent(cmd))) {
     eb::EventBus::FireEvent(*e);
   }

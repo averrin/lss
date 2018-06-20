@@ -44,4 +44,10 @@ public:
   std::shared_ptr<CommandEvent> getEvent(std::string);
 };
 
+class AttackCommand : public Command {
+public:
+  AttackCommand();
+  std::shared_ptr<CommandEvent> getEvent(std::string);
+};
+
 #endif // __COMMAND_H_

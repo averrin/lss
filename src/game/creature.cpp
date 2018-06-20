@@ -3,6 +3,7 @@
 #include "lss/game/creature.hpp"
 #include "lss/game/events.hpp"
 #include "lss/game/player.hpp"
+#include "lss/game/enemy.hpp"
 
 #include "EventBus.hpp"
 #include "fmt/format.h"
@@ -39,7 +40,7 @@ std::shared_ptr<Cell> Creature::getCell(Direction d) {
             cell = cells[cc->y-1][cc->x-1];
             break;
         case NE:
-            cell = cells[cc->y+1][cc->x+1];
+            cell = cells[cc->y-1][cc->x+1];
             break;
         case SW:
             cell = cells[cc->y+1][cc->x-1];
@@ -51,7 +52,23 @@ std::shared_ptr<Cell> Creature::getCell(Direction d) {
     return cell;
 }
 
-bool Creature::move(Direction d) {
+bool Creature::attack(Direction d) {
+    auto nc = getCell(d);
+    auto opponent = std::find_if(currentLocation->objects.begin(),
+                                    currentLocation->objects.end(),
+                 [&](std::shared_ptr<Object> o){
+                                    return o->currentCell == nc && std::dynamic_pointer_cast<Enemy>(o);
+                 });
+    if (opponent == currentLocation->objects.end()) {
+        MessageEvent me(shared_from_this(), "There is no target.");
+        eb::EventBus::FireEvent(me);
+        return false;
+    }
+    (*opponent)->interact();
+    return true;
+}
+
+bool Creature::move(Direction d, bool autoAction) {
     auto cc = currentCell;
     auto nc = getCell(d);
     auto obstacle = std::find_if(currentLocation->objects.begin(),
@@ -63,7 +80,7 @@ bool Creature::move(Direction d) {
     auto hasPlayer = currentLocation->player->currentCell == nc;
     // fmt::print("{} - {} - {}.{} -> {}.{}\n", d, hasObstacles, cc->x, cc->y, nc->x, nc->y);
     if (!nc->passThrough || hasObstacles || hasPlayer) {
-        if (hasObstacles && !(*obstacle)->passThrough) {
+        if (autoAction && hasObstacles && !(*obstacle)->passThrough) {
             return !(*obstacle)->interact();
         }
         return false;

@@ -45,12 +45,10 @@ CommandEvent::CommandEvent(eb::ObjectPtr s) : eb::Event(s) {}
 
 MoveCommand::MoveCommand()
     : Command({"move", "m"s, "n"s, "e"s, "s"s, "w"s, "nw", "ne", "se", "sw"}) {}
-
 QuitCommand::QuitCommand() : Command({"quit", "q"s}) {}
-
 PickCommand::PickCommand() : Command({"pick", "p"s}) {}
-
 DigCommand::DigCommand() : Command({"dig", "d"s}) {}
+AttackCommand::AttackCommand() : Command({"attack", "a"s}) {}
 
 WalkCommandEvent::WalkCommandEvent(Direction d) : CommandEvent(nullptr), direction(d) {}
 WalkCommand::WalkCommand() : Command({"walk", "w"s}) {}
@@ -83,4 +81,15 @@ std::shared_ptr<CommandEvent> MoveCommand::getEvent(std::string cmd) {
   }
   auto direction = getDirection(dirString);
   return std::make_shared<MoveCommandEvent>(direction);
+}
+
+AttackCommandEvent::AttackCommandEvent(Direction d) : CommandEvent(nullptr), direction(d) {}
+std::shared_ptr<CommandEvent> AttackCommand::getEvent(std::string cmd) {
+  auto tokens = split(cmd, ' ');
+  std::string dirString = tokens.front();
+  if (tokens.size() > 1) {
+    dirString = tokens[1];
+  }
+  auto direction = getDirection(dirString);
+  return std::make_shared<AttackCommandEvent>(direction);
 }

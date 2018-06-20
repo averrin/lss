@@ -35,8 +35,14 @@ std::shared_ptr<CommandEvent> PickCommand::getEvent(std::string s) {
 
 
 void Player::onEvent(MoveCommandEvent &e) {
-  if (move(e.direction)) {
+  if (move(e.direction, true)) {
     commit(1000 / speed);
+  }
+}
+
+void Player::onEvent(AttackCommandEvent &e) {
+  if (attack(e.direction)) {
+    commit(500 / speed);
   }
 }
 

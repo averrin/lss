@@ -11,7 +11,8 @@ public:
   std::vector<std::shared_ptr<Cell>> viewField;
   std::shared_ptr<Location> currentLocation;
 
-  bool move(Direction);
+  bool move(Direction, bool autoAction = false);
+  bool attack(Direction);
   bool canSee(std::shared_ptr<Cell> c) {
     return std::find(viewField.begin(), viewField.end(), c) != viewField.end();
   };

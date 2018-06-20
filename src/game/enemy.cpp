@@ -38,13 +38,15 @@ void Enemy::onEvent(CommitEvent &e) {
     // fmt::print("{}\n", actionPoints);
 
     //TODO: solve endless cycle
-    while (actionPoints >= stepCost) {
+    auto n = 0;
+    while (actionPoints >= stepCost && n != 2) {
         if (!move(cd)) {
             if (cd == Direction::W) {
                 cd = Direction::E;
             } else {
                 cd = Direction::W;
             }
+            n++;
         } else {
             actionPoints -= stepCost;
         }
