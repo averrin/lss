@@ -43,14 +43,11 @@ std::string Fragment::render(State *state) {
   return cache;
 }
 
-std::map<ItemType, std::string> itemSigns = {
-  {CORPSE, "%"},
-  {ROCK, "*"},
-  {PICK_AXE, "("},
+std::map<ItemSpec, std::string> itemSigns = {
+  {ItemType::CORPSE, "%"},
+  {ItemType::ROCK, "*"},
+  {ItemType::PICK_AXE, "("},
 };
-std::string getItemSign(ItemType type){
-  return itemSigns[type];
-}
 
 std::map<EnemySpec, std::string> enemySigns = {
   {EnemyType::GOBLIN, "g"},
@@ -63,13 +60,6 @@ std::map<EnemySpec, std::string> enemyColors = {
   {EnemyType::ORK, "#22cc22"},
   {EnemyType::PIXI, "pink"},
 };
-std::string getEnemySign(EnemySpec type){
-  return enemySigns[type];
-}
-
-std::string getEnemyColor(EnemySpec type){
-  return enemyColors[type];
-}
 
 Floor::Floor() : Fragment("<span color='{{floor_color}}'>⋅</span>") {}
 Wall::Wall()
@@ -78,7 +68,7 @@ HeroSign::HeroSign()
     : Fragment("<span color='{{hero_color}}' weight='bold'>@</span>") {}
 EnemySign::EnemySign(EnemySpec type)
     : Fragment("<span color='{{color}}' weight='bold'>{{sign}}</span>",
-               {{"sign", getEnemySign(type)}, {"color", getEnemyColor(type)}}) {}
+               {{"sign", enemySigns[type]}, {"color", enemyColors[type]}}) {}
 FloorSeen::FloorSeen()
     : Fragment("<span color='{{floor_color_seen}}'>⋅</span>") {}
 WallSeen::WallSeen()
@@ -86,8 +76,8 @@ WallSeen::WallSeen()
 DoorSign::DoorSign(bool opened)
     : Fragment("<span weight='bold'>{{sign}}</span>",
                {{"sign", opened ? "/"s : "+"s}}) {}
-ItemSign::ItemSign(ItemType type)
+ItemSign::ItemSign(ItemSpec type)
     : Fragment("<span>{{sign}}</span>",
-               {{"sign", getItemSign(type)}}) {}
+               {{"sign", itemSigns[type]}}) {}
 
 Unknown::Unknown() : Fragment(" ", false) {}

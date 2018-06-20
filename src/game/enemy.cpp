@@ -11,7 +11,7 @@ Enemy::~Enemy() {
 }
 
 std::shared_ptr<Item> Enemy::drop() {
-    auto item = std::make_shared<Item>(ItemType::CORPSE, "enemy corpse");
+    auto item = std::make_shared<Item>(ItemType::CORPSE);
     item->currentCell = currentCell;
     return item;
 }

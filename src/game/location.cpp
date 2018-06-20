@@ -25,7 +25,7 @@ void Location::onEvent(DigEvent & e) {
     e.cell->passThrough = true;
     e.cell->seeThrough = true;
 
-    auto rock = std::make_shared<Item>(ItemType::ROCK, "rock");
+    auto rock = std::make_shared<Item>(ItemType::ROCK);
     rock->currentCell = e.cell;
     objects.push_back(rock);
 

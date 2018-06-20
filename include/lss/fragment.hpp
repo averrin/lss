@@ -79,7 +79,7 @@ public:
 
 class ItemSign : public Fragment {
 public:
-  ItemSign(ItemType);
+  ItemSign(ItemSpec);
 };
 
 typedef std::vector<std::shared_ptr<Fragment>> Fragments;

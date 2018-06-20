@@ -187,7 +187,7 @@ void LSSApp::loadMap() {
   hero->calcViewField();
   hero->currentLocation->updateView(hero);
 
-  auto axe = std::make_shared<Item>(ItemType::PICK_AXE, "pick axe");
+  auto axe = std::make_shared<Item>(ItemType::PICK_AXE);
   axe->currentCell = hero->currentLocation->cells[16][31];
 hero->currentLocation->objects.push_back(axe);
 

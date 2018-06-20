@@ -4,23 +4,36 @@
 
 #include "fmt/ostream.h"
 
-enum ItemType {
-  CORPSE,
-  ROCK,
-  PICK_AXE,
+struct ItemSpec {
+public:
+    std::string name;
+
+	friend bool operator<(const ItemSpec& lhs, const ItemSpec& rhs)
+	{
+		return lhs.name < rhs.name;
+	}
+	friend bool operator==(ItemSpec& lhs, const ItemSpec& rhs)
+	{
+		return lhs.name == rhs.name;
+	}
+};
+
+namespace ItemType {
+  ItemSpec const CORPSE = {"corpse"};
+  ItemSpec const ROCK = {"rock"};
+  ItemSpec const PICK_AXE = {"pick axe"};
 };
 
 class Item : public Object {
 public:
-  Item(ItemType, std::string);
-  ItemType type;
-  std::string name;
+  Item(ItemSpec);
+  ItemSpec type;
 
   bool interact();
 
 	friend std::ostream& operator<<(std::ostream& os, const Item& item)
 	{
-		os << item.name;
+		os << item.type.name;
 		return os;
 	}
 };

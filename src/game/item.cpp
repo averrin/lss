@@ -1,6 +1,6 @@
 #include "lss/game/item.hpp"
 
-Item::Item(ItemType t, std::string n): Object(), type(t), name(n) {};
+Item::Item(ItemSpec t): Object(), type(t) {};
 
 bool Item::interact() {
     return false;
