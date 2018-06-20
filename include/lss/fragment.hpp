@@ -8,8 +8,8 @@
 #include <variant>
 
 #include "CinderPango.h"
-#include "lss/game/item.hpp"
 #include "lss/game/enemy.hpp"
+#include "lss/game/item.hpp"
 
 typedef std::variant<int, float, bool, std::string> tpl_arg;
 

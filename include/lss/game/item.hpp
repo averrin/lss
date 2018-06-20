@@ -6,22 +6,20 @@
 
 struct ItemSpec {
 public:
-    std::string name;
+  std::string name;
 
-	friend bool operator<(const ItemSpec& lhs, const ItemSpec& rhs)
-	{
-		return lhs.name < rhs.name;
-	}
-	friend bool operator==(ItemSpec& lhs, const ItemSpec& rhs)
-	{
-		return lhs.name == rhs.name;
-	}
+  friend bool operator<(const ItemSpec &lhs, const ItemSpec &rhs) {
+    return lhs.name < rhs.name;
+  }
+  friend bool operator==(ItemSpec &lhs, const ItemSpec &rhs) {
+    return lhs.name == rhs.name;
+  }
 };
 
 namespace ItemType {
-  ItemSpec const CORPSE = {"corpse"};
-  ItemSpec const ROCK = {"rock"};
-  ItemSpec const PICK_AXE = {"pick axe"};
+ItemSpec const CORPSE = {"corpse"};
+ItemSpec const ROCK = {"rock"};
+ItemSpec const PICK_AXE = {"pick axe"};
 };
 
 class Item : public Object {
@@ -31,11 +29,10 @@ public:
 
   bool interact(std::shared_ptr<Object>);
 
-	friend std::ostream& operator<<(std::ostream& os, const Item& item)
-	{
-		os << item.type.name;
-		return os;
-	}
+  friend std::ostream &operator<<(std::ostream &os, const Item &item) {
+    os << item.type.name;
+    return os;
+  }
 };
 
 #endif // __ITEM_H_

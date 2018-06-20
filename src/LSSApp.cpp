@@ -23,7 +23,8 @@ std::string DEFAULT_FONT = "FiraCode 12";
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 
 QuitCommandEvent::QuitCommandEvent() : CommandEvent(nullptr) {}
-std::optional<std::shared_ptr<CommandEvent>> QuitCommand::getEvent(std::string s) {
+std::optional<std::shared_ptr<CommandEvent>>
+QuitCommand::getEvent(std::string s) {
   return std::make_shared<QuitCommandEvent>();
 }
 
@@ -62,12 +63,13 @@ void LSSApp::setup() {
   commands.push_back(std::make_shared<AttackCommand>());
 }
 
-std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Cell> c, std::shared_ptr<Player> hero, EnemySpec type) {
-    auto enemy = std::make_shared<Enemy>(type);
-    enemy->currentCell = c;
-    enemy->currentLocation = hero->currentLocation;
-    enemy->registration = eb::EventBus::AddHandler<CommitEvent>(*enemy, hero);
-    return enemy;
+std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Cell> c,
+                                 std::shared_ptr<Player> hero, EnemySpec type) {
+  auto enemy = std::make_shared<Enemy>(type);
+  enemy->currentCell = c;
+  enemy->currentLocation = hero->currentLocation;
+  enemy->registration = eb::EventBus::AddHandler<CommitEvent>(*enemy, hero);
+  return enemy;
 }
 
 void LSSApp::loadMap() {
@@ -93,8 +95,8 @@ void LSSApp::loadMap() {
         switch (ch) {
         case '.':
           c->type = CellType::FLOOR;
-            c->passThrough = true;
-            c->seeThrough = true;
+          c->passThrough = true;
+          c->seeThrough = true;
           break;
         case '#':
           c->type = CellType::WALL;
@@ -108,21 +110,24 @@ void LSSApp::loadMap() {
           c->passThrough = true;
           hero->currentLocation->objects.push_back(door);
         } break;
-        case 'o':{
+        case 'o': {
           c->type = CellType::FLOOR;
           c->passThrough = true;
-          hero->currentLocation->objects.push_back(makeEnemy(c, hero, EnemyType::ORK));
-          }break;
-        case 'g':{
+          hero->currentLocation->objects.push_back(
+              makeEnemy(c, hero, EnemyType::ORK));
+        } break;
+        case 'g': {
           c->type = CellType::FLOOR;
           c->passThrough = true;
-          hero->currentLocation->objects.push_back(makeEnemy(c, hero, EnemyType::GOBLIN));
-          }break;
+          hero->currentLocation->objects.push_back(
+              makeEnemy(c, hero, EnemyType::GOBLIN));
+        } break;
         case 'p': {
           c->type = CellType::FLOOR;
           c->passThrough = true;
-          hero->currentLocation->objects.push_back(makeEnemy(c, hero, EnemyType::PIXI));
-          }break;
+          hero->currentLocation->objects.push_back(
+              makeEnemy(c, hero, EnemyType::PIXI));
+        } break;
         }
         hero->currentLocation->cells[n].push_back(c);
         i++;
@@ -138,7 +143,7 @@ void LSSApp::loadMap() {
 
   auto axe = std::make_shared<Item>(ItemType::PICK_AXE);
   axe->currentCell = hero->currentLocation->cells[16][31];
-hero->currentLocation->objects.push_back(axe);
+  hero->currentLocation->objects.push_back(axe);
 
   state->fragments.assign(n * (i + 1), std::make_shared<Unknown>());
 }
@@ -251,25 +256,24 @@ void LSSApp::invalidate() {
 
 void LSSApp::mouseDown(MouseEvent event) {}
 
-
 void LSSApp::keyDown(KeyEvent event) {
 
   modeManager.processKey(event);
   if (modeManager.modeFlags->currentMode != Modes::INSERT) {
     typedCommand = "";
   }
-  
+
   switch (modeManager.modeFlags->currentMode) {
-    case Modes::NORMAL:
-      statusLine->setContent(State::normal_mode);
-      normalMode->processKey(event);
-      break;
-    case Modes::DIRECTION:
-      directionMode->processKey(event);
-      break;
-    case Modes::INSERT:
-      insertMode->processKey(event);
-      break;
+  case Modes::NORMAL:
+    statusLine->setContent(State::normal_mode);
+    normalMode->processKey(event);
+    break;
+  case Modes::DIRECTION:
+    directionMode->processKey(event);
+    break;
+  case Modes::INSERT:
+    insertMode->processKey(event);
+    break;
   }
 }
 
@@ -297,9 +301,10 @@ bool LSSApp::processCommand(std::string cmd) {
   }
   auto command = *c;
   auto event = command->getEvent(cmd);
-  if (event == std::nullopt) return false;
+  if (event == std::nullopt)
+    return false;
 
-  //TODO: do it automagicaly
+  // TODO: do it automagicaly
   if (auto e = dynamic_pointer_cast<MoveCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
   } else if (auto e = dynamic_pointer_cast<QuitCommandEvent>(*event)) {
@@ -351,7 +356,8 @@ void LSSApp::draw() {
     gl::draw(statusFrame->getTexture(),
              vec2(6, getWindowHeight() - StatusLine::HEIGHT + 6));
   }
-  gl::drawString(VERSION, vec2(getWindowWidth() - 120, getWindowHeight() - StatusLine::HEIGHT + 12));
+  gl::drawString(VERSION, vec2(getWindowWidth() - 120,
+                               getWindowHeight() - StatusLine::HEIGHT + 12));
 }
 
 CINDER_APP(LSSApp, RendererGl)

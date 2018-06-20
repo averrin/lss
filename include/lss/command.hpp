@@ -1,9 +1,9 @@
 #ifndef __COMMAND_H_
 #define __COMMAND_H_
 
+#include <optional>
 #include <string>
 #include <vector>
-#include <optional>
 
 #include "Event.hpp"
 #include "lss/game/events.hpp"
@@ -12,7 +12,8 @@ class Command {
 public:
   Command(std::vector<std::string>);
   std::vector<std::string> aliases;
-  virtual std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string) = 0;
+  virtual std::optional<std::shared_ptr<CommandEvent>>
+      getEvent(std::string) = 0;
 };
 
 class MoveCommand : public Command {

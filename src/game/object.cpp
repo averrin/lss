@@ -1,4 +1,3 @@
 #include "lss/game/object.hpp"
 
-Object::Object(){}
-
+Object::Object() {}

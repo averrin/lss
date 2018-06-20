@@ -56,7 +56,6 @@ public:
   std::shared_ptr<Cell> cell;
 };
 
-
 class CommitEvent : public eb::Event {
 public:
   CommitEvent(eb::ObjectPtr, int);

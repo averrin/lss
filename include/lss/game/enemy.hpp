@@ -8,27 +8,23 @@
 
 struct EnemySpec {
 public:
-    std::string name;
-    float baseSpeed;
-    int baseHP;
-    int baseDamage;
+  std::string name;
+  float baseSpeed;
+  int baseHP;
+  int baseDamage;
 
-	friend bool operator<(const EnemySpec& lhs, const EnemySpec& rhs)
-	{
-		return lhs.name < rhs.name;
-	}
+  friend bool operator<(const EnemySpec &lhs, const EnemySpec &rhs) {
+    return lhs.name < rhs.name;
+  }
 };
 
 namespace EnemyType {
-    EnemySpec const GOBLIN = {"goblin", 0.5, 5};
-    EnemySpec const ORK =    {"ork", 1, 15};
-    EnemySpec const PIXI =   {"pixi", 2, 1};
+EnemySpec const GOBLIN = {"goblin", 0.5, 5};
+EnemySpec const ORK = {"ork", 1, 15};
+EnemySpec const PIXI = {"pixi", 2, 1};
 }
 
-
-class Enemy : public Creature,
-              public eb::EventHandler<CommitEvent>
-{
+class Enemy : public Creature, public eb::EventHandler<CommitEvent> {
 public:
   Enemy(EnemySpec);
   ~Enemy();
@@ -36,9 +32,9 @@ public:
   bool interact(std::shared_ptr<Object>) override;
   std::shared_ptr<Item> drop();
 
-    Direction cd = Direction::W;
-    int actionPoints = 0;
-    EnemySpec type;
+  Direction cd = Direction::W;
+  int actionPoints = 0;
+  EnemySpec type;
 
   virtual void onEvent(CommitEvent &e) override;
 };

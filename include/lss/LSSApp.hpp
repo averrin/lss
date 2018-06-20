@@ -38,8 +38,7 @@ using namespace ci::app;
 
 class LSSApp : public App,
                public eb::EventHandler<eb::Event>,
-               public eb::EventHandler<QuitCommandEvent>
-{
+               public eb::EventHandler<QuitCommandEvent> {
 public:
   void setup() override;
   void mouseDown(MouseEvent event) override;
@@ -70,6 +69,5 @@ public:
   virtual void onEvent(eb::Event &e) override;
   virtual void onEvent(QuitCommandEvent &e) override;
 };
-
 
 #endif // __LSSAPP_H_

@@ -93,41 +93,41 @@ private:
 
 class Mode {
 public:
-  Mode(LSSApp*);
+  Mode(LSSApp *);
   bool processKey(KeyEvent e);
   bool activated = false;
 
 protected:
-  LSSApp* app;
+  LSSApp *app;
 };
 
 class HintsMode : public Mode {
 public:
-  HintsMode(LSSApp* app) : Mode(app){};
+  HintsMode(LSSApp *app) : Mode(app){};
   bool processKey(KeyEvent e);
   void processEvent(std::shared_ptr<LssEvent> e);
 };
 
 class NormalMode : public Mode {
 public:
-  NormalMode(LSSApp* app) : Mode(app){};
+  NormalMode(LSSApp *app) : Mode(app){};
   bool processKey(KeyEvent e);
 };
 
 class LeaderMode : public Mode {
-  LeaderMode(LSSApp* app) : Mode(app){};
+  LeaderMode(LSSApp *app) : Mode(app){};
   bool processKey(KeyEvent e);
 };
 
 class DirectionMode : public Mode {
 public:
-  DirectionMode(LSSApp* app) : Mode(app){};
+  DirectionMode(LSSApp *app) : Mode(app){};
   bool processKey(KeyEvent e);
 };
 
 class InsertMode : public Mode {
 public:
-  InsertMode(LSSApp* app) : Mode(app){};
+  InsertMode(LSSApp *app) : Mode(app){};
   bool processKey(KeyEvent e);
 };
 

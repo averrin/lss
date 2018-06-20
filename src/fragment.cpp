@@ -34,7 +34,7 @@ std::string Fragment::render(State *state) {
   tpl.setValue("wall_color_seen", state->currentPalette.wall_color_seen);
   tpl.setValue("hero_color", state->currentPalette.hero_color);
 
-  for (auto [key, value] : args) {
+  for (auto[key, value] : args) {
     std::visit([&](auto const &val) { tpl.setValue(key, val); }, value);
   }
 
@@ -44,21 +44,17 @@ std::string Fragment::render(State *state) {
 }
 
 std::map<ItemSpec, std::string> itemSigns = {
-  {ItemType::CORPSE, "%"},
-  {ItemType::ROCK, "*"},
-  {ItemType::PICK_AXE, "("},
+    {ItemType::CORPSE, "%"}, {ItemType::ROCK, "*"}, {ItemType::PICK_AXE, "("},
 };
 
 std::map<EnemySpec, std::string> enemySigns = {
-  {EnemyType::GOBLIN, "g"},
-  {EnemyType::ORK, "o"},
-  {EnemyType::PIXI, "p"},
+    {EnemyType::GOBLIN, "g"}, {EnemyType::ORK, "o"}, {EnemyType::PIXI, "p"},
 };
 
 std::map<EnemySpec, std::string> enemyColors = {
-  {EnemyType::GOBLIN, "green"},
-  {EnemyType::ORK, "#22cc22"},
-  {EnemyType::PIXI, "pink"},
+    {EnemyType::GOBLIN, "green"},
+    {EnemyType::ORK, "#22cc22"},
+    {EnemyType::PIXI, "pink"},
 };
 
 Floor::Floor() : Fragment("<span color='{{floor_color}}'>⋅</span>") {}
@@ -77,7 +73,6 @@ DoorSign::DoorSign(bool opened)
     : Fragment("<span weight='bold'>{{sign}}</span>",
                {{"sign", opened ? "/"s : "+"s}}) {}
 ItemSign::ItemSign(ItemSpec type)
-    : Fragment("<span>{{sign}}</span>",
-               {{"sign", itemSigns[type]}}) {}
+    : Fragment("<span>{{sign}}</span>", {{"sign", itemSigns[type]}}) {}
 
 Unknown::Unknown() : Fragment(" ", false) {}

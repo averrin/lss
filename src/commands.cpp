@@ -51,9 +51,11 @@ PickCommand::PickCommand() : Command({"pick", "p"s}) {}
 DigCommand::DigCommand() : Command({"dig", "d"s}) {}
 AttackCommand::AttackCommand() : Command({"attack", "a"s}) {}
 
-WalkCommandEvent::WalkCommandEvent(Direction d) : CommandEvent(nullptr), direction(d) {}
+WalkCommandEvent::WalkCommandEvent(Direction d)
+    : CommandEvent(nullptr), direction(d) {}
 WalkCommand::WalkCommand() : Command({"walk"}) {}
-std::optional<std::shared_ptr<CommandEvent>> WalkCommand::getEvent(std::string cmd) {
+std::optional<std::shared_ptr<CommandEvent>>
+WalkCommand::getEvent(std::string cmd) {
   auto tokens = split(cmd, ' ');
   std::string dirString = tokens.front();
   if (tokens.size() > 1) {
@@ -61,15 +63,18 @@ std::optional<std::shared_ptr<CommandEvent>> WalkCommand::getEvent(std::string c
   }
   auto direction = getDirection(dirString);
   if (direction == std::nullopt) {
-    MessageEvent me(nullptr, "Please specify direction: n, e, s, w, nw, ne, se, sw.");
+    MessageEvent me(nullptr,
+                    "Please specify direction: n, e, s, w, nw, ne, se, sw.");
     eb::EventBus::FireEvent(me);
     return std::nullopt;
   }
   return std::make_shared<WalkCommandEvent>(*direction);
 }
 
-DigCommandEvent::DigCommandEvent(Direction d) : CommandEvent(nullptr), direction(d) {}
-std::optional<std::shared_ptr<CommandEvent>> DigCommand::getEvent(std::string cmd) {
+DigCommandEvent::DigCommandEvent(Direction d)
+    : CommandEvent(nullptr), direction(d) {}
+std::optional<std::shared_ptr<CommandEvent>>
+DigCommand::getEvent(std::string cmd) {
   auto tokens = split(cmd, ' ');
   std::string dirString = tokens.front();
   if (tokens.size() > 1) {
@@ -77,14 +82,18 @@ std::optional<std::shared_ptr<CommandEvent>> DigCommand::getEvent(std::string cm
   }
   auto direction = getDirection(dirString);
   if (direction == std::nullopt) {
-    MessageEvent me(nullptr, "Please specify direction: n, e, s, w, nw, ne, se, sw.");
+    MessageEvent me(nullptr,
+                    "Please specify direction: n, e, s, w, nw, ne, se, sw.");
     eb::EventBus::FireEvent(me);
     return std::nullopt;
   }
   return std::make_shared<DigCommandEvent>(*direction);
 }
 
-std::optional<std::shared_ptr<CommandEvent>> MoveCommand::getEvent(std::string cmd) {
+MoveCommandEvent::MoveCommandEvent(Direction d)
+    : CommandEvent(nullptr), direction(d) {}
+std::optional<std::shared_ptr<CommandEvent>>
+MoveCommand::getEvent(std::string cmd) {
   auto tokens = split(cmd, ' ');
   std::string dirString = tokens.front();
   if (tokens.size() > 1) {
@@ -92,15 +101,18 @@ std::optional<std::shared_ptr<CommandEvent>> MoveCommand::getEvent(std::string c
   }
   auto direction = getDirection(dirString);
   if (direction == std::nullopt) {
-    MessageEvent me(nullptr, "Please specify direction: n, e, s, w, nw, ne, se, sw.");
+    MessageEvent me(nullptr,
+                    "Please specify direction: n, e, s, w, nw, ne, se, sw.");
     eb::EventBus::FireEvent(me);
     return std::nullopt;
   }
   return std::make_shared<MoveCommandEvent>(*direction);
 }
 
-AttackCommandEvent::AttackCommandEvent(Direction d) : CommandEvent(nullptr), direction(d) {}
-std::optional<std::shared_ptr<CommandEvent>> AttackCommand::getEvent(std::string cmd) {
+AttackCommandEvent::AttackCommandEvent(Direction d)
+    : CommandEvent(nullptr), direction(d) {}
+std::optional<std::shared_ptr<CommandEvent>>
+AttackCommand::getEvent(std::string cmd) {
   auto tokens = split(cmd, ' ');
   std::string dirString = tokens.front();
   if (tokens.size() > 1) {
@@ -108,9 +120,16 @@ std::optional<std::shared_ptr<CommandEvent>> AttackCommand::getEvent(std::string
   }
   auto direction = getDirection(dirString);
   if (direction == std::nullopt) {
-    MessageEvent me(nullptr, "Please specify direction: n, e, s, w, nw, ne, se, sw.");
+    MessageEvent me(nullptr,
+                    "Please specify direction: n, e, s, w, nw, ne, se, sw.");
     eb::EventBus::FireEvent(me);
     return std::nullopt;
   }
   return std::make_shared<AttackCommandEvent>(*direction);
+}
+
+PickCommandEvent::PickCommandEvent() : CommandEvent(nullptr) {}
+std::optional<std::shared_ptr<CommandEvent>>
+PickCommand::getEvent(std::string s) {
+  return std::make_shared<PickCommandEvent>();
 }

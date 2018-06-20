@@ -10,11 +10,14 @@ using namespace ci::app;
 
 struct Modes {
   enum ModeName {
-    NORMAL, HINTS, LEADER, INSERT, DIRECTION,
+    NORMAL,
+    HINTS,
+    LEADER,
+    INSERT,
+    DIRECTION,
   };
   ModeName currentMode = ModeName::NORMAL;
 };
-
 
 struct SetContentEvent : LssEvent {
   Fragments content;

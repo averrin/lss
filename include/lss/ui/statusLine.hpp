@@ -9,13 +9,12 @@
 
 #include "EventHandler.hpp"
 
-class StatusLine : public eb::EventHandler<DoorOpenedEvent>
-                 , public eb::EventHandler<EnemyTakeDamageEvent>
-                 , public eb::EventHandler<EnemyDiedEvent>
-                 , public eb::EventHandler<ItemTakenEvent>
-                 , public eb::EventHandler<ItemsFoundEvent>
-                 , public eb::EventHandler<MessageEvent>
-{
+class StatusLine : public eb::EventHandler<DoorOpenedEvent>,
+                   public eb::EventHandler<EnemyTakeDamageEvent>,
+                   public eb::EventHandler<EnemyDiedEvent>,
+                   public eb::EventHandler<ItemTakenEvent>,
+                   public eb::EventHandler<ItemsFoundEvent>,
+                   public eb::EventHandler<MessageEvent> {
 public:
   StatusLine(std::shared_ptr<State> state);
   void setContent(Fragments content);
