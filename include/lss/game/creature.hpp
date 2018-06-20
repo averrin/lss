@@ -17,9 +17,10 @@ public:
     return std::find(viewField.begin(), viewField.end(), c) != viewField.end();
   };
   void calcViewField();
-  bool interact();
+  bool interact(std::shared_ptr<Object>);
 
   int hp;
+  int damage;
   float speed = 1.f;
 
   std::shared_ptr<Cell> getCell(Direction);

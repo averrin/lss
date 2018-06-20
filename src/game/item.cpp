@@ -2,6 +2,6 @@
 
 Item::Item(ItemSpec t): Object(), type(t) {};
 
-bool Item::interact() {
+bool Item::interact(std::shared_ptr<Object> actor) {
     return false;
 }

@@ -12,7 +12,7 @@ Creature::Creature(){
     passThrough = false;
 }
 
-bool Creature::interact() {
+bool Creature::interact(std::shared_ptr<Object> actor) {
     return false;
 }
 
@@ -64,7 +64,7 @@ bool Creature::attack(Direction d) {
         eb::EventBus::FireEvent(me);
         return false;
     }
-    (*opponent)->interact();
+    (*opponent)->interact(shared_from_this());
     return true;
 }
 
@@ -81,7 +81,7 @@ bool Creature::move(Direction d, bool autoAction) {
     // fmt::print("{} - {} - {}.{} -> {}.{}\n", d, hasObstacles, cc->x, cc->y, nc->x, nc->y);
     if (!nc->passThrough || hasObstacles || hasPlayer) {
         if (autoAction && hasObstacles && !(*obstacle)->passThrough) {
-            return !(*obstacle)->interact();
+            return !(*obstacle)->interact(shared_from_this());
         }
         return false;
     }

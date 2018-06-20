@@ -6,7 +6,7 @@ class Door : public Object {
 public:
   // Door(bool o = false, bool l = false) : Object(), opened(o), locked(l) {}
   Door();
-  bool interact();
+  bool interact(std::shared_ptr<Object>);
 
   bool opened;
   bool locked;

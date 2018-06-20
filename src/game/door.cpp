@@ -8,7 +8,7 @@ Door::Door() {
     seeThrough = false;
 };
 
-bool Door::interact() {
+bool Door::interact(std::shared_ptr<Object> actor) {
     if (!opened) {
         opened = true;
         passThrough = true;

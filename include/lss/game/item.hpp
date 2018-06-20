@@ -29,7 +29,7 @@ public:
   Item(ItemSpec);
   ItemSpec type;
 
-  bool interact();
+  bool interact(std::shared_ptr<Object>);
 
 	friend std::ostream& operator<<(std::ostream& os, const Item& item)
 	{

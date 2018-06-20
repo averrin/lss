@@ -1,6 +1,6 @@
 #include <memory>
-#include "lss/game/player.hpp"
 #include "lss/command.hpp"
+#include "lss/game/player.hpp"
 #include "EventBus.hpp"
 
 CommitEvent::CommitEvent(eb::ObjectPtr s, int ap): eb::Event(s), actionPoints(ap) {}
@@ -10,6 +10,7 @@ Player::Player() : Creature() {
   eb::EventBus::AddHandler<WalkCommandEvent>(*this);
   
   hp = 20;
+  damage = 5;
 }
 
 void Player::commit(int ap) {
@@ -21,6 +22,11 @@ void Player::commit(int ap) {
 bool Player::pick(std::shared_ptr<Item> item) {
     auto ptr = shared_from_this();
     inventory.push_back(item);
+    
+    if (item->type == ItemType::PICK_AXE) {
+      damage += 5;
+    }
+
     ItemTakenEvent e(ptr, item);
     eb::EventBus::FireEvent(e);
     commit(1000 / speed);

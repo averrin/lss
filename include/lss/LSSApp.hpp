@@ -35,7 +35,6 @@
 
 using namespace ci;
 using namespace ci::app;
-using namespace std;
 
 class LSSApp : public App,
                public eb::EventHandler<eb::Event>,
@@ -52,7 +51,7 @@ public:
   void setListeners();
   void loadMap();
 
-  kp::pango::CinderPangoRef mPango;
+  kp::pango::CinderPangoRef gameFrame;
   kp::pango::CinderPangoRef statusFrame;
   ModeManager modeManager = ModeManager();
   std::shared_ptr<NormalMode> normalMode;

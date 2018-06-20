@@ -1,9 +1,11 @@
 #include "lss/game/enemy.hpp"
+#include "lss/game/player.hpp"
 #include "EventBus.hpp"
 
 Enemy::Enemy(EnemySpec t): Creature(), type(t) {
     hp = type.baseHP;
     speed = type.baseSpeed;
+    damage = type.baseDamage;
 }
 
 Enemy::~Enemy() {
@@ -16,11 +18,12 @@ std::shared_ptr<Item> Enemy::drop() {
     return item;
 }
 
-bool Enemy::interact() {
+bool Enemy::interact(std::shared_ptr<Object> actor) {
+    auto hero = std::dynamic_pointer_cast<Player>(actor);
     auto ptr = shared_from_this();
     if (hp > 0) {
-        hp -= 5;
-        EnemyTakeDamageEvent e(ptr, 5);
+        hp -= hero->damage;
+        EnemyTakeDamageEvent e(ptr, hero->damage);
 		eb::EventBus::FireEvent(e);
     }
     if (hp <= 0) {

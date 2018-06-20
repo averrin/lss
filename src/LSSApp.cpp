@@ -32,10 +32,10 @@ void LSSApp::onEvent(QuitCommandEvent &e) { exit(0); }
 
 void LSSApp::setup() {
   kp::pango::CinderPango::setTextRenderer(kp::pango::TextRenderer::FREETYPE);
-  mPango = kp::pango::CinderPango::create();
-  mPango->setMinSize(800, 600);
-  mPango->setMaxSize(getWindowWidth(), getWindowHeight());
-  mPango->setSpacing(mPango->getSpacing() - 4.0);
+  gameFrame = kp::pango::CinderPango::create();
+  gameFrame->setMinSize(800, 600);
+  gameFrame->setMaxSize(getWindowWidth(), getWindowHeight());
+  gameFrame->setSpacing(gameFrame->getSpacing() - 4.0);
 
   statusFrame = kp::pango::CinderPango::create();
   statusFrame->setMinSize(getWindowWidth(), StatusLine::HEIGHT);
@@ -285,7 +285,6 @@ std::vector<std::string> split_command(std::string strToSplit, char delimeter) {
 }
 
 bool LSSApp::processCommand(std::string cmd) {
-  // TODO: split, find command, create event, emit it and handle
   auto s = split_command(cmd, ' ').front();
   auto c = std::find_if(commands.begin(), commands.end(),
                         [s](std::shared_ptr<Command> c) {
@@ -300,6 +299,7 @@ bool LSSApp::processCommand(std::string cmd) {
   auto event = command->getEvent(cmd);
   if (event == std::nullopt) return false;
 
+  //TODO: do it automagicaly
   if (auto e = dynamic_pointer_cast<MoveCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
   } else if (auto e = dynamic_pointer_cast<QuitCommandEvent>(*event)) {
@@ -321,8 +321,8 @@ void LSSApp::update() {
   gl::clear(state->currentPalette.bgColor);
   gl::enableAlphaBlendingPremult();
 
-  if (mPango != nullptr) {
-    state->render(mPango);
+  if (gameFrame != nullptr) {
+    state->render(gameFrame);
   }
 
   if (statusFrame != nullptr) {
@@ -335,11 +335,11 @@ void LSSApp::update() {
 }
 
 void LSSApp::draw() {
-  if (mPango != nullptr) {
+  if (gameFrame != nullptr) {
 
-    mPango->setDefaultTextColor(state->currentPalette.fgColor);
-    mPango->setBackgroundColor(ColorA(0, 0, 0, 0));
-    gl::draw(mPango->getTexture(), vec2(HOffset, VOffset));
+    gameFrame->setDefaultTextColor(state->currentPalette.fgColor);
+    gameFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
+    gl::draw(gameFrame->getTexture(), vec2(HOffset, VOffset));
   }
   if (statusFrame != nullptr) {
     gl::color(state->currentPalette.bgColorAlt);

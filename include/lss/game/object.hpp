@@ -15,7 +15,7 @@ public:
 
   std::shared_ptr<Cell> currentCell;
 
-  virtual bool interact() { return false; };
+  virtual bool interact(std::shared_ptr<Object> actor) { return false; };
 };
 
 typedef std::vector<std::shared_ptr<Object>> Objects;

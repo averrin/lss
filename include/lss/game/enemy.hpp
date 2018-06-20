@@ -11,6 +11,7 @@ public:
     std::string name;
     float baseSpeed;
     int baseHP;
+    int baseDamage;
 
 	friend bool operator<(const EnemySpec& lhs, const EnemySpec& rhs)
 	{
@@ -32,7 +33,7 @@ public:
   Enemy(EnemySpec);
   ~Enemy();
   eb::HandlerRegistrationPtr registration;
-  bool interact() override;
+  bool interact(std::shared_ptr<Object>) override;
   std::shared_ptr<Item> drop();
 
     Direction cd = Direction::W;
