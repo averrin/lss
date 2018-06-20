@@ -43,7 +43,7 @@ std::string DEFAULT_FONT = "FiraCode 12";
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 
 QuitCommandEvent::QuitCommandEvent() : CommandEvent(nullptr) {}
-std::shared_ptr<CommandEvent> QuitCommand::getEvent(std::string s) {
+std::optional<std::shared_ptr<CommandEvent>> QuitCommand::getEvent(std::string s) {
   return std::make_shared<QuitCommandEvent>();
 }
 
@@ -435,22 +435,20 @@ bool LSSApp::processCommand(std::string cmd) {
     return false;
   }
   auto command = *c;
-  if (auto e = dynamic_pointer_cast<MoveCommandEvent>(command->getEvent(cmd))) {
+  auto event = command->getEvent(cmd);
+  if (event == std::nullopt) return false;
+
+  if (auto e = dynamic_pointer_cast<MoveCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
-  } else if (auto e = dynamic_pointer_cast<QuitCommandEvent>(
-                 command->getEvent(cmd))) {
+  } else if (auto e = dynamic_pointer_cast<QuitCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
-  } else if (auto e = dynamic_pointer_cast<PickCommandEvent>(
-                 command->getEvent(cmd))) {
+  } else if (auto e = dynamic_pointer_cast<PickCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
-  } else if (auto e = dynamic_pointer_cast<DigCommandEvent>(
-                 command->getEvent(cmd))) {
+  } else if (auto e = dynamic_pointer_cast<DigCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
-  } else if (auto e = dynamic_pointer_cast<WalkCommandEvent>(
-                 command->getEvent(cmd))) {
+  } else if (auto e = dynamic_pointer_cast<WalkCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
-  } else if (auto e = dynamic_pointer_cast<AttackCommandEvent>(
-                 command->getEvent(cmd))) {
+  } else if (auto e = dynamic_pointer_cast<AttackCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
   }
   invalidate();

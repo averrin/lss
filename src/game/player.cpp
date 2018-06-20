@@ -29,7 +29,7 @@ ItemTakenEvent::ItemTakenEvent(eb::ObjectPtr s, std::shared_ptr<Item> i): eb::Ev
 MoveCommandEvent::MoveCommandEvent(Direction d): CommandEvent(nullptr), direction(d) {}
 
 PickCommandEvent::PickCommandEvent(): CommandEvent(nullptr){}
-std::shared_ptr<CommandEvent> PickCommand::getEvent(std::string s) {
+std::optional<std::shared_ptr<CommandEvent>> PickCommand::getEvent(std::string s) {
   return std::make_shared<PickCommandEvent>();
 }
 

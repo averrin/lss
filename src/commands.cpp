@@ -4,6 +4,8 @@
 #include "lss/command.hpp"
 #include "lss/game/events.hpp"
 
+#include "EventBus.hpp"
+
 using namespace std::string_literals;
 
 // TODO: to utils
@@ -18,26 +20,25 @@ std::vector<std::string> split(std::string strToSplit, char delimeter) {
 }
 
 // TODO: to utils
-Direction getDirection(std::string dirString) {
-  Direction direction;
+std::optional<Direction> getDirection(std::string dirString) {
   if (dirString == "n"s) {
-    direction = Direction::N;
+    return Direction::N;
   } else if (dirString == "e"s) {
-    direction = Direction::E;
+    return Direction::E;
   } else if (dirString == "s"s) {
-    direction = Direction::S;
+    return Direction::S;
   } else if (dirString == "w"s) {
-    direction = Direction::W;
+    return Direction::W;
   } else if (dirString == "nw"s) {
-    direction = Direction::NW;
+    return Direction::NW;
   } else if (dirString == "ne"s) {
-    direction = Direction::NE;
+    return Direction::NE;
   } else if (dirString == "sw"s) {
-    direction = Direction::SW;
+    return Direction::SW;
   } else if (dirString == "se"s) {
-    direction = Direction::SE;
+    return Direction::SE;
   }
-  return direction;
+  return std::nullopt;
 }
 
 Command::Command(std::vector<std::string> a) : aliases(a) {}
@@ -51,45 +52,65 @@ DigCommand::DigCommand() : Command({"dig", "d"s}) {}
 AttackCommand::AttackCommand() : Command({"attack", "a"s}) {}
 
 WalkCommandEvent::WalkCommandEvent(Direction d) : CommandEvent(nullptr), direction(d) {}
-WalkCommand::WalkCommand() : Command({"walk", "w"s}) {}
-std::shared_ptr<CommandEvent> WalkCommand::getEvent(std::string cmd) {
+WalkCommand::WalkCommand() : Command({"walk"}) {}
+std::optional<std::shared_ptr<CommandEvent>> WalkCommand::getEvent(std::string cmd) {
   auto tokens = split(cmd, ' ');
   std::string dirString = tokens.front();
   if (tokens.size() > 1) {
     dirString = tokens[1];
   }
   auto direction = getDirection(dirString);
-  return std::make_shared<WalkCommandEvent>(direction);
+  if (direction == std::nullopt) {
+    MessageEvent me(nullptr, "Please specify direction: n, e, s, w, nw, ne, se, sw.");
+    eb::EventBus::FireEvent(me);
+    return std::nullopt;
+  }
+  return std::make_shared<WalkCommandEvent>(*direction);
 }
 
 DigCommandEvent::DigCommandEvent(Direction d) : CommandEvent(nullptr), direction(d) {}
-std::shared_ptr<CommandEvent> DigCommand::getEvent(std::string cmd) {
+std::optional<std::shared_ptr<CommandEvent>> DigCommand::getEvent(std::string cmd) {
   auto tokens = split(cmd, ' ');
   std::string dirString = tokens.front();
   if (tokens.size() > 1) {
     dirString = tokens[1];
   }
   auto direction = getDirection(dirString);
-  return std::make_shared<DigCommandEvent>(direction);
+  if (direction == std::nullopt) {
+    MessageEvent me(nullptr, "Please specify direction: n, e, s, w, nw, ne, se, sw.");
+    eb::EventBus::FireEvent(me);
+    return std::nullopt;
+  }
+  return std::make_shared<DigCommandEvent>(*direction);
 }
 
-std::shared_ptr<CommandEvent> MoveCommand::getEvent(std::string cmd) {
+std::optional<std::shared_ptr<CommandEvent>> MoveCommand::getEvent(std::string cmd) {
   auto tokens = split(cmd, ' ');
   std::string dirString = tokens.front();
   if (tokens.size() > 1) {
     dirString = tokens[1];
   }
   auto direction = getDirection(dirString);
-  return std::make_shared<MoveCommandEvent>(direction);
+  if (direction == std::nullopt) {
+    MessageEvent me(nullptr, "Please specify direction: n, e, s, w, nw, ne, se, sw.");
+    eb::EventBus::FireEvent(me);
+    return std::nullopt;
+  }
+  return std::make_shared<MoveCommandEvent>(*direction);
 }
 
 AttackCommandEvent::AttackCommandEvent(Direction d) : CommandEvent(nullptr), direction(d) {}
-std::shared_ptr<CommandEvent> AttackCommand::getEvent(std::string cmd) {
+std::optional<std::shared_ptr<CommandEvent>> AttackCommand::getEvent(std::string cmd) {
   auto tokens = split(cmd, ' ');
   std::string dirString = tokens.front();
   if (tokens.size() > 1) {
     dirString = tokens[1];
   }
   auto direction = getDirection(dirString);
-  return std::make_shared<AttackCommandEvent>(direction);
+  if (direction == std::nullopt) {
+    MessageEvent me(nullptr, "Please specify direction: n, e, s, w, nw, ne, se, sw.");
+    eb::EventBus::FireEvent(me);
+    return std::nullopt;
+  }
+  return std::make_shared<AttackCommandEvent>(*direction);
 }
