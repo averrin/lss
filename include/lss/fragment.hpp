@@ -37,34 +37,14 @@ protected:
   std::map<std::string, tpl_arg> args;
 };
 
-class Floor : public Fragment {
+class CellSign : public Fragment {
 public:
-  Floor();
-};
-
-class Wall : public Fragment {
-public:
-  Wall();
+  CellSign(CellType, bool);
 };
 
 class HeroSign : public Fragment {
 public:
   HeroSign();
-};
-
-class Unknown : public Fragment {
-public:
-  Unknown();
-};
-
-class FloorSeen : public Fragment {
-public:
-  FloorSeen();
-};
-
-class WallSeen : public Fragment {
-public:
-  WallSeen();
 };
 
 class EnemySign : public Fragment {

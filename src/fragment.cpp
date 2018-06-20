@@ -57,22 +57,41 @@ std::map<EnemySpec, std::string> enemyColors = {
     {EnemyType::PIXI, "pink"},
 };
 
-Floor::Floor() : Fragment("<span color='{{floor_color}}'>⋅</span>") {}
-Wall::Wall()
-    : Fragment("<span color='{{wall_color}}' weight='bold'>#</span>") {}
+std::map<CellType, std::string> cellSigns = {
+  {CellType::FLOOR, "⋅"s},
+  {CellType::WALL, "#"s},
+  {CellType::UNKNOWN_CELL, " "s},
+};
+
+std::map<CellType, std::map<bool,std::string>> cellColors = {
+  {CellType::FLOOR, {{false, "#555"}, {true, "#333"}}},
+  {CellType::WALL, {{false, "#aaa"}, {true, "#666"}}},
+  {CellType::UNKNOWN_CELL, {{false, "#555"}, {true, "#777"}}},
+};
+
+std::map<CellType, std::map<bool,std::string>> cellWeights = {
+  {CellType::FLOOR, {{false, "normal"}, {true, "normal"}}},
+  {CellType::WALL, {{false, "bold"}, {true, "bold"}}},
+  {CellType::UNKNOWN_CELL, {{false, "normal"}, {true, "normal"}}},
+};
+
+std::map<std::string, tpl_arg> getCellArgs(CellType type, bool seen) {
+  return {
+    {"sign", cellSigns[type]},
+    {"color", cellColors[type][seen]},
+    {"weight", cellWeights[type][seen]},
+  };
+}
+
+
+CellSign::CellSign(CellType type, bool seen) : Fragment("<span color='{{color}}' weight='{{weight}}'>{{sign}}</span>", getCellArgs(type, seen)) {}
 HeroSign::HeroSign()
     : Fragment("<span color='{{hero_color}}' weight='bold'>@</span>") {}
 EnemySign::EnemySign(EnemySpec type)
     : Fragment("<span color='{{color}}' weight='bold'>{{sign}}</span>",
                {{"sign", enemySigns[type]}, {"color", enemyColors[type]}}) {}
-FloorSeen::FloorSeen()
-    : Fragment("<span color='{{floor_color_seen}}'>⋅</span>") {}
-WallSeen::WallSeen()
-    : Fragment("<span color='{{wall_color_seen}}' weight='bold'>#</span>") {}
 DoorSign::DoorSign(bool opened)
     : Fragment("<span weight='bold'>{{sign}}</span>",
                {{"sign", opened ? "/"s : "+"s}}) {}
 ItemSign::ItemSign(ItemSpec type)
     : Fragment("<span>{{sign}}</span>", {{"sign", itemSigns[type]}}) {}
-
-Unknown::Unknown() : Fragment(" ", false) {}

@@ -145,7 +145,7 @@ void LSSApp::loadMap() {
   axe->currentCell = hero->currentLocation->cells[16][31];
   hero->currentLocation->objects.push_back(axe);
 
-  state->fragments.assign(n * (i + 1), std::make_shared<Unknown>());
+  state->fragments.assign(n * (i + 1), std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false));
 }
 
 void LSSApp::setListeners() {
@@ -178,45 +178,11 @@ void LSSApp::invalidate() {
       auto cc = hero->currentCell;
       auto f = state->fragments[index];
       if (c->visibilityState == VisibilityState::UNKNOWN) {
-        if (!std::dynamic_pointer_cast<Unknown>(f)) {
-          state->fragments[index] = std::make_shared<Unknown>();
-        }
+        state->fragments[index] = std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false);
       } else if (c->visibilityState == VisibilityState::SEEN) {
-        switch (c->type) {
-        case CellType::UNKNOWN_CELL:
-          if (!std::dynamic_pointer_cast<Unknown>(f)) {
-            state->fragments[index] = std::make_shared<Unknown>();
-          }
-          break;
-        case CellType::WALL:
-          if (!std::dynamic_pointer_cast<WallSeen>(f)) {
-            state->fragments[index] = std::make_shared<WallSeen>();
-          }
-          break;
-        case CellType::FLOOR:
-          if (!std::dynamic_pointer_cast<FloorSeen>(f)) {
-            state->fragments[index] = std::make_shared<FloorSeen>();
-          }
-          break;
-        }
+        state->fragments[index] = std::make_shared<CellSign>(c->type, true);
       } else {
-        switch (c->type) {
-        case CellType::UNKNOWN_CELL:
-          if (!std::dynamic_pointer_cast<Unknown>(f)) {
-            state->fragments[index] = std::make_shared<Unknown>();
-          }
-          break;
-        case CellType::WALL:
-          if (!std::dynamic_pointer_cast<Wall>(f)) {
-            state->fragments[index] = std::make_shared<Wall>();
-          }
-          break;
-        case CellType::FLOOR:
-          if (!std::dynamic_pointer_cast<Floor>(f)) {
-            state->fragments[index] = std::make_shared<Floor>();
-          }
-          break;
-        }
+        state->fragments[index] = std::make_shared<CellSign>(c->type, false);
       }
       column++;
       index++;
