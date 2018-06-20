@@ -8,6 +8,8 @@ CommitEvent::CommitEvent(eb::ObjectPtr s, int ap): eb::Event(s), actionPoints(ap
 Player::Player() : Creature() {
   eb::EventBus::AddHandler<MoveCommandEvent>(*this);
   eb::EventBus::AddHandler<WalkCommandEvent>(*this);
+  
+  hp = 20;
 }
 
 void Player::commit(int ap) {

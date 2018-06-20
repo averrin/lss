@@ -8,27 +8,7 @@
 #include <string>
 #include <utility>
 
-#include "cinder/Rand.h"
-#include "cinder/app/App.h"
-#include "cinder/app/RendererGl.h"
-#include "cinder/gl/gl.h"
-
-#include "CinderPango.h"
-#include "lss/command.hpp"
-#include "lss/modes.hpp"
-#include "lss/state.hpp"
-
-#include "lss/game/door.hpp"
-#include "lss/game/enemy.hpp"
-#include "lss/game/events.hpp"
-#include "lss/game/player.hpp"
-
-#include "fmt/format.h"
-#include "lss/ui/statusLine.hpp"
-#include "rang.hpp"
-
-#include "EventBus.hpp"
-#include "EventHandler.hpp"
+#include "lss/LSSApp.hpp"
 
 using namespace ci;
 using namespace ci::app;
@@ -47,37 +27,6 @@ std::optional<std::shared_ptr<CommandEvent>> QuitCommand::getEvent(std::string s
   return std::make_shared<QuitCommandEvent>();
 }
 
-class LSSApp : public App,
-               public eb::EventHandler<eb::Event>,
-               public eb::EventHandler<QuitCommandEvent> {
-public:
-  void setup() override;
-  void mouseDown(MouseEvent event) override;
-  void update() override;
-  void keyDown(KeyEvent event) override;
-  void draw() override;
-  void invalidate();
-  bool processCommand(std::string);
-  void setListeners();
-  void loadMap();
-
-  kp::pango::CinderPangoRef mPango;
-  kp::pango::CinderPangoRef statusFrame;
-  ModeManager modeManager = ModeManager();
-  std::shared_ptr<HintsMode> hints;
-  std::shared_ptr<StatusLine> statusLine;
-  std::shared_ptr<State> state;
-  std::shared_ptr<Player> hero;
-
-  std::vector<std::shared_ptr<Command>> commands;
-
-  std::string typedCommand;
-  std::string pendingCommand;
-
-  virtual void onEvent(eb::Event &e) override;
-  virtual void onEvent(QuitCommandEvent &e) override;
-};
-
 void LSSApp::onEvent(eb::Event &e) { invalidate(); }
 void LSSApp::onEvent(QuitCommandEvent &e) { exit(0); }
 
@@ -93,6 +42,9 @@ void LSSApp::setup() {
   statusFrame->setMaxSize(getWindowWidth(), StatusLine::HEIGHT);
 
   state = std::make_shared<State>();
+  normalMode = std::make_shared<NormalMode>(this);
+  directionMode = std::make_shared<DirectionMode>(this);
+  insertMode = std::make_shared<InsertMode>(this);
 
   statusLine = std::make_shared<StatusLine>(state);
   statusLine->setContent(State::normal_mode);
@@ -108,6 +60,14 @@ void LSSApp::setup() {
   commands.push_back(std::make_shared<DigCommand>());
   commands.push_back(std::make_shared<WalkCommand>());
   commands.push_back(std::make_shared<AttackCommand>());
+}
+
+std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Cell> c, std::shared_ptr<Player> hero, EnemySpec type) {
+    auto enemy = std::make_shared<Enemy>(type);
+    enemy->currentCell = c;
+    enemy->currentLocation = hero->currentLocation;
+    enemy->registration = eb::EventBus::AddHandler<CommitEvent>(*enemy, hero);
+    return enemy;
 }
 
 void LSSApp::loadMap() {
@@ -149,31 +109,19 @@ void LSSApp::loadMap() {
           hero->currentLocation->objects.push_back(door);
         } break;
         case 'o':{
-          auto enemy = std::make_shared<Enemy>(EnemyType::ORK);
-          enemy->currentCell = c;
           c->type = CellType::FLOOR;
           c->passThrough = true;
-          hero->currentLocation->objects.push_back(enemy);
-          enemy->currentLocation = hero->currentLocation;
-          enemy->registration = eb::EventBus::AddHandler<CommitEvent>(*enemy, hero);
+          hero->currentLocation->objects.push_back(makeEnemy(c, hero, EnemyType::ORK));
           }break;
         case 'g':{
-          auto enemy = std::make_shared<Enemy>(EnemyType::GOBLIN);
-          enemy->currentCell = c;
           c->type = CellType::FLOOR;
           c->passThrough = true;
-          hero->currentLocation->objects.push_back(enemy);
-          enemy->currentLocation = hero->currentLocation;
-          enemy->registration = eb::EventBus::AddHandler<CommitEvent>(*enemy, hero);
+          hero->currentLocation->objects.push_back(makeEnemy(c, hero, EnemyType::GOBLIN));
           }break;
         case 'p': {
-          auto enemy = std::make_shared<Enemy>(EnemyType::PIXI);
-          enemy->currentCell = c;
           c->type = CellType::FLOOR;
           c->passThrough = true;
-          hero->currentLocation->objects.push_back(enemy);
-          enemy->currentLocation = hero->currentLocation;
-          enemy->registration = eb::EventBus::AddHandler<CommitEvent>(*enemy, hero);
+          hero->currentLocation->objects.push_back(makeEnemy(c, hero, EnemyType::PIXI));
           }break;
         }
         hero->currentLocation->cells[n].push_back(c);
@@ -303,111 +251,25 @@ void LSSApp::invalidate() {
 
 void LSSApp::mouseDown(MouseEvent event) {}
 
-// TODO: to utils
-std::optional<std::string> getDir(int code) {
-    switch (code) {
-      case KeyEvent::KEY_j:
-        return "s";
-      case KeyEvent::KEY_h:
-        return "w";
-      case KeyEvent::KEY_l:
-        return "e";
-      case KeyEvent::KEY_k:
-        return "n";
-    }
-    return std::nullopt;
-}
 
 void LSSApp::keyDown(KeyEvent event) {
 
   modeManager.processKey(event);
-  if (!modeManager.modeFlags->currentMode == Modes::INSERT) {
+  if (modeManager.modeFlags->currentMode != Modes::INSERT) {
     typedCommand = "";
   }
-
-  if (modeManager.modeFlags->currentMode == Modes::NORMAL) {
-    statusLine->setContent(State::normal_mode);
-  } else if (modeManager.modeFlags->currentMode == Modes::HINTS) {
-    hints->activated = true;
-    statusLine->setContent(State::hints_mode);
-  } else if (modeManager.modeFlags->currentMode == Modes::LEADER) {
-    statusLine->setContent(State::leader_mode);
-  } else if (modeManager.modeFlags->currentMode == Modes::DIRECTION) {
-    auto isDir = false;
-    std::optional<std::string> dirName = getDir(event.getCode());
-    if(dirName != std::nullopt) {
-      modeManager.toNormal();
+  
+  switch (modeManager.modeFlags->currentMode) {
+    case Modes::NORMAL:
       statusLine->setContent(State::normal_mode);
-      processCommand(pendingCommand+" "+*dirName);
-    }
-    return;
-  } else if (modeManager.modeFlags->currentMode == Modes::INSERT) {
-    if (event.getCode() != KeyEvent::KEY_SLASH &&
-        event.getCode() != KeyEvent::KEY_RETURN &&
-        event.getCode() != KeyEvent::KEY_BACKSPACE
-    ) {
-      typedCommand += event.getChar();
-    } else if (event.getCode() == KeyEvent::KEY_BACKSPACE) {
-      std::cout << typedCommand.length() << std::endl;
-      if (typedCommand.length() > 0) {
-        typedCommand.erase(typedCommand.length() - 1, typedCommand.length());
-      } else {
-        modeManager.toNormal();
-        statusLine->setContent(State::normal_mode);
-        typedCommand = "";
-        return;
-      }
-    } else if (event.getCode() == KeyEvent::KEY_RETURN) {
-      modeManager.toNormal();
-      statusLine->setContent(State::normal_mode);
-      processCommand(typedCommand);
-      typedCommand = "";
-      return;
-    }
-    if (typedCommand.length() == 0) {
-      statusLine->setContent(State::insert_mode);
-    } else {
-      statusLine->setContent({State::insert_mode.front(), F(typedCommand)});
-    }
-    return;
-  }
-
-  switch (event.getCode()) {
-  case KeyEvent::KEY_k:
-    processCommand("move n");
-    break;
-  case KeyEvent::KEY_l:
-    processCommand("e");
-    break;
-  case KeyEvent::KEY_j:
-    processCommand("m s");
-    break;
-  case KeyEvent::KEY_h:
-    processCommand("w");
-    break;
-  case KeyEvent::KEY_q:
-    processCommand("q");
-    break;
-  case KeyEvent::KEY_p:
-    processCommand("p");
-    break;
-  case KeyEvent::KEY_d:
-    modeManager.toDirection();
-    pendingCommand = DigCommand().aliases.front();
-    statusLine->setContent({F("Dig: "), State::direction_mode.front()});
-    break;
-  case KeyEvent::KEY_a:
-    modeManager.toDirection();
-    pendingCommand = AttackCommand().aliases.front();
-    statusLine->setContent({F("Attack: "), State::direction_mode.front()});
-    break;
-  case KeyEvent::KEY_w:
-    modeManager.toDirection();
-    pendingCommand = "walk";
-    statusLine->setContent({F("Walk: "), State::direction_mode.front()});
-    break;
-  default:
-    break;
+      normalMode->processKey(event);
+      break;
+    case Modes::DIRECTION:
+      directionMode->processKey(event);
+      break;
+    case Modes::INSERT:
+      insertMode->processKey(event);
+      break;
   }
 }
 
@@ -489,6 +351,7 @@ void LSSApp::draw() {
     gl::draw(statusFrame->getTexture(),
              vec2(6, getWindowHeight() - StatusLine::HEIGHT + 6));
   }
+  gl::drawString(VERSION, vec2(getWindowWidth() - 120, getWindowHeight() - StatusLine::HEIGHT + 12));
 }
 
 CINDER_APP(LSSApp, RendererGl)

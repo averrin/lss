@@ -13,6 +13,7 @@ namespace sml = boost::sml;
 #include "lss/actions.hpp"
 #include "lss/state.hpp"
 
+class LSSApp;
 struct modes {
   auto operator()() const noexcept {
     using namespace sml;
@@ -92,29 +93,41 @@ private:
 
 class Mode {
 public:
-  Mode(std::shared_ptr<State> s);
+  Mode(LSSApp*);
   bool processKey(KeyEvent e);
   bool activated = false;
 
 protected:
-  std::shared_ptr<State> state;
+  LSSApp* app;
 };
 
 class HintsMode : public Mode {
 public:
-  HintsMode(std::shared_ptr<State> s) : Mode(s){};
+  HintsMode(LSSApp* app) : Mode(app){};
   bool processKey(KeyEvent e);
   void processEvent(std::shared_ptr<LssEvent> e);
 };
 
 class NormalMode : public Mode {
 public:
-  NormalMode(std::shared_ptr<State> s) : Mode(s){};
+  NormalMode(LSSApp* app) : Mode(app){};
   bool processKey(KeyEvent e);
 };
 
 class LeaderMode : public Mode {
-  LeaderMode(std::shared_ptr<State> s) : Mode(s){};
+  LeaderMode(LSSApp* app) : Mode(app){};
+  bool processKey(KeyEvent e);
+};
+
+class DirectionMode : public Mode {
+public:
+  DirectionMode(LSSApp* app) : Mode(app){};
+  bool processKey(KeyEvent e);
+};
+
+class InsertMode : public Mode {
+public:
+  InsertMode(LSSApp* app) : Mode(app){};
   bool processKey(KeyEvent e);
 };
 
