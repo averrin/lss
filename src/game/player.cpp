@@ -97,3 +97,8 @@ void Player::onEvent(PickCommandEvent &e) {
     pick(std::dynamic_pointer_cast<Item>(*item));
   }
 }
+
+void Player::onEvent(EquipCommandEvent &e) {
+    if (e.item == nullptr) return;
+    equip(e.item);
+}

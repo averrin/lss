@@ -48,7 +48,14 @@ Mode::Mode(LSSApp *a) : app(a){};
 
 bool HintsMode::processKey(KeyEvent event) { return false; }
 
-bool ItemSelectMode::processKey(KeyEvent event) { return false; }
+bool ItemSelectMode::processKey(KeyEvent event) {
+    std::string letters = "abcdefghijklmnopqrstuvwxyz";
+    auto index = letters.find(event.getChar());
+    auto e = std::make_shared<EquipCommandEvent>(app->hero->inventory[index]);
+    eb::EventBus::FireEvent(*e);
+    app->modeManager.toNormal();
+    return false;
+}
 
 bool NormalMode::processKey(KeyEvent event) {
 

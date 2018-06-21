@@ -18,7 +18,6 @@ public:
   void invalidate();
 
   Fragments fragments;
-  Fragments statusFragments;
 
   static const Fragments normal_mode;
   static const Fragments hints_mode;

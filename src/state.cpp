@@ -66,15 +66,6 @@ void State::render(kp::pango::CinderPangoRef surface) {
 
 void State::invalidate() { damaged = true; }
 
-std::string State::renderStatus() {
-  std::string content;
-  for (auto f : statusFragments) {
-    content += f->render(this);
-  }
-  // std::cout << content << std::endl;
-  return content;
-};
-
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 
 const Fragments State::START = {F("<tt>")};

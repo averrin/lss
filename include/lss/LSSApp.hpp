@@ -63,6 +63,8 @@ public:
 
   std::shared_ptr<StatusLine> statusLine;
   std::shared_ptr<State> state;
+  std::shared_ptr<State> statusState;
+  std::shared_ptr<State> itemSelectState;
   std::shared_ptr<Player> hero;
 
   std::vector<std::shared_ptr<Command>> commands;

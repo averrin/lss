@@ -31,7 +31,7 @@ QuitCommand::getEvent(std::string s) {
 void LSSApp::onEvent(eb::Event &e) { invalidate(); }
 void LSSApp::onEvent(QuitCommandEvent &e) { exit(0); }
 void LSSApp::onEvent(EquipCommandEvent &e) {
-    std::cout << "equip" << std::endl;
+    if (e.item != nullptr) return;
     modeManager.toItemSelect();
     statusLine->setContent(State::item_select_mode);
 }
@@ -52,12 +52,14 @@ void LSSApp::setup() {
   itemSelectFrame->setMaxSize(getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT);
 
   state = std::make_shared<State>();
+  statusState = std::make_shared<State>();
+  itemSelectState = std::make_shared<State>();
   normalMode = std::make_shared<NormalMode>(this);
   directionMode = std::make_shared<DirectionMode>(this);
   insertMode = std::make_shared<InsertMode>(this);
   itemSelectMode = std::make_shared<ItemSelectMode>(this);
 
-  statusLine = std::make_shared<StatusLine>(state);
+  statusLine = std::make_shared<StatusLine>(statusState);
   statusLine->setContent(State::normal_mode);
 
   loadMap();
@@ -148,6 +150,8 @@ void LSSApp::loadMap() {
     dungeon_file.close();
   }
   state->currentPalette = palettes::DARK;
+  statusState->currentPalette = palettes::DARK;
+  itemSelectState->currentPalette = palettes::DARK;
   hero->currentCell = hero->currentLocation->cells[15][30];
   hero->calcViewField();
   hero->currentLocation->updateView(hero);
@@ -178,6 +182,7 @@ void LSSApp::setListeners() {
   eb::EventBus::AddHandler<DigCommandEvent>(*hero);
   eb::EventBus::AddHandler<AttackCommandEvent>(*hero);
   eb::EventBus::AddHandler<EquipCommandEvent>(*this);
+  eb::EventBus::AddHandler<EquipCommandEvent>(*hero);
 
   eb::EventBus::AddHandler<DoorOpenedEvent>(*statusLine);
   eb::EventBus::AddHandler<EnemyDiedEvent>(*statusLine);
@@ -323,18 +328,19 @@ void LSSApp::update() {
   }
 
   if (statusFrame != nullptr) {
-
-    statusFrame->setText(state->renderStatus());
-
-    statusFrame->setDefaultTextFont(DEFAULT_FONT);
-    statusFrame->render();
+    statusState->render(statusFrame);
   }
 
   if (itemSelectFrame != nullptr && modeManager.modeFlags->currentMode == Modes::ITEMSELECT) {
-    itemSelectFrame->setText("Items to equip");
-
-    itemSelectFrame->setDefaultTextFont(DEFAULT_FONT);
-    itemSelectFrame->render();
+    itemSelectState->setContent({F("Items to equip: <br><br>")});
+    auto n = 0;
+    std::string letters = "abcdefghijklmnopqrstuvwxyz";
+    for (auto item : hero->inventory) {
+        if (!item->type.equipable) continue;
+        itemSelectState->appendContent({F(fmt::format("    * {} [{}]<br>", item->type.name, letters[n]))});
+        n++;
+    }
+    itemSelectState->render(itemSelectFrame);
   }
 }
 
