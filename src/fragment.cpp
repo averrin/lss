@@ -44,7 +44,11 @@ std::string Fragment::render(State *state) {
 }
 
 std::map<ItemSpec, std::string> itemSigns = {
-    {ItemType::CORPSE, "%"}, {ItemType::ROCK, "*"}, {ItemType::PICK_AXE, "("},
+    {ItemType::CORPSE, "%"}, {ItemType::ROCK, "*"}, {ItemType::PICK_AXE, "("}, {ItemType::SWORD, "("},
+};
+
+std::map<ItemSpec, std::string> itemColors = {
+    {ItemType::CORPSE, "red"}, {ItemType::ROCK, "gray"}, {ItemType::PICK_AXE, "white"}, {ItemType::SWORD, "orange"},
 };
 
 std::map<EnemySpec, std::string> enemySigns = {
@@ -85,6 +89,13 @@ std::map<std::string, tpl_arg> getCellArgs(CellType type, bool seen) {
 
 
 CellSign::CellSign(CellType type, bool seen) : Fragment("<span color='{{color}}' weight='{{weight}}'>{{sign}}</span>", getCellArgs(type, seen)) {}
+void CellSign::update(CellType type, bool seen) {
+  auto new_args = getCellArgs(type, seen);
+  if (std::get<std::string>(args["color"]) != std::get<std::string>(new_args["color"]) || std::get<std::string>(args["sign"]) != std::get<std::string>(new_args["sign"])) {
+    args = new_args;
+    damaged = true;
+  }
+}
 HeroSign::HeroSign()
     : Fragment("<span color='{{hero_color}}' weight='bold'>@</span>") {}
 EnemySign::EnemySign(EnemySpec type)
@@ -94,4 +105,4 @@ DoorSign::DoorSign(bool opened)
     : Fragment("<span weight='bold'>{{sign}}</span>",
                {{"sign", opened ? "/"s : "+"s}}) {}
 ItemSign::ItemSign(ItemSpec type)
-    : Fragment("<span>{{sign}}</span>", {{"sign", itemSigns[type]}}) {}
+    : Fragment("<span color='{{color}}'>{{sign}}</span>", {{"sign", itemSigns[type]}, {"color", itemColors[type]}}) {}

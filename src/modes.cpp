@@ -38,11 +38,17 @@ void ModeManager::toDirection() {
   state_machine.process_event(EnableModeEvent{Modes::DIRECTION});
 }
 
+void ModeManager::toItemSelect() {
+  state_machine.process_event(EnableModeEvent{Modes::ITEMSELECT});
+}
+
 void HintsMode::processEvent(std::shared_ptr<LssEvent> event) {}
 
 Mode::Mode(LSSApp *a) : app(a){};
 
 bool HintsMode::processKey(KeyEvent event) { return false; }
+
+bool ItemSelectMode::processKey(KeyEvent event) { return false; }
 
 bool NormalMode::processKey(KeyEvent event) {
 
@@ -79,6 +85,9 @@ bool NormalMode::processKey(KeyEvent event) {
     app->modeManager.toDirection();
     app->pendingCommand = "walk";
     app->statusLine->setContent({F("Walk: "), State::direction_mode.front()});
+    break;
+  case KeyEvent::KEY_e:
+    app->processCommand("equip");
     break;
   default:
     return false;

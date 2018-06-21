@@ -52,4 +52,10 @@ public:
   std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
 };
 
+class EquipCommand : public Command {
+public:
+  EquipCommand();
+  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
+};
+
 #endif // __COMMAND_H_

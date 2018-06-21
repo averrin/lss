@@ -38,6 +38,7 @@ using namespace ci::app;
 
 class LSSApp : public App,
                public eb::EventHandler<eb::Event>,
+               public eb::EventHandler<EquipCommandEvent>,
                public eb::EventHandler<QuitCommandEvent> {
 public:
   void setup() override;
@@ -52,10 +53,13 @@ public:
 
   kp::pango::CinderPangoRef gameFrame;
   kp::pango::CinderPangoRef statusFrame;
+  kp::pango::CinderPangoRef itemSelectFrame;
+
   ModeManager modeManager = ModeManager();
   std::shared_ptr<NormalMode> normalMode;
   std::shared_ptr<DirectionMode> directionMode;
   std::shared_ptr<InsertMode> insertMode;
+  std::shared_ptr<ItemSelectMode> itemSelectMode;
 
   std::shared_ptr<StatusLine> statusLine;
   std::shared_ptr<State> state;
@@ -68,6 +72,7 @@ public:
 
   virtual void onEvent(eb::Event &e) override;
   virtual void onEvent(QuitCommandEvent &e) override;
+  virtual void onEvent(EquipCommandEvent &e) override;
 };
 
 #endif // __LSSAPP_H_

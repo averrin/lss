@@ -50,6 +50,7 @@ QuitCommand::QuitCommand() : Command({"quit", "q"s}) {}
 PickCommand::PickCommand() : Command({"pick", "p"s}) {}
 DigCommand::DigCommand() : Command({"dig", "d"s}) {}
 AttackCommand::AttackCommand() : Command({"attack", "a"s}) {}
+EquipCommand::EquipCommand() : Command({"equip", "eq"s}) {}
 
 WalkCommandEvent::WalkCommandEvent(Direction d)
     : CommandEvent(nullptr), direction(d) {}
@@ -132,4 +133,11 @@ PickCommandEvent::PickCommandEvent() : CommandEvent(nullptr) {}
 std::optional<std::shared_ptr<CommandEvent>>
 PickCommand::getEvent(std::string s) {
   return std::make_shared<PickCommandEvent>();
+}
+
+EquipCommandEvent::EquipCommandEvent() : CommandEvent(nullptr) {}
+EquipCommandEvent::EquipCommandEvent(std::shared_ptr<Item> i) : CommandEvent(nullptr), item(i) {}
+std::optional<std::shared_ptr<CommandEvent>>
+EquipCommand::getEvent(std::string s) {
+  return std::make_shared<EquipCommandEvent>();
 }

@@ -30,22 +30,32 @@ QuitCommand::getEvent(std::string s) {
 
 void LSSApp::onEvent(eb::Event &e) { invalidate(); }
 void LSSApp::onEvent(QuitCommandEvent &e) { exit(0); }
+void LSSApp::onEvent(EquipCommandEvent &e) {
+    std::cout << "equip" << std::endl;
+    modeManager.toItemSelect();
+    statusLine->setContent(State::item_select_mode);
+}
 
 void LSSApp::setup() {
   kp::pango::CinderPango::setTextRenderer(kp::pango::TextRenderer::FREETYPE);
   gameFrame = kp::pango::CinderPango::create();
   gameFrame->setMinSize(800, 600);
-  gameFrame->setMaxSize(getWindowWidth(), getWindowHeight());
+  gameFrame->setMaxSize(getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT);
   gameFrame->setSpacing(gameFrame->getSpacing() - 4.0);
 
   statusFrame = kp::pango::CinderPango::create();
   statusFrame->setMinSize(getWindowWidth(), StatusLine::HEIGHT);
   statusFrame->setMaxSize(getWindowWidth(), StatusLine::HEIGHT);
 
+  itemSelectFrame = kp::pango::CinderPango::create();
+  itemSelectFrame->setMinSize(getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT);
+  itemSelectFrame->setMaxSize(getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT);
+
   state = std::make_shared<State>();
   normalMode = std::make_shared<NormalMode>(this);
   directionMode = std::make_shared<DirectionMode>(this);
   insertMode = std::make_shared<InsertMode>(this);
+  itemSelectMode = std::make_shared<ItemSelectMode>(this);
 
   statusLine = std::make_shared<StatusLine>(state);
   statusLine->setContent(State::normal_mode);
@@ -61,6 +71,7 @@ void LSSApp::setup() {
   commands.push_back(std::make_shared<DigCommand>());
   commands.push_back(std::make_shared<WalkCommand>());
   commands.push_back(std::make_shared<AttackCommand>());
+  commands.push_back(std::make_shared<EquipCommand>());
 }
 
 std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Cell> c,
@@ -145,6 +156,10 @@ void LSSApp::loadMap() {
   axe->currentCell = hero->currentLocation->cells[16][31];
   hero->currentLocation->objects.push_back(axe);
 
+  auto sword = std::make_shared<Item>(ItemType::SWORD);
+  sword->currentCell = hero->currentLocation->cells[15][32];
+  hero->currentLocation->objects.push_back(sword);
+
   state->fragments.assign(n * (i + 1), std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false));
 }
 
@@ -162,6 +177,7 @@ void LSSApp::setListeners() {
   eb::EventBus::AddHandler<PickCommandEvent>(*hero);
   eb::EventBus::AddHandler<DigCommandEvent>(*hero);
   eb::EventBus::AddHandler<AttackCommandEvent>(*hero);
+  eb::EventBus::AddHandler<EquipCommandEvent>(*this);
 
   eb::EventBus::AddHandler<DoorOpenedEvent>(*statusLine);
   eb::EventBus::AddHandler<EnemyDiedEvent>(*statusLine);
@@ -177,12 +193,17 @@ void LSSApp::invalidate() {
     for (auto c : r) {
       auto cc = hero->currentCell;
       auto f = state->fragments[index];
-      if (c->visibilityState == VisibilityState::UNKNOWN) {
-        state->fragments[index] = std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false);
-      } else if (c->visibilityState == VisibilityState::SEEN) {
-        state->fragments[index] = std::make_shared<CellSign>(c->type, true);
-      } else {
-        state->fragments[index] = std::make_shared<CellSign>(c->type, false);
+      switch (c->visibilityState) {
+        case VisibilityState::SEEN:
+            // if (auto cs = std::dynamic_pointer_cast<CellSign>(state->fragments[index])) {
+            //     cs->update(c->type, true);
+            // } else {
+                state->fragments[index] = std::make_shared<CellSign>(c->type, true);
+            // }
+            break;
+        case VisibilityState::VISIBLE:
+            state->fragments[index] = std::make_shared<CellSign>(c->type, false);
+            break;
       }
       column++;
       index++;
@@ -240,6 +261,9 @@ void LSSApp::keyDown(KeyEvent event) {
   case Modes::INSERT:
     insertMode->processKey(event);
     break;
+  case Modes::ITEMSELECT:
+    itemSelectMode->processKey(event);
+    break;
   }
 }
 
@@ -283,6 +307,8 @@ bool LSSApp::processCommand(std::string cmd) {
     eb::EventBus::FireEvent(*e);
   } else if (auto e = dynamic_pointer_cast<AttackCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
+  } else if (auto e = dynamic_pointer_cast<EquipCommandEvent>(*event)) {
+    eb::EventBus::FireEvent(*e);
   }
   invalidate();
   return true;
@@ -303,6 +329,13 @@ void LSSApp::update() {
     statusFrame->setDefaultTextFont(DEFAULT_FONT);
     statusFrame->render();
   }
+
+  if (itemSelectFrame != nullptr && modeManager.modeFlags->currentMode == Modes::ITEMSELECT) {
+    itemSelectFrame->setText("Items to equip");
+
+    itemSelectFrame->setDefaultTextFont(DEFAULT_FONT);
+    itemSelectFrame->render();
+  }
 }
 
 void LSSApp::draw() {
@@ -322,6 +355,17 @@ void LSSApp::draw() {
     gl::draw(statusFrame->getTexture(),
              vec2(6, getWindowHeight() - StatusLine::HEIGHT + 6));
   }
+
+  if (itemSelectFrame != nullptr && modeManager.modeFlags->currentMode == Modes::ITEMSELECT) {
+    gl::color(state->currentPalette.bgColor);
+    gl::drawSolidRect(Rectf(0, 0,
+                            getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT));
+    gl::color(ColorA(1, 1, 1, 1));
+    itemSelectFrame->setDefaultTextColor(state->currentPalette.fgColor);
+    itemSelectFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
+    gl::draw(itemSelectFrame->getTexture(), vec2(HOffset, VOffset));
+  }
+
   gl::drawString(VERSION, vec2(getWindowWidth() - 120,
                                getWindowHeight() - StatusLine::HEIGHT + 12));
 }

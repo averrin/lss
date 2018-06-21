@@ -110,4 +110,11 @@ public:
   Direction direction;
 };
 
+class EquipCommandEvent : public CommandEvent {
+public:
+  EquipCommandEvent(std::shared_ptr<Item>);
+  EquipCommandEvent();
+  std::shared_ptr<Item> item;
+};
+
 #endif // __EVENTS_H_

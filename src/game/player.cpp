@@ -24,17 +24,23 @@ void Player::commit(int ap) {
   eb::EventBus::FireEvent(e);
 }
 
+bool Player::equip(std::shared_ptr<Item> item) {
+  auto ptr = shared_from_this();
+  equipment.push_back(item);
+
+  // ItemTakenEvent e(ptr, item);
+  // eb::EventBus::FireEvent(e);
+  commit(200 / speed);
+  return true;
+}
+
 bool Player::pick(std::shared_ptr<Item> item) {
   auto ptr = shared_from_this();
   inventory.push_back(item);
 
-  if (item->type == ItemType::PICK_AXE) {
-    damage += 5;
-  }
-
   ItemTakenEvent e(ptr, item);
   eb::EventBus::FireEvent(e);
-  commit(1000 / speed);
+  commit(200 / speed);
   return true;
 }
 
@@ -51,10 +57,10 @@ void Player::onEvent(AttackCommandEvent &e) {
 }
 
 void Player::onEvent(DigCommandEvent &e) {
-  if (std::find_if(inventory.begin(), inventory.end(),
+  if (std::find_if(equipment.begin(), equipment.end(),
                    [](std::shared_ptr<Item> item) {
                      return item->type == ItemType::PICK_AXE;
-                   }) == inventory.end()) {
+                   }) == equipment.end()) {
     MessageEvent me(shared_from_this(), "You have no pick axe");
     eb::EventBus::FireEvent(me);
     return;

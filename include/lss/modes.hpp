@@ -30,8 +30,10 @@ struct modes {
       return e.key.getCode() == KeyEvent::KEY_SLASH;
     };
     auto is_direction_event = [](EnableModeEvent e) {
-      std::cout << std::string{e.mode == Modes::DIRECTION} << std::endl;
       return e.mode == Modes::DIRECTION;
+    };
+    auto is_item_select_event = [](EnableModeEvent e) {
+      return e.mode == Modes::ITEMSELECT;
     };
 
     auto set_hints = [](std::shared_ptr<Modes> m) {
@@ -54,6 +56,10 @@ struct modes {
       std::cout << "Set DIRECTION mode" << std::endl;
       m->currentMode = Modes::DIRECTION;
     };
+    auto set_item_select = [](std::shared_ptr<Modes> m) {
+      std::cout << "Set ITEMSELECT mode" << std::endl;
+      m->currentMode = Modes::ITEMSELECT;
+    };
 
     // clang-format off
         return make_transition_table(
@@ -61,11 +67,13 @@ struct modes {
             , "normal"_s + event<KeyPressedEvent> [is_leader] / set_leader  = "leader"_s
             , "normal"_s + event<KeyPressedEvent> [is_insert] / set_insert  = "insert"_s
             , "normal"_s + event<EnableModeEvent> [is_direction_event] / set_direction  = "direction"_s
+            , "normal"_s + event<EnableModeEvent> [is_item_select_event] / set_item_select  = "item_select"_s
 
             , "hints"_s + event<KeyPressedEvent> [is_esc] / set_normal = "normal"_s
             , "leader"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
             , "insert"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
             , "direction"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
+            , "item_select"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
 
             , "insert"_s + event<KeyPressedEvent> [is_insert] / set_normal  = "normal"_s
 
@@ -73,6 +81,7 @@ struct modes {
             , "leader"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
             , "insert"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
             , "direction"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
+            , "item_select"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
         );
     // clang-format on
   }
@@ -85,6 +94,7 @@ public:
   void processEvent(std::shared_ptr<LssEvent> e);
   void toNormal();
   void toDirection();
+  void toItemSelect();
   std::shared_ptr<Modes> modeFlags = std::make_shared<Modes>();
 
 private:
@@ -128,6 +138,12 @@ public:
 class InsertMode : public Mode {
 public:
   InsertMode(LSSApp *app) : Mode(app){};
+  bool processKey(KeyEvent e);
+};
+
+class ItemSelectMode : public Mode {
+public:
+  ItemSelectMode(LSSApp *app) : Mode(app){};
   bool processKey(KeyEvent e);
 };
 

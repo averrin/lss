@@ -14,7 +14,9 @@ class Player : public Creature,
 public:
   Player();
   Inventory inventory;
+  Inventory equipment;
   bool pick(std::shared_ptr<Item>);
+  bool equip(std::shared_ptr<Item>);
   void commit(int ap);
 
   virtual void onEvent(MoveCommandEvent &e) override;

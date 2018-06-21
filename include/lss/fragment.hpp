@@ -33,13 +33,14 @@ public:
   std::string cache;
 
 protected:
-  std::string template_str;
   std::map<std::string, tpl_arg> args;
+  std::string template_str;
 };
 
 class CellSign : public Fragment {
 public:
   CellSign(CellType, bool);
+  void update(CellType, bool);
 };
 
 class HeroSign : public Fragment {

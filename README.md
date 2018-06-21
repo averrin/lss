@@ -10,6 +10,7 @@
 * cmake ../linux; make -j4
 
 ## Controls
+* q — quit [/quit, /q]
 * hjkl — move [/m, /move, /n, /e, /s, /w, /nw, /ne, /se, /sw]
 * / — insert mode
 * d[hjkl] — dig [/dig, /d]
