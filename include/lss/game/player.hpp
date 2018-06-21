@@ -3,6 +3,8 @@
 #include "lss/game/creature.hpp"
 #include "lss/game/item.hpp"
 
+class Slot {};
+
 typedef std::vector<std::shared_ptr<Item>> Inventory;
 
 class Player : public Creature,

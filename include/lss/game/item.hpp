@@ -29,6 +29,7 @@ class Item : public Object {
 public:
   Item(ItemSpec);
   ItemSpec type;
+  bool equipped = false;
         
   Effects effects;
 

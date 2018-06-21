@@ -27,6 +27,7 @@ void Player::commit(int ap) {
 bool Player::equip(std::shared_ptr<Item> item) {
   auto ptr = shared_from_this();
   equipment.push_back(item);
+  item->equipped = true;
 
   // ItemTakenEvent e(ptr, item);
   // eb::EventBus::FireEvent(e);
@@ -61,7 +62,7 @@ void Player::onEvent(DigCommandEvent &e) {
                    [](std::shared_ptr<Item> item) {
                      return item->type == ItemType::PICK_AXE;
                    }) == equipment.end()) {
-    MessageEvent me(shared_from_this(), "You have no pick axe");
+    MessageEvent me(shared_from_this(), "You need to equip pick axe");
     eb::EventBus::FireEvent(me);
     return;
   }

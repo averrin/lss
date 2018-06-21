@@ -51,9 +51,12 @@ bool HintsMode::processKey(KeyEvent event) { return false; }
 bool ItemSelectMode::processKey(KeyEvent event) {
     std::string letters = "abcdefghijklmnopqrstuvwxyz";
     auto index = letters.find(event.getChar());
-    auto e = std::make_shared<EquipCommandEvent>(app->hero->inventory[index]);
-    eb::EventBus::FireEvent(*e);
-    app->modeManager.toNormal();
+    if (app->hero->inventory.size() > index) {
+        auto e = std::make_shared<EquipCommandEvent>(app->hero->inventory[index]);
+        eb::EventBus::FireEvent(*e);
+        app->modeManager.toNormal();
+        return true;
+    }
     return false;
 }
 

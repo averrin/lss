@@ -337,7 +337,12 @@ void LSSApp::update() {
     std::string letters = "abcdefghijklmnopqrstuvwxyz";
     for (auto item : hero->inventory) {
         if (!item->type.equipable) continue;
-        itemSelectState->appendContent({F(fmt::format("    * {} [{}]<br>", item->type.name, letters[n]))});
+        itemSelectState->appendContent({
+            F(fmt::format("    <span color='{}'>*</span> {} [{}]<br>",
+                         (item->equipped ? "orange" : "grey"),
+                         item->type.name,
+                         (item->equipped ? "equipped" : std::string{letters[n]})
+              ))});
         n++;
     }
     itemSelectState->render(itemSelectFrame);
