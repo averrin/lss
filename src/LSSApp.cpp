@@ -22,6 +22,19 @@ int VOffset = 24;
 std::string DEFAULT_FONT = "FiraCode 12";
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 
+template <typename rT, typename iT>
+std::vector<std::shared_ptr<rT>> castObjects(std::vector<std::shared_ptr<iT>> input) {
+    std::vector<std::shared_ptr<rT>> result;
+    for (auto input_object : input) {
+      if (auto casted_object = std::dynamic_pointer_cast<rT>(input_object)) {
+        result.push_back(casted_object);
+      }
+    }
+    std::cout << "casted: " << result.size() << std::endl;
+    return result;
+}
+
+
 QuitCommandEvent::QuitCommandEvent() : CommandEvent(nullptr) {}
 std::optional<std::shared_ptr<CommandEvent>>
 QuitCommand::getEvent(std::string s) {
@@ -32,7 +45,26 @@ void LSSApp::onEvent(eb::Event &e) { invalidate(); }
 void LSSApp::onEvent(QuitCommandEvent &e) { exit(0); }
 void LSSApp::onEvent(EquipCommandEvent &e) {
     if (e.item != nullptr) return;
-    modeManager.toItemSelect();
+
+    objectSelectMode->setHeader(F("Items to equip: "));
+    Items equipable(hero->inventory.size());
+    auto it = std::copy_if(hero->inventory.begin(), hero->inventory.end(), equipable.begin(), [](std::shared_ptr<Item> item) {
+        return item->type.equipable;
+    });
+
+    equipable.resize(std::distance(equipable.begin(), it));
+    objectSelectMode->setObjects(castObjects<Object>(equipable));
+    Formatter formatter = [](std::shared_ptr<Object> o) {
+      auto item = std::dynamic_pointer_cast<Item>(o);
+      return fmt::format("<span color='{}'>*</span> {}{}",
+                         (item->equipped ? "orange" : "grey"),
+                         item->type.name,
+                         (item->equipped ? " &lt;equipped&gt;" : "")
+    );};
+    objectSelectMode->setFormatter(formatter);
+    objectSelectMode->render(objectSelectState);
+
+    modeManager.toObjectSelect();
     statusLine->setContent(State::item_select_mode);
 }
 
@@ -47,17 +79,17 @@ void LSSApp::setup() {
   statusFrame->setMinSize(getWindowWidth(), StatusLine::HEIGHT);
   statusFrame->setMaxSize(getWindowWidth(), StatusLine::HEIGHT);
 
-  itemSelectFrame = kp::pango::CinderPango::create();
-  itemSelectFrame->setMinSize(getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT);
-  itemSelectFrame->setMaxSize(getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT);
+  objectSelectFrame = kp::pango::CinderPango::create();
+  objectSelectFrame->setMinSize(getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT);
+  objectSelectFrame->setMaxSize(getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT);
 
   state = std::make_shared<State>();
   statusState = std::make_shared<State>();
-  itemSelectState = std::make_shared<State>();
+  objectSelectState = std::make_shared<State>();
   normalMode = std::make_shared<NormalMode>(this);
   directionMode = std::make_shared<DirectionMode>(this);
   insertMode = std::make_shared<InsertMode>(this);
-  itemSelectMode = std::make_shared<ItemSelectMode>(this);
+  objectSelectMode = std::make_shared<ObjectSelectMode>(this);
 
   statusLine = std::make_shared<StatusLine>(statusState);
   statusLine->setContent(State::normal_mode);
@@ -151,7 +183,7 @@ void LSSApp::loadMap() {
   }
   state->currentPalette = palettes::DARK;
   statusState->currentPalette = palettes::DARK;
-  itemSelectState->currentPalette = palettes::DARK;
+  objectSelectState->currentPalette = palettes::DARK;
   hero->currentCell = hero->currentLocation->cells[15][30];
   hero->calcViewField();
   hero->currentLocation->updateView(hero);
@@ -266,8 +298,8 @@ void LSSApp::keyDown(KeyEvent event) {
   case Modes::INSERT:
     insertMode->processKey(event);
     break;
-  case Modes::ITEMSELECT:
-    itemSelectMode->processKey(event);
+  case Modes::OBJECTSELECT:
+    objectSelectMode->processKey(event);
     break;
   }
 }
@@ -331,21 +363,8 @@ void LSSApp::update() {
     statusState->render(statusFrame);
   }
 
-  if (itemSelectFrame != nullptr && modeManager.modeFlags->currentMode == Modes::ITEMSELECT) {
-    itemSelectState->setContent({F("Items to equip: <br><br>")});
-    auto n = 0;
-    std::string letters = "abcdefghijklmnopqrstuvwxyz";
-    for (auto item : hero->inventory) {
-        if (!item->type.equipable) continue;
-        itemSelectState->appendContent({
-            F(fmt::format("    <span color='{}'>*</span> {} [{}]<br>",
-                         (item->equipped ? "orange" : "grey"),
-                         item->type.name,
-                         (item->equipped ? "equipped" : std::string{letters[n]})
-              ))});
-        n++;
-    }
-    itemSelectState->render(itemSelectFrame);
+  if (objectSelectFrame != nullptr && modeManager.modeFlags->currentMode == Modes::OBJECTSELECT) {
+    objectSelectState->render(objectSelectFrame);
   }
 }
 
@@ -367,14 +386,14 @@ void LSSApp::draw() {
              vec2(6, getWindowHeight() - StatusLine::HEIGHT + 6));
   }
 
-  if (itemSelectFrame != nullptr && modeManager.modeFlags->currentMode == Modes::ITEMSELECT) {
+  if (objectSelectFrame != nullptr && modeManager.modeFlags->currentMode == Modes::OBJECTSELECT) {
     gl::color(state->currentPalette.bgColor);
     gl::drawSolidRect(Rectf(0, 0,
                             getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT));
     gl::color(ColorA(1, 1, 1, 1));
-    itemSelectFrame->setDefaultTextColor(state->currentPalette.fgColor);
-    itemSelectFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
-    gl::draw(itemSelectFrame->getTexture(), vec2(HOffset, VOffset));
+    objectSelectFrame->setDefaultTextColor(state->currentPalette.fgColor);
+    objectSelectFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
+    gl::draw(objectSelectFrame->getTexture(), vec2(HOffset, VOffset));
   }
 
   gl::drawString(VERSION, vec2(getWindowWidth() - 120,

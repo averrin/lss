@@ -15,7 +15,7 @@ struct Modes {
     LEADER,
     INSERT,
     DIRECTION,
-    ITEMSELECT,
+    OBJECTSELECT,
   };
   ModeName currentMode = ModeName::NORMAL;
 };

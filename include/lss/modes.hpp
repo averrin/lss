@@ -1,6 +1,7 @@
 #ifndef __MODES_H_
 #define __MODES_H_
 #include <memory>
+#include <functional>
 
 #include "cinder/app/App.h"
 
@@ -32,8 +33,8 @@ struct modes {
     auto is_direction_event = [](EnableModeEvent e) {
       return e.mode == Modes::DIRECTION;
     };
-    auto is_item_select_event = [](EnableModeEvent e) {
-      return e.mode == Modes::ITEMSELECT;
+    auto is_object_select_event = [](EnableModeEvent e) {
+      return e.mode == Modes::OBJECTSELECT;
     };
 
     auto set_hints = [](std::shared_ptr<Modes> m) {
@@ -56,9 +57,9 @@ struct modes {
       std::cout << "Set DIRECTION mode" << std::endl;
       m->currentMode = Modes::DIRECTION;
     };
-    auto set_item_select = [](std::shared_ptr<Modes> m) {
-      std::cout << "Set ITEMSELECT mode" << std::endl;
-      m->currentMode = Modes::ITEMSELECT;
+    auto set_object_select = [](std::shared_ptr<Modes> m) {
+      std::cout << "Set OBJECTSELECT mode" << std::endl;
+      m->currentMode = Modes::OBJECTSELECT;
     };
 
     // clang-format off
@@ -67,13 +68,13 @@ struct modes {
             , "normal"_s + event<KeyPressedEvent> [is_leader] / set_leader  = "leader"_s
             , "normal"_s + event<KeyPressedEvent> [is_insert] / set_insert  = "insert"_s
             , "normal"_s + event<EnableModeEvent> [is_direction_event] / set_direction  = "direction"_s
-            , "normal"_s + event<EnableModeEvent> [is_item_select_event] / set_item_select  = "item_select"_s
+            , "normal"_s + event<EnableModeEvent> [is_object_select_event] / set_object_select  = "object_select"_s
 
             , "hints"_s + event<KeyPressedEvent> [is_esc] / set_normal = "normal"_s
             , "leader"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
             , "insert"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
             , "direction"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
-            , "item_select"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
+            , "object_select"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
 
             , "insert"_s + event<KeyPressedEvent> [is_insert] / set_normal  = "normal"_s
 
@@ -81,7 +82,7 @@ struct modes {
             , "leader"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
             , "insert"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
             , "direction"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
-            , "item_select"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
+            , "object_select"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
         );
     // clang-format on
   }
@@ -94,7 +95,7 @@ public:
   void processEvent(std::shared_ptr<LssEvent> e);
   void toNormal();
   void toDirection();
-  void toItemSelect();
+  void toObjectSelect();
   std::shared_ptr<Modes> modeFlags = std::make_shared<Modes>();
 
 private:
@@ -141,10 +142,27 @@ public:
   bool processKey(KeyEvent e);
 };
 
-class ItemSelectMode : public Mode {
+typedef std::function<std::string(std::shared_ptr<Object>)> Formatter;
+
+class ObjectSelectMode : public Mode {
 public:
-  ItemSelectMode(LSSApp *app) : Mode(app){};
+  ObjectSelectMode(LSSApp *app) : Mode(app){};
   bool processKey(KeyEvent e);
+  void setHeader(std::shared_ptr<Fragment> h) {
+    header = h;
+  }
+  void setObjects(Objects o) {
+    objects = o;
+  }
+  void setFormatter(Formatter f) {
+    formatter = f;
+  };
+
+  void render(std::shared_ptr<State>);
+    
+  std::shared_ptr<Fragment> header;
+  Objects objects;
+  Formatter formatter;
 };
 
 #endif // __MODES_H_

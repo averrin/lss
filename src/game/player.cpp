@@ -14,6 +14,8 @@ Player::Player() : Creature() {
   eb::EventBus::AddHandler<MoveCommandEvent>(*this);
   eb::EventBus::AddHandler<WalkCommandEvent>(*this);
 
+  equipment = std::make_shared<Equipment>();
+
   hp = 20;
   damage = 5;
 }
@@ -25,9 +27,8 @@ void Player::commit(int ap) {
 }
 
 bool Player::equip(std::shared_ptr<Item> item) {
-  auto ptr = shared_from_this();
-  equipment.push_back(item);
-  item->equipped = true;
+  // auto ptr = shared_from_this();
+  equipment->equip(item);
 
   // ItemTakenEvent e(ptr, item);
   // eb::EventBus::FireEvent(e);

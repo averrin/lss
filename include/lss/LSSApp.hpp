@@ -53,18 +53,18 @@ public:
 
   kp::pango::CinderPangoRef gameFrame;
   kp::pango::CinderPangoRef statusFrame;
-  kp::pango::CinderPangoRef itemSelectFrame;
+  kp::pango::CinderPangoRef objectSelectFrame;
 
   ModeManager modeManager = ModeManager();
   std::shared_ptr<NormalMode> normalMode;
   std::shared_ptr<DirectionMode> directionMode;
   std::shared_ptr<InsertMode> insertMode;
-  std::shared_ptr<ItemSelectMode> itemSelectMode;
+  std::shared_ptr<ObjectSelectMode> objectSelectMode;
 
   std::shared_ptr<StatusLine> statusLine;
   std::shared_ptr<State> state;
   std::shared_ptr<State> statusState;
-  std::shared_ptr<State> itemSelectState;
+  std::shared_ptr<State> objectSelectState;
   std::shared_ptr<Player> hero;
 
   std::vector<std::shared_ptr<Command>> commands;

@@ -38,8 +38,8 @@ void ModeManager::toDirection() {
   state_machine.process_event(EnableModeEvent{Modes::DIRECTION});
 }
 
-void ModeManager::toItemSelect() {
-  state_machine.process_event(EnableModeEvent{Modes::ITEMSELECT});
+void ModeManager::toObjectSelect() {
+  state_machine.process_event(EnableModeEvent{Modes::OBJECTSELECT});
 }
 
 void HintsMode::processEvent(std::shared_ptr<LssEvent> event) {}
@@ -48,7 +48,7 @@ Mode::Mode(LSSApp *a) : app(a){};
 
 bool HintsMode::processKey(KeyEvent event) { return false; }
 
-bool ItemSelectMode::processKey(KeyEvent event) {
+bool ObjectSelectMode::processKey(KeyEvent event) {
     std::string letters = "abcdefghijklmnopqrstuvwxyz";
     auto index = letters.find(event.getChar());
     if (app->hero->inventory.size() > index) {
@@ -146,4 +146,19 @@ bool InsertMode::processKey(KeyEvent event) {
         {State::insert_mode.front(), F(app->typedCommand)});
   }
   return false;
+}
+
+void ObjectSelectMode::render(std::shared_ptr<State> state) {
+  state->setContent({header});
+  state->appendContent(State::END_LINE);
+  state->appendContent(State::END_LINE);
+  std::string letters = "abcdefghijklmnopqrstuvwxyz";
+  auto n = 0;
+  for (auto o : objects) {
+    state->appendContent(F("    "));
+    state->appendContent(F(formatter(o)));
+    state->appendContent(F(fmt::format(" [{}]", letters[n])));
+    state->appendContent(State::END_LINE);
+    n++;
+  }
 }
