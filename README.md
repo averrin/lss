@@ -1,5 +1,7 @@
 # Long Story Short
 
+![screenshot](https://raw.githubusercontent.com/averrin/lss/master/screenshot.png)
+
 ## Build
 * git clone --recursive git@github.com:cinder/Cinder.git
 * cd ./Cinder; mkdir build; cd ./build; cmake ..; make -j4
