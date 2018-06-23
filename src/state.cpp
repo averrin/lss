@@ -76,7 +76,7 @@ const Fragments State::normal_mode = {F("<span>NORMAL</span>")};
 const Fragments State::hints_mode = {F("<span color='{{green}}'>HINTS</span>")};
 const Fragments State::direction_mode = {
     F("<span color='{{green}}'>Choose direction: <span "
-      "weight='bold'>[hjkl]</span></span>")};
+      "weight='bold'>[yuhjklbn]</span></span>")};
 const Fragments State::insert_mode = {
     F("<span color='{{red}}' weight='bold'>/</span>")};
 const Fragments State::leader_mode = {

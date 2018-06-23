@@ -18,7 +18,7 @@ Player::Player() : Creature() {
   equipment = std::make_shared<Equipment>();
   equipment->slots = {
         std::make_shared<Slot>("Right hand", std::vector<WearableType>{WEAPON, WEAPON_TWOHANDED, SHIELD}),
-        std::make_shared<Slot>("Left hand", std::vector<WearableType>{WEAPON, WEAPON_TWOHANDED, SHIELD}),
+        std::make_shared<Slot>("Left hand", std::vector<WearableType>{WEAPON, SHIELD}),
         std::make_shared<Slot>("Right ring", std::vector<WearableType>{RING})
   };
 
