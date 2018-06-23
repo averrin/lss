@@ -54,6 +54,7 @@ set( SRC_FILES
 	${SRC_DIR}/game/cell.cpp
 	${SRC_DIR}/game/location.cpp
 	${SRC_DIR}/game/object.cpp
+	${SRC_DIR}/game/effect.cpp
 	${SRC_DIR}/game/item.cpp
 	${SRC_DIR}/game/creature.cpp
 	${SRC_DIR}/game/enemy.cpp

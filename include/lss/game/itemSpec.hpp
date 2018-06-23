@@ -22,6 +22,7 @@ ItemSpec const CORPSE = {"corpse", false};
 ItemSpec const ROCK = {"rock", false};
 ItemSpec const PICK_AXE = {"pick axe", true, WearableType::WEAPON_TWOHANDED};
 ItemSpec const SWORD = {"rusty sword", true, WearableType::WEAPON};
+ItemSpec const GOLD_RING = {"gold ring", true, WearableType::RING};
 };
 
 

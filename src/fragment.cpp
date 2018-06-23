@@ -48,6 +48,7 @@ std::map<ItemSpec, std::string> itemSigns = {
     {ItemType::ROCK, "*"},
     {ItemType::PICK_AXE, "("},
     {ItemType::SWORD, "("},
+    {ItemType::GOLD_RING, "="},
 };
 
 std::map<ItemSpec, std::string> itemColors = {
@@ -55,6 +56,7 @@ std::map<ItemSpec, std::string> itemColors = {
     {ItemType::ROCK, "gray"},
     {ItemType::PICK_AXE, "white"},
     {ItemType::SWORD, "orange"},
+    {ItemType::GOLD_RING, "yellow"},
 };
 
 std::map<EnemySpec, std::string> enemySigns = {

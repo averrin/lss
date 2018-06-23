@@ -14,7 +14,7 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-std::string VERSION = "0.0.4 by Averrin";
+std::string VERSION = "0.0.5 by Averrin";
 
 int HOffset = 24;
 int VOffset = 24;
@@ -31,7 +31,6 @@ castObjects(std::vector<std::shared_ptr<iT>> input) {
       result.push_back(casted_object);
     }
   }
-  std::cout << "casted: " << result.size() << std::endl;
   return result;
 }
 
@@ -43,6 +42,20 @@ QuitCommand::getEvent(std::string s) {
 
 void LSSApp::onEvent(eb::Event &e) { invalidate(); }
 void LSSApp::onEvent(QuitCommandEvent &e) { exit(0); }
+
+template <typename T>
+std::string join_s(const T &array, const std::string &delimiter) {
+  std::string res;
+  for (auto &element : array) {
+    if (!res.empty()) {
+      res += delimiter;
+    }
+
+    res += element;
+  }
+
+  return res;
+}
 
 bool LSSApp::slotCallback(std::shared_ptr<Object> o) {
   auto slot = std::dynamic_pointer_cast<Slot>(o);
@@ -71,7 +84,14 @@ bool LSSApp::slotCallback(std::shared_ptr<Object> o) {
 
   Formatter formatter = [](std::shared_ptr<Object> o) {
     auto item = std::dynamic_pointer_cast<Item>(o);
-    return item->type.name;
+    std::vector<std::string> effects;
+    if (item->effects.size() != 0) {
+      for (auto e : item->effects) {
+        effects.push_back(e->getTitle());
+      }
+    }
+    return fmt::format("{}{}", item->type.name,
+                 item->effects.size() == 0 ? "" : fmt::format(" {{{}}}", join_s(effects," ,")));
   };
   objectSelectMode->setFormatter(formatter);
 
@@ -79,7 +99,6 @@ bool LSSApp::slotCallback(std::shared_ptr<Object> o) {
       [=](std::shared_ptr<Object> o) { return itemCallback(slot, o); });
 
   objectSelectMode->render(objectSelectState);
-  // modeManager.toObjectSelect();
   return true;
 }
 
@@ -102,8 +121,20 @@ void LSSApp::onEvent(EquipCommandEvent &e) {
 
   Formatter formatter = [](std::shared_ptr<Object> o) {
     auto slot = std::dynamic_pointer_cast<Slot>(o);
-    return fmt::format("{} — {}", slot->name,
-                       slot->item == nullptr ? "EMPTY" : slot->item->type.name);
+    std::vector<std::string> effects;
+    std::string effect = "";
+    if (slot->item != nullptr) {
+        if (slot->item->effects.size() != 0) {
+            for (auto e : slot->item->effects) {
+                effects.push_back(e->getTitle());
+            }
+        }
+        effect = slot->item->effects.size() == 0 ? "" : fmt::format(" {{{}}}", join_s(effects," ,"));
+    }
+
+    return fmt::format("{} — {}{}", slot->name,
+                       slot->item == nullptr ? "EMPTY" : slot->item->type.name,
+                       effect);
   };
   objectSelectMode->setFormatter(formatter);
 

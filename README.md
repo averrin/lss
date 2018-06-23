@@ -17,4 +17,5 @@
 * a[hjkl] — attack [/attack, /a]
 * w[hjkl] — walk until obstacle [/walk]
 * p — pick [/pick, /p]
+* e — equip [/equip, /eq]
 

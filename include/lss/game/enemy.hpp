@@ -1,10 +1,12 @@
 #ifndef __ENEMY_H_
 #define __ENEMY_H_
+#include <optional>
 
 #include "Event.hpp"
 #include "EventBus.hpp"
 #include "lss/game/creature.hpp"
 #include "lss/game/item.hpp"
+#include "lss/game/effect.hpp"
 
 struct EnemySpec {
 public:
@@ -12,6 +14,7 @@ public:
   float baseSpeed;
   int baseHP;
   int baseDamage;
+  Items loot;
 
   friend bool operator<(const EnemySpec &lhs, const EnemySpec &rhs) {
     return lhs.name < rhs.name;
@@ -19,9 +22,11 @@ public:
 };
 
 namespace EnemyType {
-EnemySpec const GOBLIN = {"goblin", 0.5, 5};
-EnemySpec const ORK = {"ork", 1, 15};
-EnemySpec const PIXI = {"pixi", 2, 1};
+EnemySpec const GOBLIN = {"goblin", 0.5, 5, 1};
+EnemySpec const ORK = {"ork", 1, 15, 1, Items{std::make_shared<Item>(ItemType::CORPSE)}};
+EnemySpec const PIXI = {"pixi", 2, 1, 1,
+                        Items{std::make_shared<Item>(ItemType::GOLD_RING,
+                                                    Effects{std::make_shared<SpeedModifier>(1)})}};
 }
 
 class Enemy : public Creature, public eb::EventHandler<CommitEvent> {
@@ -30,7 +35,7 @@ public:
   ~Enemy();
   eb::HandlerRegistrationPtr registration;
   bool interact(std::shared_ptr<Object>) override;
-  std::shared_ptr<Item> drop();
+  std::optional<std::shared_ptr<Item>> drop();
 
   Direction cd = Direction::W;
   int actionPoints = 0;

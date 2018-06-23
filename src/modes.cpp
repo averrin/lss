@@ -151,12 +151,22 @@ void ObjectSelectMode::render(std::shared_ptr<State> state) {
   state->setContent({header});
   state->appendContent(State::END_LINE);
   state->appendContent(State::END_LINE);
+
+  if (objects.size() == 0) {
+    state->appendContent(F("<span color='grey'>Nothing to choose.</span>"));
+    return;
+  }
+
   std::string letters = "abcdefghijklmnopqrstuvwxyz";
   auto n = 0;
   for (auto o : objects) {
     state->appendContent(F("    "));
     state->appendContent(F(formatter(o)));
-    state->appendContent(F(fmt::format(" [{}]", letters[n])));
+    state->appendContent(
+      std::make_shared<Fragment>(
+        " [<span color='{{blue}}' weight='bold'>{{letter}}</span>]",
+        std::map<std::string, tpl_arg>{{"letter", std::string{letters[n]}}}
+      ));
     state->appendContent(State::END_LINE);
     n++;
   }

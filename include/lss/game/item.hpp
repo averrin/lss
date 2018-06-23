@@ -9,10 +9,11 @@
 class Item : public Object {
 public:
   Item(ItemSpec);
+  Item(ItemSpec, Effects);
   ItemSpec type;
-  bool equipped = false;
-        
   Effects effects;
+
+  bool equipped = false;
 
   bool interact(std::shared_ptr<Object>);
 

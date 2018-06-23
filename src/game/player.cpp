@@ -18,7 +18,8 @@ Player::Player() : Creature() {
   equipment = std::make_shared<Equipment>();
   equipment->slots = {
         std::make_shared<Slot>("Right hand", std::vector<WearableType>{WEAPON, WEAPON_TWOHANDED, SHIELD}),
-        std::make_shared<Slot>("Left hand", std::vector<WearableType>{WEAPON, WEAPON_TWOHANDED, SHIELD})
+        std::make_shared<Slot>("Left hand", std::vector<WearableType>{WEAPON, WEAPON_TWOHANDED, SHIELD}),
+        std::make_shared<Slot>("Right ring", std::vector<WearableType>{RING})
   };
 
   hp = 20;
@@ -32,6 +33,9 @@ void Player::commit(int ap) {
 }
 
 bool Player::unequip(std::shared_ptr<Slot> slot) {
+  for (auto e : slot->item->effects) {
+    e->undo(this);
+  }
   equipment->unequip(slot);
   return true;
   }
@@ -40,6 +44,9 @@ bool Player::equip(std::shared_ptr<Slot> slot, std::shared_ptr<Item> item) {
   // auto ptr = shared_from_this();
   fmt::print("Player equip: {}\n", item->type.name);
   equipment->equip(slot, item);
+  for (auto e : item->effects) {
+    e->apply(this);
+  }
 
   // ItemTakenEvent e(ptr, item);
   // eb::EventBus::FireEvent(e);
