@@ -24,7 +24,8 @@ public:
   static const Fragments leader_mode;
   static const Fragments insert_mode;
   static const Fragments direction_mode;
-  static const Fragments item_select_mode;
+  static const Fragments object_select_mode;
+  static const Fragments text_mode;
 
   static const Fragments unknown_command;
 

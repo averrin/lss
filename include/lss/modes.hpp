@@ -25,7 +25,7 @@ struct modes {
       return e.key.getCode() == KeyEvent::KEY_SPACE;
     };
     auto is_esc = [](KeyPressedEvent e) {
-      return e.key.getCode() == KeyEvent::KEY_ESCAPE;
+      return e.key.getCode() == KeyEvent::KEY_ESCAPE || e.key.getCode() == KeyEvent::KEY_z;
     };
     auto is_insert = [](KeyPressedEvent e) {
       return e.key.getCode() == KeyEvent::KEY_SLASH && !e.key.isShiftDown();

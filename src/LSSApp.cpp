@@ -47,12 +47,14 @@ void LSSApp::onEvent(HelpCommandEvent &e) {
   helpMode->setHeader(State::HELP_HEADER.front());
   helpMode->render(helpState);
   modeManager.toHelp();
+  statusLine->setContent(State::text_mode);
 }
 void LSSApp::onEvent(InventoryCommandEvent &e) {
   inventoryMode->setHeader(State::INVENTORY_HEADER.front());
   inventoryMode->setObjects(castObjects<Object>(hero->inventory));
   inventoryMode->render(inventoryState);
   modeManager.toInventory();
+  statusLine->setContent(State::text_mode);
 }
 
 template <typename T>
@@ -72,6 +74,17 @@ std::string join_s(const T &array, const std::string &delimiter) {
 bool LSSApp::slotCallback(std::shared_ptr<Object> o) {
   auto slot = std::dynamic_pointer_cast<Slot>(o);
   fmt::print("Selected slot: {}\n", slot->name);
+
+    if (std::find_if(hero->inventory.begin(), hero->inventory.end(),
+                     [slot](std::shared_ptr<Item> item) {
+                       return item->type.equipable &&
+                              std::find(slot->acceptTypes.begin(),
+                                        slot->acceptTypes.end(),
+                                        item->type.wearableType) !=
+                                  slot->acceptTypes.end();
+                     }) == hero->inventory.end()) {
+      return false;
+      }
 
   if (slot->item != nullptr) {
     auto e = std::make_shared<UnEquipCommandEvent>(slot);
@@ -123,8 +136,9 @@ bool LSSApp::itemCallback(std::shared_ptr<Slot> slot,
 
   auto e = std::make_shared<EquipCommandEvent>(slot, item);
   eb::EventBus::FireEvent(*e);
-  modeManager.toNormal();
-  statusLine->setContent(State::normal_mode);
+
+  e = std::make_shared<EquipCommandEvent>();
+  eb::EventBus::FireEvent(*e);
   return true;
 }
 
@@ -178,7 +192,7 @@ void LSSApp::onEvent(EquipCommandEvent &e) {
   objectSelectMode->render(objectSelectState);
 
   modeManager.toObjectSelect();
-  statusLine->setContent(State::item_select_mode);
+  statusLine->setContent(State::object_select_mode);
 }
 
 void LSSApp::setup() {
@@ -318,6 +332,8 @@ void LSSApp::loadMap() {
   state->currentPalette = palettes::DARK;
   statusState->currentPalette = palettes::DARK;
   objectSelectState->currentPalette = palettes::DARK;
+  helpState->currentPalette = palettes::DARK;
+  inventoryState->currentPalette = palettes::DARK;
   hero->currentCell = hero->currentLocation->cells[15][30];
   hero->calcViewField();
   hero->currentLocation->updateView(hero);

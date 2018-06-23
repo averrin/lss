@@ -178,18 +178,42 @@ void HelpMode::render(std::shared_ptr<State> state) {
   state->appendContent(State::END_LINE);
   state->appendContent(State::HELP);
 }
+
+template <typename T>
+std::string join_e(const T &array, const std::string &delimiter) {
+  std::string res;
+  for (auto &element : array) {
+    if (!res.empty()) {
+      res += delimiter;
+    }
+
+    res += element;
+  }
+
+  return res;
+}
+
 void InventoryMode::render(std::shared_ptr<State> state) {
   state->setContent({header});
   state->appendContent(State::END_LINE);
   state->appendContent(State::END_LINE);
   if (objects.size() == 0) {
-    state->appendContent(F("<span color='grey'>Nothing to choose.</span>"));
+    state->appendContent(F("<span color='grey'>Nothing here.</span>"));
     return;
   }
 
   for (auto o : objects) {
     auto item = std::dynamic_pointer_cast<Item>(o);
-    state->appendContent(F(fmt::format("    {}", item->type.name)));
+    std::vector<std::string> effects;
+    if (item->effects.size() != 0) {
+      for (auto e : item->effects) {
+        effects.push_back(e->getTitle());
+      }
+    }
+    state->appendContent(F(fmt::format("     - {}{}", item->type.name,
+                                    item->effects.size() == 0
+                           ? ""
+                           : fmt::format(" {{{}}}", join_e(effects, " ,")) )));
     state->appendContent(State::END_LINE);
   }
 }
