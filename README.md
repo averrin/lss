@@ -1,5 +1,7 @@
 # Long Story Short
 
+Yet another undinished roguelike game.
+
 ![screenshot](https://raw.githubusercontent.com/averrin/lss/master/screenshot.png)
 
 ## Build
@@ -12,6 +14,7 @@
 * `cmake ../linux; make -j4`
 
 ## Controls
+* / — insert mode
 * q — quit [`/quit`, `/q`]
 * yuhjklbn — move [`/m`, `/move`, `/n`, `/e`, `/s`, `/w`, `/nw`, `/ne`, `/se`, `/sw`]
 ```
@@ -21,7 +24,6 @@
     /|\ 
    b j n
 ```
-* / — insert mode
 * d[yuhjklbn] — dig [`/dig`, `/d`]
 * a[yuhjklbn] — attack [`/attack`, `/a`]
 * w[yuhjklbn] — walk until obstacle [`/walk`]

@@ -14,7 +14,6 @@ bool Equipment::equip(std::shared_ptr<Slot> slot, std::shared_ptr<Item> item) {
                            WEAPON) != s->acceptTypes.end();
         });
     if (secondary != slots.end()) {
-      fmt::print("Ecuip to secondary slot: {}", (*secondary)->name);
       (*secondary)->equip(item);
     }
   }
