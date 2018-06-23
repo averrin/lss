@@ -116,3 +116,7 @@ void Player::onEvent(EquipCommandEvent &e) {
     fmt::print("Equipment equip: {} --> {}\n", e.item->type.name, e.slot->name);
     equip(e.slot, e.item);
 }
+
+void Player::onEvent(UnEquipCommandEvent &e) {
+    unequip(e.slot);
+}

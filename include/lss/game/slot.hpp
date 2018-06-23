@@ -12,7 +12,7 @@ public:
     std::vector<WearableType> acceptTypes;
     std::shared_ptr<Item> item;
     void equip(std::shared_ptr<Item> item);
-    void unequip(std::shared_ptr<Item> item);
+    void unequip();
 };
 
 

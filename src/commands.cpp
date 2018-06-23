@@ -143,3 +143,6 @@ std::optional<std::shared_ptr<CommandEvent>>
 EquipCommand::getEvent(std::string s) {
   return std::make_shared<EquipCommandEvent>();
 }
+
+UnEquipCommandEvent::UnEquipCommandEvent(std::shared_ptr<Slot> s)
+    : CommandEvent(nullptr), slot(s) {}

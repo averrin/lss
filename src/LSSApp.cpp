@@ -47,6 +47,14 @@ void LSSApp::onEvent(QuitCommandEvent &e) { exit(0); }
 bool LSSApp::slotCallback(std::shared_ptr<Object> o) {
   auto slot = std::dynamic_pointer_cast<Slot>(o);
   fmt::print("Selected slot: {}\n", slot->name);
+
+  if (slot->item != nullptr) {
+    auto e = std::make_shared<UnEquipCommandEvent>(slot);
+    eb::EventBus::FireEvent(*e);
+    objectSelectMode->render(objectSelectState);
+    return true;
+  }
+
   objectSelectMode->setHeader(F("Items to equip: "));
 
   Items equipable(hero->inventory.size());
@@ -78,8 +86,6 @@ bool LSSApp::slotCallback(std::shared_ptr<Object> o) {
 bool LSSApp::itemCallback(std::shared_ptr<Slot> slot,
                           std::shared_ptr<Object> o) {
   auto item = std::dynamic_pointer_cast<Item>(o);
-  fmt::print("Selected item: {}\n", item->type.name);
-  fmt::print("- Selected slot: {}\n", slot->name);
 
   auto e = std::make_shared<EquipCommandEvent>(slot, item);
   eb::EventBus::FireEvent(*e);
@@ -261,6 +267,7 @@ void LSSApp::setListeners() {
   eb::EventBus::AddHandler<AttackCommandEvent>(*hero);
   eb::EventBus::AddHandler<EquipCommandEvent>(*this);
   eb::EventBus::AddHandler<EquipCommandEvent>(*hero);
+  eb::EventBus::AddHandler<UnEquipCommandEvent>(*hero);
 
   eb::EventBus::AddHandler<DoorOpenedEvent>(*statusLine);
   eb::EventBus::AddHandler<EnemyDiedEvent>(*statusLine);

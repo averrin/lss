@@ -8,7 +8,8 @@ bool Equipment::equip(std::shared_ptr<Slot> slot, std::shared_ptr<Item> item) {
     slot->equip(item);
     return true;
 }
-bool Equipment::unequip(std::shared_ptr<Slot>) {
+bool Equipment::unequip(std::shared_ptr<Slot> slot) {
+    slot->unequip();
     return true;
 }
 

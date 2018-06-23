@@ -120,4 +120,10 @@ public:
   std::shared_ptr<Item> item;
 };
 
+class UnEquipCommandEvent : public CommandEvent {
+public:
+  UnEquipCommandEvent(std::shared_ptr<Slot>);
+  std::shared_ptr<Slot> slot;
+};
+
 #endif // __EVENTS_H_
