@@ -4,8 +4,11 @@
 
 Enemy::Enemy(EnemySpec t) : Creature(), type(t) {
   hp = type.baseHP;
+  hp_max = type.baseHP;
   speed = type.baseSpeed;
-  damage = type.baseDamage;
+  damage_dices = type.baseDamage_dices;
+  damage_edges = type.baseDamage_edges;
+  damage_modifier = type.baseDamage_modifier;
 }
 
 Enemy::~Enemy() { registration->removeHandler(); }
@@ -23,8 +26,9 @@ bool Enemy::interact(std::shared_ptr<Object> actor) {
   auto hero = std::dynamic_pointer_cast<Player>(actor);
   auto ptr = shared_from_this();
   if (hp > 0) {
-    hp -= hero->damage;
-    EnemyTakeDamageEvent e(ptr, hero->damage);
+    auto damage = hero->getDamage(shared_from_this());
+    hp -= damage;
+    EnemyTakeDamageEvent e(ptr, damage);
     eb::EventBus::FireEvent(e);
   }
   if (hp <= 0) {

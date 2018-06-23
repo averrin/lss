@@ -75,16 +75,16 @@ bool LSSApp::slotCallback(std::shared_ptr<Object> o) {
   auto slot = std::dynamic_pointer_cast<Slot>(o);
   fmt::print("Selected slot: {}\n", slot->name);
 
-    if (std::find_if(hero->inventory.begin(), hero->inventory.end(),
-                     [slot](std::shared_ptr<Item> item) {
-                       return item->type.equipable &&
-                              std::find(slot->acceptTypes.begin(),
-                                        slot->acceptTypes.end(),
-                                        item->type.wearableType) !=
-                                  slot->acceptTypes.end();
-                     }) == hero->inventory.end()) {
-      return false;
-      }
+  if (std::find_if(hero->inventory.begin(), hero->inventory.end(),
+                   [slot](std::shared_ptr<Item> item) {
+                     return item->type.equipable &&
+                            std::find(slot->acceptTypes.begin(),
+                                      slot->acceptTypes.end(),
+                                      item->type.wearableType) !=
+                                slot->acceptTypes.end();
+                   }) == hero->inventory.end()) {
+    return false;
+  }
 
   if (slot->item != nullptr) {
     auto e = std::make_shared<UnEquipCommandEvent>(slot);
@@ -109,17 +109,8 @@ bool LSSApp::slotCallback(std::shared_ptr<Object> o) {
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
     auto item = std::dynamic_pointer_cast<Item>(o);
-    std::vector<std::string> effects;
-    if (item->effects.size() != 0) {
-      for (auto e : item->effects) {
-        effects.push_back(e->getTitle());
-      }
-    }
-    return fmt::format("<span weight='bold'>{}</span> - {}{}", letter,
-                       item->type.name,
-                       item->effects.size() == 0
-                           ? ""
-                           : fmt::format(" {{{}}}", join_s(effects, " ,")));
+    return fmt::format("<span weight='bold'>{}</span> - {}", letter,
+                       item->getTitle());
   };
   objectSelectMode->setFormatter(formatter);
 
@@ -151,18 +142,6 @@ void LSSApp::onEvent(EquipCommandEvent &e) {
 
   Formatter formatter = [&](std::shared_ptr<Object> o, std::string letter) {
     auto slot = std::dynamic_pointer_cast<Slot>(o);
-    std::vector<std::string> effects;
-    std::string effect = "";
-    if (slot->item != nullptr) {
-      if (slot->item->effects.size() != 0) {
-        for (auto e : slot->item->effects) {
-          effects.push_back(e->getTitle());
-        }
-      }
-      effect = slot->item->effects.size() == 0
-                   ? ""
-                   : fmt::format(" {{{}}}", join_s(effects, " ,"));
-    }
     bool have_items = true;
     auto shortcut = fmt::format("<span weight='bold'>{}</span> -", letter);
     if (std::find_if(hero->inventory.begin(), hero->inventory.end(),
@@ -177,12 +156,11 @@ void LSSApp::onEvent(EquipCommandEvent &e) {
       have_items = false;
     }
 
-    return fmt::format("<span color='{}'>{} {:16} :</span> {}{}",
+    return fmt::format("<span color='{}'>{} {:16} :</span> {}",
                        have_items ? "{{orange}}" : "gray", shortcut, slot->name,
                        slot->item == nullptr
                            ? (have_items ? "-" : "<span color='gray'>-</span>")
-                           : slot->item->type.name,
-                       effect);
+                           : slot->item->getTitle());
   };
   objectSelectMode->setFormatter(formatter);
 
@@ -342,7 +320,9 @@ void LSSApp::loadMap() {
   axe->currentCell = hero->currentLocation->cells[16][31];
   hero->currentLocation->objects.push_back(axe);
 
-  auto sword = std::make_shared<Item>(ItemType::SWORD);
+  auto sword = std::make_shared<Item>(
+      ItemType::SWORD, Effects{std::make_shared<MeleeDamage>(1, 6, 1),
+                               std::make_shared<HPModifier>(5)});
   sword->currentCell = hero->currentLocation->cells[15][32];
   hero->currentLocation->objects.push_back(sword);
 

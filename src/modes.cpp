@@ -179,20 +179,6 @@ void HelpMode::render(std::shared_ptr<State> state) {
   state->appendContent(State::HELP);
 }
 
-template <typename T>
-std::string join_e(const T &array, const std::string &delimiter) {
-  std::string res;
-  for (auto &element : array) {
-    if (!res.empty()) {
-      res += delimiter;
-    }
-
-    res += element;
-  }
-
-  return res;
-}
-
 void InventoryMode::render(std::shared_ptr<State> state) {
   state->setContent({header});
   state->appendContent(State::END_LINE);
@@ -210,10 +196,7 @@ void InventoryMode::render(std::shared_ptr<State> state) {
         effects.push_back(e->getTitle());
       }
     }
-    state->appendContent(F(fmt::format("     - {}{}", item->type.name,
-                                    item->effects.size() == 0
-                           ? ""
-                           : fmt::format(" {{{}}}", join_e(effects, " ,")) )));
+    state->appendContent(F(fmt::format("     - {}", item->getTitle())));
     state->appendContent(State::END_LINE);
   }
 }

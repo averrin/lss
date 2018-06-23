@@ -18,9 +18,13 @@ public:
   };
   void calcViewField();
   bool interact(std::shared_ptr<Object>);
+  int getDamage(std::shared_ptr<Object>);
 
   int hp;
-  int damage;
+  int hp_max;
+  int damage_dices;
+  int damage_edges;
+  int damage_modifier;
   float speed = 1.f;
 
   std::shared_ptr<Cell> getCell(Direction);

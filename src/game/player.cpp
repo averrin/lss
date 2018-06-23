@@ -20,24 +20,30 @@ Player::Player() : Creature() {
       std::make_shared<Slot>("Head", std::vector<WearableType>{HEAD}),
       std::make_shared<Slot>("Neck", std::vector<WearableType>{NECK}),
       std::make_shared<Slot>("Cloak", std::vector<WearableType>{CLOAK}),
-      std::make_shared<Slot>("Right pauldron", std::vector<WearableType>{RIGHT_PAULDRON}),
-      std::make_shared<Slot>("Left pauldron", std::vector<WearableType>{LEFT_PAULDRON}),
+      std::make_shared<Slot>("Right pauldron",
+                             std::vector<WearableType>{RIGHT_PAULDRON}),
+      std::make_shared<Slot>("Left pauldron",
+                             std::vector<WearableType>{LEFT_PAULDRON}),
       std::make_shared<Slot>(
           "Right hand",
           std::vector<WearableType>{WEAPON, WEAPON_TWOHANDED, SHIELD}),
       std::make_shared<Slot>("Left hand",
                              std::vector<WearableType>{WEAPON, SHIELD}),
-      std::make_shared<Slot>("Right gauntlet", std::vector<WearableType>{RIGHT_GAUNTLET}),
-      std::make_shared<Slot>("Left gauntlet", std::vector<WearableType>{LEFT_GAUNTLET}),
+      std::make_shared<Slot>("Right gauntlet",
+                             std::vector<WearableType>{RIGHT_GAUNTLET}),
+      std::make_shared<Slot>("Left gauntlet",
+                             std::vector<WearableType>{LEFT_GAUNTLET}),
       std::make_shared<Slot>("Right ring", std::vector<WearableType>{RING}),
       std::make_shared<Slot>("Left ring", std::vector<WearableType>{RING}),
       std::make_shared<Slot>("Greaves", std::vector<WearableType>{GREAVES}),
       std::make_shared<Slot>("Boots", std::vector<WearableType>{BOOTS}),
-      std::make_shared<Slot>("Light", std::vector<WearableType>{LIGHT})
-  };
+      std::make_shared<Slot>("Light", std::vector<WearableType>{LIGHT})};
 
   hp = 20;
-  damage = 5;
+  hp_max = 20;
+  damage_dices = 1;
+  damage_edges = 1;
+  damage_modifier = 0;
 }
 
 void Player::commit(int ap) {

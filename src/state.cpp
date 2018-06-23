@@ -85,8 +85,7 @@ const Fragments State::unknown_command = {
     F("<span color='{{red}}' weight='bold'>Unknown command</span>")};
 const Fragments State::object_select_mode = {
     F("<span color='{{blue}}'>Select item</span> [a-y] or [Zz, Esc] for exit")};
-const Fragments State::text_mode = {
-    F("[Zz, Esc] for exit")};
+const Fragments State::text_mode = {F("[Zz, Esc] for exit")};
 
 const Fragments State::HELP_HEADER = {F("<span weight='bold'>Help</span>")};
 const Fragments State::INVENTORY_HEADER = {
@@ -95,9 +94,12 @@ const Fragments State::INVENTORY_HEADER = {
 const Fragments State::HELP = {
     F("<span weight='bold'>Controls</span><br>"
       "• <span color='{{orange}}' weight='bold'>/</span> — insert mode<br>"
-      "• <span color='{{orange}}' weight='bold'>q</span> — quit [`/quit`, `/q`]<br>"
-      "• <span color='{{orange}}' weight='bold'>?</span> — help [`/help`, `/h`]<br>"
-      "• <span color='{{orange}}' weight='bold'>yuhjklbn</span> — move [`/m`, `/move`, `/n`, `/e`, `/s`, `/w`, `/nw`, `/ne`, "
+      "• <span color='{{orange}}' weight='bold'>q</span> — quit [`/quit`, "
+      "`/q`]<br>"
+      "• <span color='{{orange}}' weight='bold'>?</span> — help [`/help`, "
+      "`/h`]<br>"
+      "• <span color='{{orange}}' weight='bold'>yuhjklbn</span> — move [`/m`, "
+      "`/move`, `/n`, `/e`, `/s`, `/w`, `/nw`, `/ne`, "
       "`/se`, `/sw`]<br>"
       "```<br>"
       "   y k u<br>"
@@ -106,10 +108,15 @@ const Fragments State::HELP = {
       "    /|\\ <br>"
       "   b j n<br>"
       "```<br>"
-      "• <span color='{{orange}}' weight='bold'>d</span>[yuhjklbn] — dig [`/dig`, `/d`]<br>"
-      "• <span color='{{orange}}' weight='bold'>a</span>[yuhjklbn] — attack [`/attack`, `/a`]<br>"
-      "• <span color='{{orange}}' weight='bold'>w</span>[yuhjklbn] — walk until obstacle [`/walk`]<br>"
-      "• <span color='{{orange}}' weight='bold'>p</span> — pick [`/pick`, `/p`]<br>"
-      "• <span color='{{orange}}' weight='bold'>e</span> — equip [`/equip`, `/eq`]<br>"
-      "• <span color='{{orange}}' weight='bold'>i</span> — inventory [`/inventory`, `/i`]<br>"
-    )};
+      "• <span color='{{orange}}' weight='bold'>d</span>[yuhjklbn] — dig "
+      "[`/dig`, `/d`]<br>"
+      "• <span color='{{orange}}' weight='bold'>a</span>[yuhjklbn] — attack "
+      "[`/attack`, `/a`]<br>"
+      "• <span color='{{orange}}' weight='bold'>w</span>[yuhjklbn] — walk "
+      "until obstacle [`/walk`]<br>"
+      "• <span color='{{orange}}' weight='bold'>p</span> — pick [`/pick`, "
+      "`/p`]<br>"
+      "• <span color='{{orange}}' weight='bold'>e</span> — equip [`/equip`, "
+      "`/eq`]<br>"
+      "• <span color='{{orange}}' weight='bold'>i</span> — inventory "
+      "[`/inventory`, `/i`]<br>")};

@@ -20,6 +20,8 @@ public:
   Player();
   Items inventory;
   std::shared_ptr<Equipment> equipment;
+  Effects activeEffects;
+
   bool pick(std::shared_ptr<Item>);
   bool equip(std::shared_ptr<Slot>, std::shared_ptr<Item>);
   bool unequip(std::shared_ptr<Slot>);

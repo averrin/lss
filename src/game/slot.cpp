@@ -13,7 +13,8 @@ void Slot::equip(std::shared_ptr<Item> i) {
 }
 
 void Slot::unequip() {
-  if (item == nullptr) return;
+  if (item == nullptr)
+    return;
   item->equipped = false;
   item = nullptr;
 }

@@ -16,6 +16,7 @@ public:
   bool equipped = false;
 
   bool interact(std::shared_ptr<Object>);
+  std::string getTitle();
 
   friend std::ostream &operator<<(std::ostream &os, const Item &item) {
     os << item.type.name;

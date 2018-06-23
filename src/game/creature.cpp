@@ -50,6 +50,15 @@ std::shared_ptr<Cell> Creature::getCell(Direction d) {
   return cell;
 }
 
+int Creature::getDamage(std::shared_ptr<Object>) {
+  auto damage = 0;
+  for (auto n = 0; n < damage_dices; n++) {
+    damage += rand() % damage_edges + 1;
+  }
+  damage += damage_modifier;
+  return damage;
+}
+
 bool Creature::attack(Direction d) {
   auto nc = getCell(d);
   auto opponent = std::find_if(

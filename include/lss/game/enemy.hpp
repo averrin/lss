@@ -13,7 +13,9 @@ public:
   std::string name;
   float baseSpeed;
   int baseHP;
-  int baseDamage;
+  int baseDamage_dices;
+  int baseDamage_edges;
+  int baseDamage_modifier;
   Items loot;
 
   friend bool operator<(const EnemySpec &lhs, const EnemySpec &rhs) {
@@ -22,13 +24,13 @@ public:
 };
 
 namespace EnemyType {
-EnemySpec const GOBLIN = {"goblin", 0.5, 5, 1};
-EnemySpec const ORK = {"ork", 1, 15, 1,
+EnemySpec const GOBLIN = {"goblin", 0.5, 5, 1, 3, 0};
+EnemySpec const ORK = {"ork", 1, 15, 1, 6, 1,
                        Items{std::make_shared<Item>(ItemType::CORPSE)}};
 EnemySpec const PIXI = {
-    "pixi", 2, 1, 1,
+    "pixi", 2, 1, 1, 2, 0,
     Items{std::make_shared<Item>(ItemType::GOLD_RING,
-                                 Effects{std::make_shared<SpeedModifier>(1)})}};
+                                 Effects{std::make_shared<SpecialName>("of lightning"), std::make_shared<SpeedModifier>(1)})}};
 } // namespace EnemyType
 
 class Enemy : public Creature, public eb::EventHandler<CommitEvent> {
