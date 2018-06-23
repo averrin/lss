@@ -39,6 +39,8 @@ using namespace ci::app;
 class LSSApp : public App,
                public eb::EventHandler<eb::Event>,
                public eb::EventHandler<EquipCommandEvent>,
+               public eb::EventHandler<HelpCommandEvent>,
+               public eb::EventHandler<InventoryCommandEvent>,
                public eb::EventHandler<QuitCommandEvent> {
 public:
   void setup() override;
@@ -54,17 +56,24 @@ public:
   kp::pango::CinderPangoRef gameFrame;
   kp::pango::CinderPangoRef statusFrame;
   kp::pango::CinderPangoRef objectSelectFrame;
+  kp::pango::CinderPangoRef helpFrame;
+  kp::pango::CinderPangoRef inventoryFrame;
 
   ModeManager modeManager = ModeManager();
   std::shared_ptr<NormalMode> normalMode;
   std::shared_ptr<DirectionMode> directionMode;
   std::shared_ptr<InsertMode> insertMode;
   std::shared_ptr<ObjectSelectMode> objectSelectMode;
+  std::shared_ptr<HelpMode> helpMode;
+  std::shared_ptr<InventoryMode> inventoryMode;
 
   std::shared_ptr<StatusLine> statusLine;
   std::shared_ptr<State> state;
   std::shared_ptr<State> statusState;
   std::shared_ptr<State> objectSelectState;
+  std::shared_ptr<State> helpState;
+  std::shared_ptr<State> inventoryState;
+
   std::shared_ptr<Player> hero;
 
   std::vector<std::shared_ptr<Command>> commands;
@@ -75,6 +84,8 @@ public:
   virtual void onEvent(eb::Event &e) override;
   virtual void onEvent(QuitCommandEvent &e) override;
   virtual void onEvent(EquipCommandEvent &e) override;
+  virtual void onEvent(HelpCommandEvent &e) override;
+  virtual void onEvent(InventoryCommandEvent &e) override;
 
   bool slotCallback(std::shared_ptr<Object>);
   bool itemCallback(std::shared_ptr<Slot>, std::shared_ptr<Object>);

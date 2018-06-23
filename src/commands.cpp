@@ -51,6 +51,8 @@ PickCommand::PickCommand() : Command({"pick", "p"s}) {}
 DigCommand::DigCommand() : Command({"dig", "d"s}) {}
 AttackCommand::AttackCommand() : Command({"attack", "a"s}) {}
 EquipCommand::EquipCommand() : Command({"equip", "eq"s}) {}
+HelpCommand::HelpCommand() : Command({"help", "h"s}) {}
+InventoryCommand::InventoryCommand() : Command({"inventory", "i"s}) {}
 
 WalkCommandEvent::WalkCommandEvent(Direction d)
     : CommandEvent(nullptr), direction(d) {}
@@ -146,3 +148,16 @@ EquipCommand::getEvent(std::string s) {
 
 UnEquipCommandEvent::UnEquipCommandEvent(std::shared_ptr<Slot> s)
     : CommandEvent(nullptr), slot(s) {}
+
+HelpCommandEvent::HelpCommandEvent() : CommandEvent(nullptr) {}
+InventoryCommandEvent::InventoryCommandEvent() : CommandEvent(nullptr) {}
+
+std::optional<std::shared_ptr<CommandEvent>>
+HelpCommand::getEvent(std::string s) {
+  return std::make_shared<HelpCommandEvent>();
+}
+
+std::optional<std::shared_ptr<CommandEvent>>
+InventoryCommand::getEvent(std::string s) {
+  return std::make_shared<InventoryCommandEvent>();
+}

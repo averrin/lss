@@ -13,6 +13,7 @@ struct Palette {
   std::string green;
   std::string red;
   std::string blue;
+  std::string orange;
 
   std::string floor_color;
   std::string wall_color;

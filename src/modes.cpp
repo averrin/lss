@@ -46,6 +46,14 @@ void ModeManager::toDirection() {
   state_machine.process_event(EnableModeEvent{Modes::DIRECTION});
 }
 
+void ModeManager::toHelp() {
+  state_machine.process_event(EnableModeEvent{Modes::HELP});
+}
+
+void ModeManager::toInventory() {
+  state_machine.process_event(EnableModeEvent{Modes::INVENTORY});
+}
+
 void ModeManager::toObjectSelect() {
   state_machine.process_event(EnableModeEvent{Modes::OBJECTSELECT});
 }
@@ -107,6 +115,14 @@ bool NormalMode::processKey(KeyEvent event) {
   case KeyEvent::KEY_e:
     app->processCommand("equip");
     break;
+  case KeyEvent::KEY_i:
+    app->processCommand("inventory");
+    break;
+  case KeyEvent::KEY_SLASH:
+    if (event.isShiftDown()) {
+      app->processCommand("help");
+    }
+    break;
   default:
     return false;
     break;
@@ -156,6 +172,28 @@ bool InsertMode::processKey(KeyEvent event) {
   return false;
 }
 
+void HelpMode::render(std::shared_ptr<State> state) {
+  state->setContent({header});
+  state->appendContent(State::END_LINE);
+  state->appendContent(State::END_LINE);
+  state->appendContent(State::HELP);
+}
+void InventoryMode::render(std::shared_ptr<State> state) {
+  state->setContent({header});
+  state->appendContent(State::END_LINE);
+  state->appendContent(State::END_LINE);
+  if (objects.size() == 0) {
+    state->appendContent(F("<span color='grey'>Nothing to choose.</span>"));
+    return;
+  }
+
+  for (auto o : objects) {
+    auto item = std::dynamic_pointer_cast<Item>(o);
+    state->appendContent(F(fmt::format("    {}", item->type.name)));
+    state->appendContent(State::END_LINE);
+  }
+}
+
 void ObjectSelectMode::render(std::shared_ptr<State> state) {
   state->setContent({header});
   state->appendContent(State::END_LINE);
@@ -169,11 +207,7 @@ void ObjectSelectMode::render(std::shared_ptr<State> state) {
   std::string letters = "abcdefghijklmnopqrstuvwxyz";
   auto n = 0;
   for (auto o : objects) {
-    state->appendContent(F("    "));
-    state->appendContent(F(formatter(o)));
-    state->appendContent(std::make_shared<Fragment>(
-        " [<span color='{{blue}}' weight='bold'>{{letter}}</span>]",
-        std::map<std::string, tpl_arg>{{"letter", std::string{letters[n]}}}));
+    state->appendContent(F(formatter(o, std::string{letters[n]})));
     state->appendContent(State::END_LINE);
     n++;
   }

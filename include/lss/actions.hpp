@@ -16,6 +16,8 @@ struct Modes {
     INSERT,
     DIRECTION,
     OBJECTSELECT,
+    INVENTORY,
+    HELP,
   };
   ModeName currentMode = ModeName::NORMAL;
 };

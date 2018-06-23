@@ -58,4 +58,16 @@ public:
   std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
 };
 
+class HelpCommand : public Command {
+public:
+  HelpCommand();
+  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
+};
+
+class InventoryCommand : public Command {
+public:
+  InventoryCommand();
+  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
+};
+
 #endif // __COMMAND_H_

@@ -43,6 +43,18 @@ QuitCommand::getEvent(std::string s) {
 void LSSApp::onEvent(eb::Event &e) { invalidate(); }
 void LSSApp::onEvent(QuitCommandEvent &e) { exit(0); }
 
+void LSSApp::onEvent(HelpCommandEvent &e) {
+  helpMode->setHeader(State::HELP_HEADER.front());
+  helpMode->render(helpState);
+  modeManager.toHelp();
+}
+void LSSApp::onEvent(InventoryCommandEvent &e) {
+  inventoryMode->setHeader(State::INVENTORY_HEADER.front());
+  inventoryMode->setObjects(castObjects<Object>(hero->inventory));
+  inventoryMode->render(inventoryState);
+  modeManager.toInventory();
+}
+
 template <typename T>
 std::string join_s(const T &array, const std::string &delimiter) {
   std::string res;
@@ -82,7 +94,7 @@ bool LSSApp::slotCallback(std::shared_ptr<Object> o) {
   equipable.resize(std::distance(equipable.begin(), it));
   objectSelectMode->setObjects(castObjects<Object>(equipable));
 
-  Formatter formatter = [](std::shared_ptr<Object> o) {
+  Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
     auto item = std::dynamic_pointer_cast<Item>(o);
     std::vector<std::string> effects;
     if (item->effects.size() != 0) {
@@ -90,7 +102,8 @@ bool LSSApp::slotCallback(std::shared_ptr<Object> o) {
         effects.push_back(e->getTitle());
       }
     }
-    return fmt::format("{}{}", item->type.name,
+    return fmt::format("<span weight='bold'>{}</span> - {}{}", letter,
+                       item->type.name,
                        item->effects.size() == 0
                            ? ""
                            : fmt::format(" {{{}}}", join_s(effects, " ,")));
@@ -111,6 +124,7 @@ bool LSSApp::itemCallback(std::shared_ptr<Slot> slot,
   auto e = std::make_shared<EquipCommandEvent>(slot, item);
   eb::EventBus::FireEvent(*e);
   modeManager.toNormal();
+  statusLine->setContent(State::normal_mode);
   return true;
 }
 
@@ -121,7 +135,7 @@ void LSSApp::onEvent(EquipCommandEvent &e) {
   objectSelectMode->setHeader(F("Select slot: "));
   objectSelectMode->setObjects(castObjects<Object>(hero->equipment->slots));
 
-  Formatter formatter = [](std::shared_ptr<Object> o) {
+  Formatter formatter = [&](std::shared_ptr<Object> o, std::string letter) {
     auto slot = std::dynamic_pointer_cast<Slot>(o);
     std::vector<std::string> effects;
     std::string effect = "";
@@ -135,9 +149,25 @@ void LSSApp::onEvent(EquipCommandEvent &e) {
                    ? ""
                    : fmt::format(" {{{}}}", join_s(effects, " ,"));
     }
+    bool have_items = true;
+    auto shortcut = fmt::format("<span weight='bold'>{}</span> -", letter);
+    if (std::find_if(hero->inventory.begin(), hero->inventory.end(),
+                     [slot](std::shared_ptr<Item> item) {
+                       return item->type.equipable &&
+                              std::find(slot->acceptTypes.begin(),
+                                        slot->acceptTypes.end(),
+                                        item->type.wearableType) !=
+                                  slot->acceptTypes.end();
+                     }) == hero->inventory.end()) {
+      shortcut = "   ";
+      have_items = false;
+    }
 
-    return fmt::format("{} — {}{}", slot->name,
-                       slot->item == nullptr ? "EMPTY" : slot->item->type.name,
+    return fmt::format("<span color='{}'>{} {:16} :</span> {}{}",
+                       have_items ? "{{orange}}" : "gray", shortcut, slot->name,
+                       slot->item == nullptr
+                           ? (have_items ? "-" : "<span color='gray'>-</span>")
+                           : slot->item->type.name,
                        effect);
   };
   objectSelectMode->setFormatter(formatter);
@@ -169,6 +199,18 @@ void LSSApp::setup() {
   objectSelectFrame->setMaxSize(getWindowWidth(),
                                 getWindowHeight() - StatusLine::HEIGHT);
 
+  helpFrame = kp::pango::CinderPango::create();
+  helpFrame->setMinSize(getWindowWidth(),
+                        getWindowHeight() - StatusLine::HEIGHT);
+  helpFrame->setMaxSize(getWindowWidth(),
+                        getWindowHeight() - StatusLine::HEIGHT);
+
+  inventoryFrame = kp::pango::CinderPango::create();
+  inventoryFrame->setMinSize(getWindowWidth(),
+                             getWindowHeight() - StatusLine::HEIGHT);
+  inventoryFrame->setMaxSize(getWindowWidth(),
+                             getWindowHeight() - StatusLine::HEIGHT);
+
   state = std::make_shared<State>();
   statusState = std::make_shared<State>();
   objectSelectState = std::make_shared<State>();
@@ -176,6 +218,10 @@ void LSSApp::setup() {
   directionMode = std::make_shared<DirectionMode>(this);
   insertMode = std::make_shared<InsertMode>(this);
   objectSelectMode = std::make_shared<ObjectSelectMode>(this);
+  helpMode = std::make_shared<HelpMode>(this);
+  helpState = std::make_shared<State>();
+  inventoryMode = std::make_shared<InventoryMode>(this);
+  inventoryState = std::make_shared<State>();
 
   statusLine = std::make_shared<StatusLine>(statusState);
   statusLine->setContent(State::normal_mode);
@@ -192,6 +238,8 @@ void LSSApp::setup() {
   commands.push_back(std::make_shared<WalkCommand>());
   commands.push_back(std::make_shared<AttackCommand>());
   commands.push_back(std::make_shared<EquipCommand>());
+  commands.push_back(std::make_shared<HelpCommand>());
+  commands.push_back(std::make_shared<InventoryCommand>());
 }
 
 std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Cell> c,
@@ -303,6 +351,9 @@ void LSSApp::setListeners() {
   eb::EventBus::AddHandler<EquipCommandEvent>(*this);
   eb::EventBus::AddHandler<EquipCommandEvent>(*hero);
   eb::EventBus::AddHandler<UnEquipCommandEvent>(*hero);
+
+  eb::EventBus::AddHandler<HelpCommandEvent>(*this);
+  eb::EventBus::AddHandler<InventoryCommandEvent>(*this);
 
   eb::EventBus::AddHandler<DoorOpenedEvent>(*statusLine);
   eb::EventBus::AddHandler<EnemyDiedEvent>(*statusLine);
@@ -435,6 +486,10 @@ bool LSSApp::processCommand(std::string cmd) {
     eb::EventBus::FireEvent(*e);
   } else if (auto e = dynamic_pointer_cast<EquipCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
+  } else if (auto e = dynamic_pointer_cast<HelpCommandEvent>(*event)) {
+    eb::EventBus::FireEvent(*e);
+  } else if (auto e = dynamic_pointer_cast<InventoryCommandEvent>(*event)) {
+    eb::EventBus::FireEvent(*e);
   }
   invalidate();
   return true;
@@ -444,27 +499,62 @@ void LSSApp::update() {
   gl::clear(state->currentPalette.bgColor);
   gl::enableAlphaBlendingPremult();
 
-  if (gameFrame != nullptr) {
+  switch (modeManager.modeFlags->currentMode) {
+  case Modes::NORMAL:
+  case Modes::INSERT:
+  case Modes::DIRECTION:
+  case Modes::HINTS:
+  case Modes::LEADER:
     state->render(gameFrame);
+    break;
+  case Modes::OBJECTSELECT:
+    objectSelectState->render(objectSelectFrame);
+    break;
+  case Modes::HELP:
+    helpState->render(helpFrame);
+    break;
+  case Modes::INVENTORY:
+    inventoryState->render(inventoryFrame);
+    break;
   }
 
   if (statusFrame != nullptr) {
     statusState->render(statusFrame);
   }
-
-  if (objectSelectFrame != nullptr &&
-      modeManager.modeFlags->currentMode == Modes::OBJECTSELECT) {
-    objectSelectState->render(objectSelectFrame);
-  }
 }
 
 void LSSApp::draw() {
-  if (gameFrame != nullptr) {
 
+  gl::color(state->currentPalette.bgColor);
+  gl::drawSolidRect(
+      Rectf(0, 0, getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT));
+  gl::color(ColorA(1, 1, 1, 1));
+  objectSelectFrame->setDefaultTextColor(state->currentPalette.fgColor);
+  objectSelectFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
+
+  switch (modeManager.modeFlags->currentMode) {
+  case Modes::NORMAL:
+  case Modes::INSERT:
+  case Modes::DIRECTION:
+  case Modes::HINTS:
+  case Modes::LEADER:
     gameFrame->setDefaultTextColor(state->currentPalette.fgColor);
-    gameFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
     gl::draw(gameFrame->getTexture(), vec2(HOffset, VOffset));
+    break;
+  case Modes::OBJECTSELECT:
+    objectSelectFrame->setDefaultTextColor(state->currentPalette.fgColor);
+    gl::draw(objectSelectFrame->getTexture(), vec2(HOffset, VOffset));
+    break;
+  case Modes::HELP:
+    helpFrame->setDefaultTextColor(state->currentPalette.fgColor);
+    gl::draw(helpFrame->getTexture(), vec2(HOffset, VOffset));
+    break;
+  case Modes::INVENTORY:
+    inventoryFrame->setDefaultTextColor(state->currentPalette.fgColor);
+    gl::draw(inventoryFrame->getTexture(), vec2(HOffset, VOffset));
+    break;
   }
+
   if (statusFrame != nullptr) {
     gl::color(state->currentPalette.bgColorAlt);
     gl::drawSolidRect(Rectf(0, getWindowHeight() - StatusLine::HEIGHT,
@@ -474,17 +564,6 @@ void LSSApp::draw() {
     statusFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
     gl::draw(statusFrame->getTexture(),
              vec2(6, getWindowHeight() - StatusLine::HEIGHT + 6));
-  }
-
-  if (objectSelectFrame != nullptr &&
-      modeManager.modeFlags->currentMode == Modes::OBJECTSELECT) {
-    gl::color(state->currentPalette.bgColor);
-    gl::drawSolidRect(
-        Rectf(0, 0, getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT));
-    gl::color(ColorA(1, 1, 1, 1));
-    objectSelectFrame->setDefaultTextColor(state->currentPalette.fgColor);
-    objectSelectFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
-    gl::draw(objectSelectFrame->getTexture(), vec2(HOffset, VOffset));
   }
 
   gl::drawString(VERSION, vec2(getWindowWidth() - 120,

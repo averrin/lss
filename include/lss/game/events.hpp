@@ -126,4 +126,14 @@ public:
   std::shared_ptr<Slot> slot;
 };
 
+class HelpCommandEvent : public CommandEvent {
+public:
+  HelpCommandEvent();
+};
+
+class InventoryCommandEvent : public CommandEvent {
+public:
+  InventoryCommandEvent();
+};
+
 #endif // __EVENTS_H_

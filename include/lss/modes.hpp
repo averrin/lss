@@ -28,13 +28,19 @@ struct modes {
       return e.key.getCode() == KeyEvent::KEY_ESCAPE;
     };
     auto is_insert = [](KeyPressedEvent e) {
-      return e.key.getCode() == KeyEvent::KEY_SLASH;
+      return e.key.getCode() == KeyEvent::KEY_SLASH && !e.key.isShiftDown();
     };
     auto is_direction_event = [](EnableModeEvent e) {
       return e.mode == Modes::DIRECTION;
     };
     auto is_object_select_event = [](EnableModeEvent e) {
       return e.mode == Modes::OBJECTSELECT;
+    };
+    auto is_inventory_event = [](EnableModeEvent e) {
+      return e.mode == Modes::INVENTORY;
+    };
+    auto is_help_event = [](EnableModeEvent e) {
+      return e.mode == Modes::HELP;
     };
 
     auto set_hints = [](std::shared_ptr<Modes> m) {
@@ -61,6 +67,14 @@ struct modes {
       std::cout << "Set OBJECTSELECT mode" << std::endl;
       m->currentMode = Modes::OBJECTSELECT;
     };
+    auto set_inventory = [](std::shared_ptr<Modes> m) {
+      std::cout << "Set INVENTORY mode" << std::endl;
+      m->currentMode = Modes::INVENTORY;
+    };
+    auto set_help = [](std::shared_ptr<Modes> m) {
+      std::cout << "Set HELP mode" << std::endl;
+      m->currentMode = Modes::HELP;
+    };
 
     // clang-format off
         return make_transition_table(
@@ -69,12 +83,16 @@ struct modes {
             , "normal"_s + event<KeyPressedEvent> [is_insert] / set_insert  = "insert"_s
             , "normal"_s + event<EnableModeEvent> [is_direction_event] / set_direction  = "direction"_s
             , "normal"_s + event<EnableModeEvent> [is_object_select_event] / set_object_select  = "object_select"_s
+            , "normal"_s + event<EnableModeEvent> [is_inventory_event] / set_inventory  = "inventory"_s
+            , "normal"_s + event<EnableModeEvent> [is_help_event] / set_help  = "inventory"_s
 
             , "hints"_s + event<KeyPressedEvent> [is_esc] / set_normal = "normal"_s
             , "leader"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
             , "insert"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
             , "direction"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
             , "object_select"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
+            , "inventory"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
+            , "help"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
 
             , "insert"_s + event<KeyPressedEvent> [is_insert] / set_normal  = "normal"_s
 
@@ -83,6 +101,8 @@ struct modes {
             , "insert"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
             , "direction"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
             , "object_select"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
+            , "inventory"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
+            , "help"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
         );
     // clang-format on
   }
@@ -94,6 +114,8 @@ public:
   void processKey(KeyEvent e);
   void processEvent(std::shared_ptr<LssEvent> e);
   void toNormal();
+  void toHelp();
+  void toInventory();
   void toDirection();
   void toObjectSelect();
   std::shared_ptr<Modes> modeFlags = std::make_shared<Modes>();
@@ -105,7 +127,9 @@ private:
 class Mode {
 public:
   Mode(LSSApp *);
-  bool processKey(KeyEvent e);
+  bool processKey(KeyEvent e) {
+    return false;
+  };
   bool activated = false;
 
 protected:
@@ -142,24 +166,47 @@ public:
   bool processKey(KeyEvent e);
 };
 
-typedef std::function<std::string(std::shared_ptr<Object>)> Formatter;
+typedef std::function<std::string(std::shared_ptr<Object>, std::string)> Formatter;
 typedef std::function<bool(std::shared_ptr<Object>)> SelectCallback;
 
-class ObjectSelectMode : public Mode {
+class TextMode : public Mode {
 public:
-  ObjectSelectMode(LSSApp *app) : Mode(app){};
-  bool processKey(KeyEvent e);
+  TextMode(LSSApp *app) : Mode(app){};
   void setHeader(std::shared_ptr<Fragment> h) { header = h; }
+  std::shared_ptr<Fragment> header;
+  bool processKey(KeyEvent e);
+  virtual void render(std::shared_ptr<State>) = 0;
+};
+
+class ObjectSelectMode : public TextMode {
+public:
+  ObjectSelectMode(LSSApp *app) : TextMode(app){};
+  bool processKey(KeyEvent e);
+
   void setObjects(Objects o) { objects = o; }
+  Objects objects;
   void setFormatter(Formatter f) { formatter = f; };
+  Formatter formatter;
+
   void setCallback(SelectCallback c) { callback = c; };
+  SelectCallback callback;
 
   void render(std::shared_ptr<State>);
+};
 
-  std::shared_ptr<Fragment> header;
+class InventoryMode : public TextMode {
+public:
+  InventoryMode(LSSApp *app) : TextMode(app){};
+  void render(std::shared_ptr<State>);
+
+  void setObjects(Objects o) { objects = o; }
   Objects objects;
-  Formatter formatter;
-  SelectCallback callback;
+};
+
+class HelpMode : public TextMode {
+public:
+  HelpMode(LSSApp *app) : TextMode(app){};
+  void render(std::shared_ptr<State>);
 };
 
 #endif // __MODES_H_

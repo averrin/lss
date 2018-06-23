@@ -85,3 +85,26 @@ const Fragments State::unknown_command = {
     F("<span color='{{red}}' weight='bold'>Unknown command</span>")};
 const Fragments State::item_select_mode = {
     F("<span color='{{blue}}'>Select item</span>")};
+
+const Fragments State::HELP_HEADER = {F("<span weight='bold'>Help</span>")};
+const Fragments State::INVENTORY_HEADER = {
+    F("<span weight='bold'>Inventory</span>")};
+
+const Fragments State::HELP = {
+    F("## Controls<br>"
+      "* / — insert mode<br>"
+      "* q — quit [`/quit`, `/q`]<br>"
+      "* yuhjklbn — move [`/m`, `/move`, `/n`, `/e`, `/s`, `/w`, `/nw`, `/ne`, "
+      "`/se`, `/sw`]<br>"
+      "```<br>"
+      "   y k u<br>"
+      "    \\|/ <br>"
+      "   h-.-l<br>"
+      "    /|\\ <br>"
+      "   b j n<br>"
+      "```<br>"
+      "* d[yuhjklbn] — dig [`/dig`, `/d`]<br>"
+      "* a[yuhjklbn] — attack [`/attack`, `/a`]<br>"
+      "* w[yuhjklbn] — walk until obstacle [`/walk`]<br>"
+      "* p — pick [`/pick`, `/p`]<br>"
+      "* e — equip [`/equip`, `/eq`]<br>")};

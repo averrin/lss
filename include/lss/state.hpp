@@ -32,6 +32,9 @@ public:
   static const Fragments END;
   static const Fragments END_LINE;
 
+  static const Fragments HELP_HEADER;
+  static const Fragments HELP;
+  static const Fragments INVENTORY_HEADER;
 private:
   bool damaged = true;
   std::string cache;

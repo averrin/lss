@@ -27,6 +27,7 @@ std::string Fragment::render(State *state) {
   tpl.setValue("green", state->currentPalette.green);
   tpl.setValue("red", state->currentPalette.red);
   tpl.setValue("blue", state->currentPalette.blue);
+  tpl.setValue("orange", state->currentPalette.orange);
 
   tpl.setValue("floor_color", state->currentPalette.floor_color);
   tpl.setValue("wall_color", state->currentPalette.wall_color);
@@ -51,7 +52,7 @@ std::map<ItemSpec, std::string> itemSigns = {
 
 std::map<ItemSpec, std::string> itemColors = {
     {ItemType::CORPSE, "red"},       {ItemType::ROCK, "gray"},
-    {ItemType::PICK_AXE, "white"},   {ItemType::SWORD, "orange"},
+    {ItemType::PICK_AXE, "white"},   {ItemType::SWORD, "#F7CA88"},
     {ItemType::GOLD_RING, "yellow"},
 };
 
