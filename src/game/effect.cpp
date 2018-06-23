@@ -13,9 +13,7 @@ void HPModifier::apply(Player *hero) { hero->hp_max += modifier; }
 
 void HPModifier::undo(Player *hero) { hero->hp_max -= modifier; }
 
-std::string HPModifier::getTitle() {
-  return fmt::format("hp +{}", modifier);
-}
+std::string HPModifier::getTitle() { return fmt::format("hp +{}", modifier); }
 
 void MeleeDamage::apply(Player *hero) {
   hero->damage_dices = dices;

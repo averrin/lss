@@ -9,9 +9,11 @@
 class Item : public Object {
 public:
   Item(ItemSpec);
+  Item(ItemSpec, int);
   Item(ItemSpec, Effects);
   ItemSpec type;
   Effects effects;
+  int count = 0;
 
   bool equipped = false;
 

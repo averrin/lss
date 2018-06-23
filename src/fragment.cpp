@@ -48,12 +48,14 @@ std::map<ItemSpec, std::string> itemSigns = {
     {ItemType::CORPSE, "%"},    {ItemType::ROCK, "*"},
     {ItemType::PICK_AXE, "("},  {ItemType::SWORD, "("},
     {ItemType::GOLD_RING, "="},
+    {ItemType::GOLD_COINS, "$"},
 };
 
 std::map<ItemSpec, std::string> itemColors = {
     {ItemType::CORPSE, "red"},       {ItemType::ROCK, "gray"},
     {ItemType::PICK_AXE, "white"},   {ItemType::SWORD, "#F7CA88"},
     {ItemType::GOLD_RING, "yellow"},
+    {ItemType::GOLD_COINS, "gold"},
 };
 
 std::map<EnemySpec, std::string> enemySigns = {

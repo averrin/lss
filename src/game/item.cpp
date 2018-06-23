@@ -1,6 +1,7 @@
 #include "lss/game/item.hpp"
 
 Item::Item(ItemSpec t) : Object(), type(t){};
+Item::Item(ItemSpec t, int c) : Object(), type(t), count(c){};
 Item::Item(ItemSpec t, Effects e) : Object(), type(t), effects(e){};
 
 bool Item::interact(std::shared_ptr<Object> actor) { return false; }
@@ -23,6 +24,7 @@ std::string Item::getTitle() {
   std::vector<std::string> effectNames;
   std::vector<std::string> specialNames;
   if (effects.size() != 0) {
+    // TODO: extract
     for (auto e : effects) {
       if (e->special)
         continue;
@@ -34,11 +36,11 @@ std::string Item::getTitle() {
       specialNames.push_back(e->getTitle());
     }
   }
-  return fmt::format("{}{}{}", type.name,
-                     specialNames.size() == 0
-                         ? ""
-                         : fmt::format(" {}", join_e(specialNames, " ")),
-                     effectNames.size() == 0
-                         ? ""
-                         : fmt::format(" {{{}}}", join_e(effectNames, " ,")));
+  return fmt::format(
+      "{}{}{}{}", count == 0 ? "" : fmt::format("{} ", count), type.name,
+      specialNames.size() == 0 ? ""
+                               : fmt::format(" {}", join_e(specialNames, " ")),
+      effectNames.size() == 0
+          ? ""
+          : fmt::format(" {{{}}}", join_e(effectNames, " ,")));
 }

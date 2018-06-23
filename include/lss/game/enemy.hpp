@@ -24,7 +24,7 @@ public:
 };
 
 namespace EnemyType {
-EnemySpec const GOBLIN = {"goblin", 0.5, 5, 1, 3, 0};
+EnemySpec const GOBLIN = {"goblin", 0.5, 5, 1, 3, 0, Items{std::make_shared<Item>(ItemType::GOLD_COINS, 200)}};
 EnemySpec const ORK = {"ork", 1, 15, 1, 6, 1,
                        Items{std::make_shared<Item>(ItemType::CORPSE)}};
 EnemySpec const PIXI = {

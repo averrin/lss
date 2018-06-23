@@ -174,6 +174,7 @@ void LSSApp::onEvent(EquipCommandEvent &e) {
 }
 
 void LSSApp::setup() {
+  srand(time(NULL));
   kp::pango::CinderPango::setTextRenderer(kp::pango::TextRenderer::FREETYPE);
   gameFrame = kp::pango::CinderPango::create();
   gameFrame->setMinSize(800, 600);
