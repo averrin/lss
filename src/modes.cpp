@@ -49,15 +49,14 @@ Mode::Mode(LSSApp *a) : app(a){};
 bool HintsMode::processKey(KeyEvent event) { return false; }
 
 bool ObjectSelectMode::processKey(KeyEvent event) {
-    std::string letters = "abcdefghijklmnopqrstuvwxyz";
-    auto index = letters.find(event.getChar());
-    if (app->hero->inventory.size() > index) {
-        auto e = std::make_shared<EquipCommandEvent>(app->hero->inventory[index]);
-        eb::EventBus::FireEvent(*e);
-        app->modeManager.toNormal();
-        return true;
+  std::string letters = "abcdefghijklmnopqrstuvwxyz";
+  auto index = letters.find(event.getChar());
+  if (objects.size() > index) {
+    if (callback(objects[index])) {
+      return true;
     }
-    return false;
+  }
+  return false;
 }
 
 bool NormalMode::processKey(KeyEvent event) {

@@ -57,6 +57,8 @@ set( SRC_FILES
 	${SRC_DIR}/game/item.cpp
 	${SRC_DIR}/game/creature.cpp
 	${SRC_DIR}/game/enemy.cpp
+	${SRC_DIR}/game/slot.cpp
+	${SRC_DIR}/game/equipment.cpp
 	${SRC_DIR}/game/player.cpp
 	${SRC_DIR}/game/door.cpp
 

@@ -20,7 +20,7 @@ std::vector<std::string> split(std::string strToSplit, char delimeter) {
 }
 
 // TODO: to utils
-std::optional<Direction> getDirection(std::string dirString) {
+std::optional<Direction> getDirection(const std::string &dirString) {
   if (dirString == "n"s) {
     return Direction::N;
   } else if (dirString == "e"s) {
@@ -136,7 +136,9 @@ PickCommand::getEvent(std::string s) {
 }
 
 EquipCommandEvent::EquipCommandEvent() : CommandEvent(nullptr) {}
-EquipCommandEvent::EquipCommandEvent(std::shared_ptr<Item> i) : CommandEvent(nullptr), item(i) {}
+EquipCommandEvent::EquipCommandEvent(std::shared_ptr<Slot> s,
+                                     std::shared_ptr<Item> i)
+    : CommandEvent(nullptr), item(i), slot(s) {}
 std::optional<std::shared_ptr<CommandEvent>>
 EquipCommand::getEvent(std::string s) {
   return std::make_shared<EquipCommandEvent>();

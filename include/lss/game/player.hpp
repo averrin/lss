@@ -20,7 +20,8 @@ public:
   Items inventory;
   std::shared_ptr<Equipment> equipment;
   bool pick(std::shared_ptr<Item>);
-  bool equip(std::shared_ptr<Item>);
+  bool equip(std::shared_ptr<Slot>, std::shared_ptr<Item>);
+  bool unequip(std::shared_ptr<Slot>);
   void commit(int ap);
 
   virtual void onEvent(MoveCommandEvent &e) override;

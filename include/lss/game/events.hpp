@@ -9,6 +9,7 @@ class Object;
 typedef std::vector<std::shared_ptr<Object>> Objects;
 
 class Item;
+class Slot;
 class Cell;
 class DoorOpenedEvent : public eb::Event {
 public:
@@ -112,8 +113,10 @@ public:
 
 class EquipCommandEvent : public CommandEvent {
 public:
-  EquipCommandEvent(std::shared_ptr<Item>);
+  EquipCommandEvent(std::shared_ptr<Slot>, std::shared_ptr<Item>);
+  EquipCommandEvent(std::shared_ptr<Slot>);
   EquipCommandEvent();
+  std::shared_ptr<Slot> slot;
   std::shared_ptr<Item> item;
 };
 

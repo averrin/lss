@@ -19,9 +19,7 @@ std::string join(const T &array, const std::string &delimiter) {
   return res;
 }
 
-void StatusLine::setContent(Fragments content) {
-  state->setContent(content);
-};
+void StatusLine::setContent(Fragments content) { state->setContent(content); };
 
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 

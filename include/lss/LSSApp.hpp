@@ -75,6 +75,9 @@ public:
   virtual void onEvent(eb::Event &e) override;
   virtual void onEvent(QuitCommandEvent &e) override;
   virtual void onEvent(EquipCommandEvent &e) override;
+
+  bool slotCallback(std::shared_ptr<Object>);
+  bool itemCallback(std::shared_ptr<Slot>, std::shared_ptr<Object>);
 };
 
 #endif // __LSSAPP_H_

@@ -1,8 +1,7 @@
 #ifndef __ITEMSPEC_H_
 #define __ITEMSPEC_H_
 #include <string>
-#include "lss/game/player.hpp"
-#include "lss/game/slot.hpp"
+#include "lss/game/wearableType.hpp"
 
 struct ItemSpec {
 public:

@@ -143,6 +143,7 @@ public:
 };
 
 typedef std::function<std::string(std::shared_ptr<Object>)> Formatter;
+typedef std::function<bool(std::shared_ptr<Object>)> SelectCallback;
 
 class ObjectSelectMode : public Mode {
 public:
@@ -157,12 +158,16 @@ public:
   void setFormatter(Formatter f) {
     formatter = f;
   };
+  void setCallback(SelectCallback c) {
+    callback = c;
+  };
 
   void render(std::shared_ptr<State>);
     
   std::shared_ptr<Fragment> header;
   Objects objects;
   Formatter formatter;
+  SelectCallback callback;
 };
 
 #endif // __MODES_H_

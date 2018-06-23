@@ -23,17 +23,17 @@ std::string DEFAULT_FONT = "FiraCode 12";
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 
 template <typename rT, typename iT>
-std::vector<std::shared_ptr<rT>> castObjects(std::vector<std::shared_ptr<iT>> input) {
-    std::vector<std::shared_ptr<rT>> result;
-    for (auto input_object : input) {
-      if (auto casted_object = std::dynamic_pointer_cast<rT>(input_object)) {
-        result.push_back(casted_object);
-      }
+std::vector<std::shared_ptr<rT>>
+castObjects(std::vector<std::shared_ptr<iT>> input) {
+  std::vector<std::shared_ptr<rT>> result;
+  for (auto input_object : input) {
+    if (auto casted_object = std::dynamic_pointer_cast<rT>(input_object)) {
+      result.push_back(casted_object);
     }
-    std::cout << "casted: " << result.size() << std::endl;
-    return result;
+  }
+  std::cout << "casted: " << result.size() << std::endl;
+  return result;
 }
-
 
 QuitCommandEvent::QuitCommandEvent() : CommandEvent(nullptr) {}
 std::optional<std::shared_ptr<CommandEvent>>
@@ -43,36 +43,79 @@ QuitCommand::getEvent(std::string s) {
 
 void LSSApp::onEvent(eb::Event &e) { invalidate(); }
 void LSSApp::onEvent(QuitCommandEvent &e) { exit(0); }
+
+bool LSSApp::slotCallback(std::shared_ptr<Object> o) {
+  auto slot = std::dynamic_pointer_cast<Slot>(o);
+  fmt::print("Selected slot: {}\n", slot->name);
+  objectSelectMode->setHeader(F("Items to equip: "));
+
+  Items equipable(hero->inventory.size());
+  auto it = std::copy_if(
+      hero->inventory.begin(), hero->inventory.end(), equipable.begin(),
+      [slot](std::shared_ptr<Item> item) {
+        return !item->equipped && item->type.equipable &&
+               std::find(slot->acceptTypes.begin(), slot->acceptTypes.end(),
+                         item->type.wearableType) != slot->acceptTypes.end();
+      });
+
+  equipable.resize(std::distance(equipable.begin(), it));
+  objectSelectMode->setObjects(castObjects<Object>(equipable));
+
+  Formatter formatter = [](std::shared_ptr<Object> o) {
+    auto item = std::dynamic_pointer_cast<Item>(o);
+    return item->type.name;
+  };
+  objectSelectMode->setFormatter(formatter);
+
+  objectSelectMode->setCallback(
+      [=](std::shared_ptr<Object> o) { return itemCallback(slot, o); });
+
+  objectSelectMode->render(objectSelectState);
+  // modeManager.toObjectSelect();
+  return true;
+}
+
+bool LSSApp::itemCallback(std::shared_ptr<Slot> slot,
+                          std::shared_ptr<Object> o) {
+  auto item = std::dynamic_pointer_cast<Item>(o);
+  fmt::print("Selected item: {}\n", item->type.name);
+  fmt::print("- Selected slot: {}\n", slot->name);
+
+  auto e = std::make_shared<EquipCommandEvent>(slot, item);
+  eb::EventBus::FireEvent(*e);
+  modeManager.toNormal();
+  return true;
+}
+
 void LSSApp::onEvent(EquipCommandEvent &e) {
-    if (e.item != nullptr) return;
+  if (e.item != nullptr)
+    return;
 
-    objectSelectMode->setHeader(F("Items to equip: "));
-    Items equipable(hero->inventory.size());
-    auto it = std::copy_if(hero->inventory.begin(), hero->inventory.end(), equipable.begin(), [](std::shared_ptr<Item> item) {
-        return item->type.equipable;
-    });
+  objectSelectMode->setHeader(F("Select slot: "));
+  objectSelectMode->setObjects(castObjects<Object>(hero->equipment->slots));
 
-    equipable.resize(std::distance(equipable.begin(), it));
-    objectSelectMode->setObjects(castObjects<Object>(equipable));
-    Formatter formatter = [](std::shared_ptr<Object> o) {
-      auto item = std::dynamic_pointer_cast<Item>(o);
-      return fmt::format("<span color='{}'>*</span> {}{}",
-                         (item->equipped ? "orange" : "grey"),
-                         item->type.name,
-                         (item->equipped ? " &lt;equipped&gt;" : "")
-    );};
-    objectSelectMode->setFormatter(formatter);
-    objectSelectMode->render(objectSelectState);
+  Formatter formatter = [](std::shared_ptr<Object> o) {
+    auto slot = std::dynamic_pointer_cast<Slot>(o);
+    return fmt::format("{} — {}", slot->name,
+                       slot->item == nullptr ? "EMPTY" : slot->item->type.name);
+  };
+  objectSelectMode->setFormatter(formatter);
 
-    modeManager.toObjectSelect();
-    statusLine->setContent(State::item_select_mode);
+  objectSelectMode->setCallback(
+      [&](std::shared_ptr<Object> o) { return slotCallback(o); });
+
+  objectSelectMode->render(objectSelectState);
+
+  modeManager.toObjectSelect();
+  statusLine->setContent(State::item_select_mode);
 }
 
 void LSSApp::setup() {
   kp::pango::CinderPango::setTextRenderer(kp::pango::TextRenderer::FREETYPE);
   gameFrame = kp::pango::CinderPango::create();
   gameFrame->setMinSize(800, 600);
-  gameFrame->setMaxSize(getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT);
+  gameFrame->setMaxSize(getWindowWidth(),
+                        getWindowHeight() - StatusLine::HEIGHT);
   gameFrame->setSpacing(gameFrame->getSpacing() - 4.0);
 
   statusFrame = kp::pango::CinderPango::create();
@@ -80,8 +123,10 @@ void LSSApp::setup() {
   statusFrame->setMaxSize(getWindowWidth(), StatusLine::HEIGHT);
 
   objectSelectFrame = kp::pango::CinderPango::create();
-  objectSelectFrame->setMinSize(getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT);
-  objectSelectFrame->setMaxSize(getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT);
+  objectSelectFrame->setMinSize(getWindowWidth(),
+                                getWindowHeight() - StatusLine::HEIGHT);
+  objectSelectFrame->setMaxSize(getWindowWidth(),
+                                getWindowHeight() - StatusLine::HEIGHT);
 
   state = std::make_shared<State>();
   statusState = std::make_shared<State>();
@@ -124,7 +169,7 @@ void LSSApp::loadMap() {
 
   std::string line;
   std::ifstream dungeon_file("./dungeon.ascii");
-  int n, i;
+  int n = 0, i = 0;
   if (dungeon_file.is_open()) {
     n = 0;
     while (getline(dungeon_file, line)) {
@@ -196,7 +241,8 @@ void LSSApp::loadMap() {
   sword->currentCell = hero->currentLocation->cells[15][32];
   hero->currentLocation->objects.push_back(sword);
 
-  state->fragments.assign(n * (i + 1), std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false));
+  state->fragments.assign(
+      n * (i + 1), std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false));
 }
 
 void LSSApp::setListeners() {
@@ -231,16 +277,17 @@ void LSSApp::invalidate() {
       auto cc = hero->currentCell;
       auto f = state->fragments[index];
       switch (c->visibilityState) {
-        case VisibilityState::SEEN:
-            // if (auto cs = std::dynamic_pointer_cast<CellSign>(state->fragments[index])) {
-            //     cs->update(c->type, true);
-            // } else {
-                state->fragments[index] = std::make_shared<CellSign>(c->type, true);
-            // }
-            break;
-        case VisibilityState::VISIBLE:
-            state->fragments[index] = std::make_shared<CellSign>(c->type, false);
-            break;
+      case VisibilityState::SEEN:
+        // if (auto cs =
+        // std::dynamic_pointer_cast<CellSign>(state->fragments[index])) {
+        //     cs->update(c->type, true);
+        // } else {
+        state->fragments[index] = std::make_shared<CellSign>(c->type, true);
+        // }
+        break;
+      case VisibilityState::VISIBLE:
+        state->fragments[index] = std::make_shared<CellSign>(c->type, false);
+        break;
       }
       column++;
       index++;
@@ -363,7 +410,8 @@ void LSSApp::update() {
     statusState->render(statusFrame);
   }
 
-  if (objectSelectFrame != nullptr && modeManager.modeFlags->currentMode == Modes::OBJECTSELECT) {
+  if (objectSelectFrame != nullptr &&
+      modeManager.modeFlags->currentMode == Modes::OBJECTSELECT) {
     objectSelectState->render(objectSelectFrame);
   }
 }
@@ -386,10 +434,11 @@ void LSSApp::draw() {
              vec2(6, getWindowHeight() - StatusLine::HEIGHT + 6));
   }
 
-  if (objectSelectFrame != nullptr && modeManager.modeFlags->currentMode == Modes::OBJECTSELECT) {
+  if (objectSelectFrame != nullptr &&
+      modeManager.modeFlags->currentMode == Modes::OBJECTSELECT) {
     gl::color(state->currentPalette.bgColor);
-    gl::drawSolidRect(Rectf(0, 0,
-                            getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT));
+    gl::drawSolidRect(
+        Rectf(0, 0, getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT));
     gl::color(ColorA(1, 1, 1, 1));
     objectSelectFrame->setDefaultTextColor(state->currentPalette.fgColor);
     objectSelectFrame->setBackgroundColor(ColorA(0, 0, 0, 0));

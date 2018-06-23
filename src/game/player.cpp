@@ -1,6 +1,7 @@
 #include "lss/game/player.hpp"
 #include "EventBus.hpp"
 #include "lss/command.hpp"
+#include "lss/game/slot.hpp"
 #include <memory>
 
 CommitEvent::CommitEvent(eb::ObjectPtr s, int ap)
@@ -15,6 +16,10 @@ Player::Player() : Creature() {
   eb::EventBus::AddHandler<WalkCommandEvent>(*this);
 
   equipment = std::make_shared<Equipment>();
+  equipment->slots = {
+        std::make_shared<Slot>("Right hand", std::vector<WearableType>{WEAPON, WEAPON_TWOHANDED, SHIELD}),
+        std::make_shared<Slot>("Left hand", std::vector<WearableType>{WEAPON, WEAPON_TWOHANDED, SHIELD})
+  };
 
   hp = 20;
   damage = 5;
@@ -26,9 +31,15 @@ void Player::commit(int ap) {
   eb::EventBus::FireEvent(e);
 }
 
-bool Player::equip(std::shared_ptr<Item> item) {
+bool Player::unequip(std::shared_ptr<Slot> slot) {
+  equipment->unequip(slot);
+  return true;
+  }
+
+bool Player::equip(std::shared_ptr<Slot> slot, std::shared_ptr<Item> item) {
   // auto ptr = shared_from_this();
-  equipment->equip(item);
+  fmt::print("Player equip: {}\n", item->type.name);
+  equipment->equip(slot, item);
 
   // ItemTakenEvent e(ptr, item);
   // eb::EventBus::FireEvent(e);
@@ -59,10 +70,10 @@ void Player::onEvent(AttackCommandEvent &e) {
 }
 
 void Player::onEvent(DigCommandEvent &e) {
-  if (std::find_if(equipment.begin(), equipment.end(),
+  if (std::find_if(inventory.begin(), inventory.end(),
                    [](std::shared_ptr<Item> item) {
-                     return item->type == ItemType::PICK_AXE;
-                   }) == equipment.end()) {
+                     return item->type == ItemType::PICK_AXE && item->equipped;
+                   }) == inventory.end()) {
     MessageEvent me(shared_from_this(), "You need to equip pick axe");
     eb::EventBus::FireEvent(me);
     return;
@@ -102,5 +113,6 @@ void Player::onEvent(PickCommandEvent &e) {
 
 void Player::onEvent(EquipCommandEvent &e) {
     if (e.item == nullptr) return;
-    equip(e.item);
+    fmt::print("Equipment equip: {} --> {}\n", e.item->type.name, e.slot->name);
+    equip(e.slot, e.item);
 }
