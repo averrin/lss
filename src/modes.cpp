@@ -18,6 +18,14 @@ std::optional<std::string> getDir(int code) {
     return "e";
   case KeyEvent::KEY_k:
     return "n";
+  case KeyEvent::KEY_y:
+    return "nw";
+  case KeyEvent::KEY_u:
+    return "ne";
+  case KeyEvent::KEY_b:
+    return "sw";
+  case KeyEvent::KEY_n:
+    return "se";
   }
   return std::nullopt;
 }
@@ -62,18 +70,18 @@ bool ObjectSelectMode::processKey(KeyEvent event) {
 bool NormalMode::processKey(KeyEvent event) {
 
   switch (event.getCode()) {
-  case KeyEvent::KEY_k:
-    app->processCommand("move n");
-    break;
-  case KeyEvent::KEY_l:
-    app->processCommand("e");
-    break;
   case KeyEvent::KEY_j:
-    app->processCommand("m s");
-    break;
   case KeyEvent::KEY_h:
-    app->processCommand("w");
-    break;
+  case KeyEvent::KEY_l:
+  case KeyEvent::KEY_k:
+  case KeyEvent::KEY_y:
+  case KeyEvent::KEY_u:
+  case KeyEvent::KEY_b:
+  case KeyEvent::KEY_n:{
+    auto d = getDir(event.getCode());
+    if (d == std::nullopt) break;
+    app->processCommand(*d);
+    }break;
   case KeyEvent::KEY_q:
     app->processCommand("q");
     break;

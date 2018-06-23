@@ -13,11 +13,18 @@
 
 ## Controls
 * q — quit [/quit, /q]
-* hjkl — move [/m, /move, /n, /e, /s, /w, /nw, /ne, /se, /sw]
+* yuhjklbn — move [/m, /move, /n, /e, /s, /w, /nw, /ne, /se, /sw]
+```
+   y k u
+    \|/ 
+   h-.-l
+    /|\ 
+   b j n
+```
 * / — insert mode
-* d[hjkl] — dig [/dig, /d]
-* a[hjkl] — attack [/attack, /a]
-* w[hjkl] — walk until obstacle [/walk]
+* d[yuhjklbn] — dig [/dig, /d]
+* a[yuhjklbn] — attack [/attack, /a]
+* w[yuhjklbn] — walk until obstacle [/walk]
 * p — pick [/pick, /p]
 * e — equip [/equip, /eq]
 
