@@ -1,7 +1,7 @@
 #ifndef __ITEMSPEC_H_
 #define __ITEMSPEC_H_
-#include <string>
 #include "lss/game/wearableType.hpp"
+#include <string>
 
 struct ItemSpec {
 public:
@@ -23,8 +23,6 @@ ItemSpec const ROCK = {"rock", false};
 ItemSpec const PICK_AXE = {"pick axe", true, WearableType::WEAPON_TWOHANDED};
 ItemSpec const SWORD = {"rusty sword", true, WearableType::WEAPON};
 ItemSpec const GOLD_RING = {"gold ring", true, WearableType::RING};
-};
-
-
+}; // namespace ItemType
 
 #endif // __ITEMSPEC_H_

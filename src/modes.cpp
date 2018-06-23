@@ -77,11 +77,12 @@ bool NormalMode::processKey(KeyEvent event) {
   case KeyEvent::KEY_y:
   case KeyEvent::KEY_u:
   case KeyEvent::KEY_b:
-  case KeyEvent::KEY_n:{
+  case KeyEvent::KEY_n: {
     auto d = getDir(event.getCode());
-    if (d == std::nullopt) break;
+    if (d == std::nullopt)
+      break;
     app->processCommand(*d);
-    }break;
+  } break;
   case KeyEvent::KEY_q:
     app->processCommand("q");
     break;
@@ -170,11 +171,9 @@ void ObjectSelectMode::render(std::shared_ptr<State> state) {
   for (auto o : objects) {
     state->appendContent(F("    "));
     state->appendContent(F(formatter(o)));
-    state->appendContent(
-      std::make_shared<Fragment>(
+    state->appendContent(std::make_shared<Fragment>(
         " [<span color='{{blue}}' weight='bold'>{{letter}}</span>]",
-        std::map<std::string, tpl_arg>{{"letter", std::string{letters[n]}}}
-      ));
+        std::map<std::string, tpl_arg>{{"letter", std::string{letters[n]}}}));
     state->appendContent(State::END_LINE);
     n++;
   }

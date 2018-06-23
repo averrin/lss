@@ -17,10 +17,12 @@ Player::Player() : Creature() {
 
   equipment = std::make_shared<Equipment>();
   equipment->slots = {
-        std::make_shared<Slot>("Right hand", std::vector<WearableType>{WEAPON, WEAPON_TWOHANDED, SHIELD}),
-        std::make_shared<Slot>("Left hand", std::vector<WearableType>{WEAPON, SHIELD}),
-        std::make_shared<Slot>("Right ring", std::vector<WearableType>{RING})
-  };
+      std::make_shared<Slot>(
+          "Right hand",
+          std::vector<WearableType>{WEAPON, WEAPON_TWOHANDED, SHIELD}),
+      std::make_shared<Slot>("Left hand",
+                             std::vector<WearableType>{WEAPON, SHIELD}),
+      std::make_shared<Slot>("Right ring", std::vector<WearableType>{RING})};
 
   hp = 20;
   damage = 5;
@@ -38,7 +40,7 @@ bool Player::unequip(std::shared_ptr<Slot> slot) {
   }
   equipment->unequip(slot);
   return true;
-  }
+}
 
 bool Player::equip(std::shared_ptr<Slot> slot, std::shared_ptr<Item> item) {
   // auto ptr = shared_from_this();
@@ -119,11 +121,10 @@ void Player::onEvent(PickCommandEvent &e) {
 }
 
 void Player::onEvent(EquipCommandEvent &e) {
-    if (e.item == nullptr) return;
-    fmt::print("Equipment equip: {} --> {}\n", e.item->type.name, e.slot->name);
-    equip(e.slot, e.item);
+  if (e.item == nullptr)
+    return;
+  fmt::print("Equipment equip: {} --> {}\n", e.item->type.name, e.slot->name);
+  equip(e.slot, e.item);
 }
 
-void Player::onEvent(UnEquipCommandEvent &e) {
-    unequip(e.slot);
-}
+void Player::onEvent(UnEquipCommandEvent &e) { unequip(e.slot); }

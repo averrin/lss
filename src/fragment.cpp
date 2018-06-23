@@ -44,18 +44,14 @@ std::string Fragment::render(State *state) {
 }
 
 std::map<ItemSpec, std::string> itemSigns = {
-    {ItemType::CORPSE, "%"},
-    {ItemType::ROCK, "*"},
-    {ItemType::PICK_AXE, "("},
-    {ItemType::SWORD, "("},
+    {ItemType::CORPSE, "%"},    {ItemType::ROCK, "*"},
+    {ItemType::PICK_AXE, "("},  {ItemType::SWORD, "("},
     {ItemType::GOLD_RING, "="},
 };
 
 std::map<ItemSpec, std::string> itemColors = {
-    {ItemType::CORPSE, "red"},
-    {ItemType::ROCK, "gray"},
-    {ItemType::PICK_AXE, "white"},
-    {ItemType::SWORD, "orange"},
+    {ItemType::CORPSE, "red"},       {ItemType::ROCK, "gray"},
+    {ItemType::PICK_AXE, "white"},   {ItemType::SWORD, "orange"},
     {ItemType::GOLD_RING, "yellow"},
 };
 

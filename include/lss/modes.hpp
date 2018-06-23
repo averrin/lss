@@ -1,7 +1,7 @@
 #ifndef __MODES_H_
 #define __MODES_H_
-#include <memory>
 #include <functional>
+#include <memory>
 
 #include "cinder/app/App.h"
 
@@ -149,21 +149,13 @@ class ObjectSelectMode : public Mode {
 public:
   ObjectSelectMode(LSSApp *app) : Mode(app){};
   bool processKey(KeyEvent e);
-  void setHeader(std::shared_ptr<Fragment> h) {
-    header = h;
-  }
-  void setObjects(Objects o) {
-    objects = o;
-  }
-  void setFormatter(Formatter f) {
-    formatter = f;
-  };
-  void setCallback(SelectCallback c) {
-    callback = c;
-  };
+  void setHeader(std::shared_ptr<Fragment> h) { header = h; }
+  void setObjects(Objects o) { objects = o; }
+  void setFormatter(Formatter f) { formatter = f; };
+  void setCallback(SelectCallback c) { callback = c; };
 
   void render(std::shared_ptr<State>);
-    
+
   std::shared_ptr<Fragment> header;
   Objects objects;
   Formatter formatter;

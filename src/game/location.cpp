@@ -13,7 +13,7 @@ void Location::onEvent(EnemyDiedEvent &e) {
   if (auto enemy = std::dynamic_pointer_cast<Enemy>(sender)) {
     auto item = enemy->drop();
     if (item != std::nullopt) {
-        objects.push_back(*item);
+      objects.push_back(*item);
     }
   }
   objects.erase(std::remove(objects.begin(), objects.end(), sender),

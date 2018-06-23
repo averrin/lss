@@ -11,5 +11,4 @@ public:
   bool unequip(std::shared_ptr<Slot>);
 };
 
-
 #endif // __EQUIPMENT_H_

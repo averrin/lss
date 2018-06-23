@@ -1,8 +1,8 @@
 #ifndef __ITEM_H_
 #define __ITEM_H_
-#include "lss/game/object.hpp"
 #include "lss/game/effect.hpp"
 #include "lss/game/itemSpec.hpp"
+#include "lss/game/object.hpp"
 
 #include "fmt/ostream.h"
 

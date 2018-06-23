@@ -5,8 +5,8 @@
 #include "Event.hpp"
 #include "EventBus.hpp"
 #include "lss/game/creature.hpp"
-#include "lss/game/item.hpp"
 #include "lss/game/effect.hpp"
+#include "lss/game/item.hpp"
 
 struct EnemySpec {
 public:
@@ -23,11 +23,13 @@ public:
 
 namespace EnemyType {
 EnemySpec const GOBLIN = {"goblin", 0.5, 5, 1};
-EnemySpec const ORK = {"ork", 1, 15, 1, Items{std::make_shared<Item>(ItemType::CORPSE)}};
-EnemySpec const PIXI = {"pixi", 2, 1, 1,
-                        Items{std::make_shared<Item>(ItemType::GOLD_RING,
-                                                    Effects{std::make_shared<SpeedModifier>(1)})}};
-}
+EnemySpec const ORK = {"ork", 1, 15, 1,
+                       Items{std::make_shared<Item>(ItemType::CORPSE)}};
+EnemySpec const PIXI = {
+    "pixi", 2, 1, 1,
+    Items{std::make_shared<Item>(ItemType::GOLD_RING,
+                                 Effects{std::make_shared<SpeedModifier>(1)})}};
+} // namespace EnemyType
 
 class Enemy : public Creature, public eb::EventHandler<CommitEvent> {
 public:

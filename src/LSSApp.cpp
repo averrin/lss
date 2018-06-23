@@ -91,7 +91,9 @@ bool LSSApp::slotCallback(std::shared_ptr<Object> o) {
       }
     }
     return fmt::format("{}{}", item->type.name,
-                 item->effects.size() == 0 ? "" : fmt::format(" {{{}}}", join_s(effects," ,")));
+                       item->effects.size() == 0
+                           ? ""
+                           : fmt::format(" {{{}}}", join_s(effects, " ,")));
   };
   objectSelectMode->setFormatter(formatter);
 
@@ -124,12 +126,14 @@ void LSSApp::onEvent(EquipCommandEvent &e) {
     std::vector<std::string> effects;
     std::string effect = "";
     if (slot->item != nullptr) {
-        if (slot->item->effects.size() != 0) {
-            for (auto e : slot->item->effects) {
-                effects.push_back(e->getTitle());
-            }
+      if (slot->item->effects.size() != 0) {
+        for (auto e : slot->item->effects) {
+          effects.push_back(e->getTitle());
         }
-        effect = slot->item->effects.size() == 0 ? "" : fmt::format(" {{{}}}", join_s(effects," ,"));
+      }
+      effect = slot->item->effects.size() == 0
+                   ? ""
+                   : fmt::format(" {{{}}}", join_s(effects, " ,"));
     }
 
     return fmt::format("{} — {}{}", slot->name,

@@ -3,8 +3,8 @@
 #include <memory>
 
 #include "lss/game/creature.hpp"
-#include "lss/game/item.hpp"
 #include "lss/game/equipment.hpp"
+#include "lss/game/item.hpp"
 
 typedef std::vector<std::shared_ptr<Item>> Items;
 

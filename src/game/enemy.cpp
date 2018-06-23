@@ -12,7 +12,8 @@ Enemy::~Enemy() { registration->removeHandler(); }
 
 std::optional<std::shared_ptr<Item>> Enemy::drop() {
   // auto item = std::make_shared<Item>(ItemType::CORPSE);
-  if (type.loot.size() == 0) return std::nullopt;
+  if (type.loot.size() == 0)
+    return std::nullopt;
   auto item = type.loot.front();
   item->currentCell = currentCell;
   return item;
