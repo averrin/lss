@@ -16,6 +16,7 @@ Yet another undinished roguelike game.
 ## Controls
 * / — insert mode
 * q — quit [`/quit`, `/q`]
+* ? — help [`/help`, `/h`]
 * yuhjklbn — move [`/m`, `/move`, `/n`, `/e`, `/s`, `/w`, `/nw`, `/ne`, `/se`, `/sw`]
 ```
    y k u
@@ -29,4 +30,5 @@ Yet another undinished roguelike game.
 * w[yuhjklbn] — walk until obstacle [`/walk`]
 * p — pick [`/pick`, `/p`]
 * e — equip [`/equip`, `/eq`]
+* i — quip inventory[`/inventory`, `/i`]
 

@@ -94,6 +94,7 @@ const Fragments State::HELP = {
     F("## Controls<br>"
       "* / — insert mode<br>"
       "* q — quit [`/quit`, `/q`]<br>"
+      "* ? — help [`/help`, `/h`]<br>"
       "* yuhjklbn — move [`/m`, `/move`, `/n`, `/e`, `/s`, `/w`, `/nw`, `/ne`, "
       "`/se`, `/sw`]<br>"
       "```<br>"
@@ -107,4 +108,6 @@ const Fragments State::HELP = {
       "* a[yuhjklbn] — attack [`/attack`, `/a`]<br>"
       "* w[yuhjklbn] — walk until obstacle [`/walk`]<br>"
       "* p — pick [`/pick`, `/p`]<br>"
-      "* e — equip [`/equip`, `/eq`]<br>")};
+      "* e — equip [`/equip`, `/eq`]<br>"
+      "* i — inventory [`/inventory`, `/i`]<br>"
+    )};
