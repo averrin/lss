@@ -23,15 +23,25 @@ public:
   }
 };
 
+// clang-format off
 namespace EnemyType {
-EnemySpec const GOBLIN = {"goblin", 0.5, 5, 1, 3, 0, Items{std::make_shared<Item>(ItemType::GOLD_COINS, 200)}};
-EnemySpec const ORK = {"ork", 1, 15, 1, 6, 1,
-                       Items{std::make_shared<Item>(ItemType::CORPSE)}};
+EnemySpec const GOBLIN = {
+    "goblin",
+    0.5, 5, 1, 3, 0,
+    Items{std::make_shared<Item>(ItemType::GOLD_COINS, 200)}};
+EnemySpec const ORK = {
+    "ork",
+    1, 15, 1, 6, 1,
+    Items{std::make_shared<Item>(ItemType::CORPSE)}};
 EnemySpec const PIXI = {
-    "pixi", 2, 1, 1, 2, 0,
-    Items{std::make_shared<Item>(ItemType::GOLD_RING,
-                                 Effects{std::make_shared<SpecialPostfix>("of lightning"), std::make_shared<SpeedModifier>(1)})}};
+    "pixi",
+    2, 1, 1, 2, 0,
+    Items{std::make_shared<Item>(
+        ItemType::GOLD_RING,
+        Effects{std::make_shared<SpecialPostfix>("of lightning"),
+                std::make_shared<SpeedModifier>(1)})}};
 } // namespace EnemyType
+// clang-format on
 
 class Enemy : public Creature, public eb::EventHandler<CommitEvent> {
 public:

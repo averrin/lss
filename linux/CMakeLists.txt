@@ -64,6 +64,7 @@ set( SRC_FILES
 	${SRC_DIR}/game/door.cpp
 
 	${SRC_DIR}/statusLine.cpp
+	${SRC_DIR}/eventReactor.cpp
 	${SRC_DIR}/LSSApp.cpp
     ${PANGO_BLOCK_SRC_DIR}/CinderPango.cpp
 )

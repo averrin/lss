@@ -3,6 +3,8 @@
 #include <memory>
 #include <vector>
 
+#include "fmt/format.h"
+
 class Player;
 class Effect {
 public:
@@ -37,7 +39,7 @@ public:
   SpecialPostfix(std::string n) : Effect(true), name(n){};
   void apply(Player *){};
   void undo(Player *){};
-  std::string getTitle() {return name;};
+  std::string getTitle() { return name; };
   std::string name;
 };
 
@@ -46,13 +48,14 @@ public:
   SpecialPrefix(std::string n) : Effect(true), name(n){};
   void apply(Player *){};
   void undo(Player *){};
-  std::string getTitle() {return name;};
+  std::string getTitle() { return name; };
   std::string name;
 };
 
 class MeleeDamage : public Effect {
 public:
-  MeleeDamage(int d, int e, int m) : Effect(true), modifier(m), dices(d), edges(e){};
+  MeleeDamage(int d, int e, int m)
+      : Effect(true), modifier(m), dices(d), edges(e){};
   void apply(Player *);
   void undo(Player *);
   std::string getTitle();

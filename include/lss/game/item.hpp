@@ -4,8 +4,6 @@
 #include "lss/game/itemSpec.hpp"
 #include "lss/game/object.hpp"
 
-#include "fmt/ostream.h"
-
 class Item : public Object {
 public:
   Item(ItemSpec);
@@ -20,11 +18,6 @@ public:
   bool interact(std::shared_ptr<Object>);
   std::string getTitle();
   std::string getFullTitle();
-
-  friend std::ostream &operator<<(std::ostream &os, const Item &item) {
-    os << item.type.name;
-    return os;
-  }
 };
 
 typedef std::vector<std::shared_ptr<Item>> Items;

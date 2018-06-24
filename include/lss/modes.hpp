@@ -25,7 +25,8 @@ struct modes {
       return e.key.getCode() == KeyEvent::KEY_SPACE;
     };
     auto is_esc = [](KeyPressedEvent e) {
-      return e.key.getCode() == KeyEvent::KEY_ESCAPE || e.key.getCode() == KeyEvent::KEY_z;
+      return e.key.getCode() == KeyEvent::KEY_ESCAPE ||
+             e.key.getCode() == KeyEvent::KEY_z;
     };
     auto is_insert = [](KeyPressedEvent e) {
       return e.key.getCode() == KeyEvent::KEY_SLASH && !e.key.isShiftDown();
@@ -127,9 +128,7 @@ private:
 class Mode {
 public:
   Mode(LSSApp *);
-  bool processKey(KeyEvent e) {
-    return false;
-  };
+  bool processKey(KeyEvent e) { return false; };
   bool activated = false;
 
 protected:
@@ -166,7 +165,8 @@ public:
   bool processKey(KeyEvent e);
 };
 
-typedef std::function<std::string(std::shared_ptr<Object>, std::string)> Formatter;
+typedef std::function<std::string(std::shared_ptr<Object>, std::string)>
+    Formatter;
 typedef std::function<bool(std::shared_ptr<Object>)> SelectCallback;
 
 class TextMode : public Mode {

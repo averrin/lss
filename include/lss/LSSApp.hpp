@@ -23,7 +23,6 @@
 
 #include "lss/game/door.hpp"
 #include "lss/game/enemy.hpp"
-#include "lss/game/events.hpp"
 #include "lss/game/player.hpp"
 
 #include "fmt/format.h"
@@ -36,13 +35,8 @@
 using namespace ci;
 using namespace ci::app;
 
-class LSSApp : public App,
-               public eb::EventHandler<eb::Event>,
-               public eb::EventHandler<EquipCommandEvent>,
-               public eb::EventHandler<DropCommandEvent>,
-               public eb::EventHandler<HelpCommandEvent>,
-               public eb::EventHandler<InventoryCommandEvent>,
-               public eb::EventHandler<QuitCommandEvent> {
+class EventReactor;
+class LSSApp : public App {
 public:
   void setup() override;
   void mouseDown(MouseEvent event) override;
@@ -61,6 +55,8 @@ public:
   kp::pango::CinderPangoRef inventoryFrame;
 
   ModeManager modeManager = ModeManager();
+  std::shared_ptr<EventReactor> reactor;
+
   std::shared_ptr<NormalMode> normalMode;
   std::shared_ptr<DirectionMode> directionMode;
   std::shared_ptr<InsertMode> insertMode;
@@ -81,16 +77,6 @@ public:
 
   std::string typedCommand;
   std::string pendingCommand;
-
-  virtual void onEvent(eb::Event &e) override;
-  virtual void onEvent(QuitCommandEvent &e) override;
-  virtual void onEvent(EquipCommandEvent &e) override;
-  virtual void onEvent(HelpCommandEvent &e) override;
-  virtual void onEvent(InventoryCommandEvent &e) override;
-  virtual void onEvent(DropCommandEvent &e) override;
-
-  bool slotCallback(std::shared_ptr<Object>);
-  bool itemCallback(std::shared_ptr<Slot>, std::shared_ptr<Object>);
 };
 
 #endif // __LSSAPP_H_

@@ -8,6 +8,7 @@
 #include <utility>
 
 #include "lss/LSSApp.hpp"
+#include "lss/eventReactor.hpp"
 #include "lss/utils.hpp"
 
 using namespace ci;
@@ -20,166 +21,6 @@ int HOffset = 24;
 int VOffset = 24;
 // std::string DEFAULT_FONT = "Iosevka 14";
 std::string DEFAULT_FONT = "FiraCode 12";
-auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
-
-QuitCommandEvent::QuitCommandEvent() : CommandEvent(nullptr) {}
-std::optional<std::shared_ptr<CommandEvent>>
-QuitCommand::getEvent(std::string s) {
-  return std::make_shared<QuitCommandEvent>();
-}
-
-void LSSApp::onEvent(eb::Event &e) { invalidate(); }
-void LSSApp::onEvent(QuitCommandEvent &e) { exit(0); }
-
-void LSSApp::onEvent(HelpCommandEvent &e) {
-  helpMode->setHeader(State::HELP_HEADER.front());
-  helpMode->render(helpState);
-  modeManager.toHelp();
-  statusLine->setContent(State::text_mode);
-}
-void LSSApp::onEvent(InventoryCommandEvent &e) {
-  inventoryMode->setHeader(State::INVENTORY_HEADER.front());
-  inventoryMode->setObjects(utils::castObjects<Object>(hero->inventory));
-  inventoryMode->render(inventoryState);
-  modeManager.toInventory();
-  statusLine->setContent(State::text_mode);
-}
-
-void LSSApp::onEvent(DropCommandEvent &e) {
-  if (e.item != nullptr) return;
-
-  objectSelectMode->setHeader(F("Items to drop: "));
-
-  Items dropable(hero->inventory.size());
-  auto it = std::copy_if(
-      hero->inventory.begin(), hero->inventory.end(), dropable.begin(),
-      [](std::shared_ptr<Item> item) {
-        return !item->equipped;});
-
-  dropable.resize(std::distance(dropable.begin(), it));
-  objectSelectMode->setObjects(utils::castObjects<Object>(dropable));
-
-  Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
-    auto item = std::dynamic_pointer_cast<Item>(o);
-    return fmt::format("<span weight='bold'>{}</span> - {}", letter,
-                       item->getFullTitle());
-  };
-  objectSelectMode->setFormatter(formatter);
-
-  objectSelectMode->setCallback(
-      [&](std::shared_ptr<Object> o) {
-        auto item = std::dynamic_pointer_cast<Item>(o);
-        auto e = std::make_shared<DropCommandEvent>(item);
-        eb::EventBus::FireEvent(*e);
-        modeManager.toNormal();
-        return true;
-      });
-
-  objectSelectMode->render(objectSelectState);
-  modeManager.toObjectSelect();
-}
-
-bool LSSApp::slotCallback(std::shared_ptr<Object> o) {
-  auto slot = std::dynamic_pointer_cast<Slot>(o);
-  fmt::print("Selected slot: {}\n", slot->name);
-
-  if (std::find_if(hero->inventory.begin(), hero->inventory.end(),
-                   [slot](std::shared_ptr<Item> item) {
-                     return item->type.equipable &&
-                            std::find(slot->acceptTypes.begin(),
-                                      slot->acceptTypes.end(),
-                                      item->type.wearableType) !=
-                                slot->acceptTypes.end();
-                   }) == hero->inventory.end()) {
-    return false;
-  }
-
-  if (slot->item != nullptr) {
-    auto e = std::make_shared<UnEquipCommandEvent>(slot);
-    eb::EventBus::FireEvent(*e);
-    objectSelectMode->render(objectSelectState);
-    return true;
-  }
-
-  objectSelectMode->setHeader(F("Items to equip: "));
-
-  Items equipable(hero->inventory.size());
-  auto it = std::copy_if(
-      hero->inventory.begin(), hero->inventory.end(), equipable.begin(),
-      [slot](std::shared_ptr<Item> item) {
-        return !item->equipped && item->type.equipable &&
-               std::find(slot->acceptTypes.begin(), slot->acceptTypes.end(),
-                         item->type.wearableType) != slot->acceptTypes.end();
-      });
-
-  equipable.resize(std::distance(equipable.begin(), it));
-  objectSelectMode->setObjects(utils::castObjects<Object>(equipable));
-
-  Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
-    auto item = std::dynamic_pointer_cast<Item>(o);
-    return fmt::format("<span weight='bold'>{}</span> - {}", letter,
-                       item->getFullTitle());
-  };
-  objectSelectMode->setFormatter(formatter);
-
-  objectSelectMode->setCallback(
-      [=](std::shared_ptr<Object> o) { return itemCallback(slot, o); });
-
-  objectSelectMode->render(objectSelectState);
-  return true;
-}
-
-bool LSSApp::itemCallback(std::shared_ptr<Slot> slot,
-                          std::shared_ptr<Object> o) {
-  auto item = std::dynamic_pointer_cast<Item>(o);
-
-  auto e = std::make_shared<EquipCommandEvent>(slot, item);
-  eb::EventBus::FireEvent(*e);
-
-  e = std::make_shared<EquipCommandEvent>();
-  eb::EventBus::FireEvent(*e);
-  return true;
-}
-
-void LSSApp::onEvent(EquipCommandEvent &e) {
-  if (e.item != nullptr)
-    return;
-
-  objectSelectMode->setHeader(F("Select slot: "));
-  objectSelectMode->setObjects(utils::castObjects<Object>(hero->equipment->slots));
-
-  Formatter formatter = [&](std::shared_ptr<Object> o, std::string letter) {
-    auto slot = std::dynamic_pointer_cast<Slot>(o);
-    bool have_items = true;
-    auto shortcut = fmt::format("<span weight='bold'>{}</span> -", letter);
-    if (std::find_if(hero->inventory.begin(), hero->inventory.end(),
-                     [slot](std::shared_ptr<Item> item) {
-                       return item->type.equipable &&
-                              std::find(slot->acceptTypes.begin(),
-                                        slot->acceptTypes.end(),
-                                        item->type.wearableType) !=
-                                  slot->acceptTypes.end();
-                     }) == hero->inventory.end()) {
-      shortcut = "   ";
-      have_items = false;
-    }
-
-    return fmt::format("<span color='{}'>{} {:16} :</span> {}",
-                       have_items ? "{{orange}}" : "gray", shortcut, slot->name,
-                       slot->item == nullptr
-                           ? (have_items ? "-" : "<span color='gray'>-</span>")
-                           : slot->item->getTitle());
-  };
-  objectSelectMode->setFormatter(formatter);
-
-  objectSelectMode->setCallback(
-      [&](std::shared_ptr<Object> o) { return slotCallback(o); });
-
-  objectSelectMode->render(objectSelectState);
-
-  modeManager.toObjectSelect();
-  statusLine->setContent(State::object_select_mode);
-}
 
 void LSSApp::setup() {
   srand(time(NULL));
@@ -344,6 +185,8 @@ void LSSApp::loadMap() {
 }
 
 void LSSApp::setListeners() {
+  reactor = std::make_shared<EventReactor>(this);
+
   eb::EventBus::AddHandler<EnemyDiedEvent>(*hero->currentLocation);
   eb::EventBus::AddHandler<ItemTakenEvent>(*hero->currentLocation);
   eb::EventBus::AddHandler<EnterCellEvent>(*hero->currentLocation, hero);
@@ -352,20 +195,13 @@ void LSSApp::setListeners() {
   eb::EventBus::AddHandler<ItemsFoundEvent>(*statusLine);
   eb::EventBus::AddHandler<MessageEvent>(*statusLine);
 
-  eb::EventBus::AddHandler<eb::Event>(*this);
-  eb::EventBus::AddHandler<QuitCommandEvent>(*this);
   eb::EventBus::AddHandler<PickCommandEvent>(*hero);
   eb::EventBus::AddHandler<DigCommandEvent>(*hero);
   eb::EventBus::AddHandler<AttackCommandEvent>(*hero);
-  eb::EventBus::AddHandler<EquipCommandEvent>(*this);
   eb::EventBus::AddHandler<EquipCommandEvent>(*hero);
   eb::EventBus::AddHandler<UnEquipCommandEvent>(*hero);
-  eb::EventBus::AddHandler<DropCommandEvent>(*this);
   eb::EventBus::AddHandler<DropCommandEvent>(*hero);
   eb::EventBus::AddHandler<DropEvent>(*hero->currentLocation);
-
-  eb::EventBus::AddHandler<HelpCommandEvent>(*this);
-  eb::EventBus::AddHandler<InventoryCommandEvent>(*this);
 
   eb::EventBus::AddHandler<DoorOpenedEvent>(*statusLine);
   eb::EventBus::AddHandler<EnemyDiedEvent>(*statusLine);

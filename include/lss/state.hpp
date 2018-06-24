@@ -36,6 +36,7 @@ public:
   static const Fragments HELP_HEADER;
   static const Fragments HELP;
   static const Fragments INVENTORY_HEADER;
+
 private:
   bool damaged = true;
   std::string cache;
