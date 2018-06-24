@@ -39,6 +39,7 @@ using namespace ci::app;
 class LSSApp : public App,
                public eb::EventHandler<eb::Event>,
                public eb::EventHandler<EquipCommandEvent>,
+               public eb::EventHandler<DropCommandEvent>,
                public eb::EventHandler<HelpCommandEvent>,
                public eb::EventHandler<InventoryCommandEvent>,
                public eb::EventHandler<QuitCommandEvent> {
@@ -86,6 +87,7 @@ public:
   virtual void onEvent(EquipCommandEvent &e) override;
   virtual void onEvent(HelpCommandEvent &e) override;
   virtual void onEvent(InventoryCommandEvent &e) override;
+  virtual void onEvent(DropCommandEvent &e) override;
 
   bool slotCallback(std::shared_ptr<Object>);
   bool itemCallback(std::shared_ptr<Slot>, std::shared_ptr<Object>);

@@ -70,4 +70,10 @@ public:
   std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
 };
 
+class DropCommand : public Command {
+public:
+  DropCommand();
+  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
+};
+
 #endif // __COMMAND_H_

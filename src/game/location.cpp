@@ -8,12 +8,19 @@
 
 Location::Location() {}
 
+void Location::onEvent(DropEvent &e) {
+  if (e.item == nullptr) return;
+  auto item = std::make_shared<Item>(*e.item);
+  item->currentCell = std::dynamic_pointer_cast<Creature>(e.getSender())->currentCell;
+  objects.push_back(item);
+}
+
 void Location::onEvent(EnemyDiedEvent &e) {
   auto sender = e.getSender();
   if (auto enemy = std::dynamic_pointer_cast<Enemy>(sender)) {
     auto item = enemy->drop();
     if (item != std::nullopt) {
-      objects.push_back(*item);
+      objects.push_back(std::make_shared<Item>(**item));
     }
   }
   objects.erase(std::remove(objects.begin(), objects.end(), sender),

@@ -98,9 +98,13 @@ bool NormalMode::processKey(KeyEvent event) {
     app->processCommand("p");
     break;
   case KeyEvent::KEY_d:
-    app->modeManager.toDirection();
-    app->pendingCommand = DigCommand().aliases.front();
-    app->statusLine->setContent({F("Dig: "), State::direction_mode.front()});
+    if (!event.isShiftDown()) {
+        app->modeManager.toDirection();
+        app->pendingCommand = DigCommand().aliases.front();
+        app->statusLine->setContent({F("Dig: "), State::direction_mode.front()});
+    } else {
+        app->processCommand("drop");
+    }
     break;
   case KeyEvent::KEY_a:
     app->modeManager.toDirection();
@@ -114,6 +118,7 @@ bool NormalMode::processKey(KeyEvent event) {
     break;
   case KeyEvent::KEY_e:
     app->processCommand("equip");
+    break;
     break;
   case KeyEvent::KEY_i:
     app->processCommand("inventory");
@@ -196,7 +201,7 @@ void InventoryMode::render(std::shared_ptr<State> state) {
         effects.push_back(e->getTitle());
       }
     }
-    state->appendContent(F(fmt::format("     - {}", item->getTitle())));
+    state->appendContent(F(fmt::format("     - {}", item->getFullTitle())));
     state->appendContent(State::END_LINE);
   }
 }

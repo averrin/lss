@@ -53,6 +53,7 @@ AttackCommand::AttackCommand() : Command({"attack", "a"s}) {}
 EquipCommand::EquipCommand() : Command({"equip", "eq"s}) {}
 HelpCommand::HelpCommand() : Command({"help", "h"s}) {}
 InventoryCommand::InventoryCommand() : Command({"inventory", "i"s}) {}
+DropCommand::DropCommand() : Command({"drop", "dr"s}) {}
 
 WalkCommandEvent::WalkCommandEvent(Direction d)
     : CommandEvent(nullptr), direction(d) {}
@@ -160,4 +161,12 @@ HelpCommand::getEvent(std::string s) {
 std::optional<std::shared_ptr<CommandEvent>>
 InventoryCommand::getEvent(std::string s) {
   return std::make_shared<InventoryCommandEvent>();
+}
+
+DropCommandEvent::DropCommandEvent() : CommandEvent(nullptr) {}
+DropCommandEvent::DropCommandEvent(std::shared_ptr<Item> i)
+    : CommandEvent(nullptr), item(i) {}
+std::optional<std::shared_ptr<CommandEvent>>
+DropCommand::getEvent(std::string s) {
+  return std::make_shared<DropCommandEvent>();
 }

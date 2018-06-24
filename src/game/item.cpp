@@ -20,6 +20,12 @@ std::string join_e(const T &array, const std::string &delimiter) {
   return res;
 }
 
+std::string Item::getFullTitle() {
+  return fmt::format("{}{}",
+        count == 0 ? "" : fmt::format("{} ", count), getTitle()
+    );
+}
+
 std::string Item::getTitle() {
   std::vector<std::string> effectNames;
   std::vector<std::string> specialNames;
@@ -37,7 +43,7 @@ std::string Item::getTitle() {
     }
   }
   return fmt::format(
-      "{}{}{}{}", count == 0 ? "" : fmt::format("{} ", count), type.name,
+      "{}{}{}", type.name,
       specialNames.size() == 0 ? ""
                                : fmt::format(" {}", join_e(specialNames, " ")),
       effectNames.size() == 0

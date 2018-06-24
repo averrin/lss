@@ -33,6 +33,12 @@ public:
   std::shared_ptr<Item> item;
 };
 
+class DropEvent : public eb::Event {
+public:
+  DropEvent(eb::ObjectPtr, std::shared_ptr<Item>);
+  std::shared_ptr<Item> item;
+};
+
 class LeaveCellEvent : public eb::Event {
 public:
   LeaveCellEvent(eb::ObjectPtr, std::shared_ptr<Cell>);
@@ -136,4 +142,10 @@ public:
   InventoryCommandEvent();
 };
 
+class DropCommandEvent : public CommandEvent {
+public:
+  DropCommandEvent(std::shared_ptr<Item>);
+  DropCommandEvent();
+  std::shared_ptr<Item> item;
+};
 #endif // __EVENTS_H_

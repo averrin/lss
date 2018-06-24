@@ -34,14 +34,14 @@ void StatusLine::onEvent(EnemyTakeDamageEvent &e) {
 void StatusLine::onEvent(EnemyDiedEvent &e) { setContent({F("Enemy died")}); }
 
 void StatusLine::onEvent(ItemTakenEvent &e) {
-  setContent({F(fmt::format("You take {}", e.item->getTitle()))});
+  setContent({F(fmt::format("You take {}", e.item->getFullTitle()))});
 }
 
 void StatusLine::onEvent(ItemsFoundEvent &e) {
   std::vector<std::string> itemNames;
   for (auto o : e.items) {
     auto item = std::dynamic_pointer_cast<Item>(o);
-    itemNames.push_back(item->getTitle());
+    itemNames.push_back(item->getFullTitle());
   }
   setContent({F(fmt::format("Here lies items: {}",
                             join(itemNames, std::string(", "))))});

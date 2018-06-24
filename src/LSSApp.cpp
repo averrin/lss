@@ -57,6 +57,40 @@ void LSSApp::onEvent(InventoryCommandEvent &e) {
   statusLine->setContent(State::text_mode);
 }
 
+void LSSApp::onEvent(DropCommandEvent &e) {
+  if (e.item != nullptr) return;
+
+  objectSelectMode->setHeader(F("Items to drop: "));
+
+  Items dropable(hero->inventory.size());
+  auto it = std::copy_if(
+      hero->inventory.begin(), hero->inventory.end(), dropable.begin(),
+      [](std::shared_ptr<Item> item) {
+        return !item->equipped;});
+
+  dropable.resize(std::distance(dropable.begin(), it));
+  objectSelectMode->setObjects(castObjects<Object>(dropable));
+
+  Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
+    auto item = std::dynamic_pointer_cast<Item>(o);
+    return fmt::format("<span weight='bold'>{}</span> - {}", letter,
+                       item->getFullTitle());
+  };
+  objectSelectMode->setFormatter(formatter);
+
+  objectSelectMode->setCallback(
+      [&](std::shared_ptr<Object> o) {
+        auto item = std::dynamic_pointer_cast<Item>(o);
+        auto e = std::make_shared<DropCommandEvent>(item);
+        eb::EventBus::FireEvent(*e);
+        modeManager.toNormal();
+        return true;
+      });
+
+  objectSelectMode->render(objectSelectState);
+  modeManager.toObjectSelect();
+}
+
 template <typename T>
 std::string join_s(const T &array, const std::string &delimiter) {
   std::string res;
@@ -110,7 +144,7 @@ bool LSSApp::slotCallback(std::shared_ptr<Object> o) {
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
     auto item = std::dynamic_pointer_cast<Item>(o);
     return fmt::format("<span weight='bold'>{}</span> - {}", letter,
-                       item->getTitle());
+                       item->getFullTitle());
   };
   objectSelectMode->setFormatter(formatter);
 
@@ -233,6 +267,7 @@ void LSSApp::setup() {
   commands.push_back(std::make_shared<EquipCommand>());
   commands.push_back(std::make_shared<HelpCommand>());
   commands.push_back(std::make_shared<InventoryCommand>());
+  commands.push_back(std::make_shared<DropCommand>());
 }
 
 std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Cell> c,
@@ -348,6 +383,9 @@ void LSSApp::setListeners() {
   eb::EventBus::AddHandler<EquipCommandEvent>(*this);
   eb::EventBus::AddHandler<EquipCommandEvent>(*hero);
   eb::EventBus::AddHandler<UnEquipCommandEvent>(*hero);
+  eb::EventBus::AddHandler<DropCommandEvent>(*this);
+  eb::EventBus::AddHandler<DropCommandEvent>(*hero);
+  eb::EventBus::AddHandler<DropEvent>(*hero->currentLocation);
 
   eb::EventBus::AddHandler<HelpCommandEvent>(*this);
   eb::EventBus::AddHandler<InventoryCommandEvent>(*this);
@@ -486,6 +524,8 @@ bool LSSApp::processCommand(std::string cmd) {
   } else if (auto e = dynamic_pointer_cast<HelpCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
   } else if (auto e = dynamic_pointer_cast<InventoryCommandEvent>(*event)) {
+    eb::EventBus::FireEvent(*e);
+  } else if (auto e = dynamic_pointer_cast<DropCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
   }
   invalidate();
