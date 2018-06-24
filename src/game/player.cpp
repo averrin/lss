@@ -83,9 +83,10 @@ bool Player::pick(std::shared_ptr<Item> item) {
   eb::EventBus::FireEvent(e);
 
   if (auto it = std::find_if(inventory.begin(), inventory.end(),
-                   [item](std::shared_ptr<Item> i) {
-                     return item->getTitle() == i->getTitle();
-                   }); it != inventory.end() && item != 0) {
+                             [item](std::shared_ptr<Item> i) {
+                               return item->getTitle() == i->getTitle();
+                             });
+      it != inventory.end() && item != 0) {
     (*it)->count += item->count;
   } else {
     inventory.push_back(item);
@@ -108,11 +109,13 @@ void Player::onEvent(AttackCommandEvent &e) {
 }
 
 void Player::onEvent(DropCommandEvent &e) {
-  if (e.item == nullptr) return;
+  if (e.item == nullptr)
+    return;
   fmt::print("drop in player\n");
-  inventory.erase(std::remove(inventory.begin(), inventory.end(), e.item), inventory.end());
-    DropEvent me(shared_from_this(), e.item);
-    eb::EventBus::FireEvent(me);
+  inventory.erase(std::remove(inventory.begin(), inventory.end(), e.item),
+                  inventory.end());
+  DropEvent me(shared_from_this(), e.item);
+  eb::EventBus::FireEvent(me);
   commit(200 / speed);
 }
 

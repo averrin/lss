@@ -3,12 +3,12 @@
 #include <iostream>
 #include <iterator>
 #include <ostream>
-#include <sstream>
 #include <stdio.h>
 #include <string>
 #include <utility>
 
 #include "lss/LSSApp.hpp"
+#include "lss/utils.hpp"
 
 using namespace ci;
 using namespace ci::app;
@@ -21,18 +21,6 @@ int VOffset = 24;
 // std::string DEFAULT_FONT = "Iosevka 14";
 std::string DEFAULT_FONT = "FiraCode 12";
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
-
-template <typename rT, typename iT>
-std::vector<std::shared_ptr<rT>>
-castObjects(std::vector<std::shared_ptr<iT>> input) {
-  std::vector<std::shared_ptr<rT>> result;
-  for (auto input_object : input) {
-    if (auto casted_object = std::dynamic_pointer_cast<rT>(input_object)) {
-      result.push_back(casted_object);
-    }
-  }
-  return result;
-}
 
 QuitCommandEvent::QuitCommandEvent() : CommandEvent(nullptr) {}
 std::optional<std::shared_ptr<CommandEvent>>
@@ -51,7 +39,7 @@ void LSSApp::onEvent(HelpCommandEvent &e) {
 }
 void LSSApp::onEvent(InventoryCommandEvent &e) {
   inventoryMode->setHeader(State::INVENTORY_HEADER.front());
-  inventoryMode->setObjects(castObjects<Object>(hero->inventory));
+  inventoryMode->setObjects(utils::castObjects<Object>(hero->inventory));
   inventoryMode->render(inventoryState);
   modeManager.toInventory();
   statusLine->setContent(State::text_mode);
@@ -69,7 +57,7 @@ void LSSApp::onEvent(DropCommandEvent &e) {
         return !item->equipped;});
 
   dropable.resize(std::distance(dropable.begin(), it));
-  objectSelectMode->setObjects(castObjects<Object>(dropable));
+  objectSelectMode->setObjects(utils::castObjects<Object>(dropable));
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
     auto item = std::dynamic_pointer_cast<Item>(o);
@@ -89,20 +77,6 @@ void LSSApp::onEvent(DropCommandEvent &e) {
 
   objectSelectMode->render(objectSelectState);
   modeManager.toObjectSelect();
-}
-
-template <typename T>
-std::string join_s(const T &array, const std::string &delimiter) {
-  std::string res;
-  for (auto &element : array) {
-    if (!res.empty()) {
-      res += delimiter;
-    }
-
-    res += element;
-  }
-
-  return res;
 }
 
 bool LSSApp::slotCallback(std::shared_ptr<Object> o) {
@@ -139,7 +113,7 @@ bool LSSApp::slotCallback(std::shared_ptr<Object> o) {
       });
 
   equipable.resize(std::distance(equipable.begin(), it));
-  objectSelectMode->setObjects(castObjects<Object>(equipable));
+  objectSelectMode->setObjects(utils::castObjects<Object>(equipable));
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
     auto item = std::dynamic_pointer_cast<Item>(o);
@@ -172,7 +146,7 @@ void LSSApp::onEvent(EquipCommandEvent &e) {
     return;
 
   objectSelectMode->setHeader(F("Select slot: "));
-  objectSelectMode->setObjects(castObjects<Object>(hero->equipment->slots));
+  objectSelectMode->setObjects(utils::castObjects<Object>(hero->equipment->slots));
 
   Formatter formatter = [&](std::shared_ptr<Object> o, std::string letter) {
     auto slot = std::dynamic_pointer_cast<Slot>(o);
@@ -487,19 +461,8 @@ void LSSApp::keyDown(KeyEvent event) {
   }
 }
 
-// TODO: to utils
-std::vector<std::string> split_command(std::string strToSplit, char delimeter) {
-  std::stringstream ss(strToSplit);
-  std::string item;
-  std::vector<std::string> splittedStrings;
-  while (std::getline(ss, item, delimeter)) {
-    splittedStrings.push_back(item);
-  }
-  return splittedStrings;
-}
-
 bool LSSApp::processCommand(std::string cmd) {
-  auto s = split_command(cmd, ' ').front();
+  auto s = utils::split(cmd, ' ').front();
   auto c = std::find_if(commands.begin(), commands.end(),
                         [s](std::shared_ptr<Command> c) {
                           return std::find(c->aliases.begin(), c->aliases.end(),

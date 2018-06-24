@@ -9,9 +9,11 @@
 Location::Location() {}
 
 void Location::onEvent(DropEvent &e) {
-  if (e.item == nullptr) return;
+  if (e.item == nullptr)
+    return;
   auto item = std::make_shared<Item>(*e.item);
-  item->currentCell = std::dynamic_pointer_cast<Creature>(e.getSender())->currentCell;
+  item->currentCell =
+      std::dynamic_pointer_cast<Creature>(e.getSender())->currentCell;
   objects.push_back(item);
 }
 
