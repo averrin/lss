@@ -191,21 +191,7 @@ void LSSApp::setListeners() {
   eb::EventBus::AddHandler<ItemTakenEvent>(*hero->currentLocation);
   eb::EventBus::AddHandler<EnterCellEvent>(*hero->currentLocation, hero);
   eb::EventBus::AddHandler<DigEvent>(*hero->currentLocation, hero);
-  eb::EventBus::AddHandler<ItemTakenEvent>(*statusLine);
-  eb::EventBus::AddHandler<ItemsFoundEvent>(*statusLine);
-  eb::EventBus::AddHandler<MessageEvent>(*statusLine);
-
-  eb::EventBus::AddHandler<PickCommandEvent>(*hero);
-  eb::EventBus::AddHandler<DigCommandEvent>(*hero);
-  eb::EventBus::AddHandler<AttackCommandEvent>(*hero);
-  eb::EventBus::AddHandler<EquipCommandEvent>(*hero);
-  eb::EventBus::AddHandler<UnEquipCommandEvent>(*hero);
-  eb::EventBus::AddHandler<DropCommandEvent>(*hero);
   eb::EventBus::AddHandler<DropEvent>(*hero->currentLocation);
-
-  eb::EventBus::AddHandler<DoorOpenedEvent>(*statusLine);
-  eb::EventBus::AddHandler<EnemyDiedEvent>(*statusLine);
-  eb::EventBus::AddHandler<EnemyTakeDamageEvent>(*statusLine);
 }
 
 void LSSApp::invalidate() {

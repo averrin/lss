@@ -1,8 +1,16 @@
 #include "lss/ui/statusLine.hpp"
+#include "lss/game/events.hpp"
 #include "lss/utils.hpp"
 #include "fmt/format.h"
 
-StatusLine::StatusLine(std::shared_ptr<State> s) : state(s){};
+StatusLine::StatusLine(std::shared_ptr<State> s) : state(s){
+  eb::EventBus::AddHandler<ItemTakenEvent>(*this);
+  eb::EventBus::AddHandler<ItemsFoundEvent>(*this);
+  eb::EventBus::AddHandler<MessageEvent>(*this);
+  eb::EventBus::AddHandler<DoorOpenedEvent>(*this);
+  eb::EventBus::AddHandler<EnemyDiedEvent>(*this);
+  eb::EventBus::AddHandler<EnemyTakeDamageEvent>(*this);
+};
 MessageEvent::MessageEvent(eb::ObjectPtr s, std::string m)
     : eb::Event(s), message(m) {}
 

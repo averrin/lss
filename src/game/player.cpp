@@ -16,6 +16,12 @@ DropEvent::DropEvent(eb::ObjectPtr s, std::shared_ptr<Item> i)
 Player::Player() : Creature() {
   eb::EventBus::AddHandler<MoveCommandEvent>(*this);
   eb::EventBus::AddHandler<WalkCommandEvent>(*this);
+  eb::EventBus::AddHandler<PickCommandEvent>(*this);
+  eb::EventBus::AddHandler<DigCommandEvent>(*this);
+  eb::EventBus::AddHandler<AttackCommandEvent>(*this);
+  eb::EventBus::AddHandler<EquipCommandEvent>(*this);
+  eb::EventBus::AddHandler<UnEquipCommandEvent>(*this);
+  eb::EventBus::AddHandler<DropCommandEvent>(*this);
 
   equipment = std::make_shared<Equipment>();
   equipment->slots = {
