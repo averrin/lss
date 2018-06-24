@@ -1,6 +1,7 @@
 #include "lss/game/enemy.hpp"
 #include "EventBus.hpp"
 #include "lss/game/player.hpp"
+#include "lss/utils.hpp"
 
 Enemy::Enemy(EnemySpec t) : Creature(), type(t) {
   hp = type.baseHP;
@@ -39,24 +40,68 @@ bool Enemy::interact(std::shared_ptr<Object> actor) {
   return hp > 0;
 }
 
+Direction getDirFromCell(std::shared_ptr<Cell> c, Cell *nc) {
+  if (nc->y < c->y) {
+    if (nc->x < c->x) {
+      return NW;
+    } else if (nc->x == c->x) {
+      return N;
+    } else {
+      return NE;
+    }
+  } else if (nc->y == c->y) {
+    if (nc->x < c->x) {
+      return W;
+    } else {
+      return E;
+    }
+  } else {
+    if (nc->x < c->x) {
+      return SW;
+    } else if (nc->x == c->x) {
+      return S;
+    } else {
+      return SE;
+    }
+  }
+};
+
 void Enemy::onEvent(CommitEvent &e) {
   actionPoints += e.actionPoints;
+
+  //TODO: add lastheropoint and attack hero if its near
   auto stepCost = 1000 / speed;
 
-  // fmt::print("{}\n", actionPoints);
+  auto pather = new micropather::MicroPather(currentLocation.get());
+  float totalCost = 0;
+  pather->Reset();
+  auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
+  int result = pather->Solve(currentCell.get(), hero->currentCell.get(), &path,
+                             &totalCost);
+  delete pather;
+  if (result != micropather::MicroPather::SOLVED) {
+    fmt::print("cannot find path\n");
+    actionPoints = 0;
+    return;
+  }
 
-  // TODO: solve endless cycle
+  auto i = 1;
+  auto nptr = path[i];
+  auto nc = static_cast<Cell *>(nptr);
+  auto cd = getDirFromCell(currentCell, nc);
+
   auto n = 0;
-  while (actionPoints >= stepCost && n != 2) {
-    if (!move(cd)) {
-      if (cd == Direction::W) {
-        cd = Direction::E;
-      } else {
-        cd = Direction::W;
+  while (actionPoints >= stepCost && n < 2) {
+    if (move(cd)) {
+      if (i < path.size() -1) {
+        i++;
+        nptr = path[i];
+        nc = static_cast<Cell *>(nptr);
+        cd = getDirFromCell(currentCell, nc);
       }
-      n++;
+    actionPoints -= stepCost;
     } else {
-      actionPoints -= stepCost;
+      n++;
     }
   }
 }

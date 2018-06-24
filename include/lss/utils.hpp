@@ -4,7 +4,9 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <optional>
 
+using namespace std::string_literals;
 
 class utils {
 public:
@@ -44,6 +46,57 @@ public:
     }
     return splittedStrings;
   }
+
+static std::optional<Direction> getDirectionByName(const std::string &dirString) {
+  if (dirString == "n"s) {
+    return Direction::N;
+  } else if (dirString == "e"s) {
+    return Direction::E;
+  } else if (dirString == "s"s) {
+    return Direction::S;
+  } else if (dirString == "w"s) {
+    return Direction::W;
+  } else if (dirString == "nw"s) {
+    return Direction::NW;
+  } else if (dirString == "ne"s) {
+    return Direction::NE;
+  } else if (dirString == "sw"s) {
+    return Direction::SW;
+  } else if (dirString == "se"s) {
+    return Direction::SE;
+  }
+  return std::nullopt;
+}
+
+static std::string getDirectionName(Direction dir) {
+  switch (dir) {
+  case N:
+      return "n"s;
+    break;
+  case E:
+      return "e"s;
+    break;
+  case S:
+      return "s"s;
+    break;
+  case W:
+      return "w"s;
+    break;
+  case NW:
+      return "nw"s;
+    break;
+  case NE:
+      return "ne"s;
+    break;
+  case SW:
+      return "sw"s;
+    break;
+  case SE:
+      return "se"s;
+    break;
+  }
+  return "";
+}
 };
 
 #endif // __UTILS_H_

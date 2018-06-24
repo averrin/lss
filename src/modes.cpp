@@ -99,11 +99,11 @@ bool NormalMode::processKey(KeyEvent event) {
     break;
   case KeyEvent::KEY_d:
     if (!event.isShiftDown()) {
-        app->modeManager.toDirection();
-        app->pendingCommand = DigCommand().aliases.front();
-        app->statusLine->setContent({F("Dig: "), State::direction_mode.front()});
+      app->modeManager.toDirection();
+      app->pendingCommand = DigCommand().aliases.front();
+      app->statusLine->setContent({F("Dig: "), State::direction_mode.front()});
     } else {
-        app->processCommand("drop");
+      app->processCommand("drop");
     }
     break;
   case KeyEvent::KEY_a:

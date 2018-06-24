@@ -53,17 +53,23 @@ void LSSApp::setup() {
   inventoryFrame->setMaxSize(getWindowWidth(),
                              getWindowHeight() - StatusLine::HEIGHT);
 
-  state = std::make_shared<State>();
-  statusState = std::make_shared<State>();
-  objectSelectState = std::make_shared<State>();
   normalMode = std::make_shared<NormalMode>(this);
+  state = std::make_shared<State>();
+
   directionMode = std::make_shared<DirectionMode>(this);
   insertMode = std::make_shared<InsertMode>(this);
+
   objectSelectMode = std::make_shared<ObjectSelectMode>(this);
+  objectSelectState = std::make_shared<State>();
+
   helpMode = std::make_shared<HelpMode>(this);
   helpState = std::make_shared<State>();
+
   inventoryMode = std::make_shared<InventoryMode>(this);
   inventoryState = std::make_shared<State>();
+
+  statusState = std::make_shared<State>();
+  statusLine = std::make_shared<StatusLine>(statusState);
 
   state->currentPalette = palettes::DARK;
   statusState->currentPalette = palettes::DARK;
@@ -71,12 +77,10 @@ void LSSApp::setup() {
   helpState->currentPalette = palettes::DARK;
   inventoryState->currentPalette = palettes::DARK;
 
-  statusLine = std::make_shared<StatusLine>(statusState);
   statusLine->setContent(State::normal_mode);
 
   loadMap();
   invalidate();
-
   setListeners();
 
   commands.push_back(std::make_shared<MoveCommand>());
@@ -229,8 +233,9 @@ void LSSApp::invalidate() {
 
   auto objects = hero->currentLocation->objects;
   std::sort(objects.begin(), objects.end(),
-           [] (std::shared_ptr<Object> a, std::shared_ptr<Object> b) {
-             return std::dynamic_pointer_cast<Creature>(b); });
+            [](std::shared_ptr<Object> a, std::shared_ptr<Object> b) {
+              return std::dynamic_pointer_cast<Creature>(b);
+            });
 
   for (auto o : objects) {
     auto ec = o->currentCell;
@@ -240,7 +245,17 @@ void LSSApp::invalidate() {
         ec->y * (hero->currentLocation->cells.front().size() + 1) + ec->x;
 
     if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
+
+      // unsigned size = e->path.size();
+      // for (int k = 0; k < size; ++k) {
+      //   auto ptr = e->path[k];
+      //   auto dot = static_cast<Cell *>(ptr);
+      //   auto i =
+      //       dot->y * (hero->currentLocation->cells.front().size() + 1) + dot->x;
+      //   state->fragments[i] = std::make_shared<ItemSign>(ItemType::ROCK);
+      // }
       state->fragments[index] = std::make_shared<EnemySign>(e->type);
+
     } else if (auto d = std::dynamic_pointer_cast<Door>(o)) {
       state->fragments[index] = std::make_shared<DoorSign>(d->opened);
     } else if (auto i = std::dynamic_pointer_cast<Item>(o)) {

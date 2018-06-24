@@ -7,7 +7,6 @@ Item::Item(ItemSpec t, Effects e) : Object(), type(t), effects(e){};
 
 bool Item::interact(std::shared_ptr<Object> actor) { return false; }
 
-
 std::string Item::getFullTitle() {
   return fmt::format("{}{}", count == 0 ? "" : fmt::format("{} ", count),
                      getTitle());
@@ -30,15 +29,16 @@ std::string Item::getTitle() {
       }
     }
   }
-  return fmt::format("{}{}{}{}",
-                     specialPrefix.size() == 0
-                         ? ""
-                         : fmt::format("{} ", utils::join(specialPrefix, " ")),
-                     type.name,
-                     specialPostfix.size() == 0
-                         ? ""
-                         : fmt::format(" {}", utils::join(specialPostfix, " ")),
-                     effectNames.size() == 0
-                         ? ""
-                         : fmt::format(" {{{}}}", utils::join(effectNames, " ,")));
+  return fmt::format(
+      "{}{}{}{}",
+      specialPrefix.size() == 0
+          ? ""
+          : fmt::format("{} ", utils::join(specialPrefix, " ")),
+      type.name,
+      specialPostfix.size() == 0
+          ? ""
+          : fmt::format(" {}", utils::join(specialPostfix, " ")),
+      effectNames.size() == 0
+          ? ""
+          : fmt::format(" {{{}}}", utils::join(effectNames, " ,")));
 }

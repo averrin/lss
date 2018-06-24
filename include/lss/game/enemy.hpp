@@ -7,6 +7,7 @@
 #include "lss/game/creature.hpp"
 #include "lss/game/effect.hpp"
 #include "lss/game/item.hpp"
+#include "micropather/micropather.h"
 
 struct EnemySpec {
 public:
@@ -54,6 +55,7 @@ public:
   Direction cd = Direction::W;
   int actionPoints = 0;
   EnemySpec type;
+  micropather::MPVector<void *> path;
 
   virtual void onEvent(CommitEvent &e) override;
 };

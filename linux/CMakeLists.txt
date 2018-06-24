@@ -16,6 +16,7 @@ get_filename_component( SMLINC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../include/sml/i
 get_filename_component( JNJ_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../include/Jinja2CppLight/src" ABSOLUTE )
 get_filename_component( BUS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../include/EventBus/src/event" ABSOLUTE )
 get_filename_component( FMT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../include/fmt" ABSOLUTE )
+get_filename_component( MP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../include/micropather" ABSOLUTE )
 
 if( NOT TARGET cinder${CINDER_LIB_SUFFIX} )
     find_package( cinder REQUIRED
@@ -43,6 +44,7 @@ set( SRC_FILES
     "${JNJ_DIR}/Jinja2CppLight.cpp"
 
 	${FMT_DIR}/src/format.cc
+    ${MP_DIR}/micropather.cpp
 
 	${SRC_DIR}/fragment.cpp
 	${SRC_DIR}/palette.cpp

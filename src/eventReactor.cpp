@@ -1,9 +1,9 @@
 #include "lss/eventReactor.hpp"
-#include "lss/utils.hpp"
 #include "lss/state.hpp"
+#include "lss/utils.hpp"
 
 std::shared_ptr<Fragment> F(std::string c) {
-    return std::make_shared<Fragment>(c);
+  return std::make_shared<Fragment>(c);
 }
 
 QuitCommandEvent::QuitCommandEvent() : CommandEvent(nullptr) {}
@@ -23,22 +23,24 @@ void EventReactor::onEvent(HelpCommandEvent &e) {
 }
 void EventReactor::onEvent(InventoryCommandEvent &e) {
   app->inventoryMode->setHeader(State::INVENTORY_HEADER.front());
-  app->inventoryMode->setObjects(utils::castObjects<Object>(app->hero->inventory));
+  app->inventoryMode->setObjects(
+      utils::castObjects<Object>(app->hero->inventory));
   app->inventoryMode->render(app->inventoryState);
   app->modeManager.toInventory();
   app->statusLine->setContent(State::text_mode);
 }
 
 void EventReactor::onEvent(DropCommandEvent &e) {
-  if (e.item != nullptr) return;
+  if (e.item != nullptr)
+    return;
 
   app->objectSelectMode->setHeader(F("Items to drop: "));
 
   Items dropable(app->hero->inventory.size());
-  auto it = std::copy_if(
-      app->hero->inventory.begin(), app->hero->inventory.end(), dropable.begin(),
-      [](std::shared_ptr<Item> item) {
-        return !item->equipped;});
+  auto it =
+      std::copy_if(app->hero->inventory.begin(), app->hero->inventory.end(),
+                   dropable.begin(),
+                   [](std::shared_ptr<Item> item) { return !item->equipped; });
 
   dropable.resize(std::distance(dropable.begin(), it));
   app->objectSelectMode->setObjects(utils::castObjects<Object>(dropable));
@@ -50,14 +52,13 @@ void EventReactor::onEvent(DropCommandEvent &e) {
   };
   app->objectSelectMode->setFormatter(formatter);
 
-  app->objectSelectMode->setCallback(
-      [&](std::shared_ptr<Object> o) {
-        auto item = std::dynamic_pointer_cast<Item>(o);
-        auto e = std::make_shared<DropCommandEvent>(item);
-        eb::EventBus::FireEvent(*e);
-        app->modeManager.toNormal();
-        return true;
-      });
+  app->objectSelectMode->setCallback([&](std::shared_ptr<Object> o) {
+    auto item = std::dynamic_pointer_cast<Item>(o);
+    auto e = std::make_shared<DropCommandEvent>(item);
+    eb::EventBus::FireEvent(*e);
+    app->modeManager.toNormal();
+    return true;
+  });
 
   app->objectSelectMode->render(app->objectSelectState);
   app->modeManager.toObjectSelect();
@@ -89,8 +90,8 @@ bool EventReactor::slotCallback(std::shared_ptr<Object> o) {
 
   Items equipable(app->hero->inventory.size());
   auto it = std::copy_if(
-      app->hero->inventory.begin(), app->hero->inventory.end(), equipable.begin(),
-      [slot](std::shared_ptr<Item> item) {
+      app->hero->inventory.begin(), app->hero->inventory.end(),
+      equipable.begin(), [slot](std::shared_ptr<Item> item) {
         return !item->equipped && item->type.equipable &&
                std::find(slot->acceptTypes.begin(), slot->acceptTypes.end(),
                          item->type.wearableType) != slot->acceptTypes.end();
@@ -114,7 +115,7 @@ bool EventReactor::slotCallback(std::shared_ptr<Object> o) {
 }
 
 bool EventReactor::itemCallback(std::shared_ptr<Slot> slot,
-                          std::shared_ptr<Object> o) {
+                                std::shared_ptr<Object> o) {
   auto item = std::dynamic_pointer_cast<Item>(o);
 
   auto e = std::make_shared<EquipCommandEvent>(slot, item);
@@ -130,7 +131,8 @@ void EventReactor::onEvent(EquipCommandEvent &e) {
     return;
 
   app->objectSelectMode->setHeader(F("Select slot: "));
-  app->objectSelectMode->setObjects(utils::castObjects<Object>(app->hero->equipment->slots));
+  app->objectSelectMode->setObjects(
+      utils::castObjects<Object>(app->hero->equipment->slots));
 
   Formatter formatter = [&](std::shared_ptr<Object> o, std::string letter) {
     auto slot = std::dynamic_pointer_cast<Slot>(o);
@@ -164,4 +166,3 @@ void EventReactor::onEvent(EquipCommandEvent &e) {
   app->modeManager.toObjectSelect();
   app->statusLine->setContent(State::object_select_mode);
 }
-

@@ -1,9 +1,9 @@
 #include "lss/ui/statusLine.hpp"
+#include "fmt/format.h"
 #include "lss/game/events.hpp"
 #include "lss/utils.hpp"
-#include "fmt/format.h"
 
-StatusLine::StatusLine(std::shared_ptr<State> s) : state(s){
+StatusLine::StatusLine(std::shared_ptr<State> s) : state(s) {
   eb::EventBus::AddHandler<ItemTakenEvent>(*this);
   eb::EventBus::AddHandler<ItemsFoundEvent>(*this);
   eb::EventBus::AddHandler<MessageEvent>(*this);
