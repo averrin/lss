@@ -32,9 +32,18 @@ public:
   float modifier;
 };
 
-class SpecialName : public Effect {
+class SpecialPostfix : public Effect {
 public:
-  SpecialName(std::string n) : Effect(true), name(n){};
+  SpecialPostfix(std::string n) : Effect(true), name(n){};
+  void apply(Player *){};
+  void undo(Player *){};
+  std::string getTitle() {return name;};
+  std::string name;
+};
+
+class SpecialPrefix : public Effect {
+public:
+  SpecialPrefix(std::string n) : Effect(true), name(n){};
   void apply(Player *){};
   void undo(Player *){};
   std::string getTitle() {return name;};

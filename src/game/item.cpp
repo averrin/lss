@@ -28,24 +28,29 @@ std::string Item::getFullTitle() {
 
 std::string Item::getTitle() {
   std::vector<std::string> effectNames;
-  std::vector<std::string> specialNames;
+  std::vector<std::string> specialPostfix;
+  std::vector<std::string> specialPrefix;
   if (effects.size() != 0) {
     // TODO: extract
     for (auto e : effects) {
-      if (e->special)
-        continue;
-      effectNames.push_back(e->getTitle());
-    }
-    for (auto e : effects) {
-      if (!e->special)
-        continue;
-      specialNames.push_back(e->getTitle());
+      if (std::dynamic_pointer_cast<SpecialPrefix>(e)) {
+            specialPrefix.push_back(e->getTitle());
+      } else if (std::dynamic_pointer_cast<SpecialPostfix>(e) || e->special) {
+            specialPostfix.push_back(e->getTitle());
+      } else {
+        if (e->special)
+            continue;
+        effectNames.push_back(e->getTitle());
+      }
     }
   }
   return fmt::format(
-      "{}{}{}", type.name,
-      specialNames.size() == 0 ? ""
-                               : fmt::format(" {}", join_e(specialNames, " ")),
+      "{}{}{}{}",
+      specialPrefix.size() == 0 ? ""
+                               : fmt::format("{} ", join_e(specialPrefix, " ")),
+      type.name,
+      specialPostfix.size() == 0 ? ""
+                               : fmt::format(" {}", join_e(specialPostfix, " ")),
       effectNames.size() == 0
           ? ""
           : fmt::format(" {{{}}}", join_e(effectNames, " ,")));

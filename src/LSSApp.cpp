@@ -250,6 +250,12 @@ void LSSApp::setup() {
   inventoryMode = std::make_shared<InventoryMode>(this);
   inventoryState = std::make_shared<State>();
 
+  state->currentPalette = palettes::DARK;
+  statusState->currentPalette = palettes::DARK;
+  objectSelectState->currentPalette = palettes::DARK;
+  helpState->currentPalette = palettes::DARK;
+  inventoryState->currentPalette = palettes::DARK;
+
   statusLine = std::make_shared<StatusLine>(statusState);
   statusLine->setContent(State::normal_mode);
 
@@ -343,11 +349,7 @@ void LSSApp::loadMap() {
     }
     dungeon_file.close();
   }
-  state->currentPalette = palettes::DARK;
-  statusState->currentPalette = palettes::DARK;
-  objectSelectState->currentPalette = palettes::DARK;
-  helpState->currentPalette = palettes::DARK;
-  inventoryState->currentPalette = palettes::DARK;
+
   hero->currentCell = hero->currentLocation->cells[15][30];
   hero->calcViewField();
   hero->currentLocation->updateView(hero);
@@ -357,7 +359,8 @@ void LSSApp::loadMap() {
   hero->currentLocation->objects.push_back(axe);
 
   auto sword = std::make_shared<Item>(
-      ItemType::SWORD, Effects{std::make_shared<MeleeDamage>(1, 6, 1),
+      ItemType::SWORD, Effects{std::make_shared<SpecialPrefix>("rusty"),
+                               std::make_shared<MeleeDamage>(1, 6, 1),
                                std::make_shared<HPModifier>(5)});
   sword->currentCell = hero->currentLocation->cells[15][32];
   hero->currentLocation->objects.push_back(sword);
@@ -428,7 +431,12 @@ void LSSApp::invalidate() {
     row++;
   }
 
-  for (auto o : hero->currentLocation->objects) {
+  auto objects = hero->currentLocation->objects;
+  std::sort(objects.begin(), objects.end(),
+           [] (std::shared_ptr<Object> a, std::shared_ptr<Object> b) {
+             return std::dynamic_pointer_cast<Creature>(b); });
+
+  for (auto o : objects) {
     auto ec = o->currentCell;
     if (!hero->canSee(ec))
       continue;

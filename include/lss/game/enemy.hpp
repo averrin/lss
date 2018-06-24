@@ -30,7 +30,7 @@ EnemySpec const ORK = {"ork", 1, 15, 1, 6, 1,
 EnemySpec const PIXI = {
     "pixi", 2, 1, 1, 2, 0,
     Items{std::make_shared<Item>(ItemType::GOLD_RING,
-                                 Effects{std::make_shared<SpecialName>("of lightning"), std::make_shared<SpeedModifier>(1)})}};
+                                 Effects{std::make_shared<SpecialPostfix>("of lightning"), std::make_shared<SpeedModifier>(1)})}};
 } // namespace EnemyType
 
 class Enemy : public Creature, public eb::EventHandler<CommitEvent> {

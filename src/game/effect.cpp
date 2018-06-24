@@ -28,5 +28,5 @@ void MeleeDamage::undo(Player *hero) {
 }
 
 std::string MeleeDamage::getTitle() {
-  return fmt::format("(+{}, {}d{})", dices, edges, modifier);
+  return fmt::format("(+{}, {}d{})", modifier, dices, edges);
 }
