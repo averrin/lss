@@ -104,7 +104,7 @@ const Fragments State::HELP = {F(
     "```<br>"
     "      y k u<br>"
     "       \\|/ <br>"
-    "      h-.-l<br>"
+    "      h-•-l<br>"
     "       /|\\ <br>"
     "      b j n<br>"
     "```<br>"
