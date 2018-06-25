@@ -1,4 +1,5 @@
 #include "lss/eventReactor.hpp"
+#include "lss/game/spell.hpp"
 #include "lss/state.hpp"
 #include "lss/utils.hpp"
 
@@ -168,4 +169,70 @@ void EventReactor::onEvent(EquipCommandEvent &e) {
 
   app->modeManager.toObjectSelect();
   app->statusLine->setContent(State::object_select_mode);
+}
+
+void EventReactor::onEvent(ZapCommandEvent &e) {
+  if (e.spell != nullptr)
+    return castSpell(e.spell);
+
+  app->objectSelectMode->setHeader(F("Spells for zap: "));
+
+  app->objectSelectMode->setObjects(utils::castObjects<Object>(
+      std::vector<std::shared_ptr<Spell>>{Spells::REVEAL, Spells::MONSTER_SENSE,
+                                          Spells::MONSTER_FREEZE,
+                                          Spells::SUMMON_ORK}));
+
+  Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
+    auto spell = std::dynamic_pointer_cast<Spell>(o);
+    return fmt::format("<span weight='bold'>{}</span> - {}", letter,
+                       spell->name);
+  };
+  app->objectSelectMode->setFormatter(formatter);
+
+  app->objectSelectMode->setCallback([&](std::shared_ptr<Object> o) {
+    auto spell = std::dynamic_pointer_cast<Spell>(o);
+    auto e = std::make_shared<ZapCommandEvent>(spell);
+    eb::EventBus::FireEvent(*e);
+    app->modeManager.toNormal();
+    return true;
+  });
+
+  app->objectSelectMode->render(app->objectSelectState);
+  app->modeManager.toObjectSelect();
+}
+
+std::shared_ptr<Enemy> mkEnemy(std::shared_ptr<Cell> c,
+                               std::shared_ptr<Player> hero, EnemySpec type) {
+  auto enemy = std::make_shared<Enemy>(type);
+  enemy->currentCell = c;
+  enemy->currentLocation = hero->currentLocation;
+  enemy->registration = eb::EventBus::AddHandler<CommitEvent>(*enemy, hero);
+  return enemy;
+}
+
+
+void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
+  if (spell == Spells::REVEAL) {
+    app->hero->currentLocation->reveal();
+    app->hero->monsterSense = true;
+    app->invalidate();
+    app->hero->monsterSense = false;
+  } else if (spell == Spells::MONSTER_SENSE) {
+    app->hero->monsterSense = !app->hero->monsterSense;
+    app->invalidate();
+  } else if (spell == Spells::MONSTER_FREEZE) {
+    for (auto o : app->hero->currentLocation->objects) {
+      if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
+        e->type.aiType = AIType::NONE;
+      }
+    }
+    app->statusLine->setContent({F("Enemy freezed!")});
+  } else if (spell == Spells::SUMMON_ORK) {
+    auto c =
+        app->hero->currentLocation
+            ->cells[app->hero->currentCell->y + 1][app->hero->currentCell->x];
+    app->hero->currentLocation->objects.push_back(
+        mkEnemy(c, app->hero, EnemyType::ORK));
+    app->invalidate();
+  }
 }

@@ -35,7 +35,7 @@ std::string Fragment::render(State *state) {
   tpl.setValue("wall_color_seen", state->currentPalette.wall_color_seen);
   tpl.setValue("hero_color", state->currentPalette.hero_color);
 
-  for (auto[key, value] : args) {
+  for (auto [key, value] : args) {
     std::visit([&](auto const &val) { tpl.setValue(key, val); }, value);
   }
 
@@ -48,16 +48,20 @@ std::map<ItemSpec, std::string> itemSigns = {
     {ItemType::CORPSE, "%"},    {ItemType::ROCK, "*"},
     {ItemType::PICK_AXE, "("},  {ItemType::SWORD, "("},
     {ItemType::GOLD_RING, "="}, {ItemType::GOLD_COINS, "$"},
+    {ItemType::DAGGER, "("},    {ItemType::TORCH, "]"},
 };
 
 std::map<ItemSpec, std::string> itemColors = {
-    {ItemType::CORPSE, "red"},       {ItemType::ROCK, "gray"},
-    {ItemType::PICK_AXE, "white"},   {ItemType::SWORD, "#F7CA88"},
-    {ItemType::GOLD_RING, "yellow"}, {ItemType::GOLD_COINS, "gold"},
+    {ItemType::CORPSE, "red"},     {ItemType::ROCK, "gray"},
+    {ItemType::PICK_AXE, "white"}, {ItemType::SWORD, "#F7CA88"},
+    {ItemType::GOLD_RING, "gold"}, {ItemType::GOLD_COINS, "gold"},
+    {ItemType::DAGGER, "gray"},    {ItemType::TORCH, "orange"},
 };
 
 std::map<EnemySpec, std::string> enemySigns = {
-    {EnemyType::GOBLIN, "g"}, {EnemyType::ORK, "o"}, {EnemyType::PIXI, "p"},
+    {EnemyType::GOBLIN, "g"},
+    {EnemyType::ORK, "o"},
+    {EnemyType::PIXI, "p"},
 };
 
 std::map<EnemySpec, std::string> enemyColors = {

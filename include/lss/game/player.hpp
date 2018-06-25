@@ -17,6 +17,8 @@ class Player : public Creature,
                public eb::EventHandler<EquipCommandEvent>,
                public eb::EventHandler<UnEquipCommandEvent>,
                public eb::EventHandler<DropCommandEvent>,
+               public eb::EventHandler<WaitCommandEvent>,
+               public eb::EventHandler<ZapCommandEvent>,
                public eb::EventHandler<PickCommandEvent> {
 public:
   Player();
@@ -41,6 +43,8 @@ public:
   virtual void onEvent(EquipCommandEvent &e) override;
   virtual void onEvent(UnEquipCommandEvent &e) override;
   virtual void onEvent(DropCommandEvent &e) override;
+  virtual void onEvent(WaitCommandEvent &e) override;
+  virtual void onEvent(ZapCommandEvent &e) override;
 };
 
 #endif // __PLAYER_H_

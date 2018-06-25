@@ -104,6 +104,8 @@ void LSSApp::setup() {
   commands.push_back(std::make_shared<HelpCommand>());
   commands.push_back(std::make_shared<InventoryCommand>());
   commands.push_back(std::make_shared<DropCommand>());
+  commands.push_back(std::make_shared<WaitCommand>());
+  commands.push_back(std::make_shared<ZapCommand>());
 }
 
 std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Cell> c,
@@ -352,6 +354,10 @@ bool LSSApp::processCommand(std::string cmd) {
   } else if (auto e = dynamic_pointer_cast<InventoryCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
   } else if (auto e = dynamic_pointer_cast<DropCommandEvent>(*event)) {
+    eb::EventBus::FireEvent(*e);
+  } else if (auto e = dynamic_pointer_cast<WaitCommandEvent>(*event)) {
+    eb::EventBus::FireEvent(*e);
+  } else if (auto e = dynamic_pointer_cast<ZapCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
   }
   invalidate();

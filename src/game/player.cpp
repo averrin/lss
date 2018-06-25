@@ -24,6 +24,8 @@ Player::Player() : Creature() {
   eb::EventBus::AddHandler<EquipCommandEvent>(*this);
   eb::EventBus::AddHandler<UnEquipCommandEvent>(*this);
   eb::EventBus::AddHandler<DropCommandEvent>(*this);
+  eb::EventBus::AddHandler<WaitCommandEvent>(*this);
+  eb::EventBus::AddHandler<ZapCommandEvent>(*this);
 
   equipment = std::make_shared<Equipment>();
   equipment->slots = {
@@ -182,6 +184,10 @@ void Player::onEvent(EquipCommandEvent &e) {
 }
 
 void Player::onEvent(UnEquipCommandEvent &e) { unequip(e.slot); }
+void Player::onEvent(WaitCommandEvent &e) { commit(ap_cost::STEP); }
+void Player::onEvent(ZapCommandEvent &e) {
+  if (e.spell == nullptr) return;
+}
 
 bool Player::interact(std::shared_ptr<Object> actor) {
   auto enemy = std::dynamic_pointer_cast<Enemy>(actor);

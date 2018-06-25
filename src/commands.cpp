@@ -22,6 +22,8 @@ EquipCommand::EquipCommand() : Command({"equip", "eq"s}) {}
 HelpCommand::HelpCommand() : Command({"help", "h"s}) {}
 InventoryCommand::InventoryCommand() : Command({"inventory", "i"s}) {}
 DropCommand::DropCommand() : Command({"drop", "dr"s}) {}
+WaitCommand::WaitCommand() : Command({"wait"}) {}
+ZapCommand::ZapCommand() : Command({"zap", "z"s}) {}
 
 WalkCommandEvent::WalkCommandEvent(Direction d)
     : CommandEvent(nullptr), direction(d) {}
@@ -137,4 +139,18 @@ DropCommandEvent::DropCommandEvent(std::shared_ptr<Item> i)
 std::optional<std::shared_ptr<CommandEvent>>
 DropCommand::getEvent(std::string s) {
   return std::make_shared<DropCommandEvent>();
+}
+
+ZapCommandEvent::ZapCommandEvent() : CommandEvent(nullptr) {}
+ZapCommandEvent::ZapCommandEvent(std::shared_ptr<Spell> i)
+    : CommandEvent(nullptr), spell(i) {}
+std::optional<std::shared_ptr<CommandEvent>>
+ZapCommand::getEvent(std::string s) {
+  return std::make_shared<ZapCommandEvent>();
+}
+
+WaitCommandEvent::WaitCommandEvent() : CommandEvent(nullptr) {}
+std::optional<std::shared_ptr<CommandEvent>>
+WaitCommand::getEvent(std::string s) {
+  return std::make_shared<WaitCommandEvent>();
 }

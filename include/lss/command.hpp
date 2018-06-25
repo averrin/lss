@@ -76,4 +76,16 @@ public:
   std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
 };
 
+class WaitCommand : public Command {
+public:
+  WaitCommand();
+  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
+};
+
+class ZapCommand : public Command {
+public:
+  ZapCommand();
+  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
+};
+
 #endif // __COMMAND_H_

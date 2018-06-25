@@ -11,6 +11,7 @@ typedef std::vector<std::shared_ptr<Object>> Objects;
 class Item;
 class Slot;
 class Cell;
+class Spell;
 class DoorOpenedEvent : public eb::Event {
 public:
   DoorOpenedEvent(eb::ObjectPtr);
@@ -147,5 +148,17 @@ public:
   DropCommandEvent(std::shared_ptr<Item>);
   DropCommandEvent();
   std::shared_ptr<Item> item;
+};
+
+class WaitCommandEvent : public CommandEvent {
+public:
+  WaitCommandEvent();
+};
+
+class ZapCommandEvent : public CommandEvent {
+public:
+  ZapCommandEvent(std::shared_ptr<Spell>);
+  ZapCommandEvent();
+  std::shared_ptr<Spell> spell;
 };
 #endif // __EVENTS_H_

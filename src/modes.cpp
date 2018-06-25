@@ -91,26 +91,8 @@ bool NormalMode::processKey(KeyEvent event) {
       break;
     app->processCommand(*d);
   } break;
-  case KeyEvent::KEY_r: // TODO: make it spell
-    app->hero->currentLocation->reveal();
-    app->hero->monsterSense = true;
-    app->invalidate();
-    app->hero->monsterSense = false;
-    break;
-  case KeyEvent::KEY_s: // TODO: make it spell
-    app->hero->monsterSense = !app->hero->monsterSense;
-    app->invalidate();
-    break;
-  case KeyEvent::KEY_f: // TODO: make it spell
-    for (auto o : app->hero->currentLocation->objects) {
-      if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
-        e->type.aiType = AIType::NONE;
-      }
-    }
-    app->statusLine->setContent({F("Enemy freezed!")});
-    break;
-  case KeyEvent::KEY_PERIOD: // TODO: make it command
-    app->hero->commit(500);
+  case KeyEvent::KEY_PERIOD:
+    app->processCommand("wait");
     app->invalidate();
     break;
   case KeyEvent::KEY_q:
@@ -145,6 +127,9 @@ bool NormalMode::processKey(KeyEvent event) {
     break;
   case KeyEvent::KEY_i:
     app->processCommand("inventory");
+    break;
+  case KeyEvent::KEY_z:
+    app->processCommand("zap");
     break;
   case KeyEvent::KEY_SLASH:
     if (event.isShiftDown()) {
