@@ -30,6 +30,8 @@ Yet another undinished roguelike game.
 * w[yuhjklbn] — walk until obstacle [`/walk`]
 * p or , — pick [`/pick`, `/p`]
 * e — equip [`/equip`, `/eq`]
+* shift+d — drop [`/drop`, `/dr`]
 * i — inventory [`/inventory`, `/i`]
-* . — wait (no command yet)
+* . — wait [`/wait`]
+* z — cast spell [`/zap`, `/z`]
 
