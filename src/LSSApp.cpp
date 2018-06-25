@@ -300,7 +300,8 @@ void LSSApp::keyDown(KeyEvent event) {
   if (modeManager.modeFlags->currentMode != Modes::INSERT) {
     typedCommand = "";
   }
-  if (modeManager.modeFlags->currentMode != prevMode) return;
+  if (modeManager.modeFlags->currentMode != prevMode)
+    return;
 
   switch (modeManager.modeFlags->currentMode) {
   case Modes::NORMAL:

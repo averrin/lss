@@ -19,11 +19,11 @@ Yet another undinished roguelike game.
 * ? — help [`/help`, `/h`]
 * yuhjklbn — move [`/m`, `/move`, `/n`, `/e`, `/s`, `/w`, `/nw`, `/ne`, `/se`, `/sw`]
 ```
-   y k u
-    \|/ 
-   h-.-l
-    /|\ 
-   b j n
+      y k u
+       \|/ 
+      h-⋅-l
+       /|\ 
+      b j n
 ```
 * d[yuhjklbn] — dig [`/dig`, `/d`]
 * a[yuhjklbn] — attack [`/attack`, `/a`]
