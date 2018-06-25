@@ -27,6 +27,7 @@
 
 #include "fmt/format.h"
 #include "lss/ui/statusLine.hpp"
+#include "lss/ui/heroLine.hpp"
 #include "rang.hpp"
 
 #include "EventBus.hpp"
@@ -53,6 +54,7 @@ public:
   kp::pango::CinderPangoRef objectSelectFrame;
   kp::pango::CinderPangoRef helpFrame;
   kp::pango::CinderPangoRef inventoryFrame;
+  kp::pango::CinderPangoRef heroFrame;
 
   ModeManager modeManager = ModeManager();
   std::shared_ptr<EventReactor> reactor;
@@ -65,11 +67,14 @@ public:
   std::shared_ptr<InventoryMode> inventoryMode;
 
   std::shared_ptr<StatusLine> statusLine;
+  std::shared_ptr<HeroLine> heroLine;
+
   std::shared_ptr<State> state;
   std::shared_ptr<State> statusState;
   std::shared_ptr<State> objectSelectState;
   std::shared_ptr<State> helpState;
   std::shared_ptr<State> inventoryState;
+  std::shared_ptr<State> heroState;
 
   std::shared_ptr<Player> hero;
 

@@ -25,6 +25,8 @@ std::string DEFAULT_FONT = "FiraCode 12";
 void LSSApp::setup() {
   srand(time(NULL));
   kp::pango::CinderPango::setTextRenderer(kp::pango::TextRenderer::FREETYPE);
+
+  /* Frames */
   gameFrame = kp::pango::CinderPango::create();
   gameFrame->setMinSize(800, 600);
   gameFrame->setMaxSize(getWindowWidth(),
@@ -53,6 +55,13 @@ void LSSApp::setup() {
   inventoryFrame->setMaxSize(getWindowWidth(),
                              getWindowHeight() - StatusLine::HEIGHT);
 
+  heroFrame = kp::pango::CinderPango::create();
+  heroFrame->setMinSize(getWindowWidth(),
+                        HeroLine::HEIGHT);
+  heroFrame->setMaxSize(getWindowWidth(),
+                        HeroLine::HEIGHT);
+
+  /* Modes && States */
   normalMode = std::make_shared<NormalMode>(this);
   state = std::make_shared<State>();
 
@@ -71,6 +80,9 @@ void LSSApp::setup() {
   statusState = std::make_shared<State>();
   statusLine = std::make_shared<StatusLine>(statusState);
 
+  heroState = std::make_shared<State>();
+  heroLine = std::make_shared<HeroLine>(heroState);
+
   state->currentPalette = palettes::DARK;
   statusState->currentPalette = palettes::DARK;
   objectSelectState->currentPalette = palettes::DARK;
@@ -83,6 +95,7 @@ void LSSApp::setup() {
   invalidate();
   setListeners();
 
+  /* Commands */
   commands.push_back(std::make_shared<MoveCommand>());
   commands.push_back(std::make_shared<QuitCommand>());
   commands.push_back(std::make_shared<PickCommand>());
@@ -186,6 +199,8 @@ void LSSApp::loadMap() {
 
   state->fragments.assign(
       n * (i + 1), std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false));
+
+  hero->commit(0);
 }
 
 void LSSApp::setListeners() {
@@ -366,6 +381,9 @@ void LSSApp::update() {
   if (statusFrame != nullptr) {
     statusState->render(statusFrame);
   }
+  if (heroFrame != nullptr) {
+    heroState->render(heroFrame);
+  }
 }
 
 void LSSApp::draw() {
@@ -409,6 +427,17 @@ void LSSApp::draw() {
     statusFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
     gl::draw(statusFrame->getTexture(),
              vec2(6, getWindowHeight() - StatusLine::HEIGHT + 6));
+  }
+
+  if (heroFrame != nullptr) {
+    gl::color(state->currentPalette.bgColor);
+    gl::drawSolidRect(Rectf(0, getWindowHeight() - StatusLine::HEIGHT - HeroLine::HEIGHT,
+                            getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT));
+    gl::color(ColorA(1, 1, 1, 1));
+    heroFrame->setDefaultTextColor(Color(state->currentPalette.fgColor));
+    heroFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
+    gl::draw(heroFrame->getTexture(),
+             vec2(6, getWindowHeight() - StatusLine::HEIGHT + 6 - HeroLine::HEIGHT));
   }
 
   gl::drawString(VERSION, vec2(getWindowWidth() - 120,
