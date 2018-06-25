@@ -295,11 +295,12 @@ void LSSApp::invalidate() {
 void LSSApp::mouseDown(MouseEvent event) {}
 
 void LSSApp::keyDown(KeyEvent event) {
-
+  auto prevMode = modeManager.modeFlags->currentMode;
   modeManager.processKey(event);
   if (modeManager.modeFlags->currentMode != Modes::INSERT) {
     typedCommand = "";
   }
+  if (modeManager.modeFlags->currentMode != prevMode) return;
 
   switch (modeManager.modeFlags->currentMode) {
   case Modes::NORMAL:

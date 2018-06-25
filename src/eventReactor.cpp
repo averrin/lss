@@ -199,6 +199,7 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
 
   app->objectSelectMode->render(app->objectSelectState);
   app->modeManager.toObjectSelect();
+  app->statusLine->setContent(State::text_mode);
 }
 
 std::shared_ptr<Enemy> mkEnemy(std::shared_ptr<Cell> c,

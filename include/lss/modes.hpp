@@ -27,6 +27,9 @@ struct modes {
       // return e.key.getCode() == KeyEvent::KEY_SPACE;
     };
     auto is_esc = [](KeyPressedEvent e) {
+      return e.key.getCode() == KeyEvent::KEY_ESCAPE;
+    };
+    auto is_esc_or_z = [](KeyPressedEvent e) {
       return e.key.getCode() == KeyEvent::KEY_ESCAPE ||
              e.key.getCode() == KeyEvent::KEY_z;
     };
@@ -93,8 +96,8 @@ struct modes {
             , "leader"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
             , "insert"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
             , "direction"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
-            , "object_select"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
-            , "inventory"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
+            , "object_select"_s + event<KeyPressedEvent> [is_esc_or_z] / set_normal  = "normal"_s
+            , "inventory"_s + event<KeyPressedEvent> [is_esc_or_z] / set_normal  = "normal"_s
             , "help"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
 
             , "insert"_s + event<KeyPressedEvent> [is_insert] / set_normal  = "normal"_s
