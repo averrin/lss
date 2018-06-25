@@ -223,6 +223,11 @@ void LSSApp::invalidate() {
       auto cc = hero->currentCell;
       auto f = state->fragments[index];
       switch (c->visibilityState) {
+      case VisibilityState::UNKNOWN:
+        if (hero->monsterSense && !std::dynamic_pointer_cast<CellSign>(state->fragments[index])) {
+            state->fragments[index] = std::make_shared<CellSign>(UNKNOWN_CELL, false);
+        }
+        break;
       case VisibilityState::SEEN:
         // if (auto cs =
         // std::dynamic_pointer_cast<CellSign>(state->fragments[index])) {
@@ -254,12 +259,12 @@ void LSSApp::invalidate() {
 
   for (auto o : objects) {
     auto ec = o->currentCell;
-    if (!hero->canSee(ec))
-      continue;
     auto index =
         ec->y * (hero->currentLocation->cells.front().size() + 1) + ec->x;
 
     if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
+        if (!hero->canSee(ec) && !hero->monsterSense)
+            continue;
 
       // unsigned size = e->path.size();
       // for (int k = 0; k < size; ++k) {
@@ -271,9 +276,9 @@ void LSSApp::invalidate() {
       // }
       state->fragments[index] = std::make_shared<EnemySign>(e->type);
 
-    } else if (auto d = std::dynamic_pointer_cast<Door>(o)) {
+    } else if (auto d = std::dynamic_pointer_cast<Door>(o); d && hero->canSee(ec)) {
       state->fragments[index] = std::make_shared<DoorSign>(d->opened);
-    } else if (auto i = std::dynamic_pointer_cast<Item>(o)) {
+    } else if (auto i = std::dynamic_pointer_cast<Item>(o); i && hero->canSee(ec)) {
       state->fragments[index] = std::make_shared<ItemSign>(i->type);
     }
   }

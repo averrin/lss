@@ -91,6 +91,14 @@ bool NormalMode::processKey(KeyEvent event) {
       break;
     app->processCommand(*d);
   } break;
+  case KeyEvent::KEY_r:
+    app->hero->currentLocation->reveal();
+    app->invalidate();
+    break;
+  case KeyEvent::KEY_s:
+    app->hero->monsterSense = !app->hero->monsterSense ;
+    app->invalidate();
+    break;
   case KeyEvent::KEY_PERIOD:
     app->hero->commit(500);
     app->invalidate();

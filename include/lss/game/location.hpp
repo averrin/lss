@@ -21,6 +21,7 @@ public:
   std::shared_ptr<Player> player;
 
   void updateView(std::shared_ptr<Player>);
+  void reveal();
 
   virtual void onEvent(EnemyDiedEvent &e) override;
   virtual void onEvent(ItemTakenEvent &e) override;

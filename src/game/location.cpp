@@ -35,6 +35,14 @@ void Location::onEvent(ItemTakenEvent &e) {
                 objects.end());
 }
 
+void Location::reveal() {
+  for (auto r : cells) {
+    for (auto c : r) {
+      c->visibilityState = VisibilityState::VISIBLE;
+    }
+  }
+};
+
 void Location::onEvent(DigEvent &e) {
   e.cell->type = CellType::FLOOR;
   e.cell->passThrough = true;
