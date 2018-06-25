@@ -20,6 +20,7 @@ void Location::onEvent(DropEvent &e) {
 void Location::onEvent(EnemyDiedEvent &e) {
   auto sender = e.getSender();
   if (auto enemy = std::dynamic_pointer_cast<Enemy>(sender)) {
+    enemy->currentCell->type = CellType::FLOOR_BLOOD;
     auto item = enemy->drop();
     if (item != std::nullopt) {
       objects.push_back(std::make_shared<Item>(**item));

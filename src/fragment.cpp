@@ -70,18 +70,21 @@ std::map<EnemySpec, std::string> enemyColors = {
 
 std::map<CellType, std::string> cellSigns = {
     {CellType::FLOOR, "⋅"s},
+    {CellType::FLOOR_BLOOD, "⋅"s},
     {CellType::WALL, "#"s},
     {CellType::UNKNOWN_CELL, " "s},
 };
 
 std::map<CellType, std::map<bool, std::string>> cellColors = {
     {CellType::FLOOR, {{false, "#555"}, {true, "#333"}}},
+    {CellType::FLOOR_BLOOD, {{false, "darkred"}, {true, "#333"}}},
     {CellType::WALL, {{false, "#aaa"}, {true, "#666"}}},
     {CellType::UNKNOWN_CELL, {{false, "#555"}, {true, "#777"}}},
 };
 
 std::map<CellType, std::map<bool, std::string>> cellWeights = {
     {CellType::FLOOR, {{false, "normal"}, {true, "normal"}}},
+    {CellType::FLOOR_BLOOD, {{false, "normal"}, {true, "normal"}}},
     {CellType::WALL, {{false, "bold"}, {true, "bold"}}},
     {CellType::UNKNOWN_CELL, {{false, "normal"}, {true, "normal"}}},
 };

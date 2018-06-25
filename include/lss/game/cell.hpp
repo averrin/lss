@@ -6,6 +6,7 @@
 enum CellType {
   UNKNOWN_CELL,
   FLOOR,
+  FLOOR_BLOOD,
   WALL,
 };
 

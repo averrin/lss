@@ -28,7 +28,7 @@ Yet another undinished roguelike game.
 * d[yuhjklbn] — dig [`/dig`, `/d`]
 * a[yuhjklbn] — attack [`/attack`, `/a`]
 * w[yuhjklbn] — walk until obstacle [`/walk`]
-* p — pick [`/pick`, `/p`]
+* p or , — pick [`/pick`, `/p`]
 * e — equip [`/equip`, `/eq`]
 * i — quip inventory[`/inventory`, `/i`]
 

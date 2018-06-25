@@ -92,10 +92,11 @@ bool NormalMode::processKey(KeyEvent event) {
     app->processCommand(*d);
   } break;
   case KeyEvent::KEY_q:
-    app->processCommand("q");
+    app->processCommand("quit");
     break;
   case KeyEvent::KEY_p:
-    app->processCommand("p");
+  case KeyEvent::KEY_COMMA:
+    app->processCommand("pick");
     break;
   case KeyEvent::KEY_d:
     if (!event.isShiftDown()) {
