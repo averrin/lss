@@ -67,10 +67,11 @@ Direction getDirFromCell(std::shared_ptr<Cell> c, Cell *nc) {
 };
 
 void Enemy::onEvent(CommitEvent &e) {
-  if (e.actionPoints == 0) return;
+  if (e.actionPoints == 0)
+    return;
   actionPoints += e.actionPoints;
 
-  //TODO: add lastheropoint and attack hero if its near
+  // TODO: add lastheropoint and attack hero if its near
   auto stepCost = 1000 / speed;
   auto attackCost = 500 / speed;
 
@@ -95,20 +96,20 @@ void Enemy::onEvent(CommitEvent &e) {
   auto n = 0;
   while (actionPoints >= stepCost && n < 2) {
     if (nc->x != hero->currentCell->x || nc->y != hero->currentCell->y) {
-        if (move(cd)) {
-            if (i < path.size() -1) {
-                i++;
-                nptr = path[i];
-                nc = static_cast<Cell *>(nptr);
-                cd = getDirFromCell(currentCell, nc);
-            }
-            actionPoints -= stepCost;
-        } else {
-            n++;
+      if (move(cd)) {
+        if (i < path.size() - 1) {
+          i++;
+          nptr = path[i];
+          nc = static_cast<Cell *>(nptr);
+          cd = getDirFromCell(currentCell, nc);
         }
+        actionPoints -= stepCost;
+      } else {
+        n++;
+      }
     } else {
-        attack(cd);
-        actionPoints -= attackCost;
+      attack(cd);
+      actionPoints -= attackCost;
     }
   }
 }

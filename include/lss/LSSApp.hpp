@@ -26,8 +26,8 @@
 #include "lss/game/player.hpp"
 
 #include "fmt/format.h"
-#include "lss/ui/statusLine.hpp"
 #include "lss/ui/heroLine.hpp"
+#include "lss/ui/statusLine.hpp"
 #include "rang.hpp"
 
 #include "EventBus.hpp"

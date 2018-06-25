@@ -35,7 +35,7 @@ std::string Fragment::render(State *state) {
   tpl.setValue("wall_color_seen", state->currentPalette.wall_color_seen);
   tpl.setValue("hero_color", state->currentPalette.hero_color);
 
-  for (auto [key, value] : args) {
+  for (auto[key, value] : args) {
     std::visit([&](auto const &val) { tpl.setValue(key, val); }, value);
   }
 
@@ -57,9 +57,7 @@ std::map<ItemSpec, std::string> itemColors = {
 };
 
 std::map<EnemySpec, std::string> enemySigns = {
-    {EnemyType::GOBLIN, "g"},
-    {EnemyType::ORK, "o"},
-    {EnemyType::PIXI, "p"},
+    {EnemyType::GOBLIN, "g"}, {EnemyType::ORK, "o"}, {EnemyType::PIXI, "p"},
 };
 
 std::map<EnemySpec, std::string> enemyColors = {

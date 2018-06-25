@@ -66,12 +66,14 @@ bool Creature::attack(Direction d) {
       [&](std::shared_ptr<Object> o) {
         return o->currentCell == nc && std::dynamic_pointer_cast<Creature>(o);
       });
-  if (opit == currentLocation->objects.end() && currentLocation->player->currentCell != nc) {
+  if (opit == currentLocation->objects.end() &&
+      currentLocation->player->currentCell != nc) {
     MessageEvent me(shared_from_this(), "There is no target.");
     eb::EventBus::FireEvent(me);
     return false;
   }
-  auto opponent = opit == currentLocation->objects.end() ? currentLocation->player : *opit;
+  auto opponent =
+      opit == currentLocation->objects.end() ? currentLocation->player : *opit;
   opponent->interact(shared_from_this());
   return true;
 }

@@ -56,10 +56,8 @@ void LSSApp::setup() {
                              getWindowHeight() - StatusLine::HEIGHT);
 
   heroFrame = kp::pango::CinderPango::create();
-  heroFrame->setMinSize(getWindowWidth(),
-                        HeroLine::HEIGHT);
-  heroFrame->setMaxSize(getWindowWidth(),
-                        HeroLine::HEIGHT);
+  heroFrame->setMinSize(getWindowWidth(), HeroLine::HEIGHT);
+  heroFrame->setMaxSize(getWindowWidth(), HeroLine::HEIGHT);
 
   /* Modes && States */
   normalMode = std::make_shared<NormalMode>(this);
@@ -224,17 +222,14 @@ void LSSApp::invalidate() {
       auto f = state->fragments[index];
       switch (c->visibilityState) {
       case VisibilityState::UNKNOWN:
-        if (hero->monsterSense && !std::dynamic_pointer_cast<CellSign>(state->fragments[index])) {
-            state->fragments[index] = std::make_shared<CellSign>(UNKNOWN_CELL, false);
+        if (hero->monsterSense &&
+            !std::dynamic_pointer_cast<CellSign>(state->fragments[index])) {
+          state->fragments[index] =
+              std::make_shared<CellSign>(UNKNOWN_CELL, false);
         }
         break;
       case VisibilityState::SEEN:
-        // if (auto cs =
-        // std::dynamic_pointer_cast<CellSign>(state->fragments[index])) {
-        //     cs->update(c->type, true);
-        // } else {
         state->fragments[index] = std::make_shared<CellSign>(c->type, true);
-        // }
         break;
       case VisibilityState::VISIBLE:
         state->fragments[index] = std::make_shared<CellSign>(c->type, false);
@@ -263,22 +258,25 @@ void LSSApp::invalidate() {
         ec->y * (hero->currentLocation->cells.front().size() + 1) + ec->x;
 
     if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
-        if (!hero->canSee(ec) && !hero->monsterSense)
-            continue;
+      if (!hero->canSee(ec) && !hero->monsterSense)
+        continue;
 
       // unsigned size = e->path.size();
       // for (int k = 0; k < size; ++k) {
       //   auto ptr = e->path[k];
       //   auto dot = static_cast<Cell *>(ptr);
       //   auto i =
-      //       dot->y * (hero->currentLocation->cells.front().size() + 1) + dot->x;
+      //       dot->y * (hero->currentLocation->cells.front().size() + 1) +
+      //       dot->x;
       //   state->fragments[i] = std::make_shared<ItemSign>(ItemType::ROCK);
       // }
       state->fragments[index] = std::make_shared<EnemySign>(e->type);
 
-    } else if (auto d = std::dynamic_pointer_cast<Door>(o); d && hero->canSee(ec)) {
+    } else if (auto d = std::dynamic_pointer_cast<Door>(o);
+               d && hero->canSee(ec)) {
       state->fragments[index] = std::make_shared<DoorSign>(d->opened);
-    } else if (auto i = std::dynamic_pointer_cast<Item>(o); i && hero->canSee(ec)) {
+    } else if (auto i = std::dynamic_pointer_cast<Item>(o);
+               i && hero->canSee(ec)) {
       state->fragments[index] = std::make_shared<ItemSign>(i->type);
     }
   }
@@ -436,13 +434,15 @@ void LSSApp::draw() {
 
   if (heroFrame != nullptr) {
     gl::color(state->currentPalette.bgColor);
-    gl::drawSolidRect(Rectf(0, getWindowHeight() - StatusLine::HEIGHT - HeroLine::HEIGHT,
-                            getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT));
+    gl::drawSolidRect(
+        Rectf(0, getWindowHeight() - StatusLine::HEIGHT - HeroLine::HEIGHT,
+              getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT));
     gl::color(ColorA(1, 1, 1, 1));
     heroFrame->setDefaultTextColor(Color(state->currentPalette.fgColor));
     heroFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
-    gl::draw(heroFrame->getTexture(),
-             vec2(6, getWindowHeight() - StatusLine::HEIGHT + 6 - HeroLine::HEIGHT));
+    gl::draw(
+        heroFrame->getTexture(),
+        vec2(6, getWindowHeight() - StatusLine::HEIGHT + 6 - HeroLine::HEIGHT));
   }
 
   gl::drawString(VERSION, vec2(getWindowWidth() - 120,

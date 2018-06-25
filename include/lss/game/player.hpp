@@ -19,7 +19,7 @@ class Player : public Creature,
                public eb::EventHandler<PickCommandEvent> {
 public:
   Player();
-        std::string name = "Unnamed hero";
+  std::string name = "Unnamed hero";
 
   Items inventory;
   std::shared_ptr<Equipment> equipment;

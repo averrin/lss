@@ -30,7 +30,8 @@ public:
   virtual void onEvent(DropEvent &e) override;
 
   float LeastCostEstimate(void *stateStart, void *stateEnd) override;
-  void AdjacentCost(void *state, MP_VECTOR<micropather::StateCost> *adjacent) override;
+  void AdjacentCost(void *state,
+                    MP_VECTOR<micropather::StateCost> *adjacent) override;
   void PrintStateInfo(void *state) override;
 };
 

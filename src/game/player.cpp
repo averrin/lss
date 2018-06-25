@@ -1,8 +1,8 @@
 #include "lss/game/player.hpp"
 #include "EventBus.hpp"
 #include "lss/command.hpp"
-#include "lss/game/slot.hpp"
 #include "lss/game/enemy.hpp"
+#include "lss/game/slot.hpp"
 #include <memory>
 
 CommitEvent::CommitEvent(eb::ObjectPtr s, int ap)

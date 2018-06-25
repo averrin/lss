@@ -127,16 +127,16 @@ void Location::AdjacentCost(void *state,
         cells[cell->y + 1][cell->x + 1], cells[cell->y + 1][cell->x]};
 
     for (auto n : nbrs) {
-      if (!n->passThrough) continue;
-      auto obstacle =
-          std::find_if(objects.begin(), objects.end(),
-                       [n](std::shared_ptr<Object> o) {
-                         return !o->passThrough && o->currentCell == n;
-                       });
-      if (obstacle != objects.end()) continue;
+      if (!n->passThrough)
+        continue;
+      auto obstacle = std::find_if(
+          objects.begin(), objects.end(), [n](std::shared_ptr<Object> o) {
+            return !o->passThrough && o->currentCell == n;
+          });
+      if (obstacle != objects.end())
+        continue;
       micropather::StateCost nodeCost = {
-          (void *)&(*n),
-          LeastCostEstimate(state, (void *)&(*n)),
+          (void *)&(*n), LeastCostEstimate(state, (void *)&(*n)),
       };
       neighbors->push_back(nodeCost);
     }
