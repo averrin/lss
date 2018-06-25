@@ -21,7 +21,7 @@ Yet another undinished roguelike game.
 ```
       y k u
        \|/ 
-      h-⋅-l
+      h-•-l
        /|\ 
       b j n
 ```
