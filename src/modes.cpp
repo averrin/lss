@@ -91,6 +91,10 @@ bool NormalMode::processKey(KeyEvent event) {
       break;
     app->processCommand(*d);
   } break;
+  case KeyEvent::KEY_PERIOD:
+    app->hero->commit(500);
+    app->invalidate();
+    break;
   case KeyEvent::KEY_q:
     app->processCommand("quit");
     break;

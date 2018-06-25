@@ -28,6 +28,7 @@ public:
   bool pick(std::shared_ptr<Item>);
   bool equip(std::shared_ptr<Slot>, std::shared_ptr<Item>);
   bool unequip(std::shared_ptr<Slot>);
+  bool interact(std::shared_ptr<Object>) override;
   void commit(int ap);
 
   virtual void onEvent(MoveCommandEvent &e) override;

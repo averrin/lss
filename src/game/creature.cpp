@@ -61,17 +61,18 @@ int Creature::getDamage(std::shared_ptr<Object>) {
 
 bool Creature::attack(Direction d) {
   auto nc = getCell(d);
-  auto opponent = std::find_if(
+  auto opit = std::find_if(
       currentLocation->objects.begin(), currentLocation->objects.end(),
       [&](std::shared_ptr<Object> o) {
-        return o->currentCell == nc && std::dynamic_pointer_cast<Enemy>(o);
+        return o->currentCell == nc && std::dynamic_pointer_cast<Creature>(o);
       });
-  if (opponent == currentLocation->objects.end()) {
+  if (opit == currentLocation->objects.end() && currentLocation->player->currentCell != nc) {
     MessageEvent me(shared_from_this(), "There is no target.");
     eb::EventBus::FireEvent(me);
     return false;
   }
-  (*opponent)->interact(shared_from_this());
+  auto opponent = opit == currentLocation->objects.end() ? currentLocation->player : *opit;
+  opponent->interact(shared_from_this());
   return true;
 }
 

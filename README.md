@@ -30,5 +30,6 @@ Yet another undinished roguelike game.
 * w[yuhjklbn] — walk until obstacle [`/walk`]
 * p or , — pick [`/pick`, `/p`]
 * e — equip [`/equip`, `/eq`]
-* i — quip inventory[`/inventory`, `/i`]
+* i — inventory [`/inventory`, `/i`]
+* . — wait (no command yet)
 
