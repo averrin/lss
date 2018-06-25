@@ -35,9 +35,9 @@ Player::Player() : Creature() {
                              std::vector<WearableType>{LEFT_PAULDRON}),
       std::make_shared<Slot>(
           "Right hand",
-          std::vector<WearableType>{WEAPON, WEAPON_TWOHANDED, SHIELD}),
+          std::vector<WearableType>{WEAPON, WEAPON_LIGHT, WEAPON_TWOHANDED, SHIELD}),
       std::make_shared<Slot>("Left hand",
-                             std::vector<WearableType>{WEAPON, SHIELD}),
+                             std::vector<WearableType>{WEAPON_LIGHT, SHIELD}),
       std::make_shared<Slot>("Right gauntlet",
                              std::vector<WearableType>{RIGHT_GAUNTLET}),
       std::make_shared<Slot>("Left gauntlet",
@@ -53,6 +53,12 @@ Player::Player() : Creature() {
   damage_dices = 1;
   damage_edges = 1;
   damage_modifier = 0;
+
+  auto dagger = std::make_shared<Item>(ItemType::DAGGER, Effects{
+                               std::make_shared<MeleeDamage>(1, 4, 0)});
+  inventory.push_back(dagger);
+  auto torch = std::make_shared<Item>(ItemType::TORCH, Effects{std::make_shared<VisibilityModifier>(5.f)});
+  inventory.push_back(torch);
 }
 
 void Player::commit(int ap) {
@@ -74,6 +80,7 @@ bool Player::equip(std::shared_ptr<Slot> slot, std::shared_ptr<Item> item) {
   fmt::print("Player equip: {}\n", item->type.name);
   equipment->equip(slot, item);
   for (auto e : item->effects) {
+    //TODO: do it another way (remember about meeleeDamage effect)
     e->apply(this);
   }
 

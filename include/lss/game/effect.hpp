@@ -34,6 +34,15 @@ public:
   float modifier;
 };
 
+class VisibilityModifier : public Effect {
+public:
+  VisibilityModifier(float m) : Effect(), modifier(m){};
+  void apply(Player *);
+  void undo(Player *);
+  std::string getTitle();
+  float modifier;
+};
+
 class SpecialPostfix : public Effect {
 public:
   SpecialPostfix(std::string n) : Effect(true), name(n){};

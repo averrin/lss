@@ -13,6 +13,11 @@ QuitCommand::getEvent(std::string s) {
 }
 
 void EventReactor::onEvent(eb::Event &e) { app->invalidate(); }
+
+void EventReactor::onEvent(CommitEvent &e) {
+    app->invalidate();
+}
+
 void EventReactor::onEvent(QuitCommandEvent &e) { exit(0); }
 
 void EventReactor::onEvent(HelpCommandEvent &e) {

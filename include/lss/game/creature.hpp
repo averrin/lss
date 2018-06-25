@@ -7,7 +7,7 @@
 class Creature : public Object {
 public:
   Creature();
-  float visibilityDistance = 10.5f;
+  float visibilityDistance = 5.5f;
   std::vector<std::shared_ptr<Cell>> viewField;
   std::shared_ptr<Location> currentLocation;
 

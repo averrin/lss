@@ -10,9 +10,7 @@ std::string SpeedModifier::getTitle() {
 }
 
 void HPModifier::apply(Player *hero) { hero->hp_max += modifier; }
-
 void HPModifier::undo(Player *hero) { hero->hp_max -= modifier; }
-
 std::string HPModifier::getTitle() { return fmt::format("hp +{}", modifier); }
 
 void MeleeDamage::apply(Player *hero) {
@@ -30,3 +28,7 @@ void MeleeDamage::undo(Player *hero) {
 std::string MeleeDamage::getTitle() {
   return fmt::format("(+{}, {}d{})", modifier, dices, edges);
 }
+
+void VisibilityModifier::apply(Player *hero) { hero->visibilityDistance += modifier; hero->calcViewField(); }
+void VisibilityModifier::undo(Player *hero) { hero->visibilityDistance -= modifier; hero->calcViewField(); }
+std::string VisibilityModifier::getTitle() { return fmt::format("increase visibility", modifier); }
