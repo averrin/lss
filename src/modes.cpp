@@ -101,6 +101,14 @@ bool NormalMode::processKey(KeyEvent event) {
     app->hero->monsterSense = !app->hero->monsterSense;
     app->invalidate();
     break;
+  case KeyEvent::KEY_f: // TODO: make it spell
+    for (auto o : app->hero->currentLocation->objects) {
+      if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
+        e->type.aiType = AIType::NONE;
+      }
+    }
+    app->statusLine->setContent({F("Enemy freezed!")});
+    break;
   case KeyEvent::KEY_PERIOD: // TODO: make it command
     app->hero->commit(500);
     app->invalidate();

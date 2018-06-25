@@ -1,5 +1,6 @@
 #ifndef __PLAYER_H_
 #define __PLAYER_H_
+#include <map>
 #include <memory>
 
 #include "lss/game/creature.hpp"
@@ -23,7 +24,7 @@ public:
 
   Items inventory;
   std::shared_ptr<Equipment> equipment;
-  Effects activeEffects;
+  std::map<std::shared_ptr<Item>, Effects> activeEffects;
   bool monsterSense = false;
 
   bool pick(std::shared_ptr<Item>);

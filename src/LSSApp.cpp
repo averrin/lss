@@ -198,7 +198,6 @@ void LSSApp::loadMap() {
   state->fragments.assign(
       n * (i + 1), std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false));
 
-
   hero->commit(0);
 }
 

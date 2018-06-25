@@ -29,6 +29,14 @@ std::string MeleeDamage::getTitle() {
   return fmt::format("(+{}, {}d{})", modifier, dices, edges);
 }
 
-void VisibilityModifier::apply(Player *hero) { hero->visibilityDistance += modifier; hero->calcViewField(); }
-void VisibilityModifier::undo(Player *hero) { hero->visibilityDistance -= modifier; hero->calcViewField(); }
-std::string VisibilityModifier::getTitle() { return fmt::format("increase visibility", modifier); }
+void VisibilityModifier::apply(Player *hero) {
+  hero->visibilityDistance += modifier;
+  hero->calcViewField();
+}
+void VisibilityModifier::undo(Player *hero) {
+  hero->visibilityDistance -= modifier;
+  hero->calcViewField();
+}
+std::string VisibilityModifier::getTitle() {
+  return fmt::format("increase visibility", modifier);
+}

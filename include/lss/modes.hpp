@@ -19,10 +19,12 @@ struct modes {
   auto operator()() const noexcept {
     using namespace sml;
     auto is_hints = [](KeyPressedEvent e) {
-      return e.key.getCode() == KeyEvent::KEY_f;
+      return false;
+      // return e.key.getCode() == KeyEvent::KEY_f;
     };
     auto is_leader = [](KeyPressedEvent e) {
-      return e.key.getCode() == KeyEvent::KEY_SPACE;
+      return false;
+      // return e.key.getCode() == KeyEvent::KEY_SPACE;
     };
     auto is_esc = [](KeyPressedEvent e) {
       return e.key.getCode() == KeyEvent::KEY_ESCAPE ||

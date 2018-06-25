@@ -1,5 +1,6 @@
 #include "lss/game/enemy.hpp"
 #include "EventBus.hpp"
+#include "lss/game/costs.hpp"
 #include "lss/game/player.hpp"
 #include "lss/utils.hpp"
 
@@ -72,44 +73,47 @@ void Enemy::onEvent(CommitEvent &e) {
   actionPoints += e.actionPoints;
 
   // TODO: add lastheropoint and attack hero if its near
-  auto stepCost = 1000 / speed;
-  auto attackCost = 500 / speed;
+  auto stepCost = ap_cost::STEP / speed;
+  auto attackCost = ap_cost::ATTACK / speed;
 
-  auto pather = new micropather::MicroPather(currentLocation.get());
-  float totalCost = 0;
-  pather->Reset();
-  auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
-  int result = pather->Solve(currentCell.get(), hero->currentCell.get(), &path,
-                             &totalCost);
-  delete pather;
-  if (result != micropather::MicroPather::SOLVED) {
-    fmt::print("cannot find path\n");
-    actionPoints = 0;
-    return;
-  }
+  // TODO: implement passive ai
+  if (type.aiType == AIType::AGGRESSIVE) {
+    auto pather = new micropather::MicroPather(currentLocation.get());
+    float totalCost = 0;
+    pather->Reset();
+    auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
+    int result = pather->Solve(currentCell.get(), hero->currentCell.get(),
+                               &path, &totalCost);
+    delete pather;
+    if (result != micropather::MicroPather::SOLVED) {
+      fmt::print("cannot find path\n");
+      actionPoints = 0;
+      return;
+    }
 
-  auto i = 1;
-  auto nptr = path[i];
-  auto nc = static_cast<Cell *>(nptr);
-  auto cd = getDirFromCell(currentCell, nc);
+    auto i = 1;
+    auto nptr = path[i];
+    auto nc = static_cast<Cell *>(nptr);
+    auto cd = getDirFromCell(currentCell, nc);
 
-  auto n = 0;
-  while (actionPoints >= stepCost && n < 2) {
-    if (nc->x != hero->currentCell->x || nc->y != hero->currentCell->y) {
-      if (move(cd)) {
-        if (i < path.size() - 1) {
-          i++;
-          nptr = path[i];
-          nc = static_cast<Cell *>(nptr);
-          cd = getDirFromCell(currentCell, nc);
+    auto n = 0;
+    while (actionPoints >= stepCost && n < 2) {
+      if (nc->x != hero->currentCell->x || nc->y != hero->currentCell->y) {
+        if (move(cd)) {
+          if (i < path.size() - 1) {
+            i++;
+            nptr = path[i];
+            nc = static_cast<Cell *>(nptr);
+            cd = getDirFromCell(currentCell, nc);
+          }
+          actionPoints -= stepCost;
+        } else {
+          n++;
         }
-        actionPoints -= stepCost;
       } else {
-        n++;
+        attack(cd);
+        actionPoints -= attackCost;
       }
-    } else {
-      attack(cd);
-      actionPoints -= attackCost;
     }
   }
 }

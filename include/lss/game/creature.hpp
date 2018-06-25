@@ -20,6 +20,9 @@ public:
   bool interact(std::shared_ptr<Object>);
   int getDamage(std::shared_ptr<Object>);
 
+  // TODO: add setters-getters for attributes. Keep effects in mind
+  // TODO: move equip-inventory logic here. get loot from inventory and apply
+  // effects from items
   int hp;
   int hp_max;
   int damage_dices;

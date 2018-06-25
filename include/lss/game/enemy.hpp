@@ -9,6 +9,12 @@
 #include "lss/game/item.hpp"
 #include "micropather/micropather.h"
 
+enum AIType {
+  NONE,
+  AGGRESSIVE,
+  PASSIVE,
+};
+
 struct EnemySpec {
 public:
   std::string name;
@@ -18,6 +24,7 @@ public:
   int baseDamage_edges;
   int baseDamage_modifier;
   Items loot;
+  AIType aiType = AGGRESSIVE;
 
   friend bool operator<(const EnemySpec &lhs, const EnemySpec &rhs) {
     return lhs.name < rhs.name;

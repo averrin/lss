@@ -1,6 +1,7 @@
 #include "lss/game/player.hpp"
 #include "EventBus.hpp"
 #include "lss/command.hpp"
+#include "lss/game/costs.hpp"
 #include "lss/game/enemy.hpp"
 #include "lss/game/slot.hpp"
 #include <memory>
@@ -34,8 +35,8 @@ Player::Player() : Creature() {
       std::make_shared<Slot>("Left pauldron",
                              std::vector<WearableType>{LEFT_PAULDRON}),
       std::make_shared<Slot>(
-          "Right hand",
-          std::vector<WearableType>{WEAPON, WEAPON_LIGHT, WEAPON_TWOHANDED, SHIELD}),
+          "Right hand", std::vector<WearableType>{WEAPON, WEAPON_LIGHT,
+                                                  WEAPON_TWOHANDED, SHIELD}),
       std::make_shared<Slot>("Left hand",
                              std::vector<WearableType>{WEAPON_LIGHT, SHIELD}),
       std::make_shared<Slot>("Right gauntlet",
@@ -54,10 +55,11 @@ Player::Player() : Creature() {
   damage_edges = 1;
   damage_modifier = 0;
 
-  auto dagger = std::make_shared<Item>(ItemType::DAGGER, Effects{
-                               std::make_shared<MeleeDamage>(1, 4, 0)});
+  auto dagger = std::make_shared<Item>(
+      ItemType::DAGGER, Effects{std::make_shared<MeleeDamage>(1, 4, 0)});
   inventory.push_back(dagger);
-  auto torch = std::make_shared<Item>(ItemType::TORCH, Effects{std::make_shared<VisibilityModifier>(5.f)});
+  auto torch = std::make_shared<Item>(
+      ItemType::TORCH, Effects{std::make_shared<VisibilityModifier>(5.f)});
   inventory.push_back(torch);
 }
 
@@ -78,15 +80,12 @@ bool Player::unequip(std::shared_ptr<Slot> slot) {
 bool Player::equip(std::shared_ptr<Slot> slot, std::shared_ptr<Item> item) {
   // auto ptr = shared_from_this();
   fmt::print("Player equip: {}\n", item->type.name);
+  // TODO: do it another way (remember about meeleeDamage effect)
   equipment->equip(slot, item);
-  for (auto e : item->effects) {
-    //TODO: do it another way (remember about meeleeDamage effect)
-    e->apply(this);
-  }
 
   // ItemTakenEvent e(ptr, item);
   // eb::EventBus::FireEvent(e);
-  commit(200 / speed);
+  commit(ap_cost::EQUIP / speed);
   return true;
 }
 
@@ -106,19 +105,19 @@ bool Player::pick(std::shared_ptr<Item> item) {
     inventory.push_back(item);
   }
 
-  commit(200 / speed);
+  commit(ap_cost::PICK / speed);
   return true;
 }
 
 void Player::onEvent(MoveCommandEvent &e) {
   if (move(e.direction, true)) {
-    commit(1000 / speed);
+    commit(ap_cost::STEP / speed);
   }
 }
 
 void Player::onEvent(AttackCommandEvent &e) {
   if (attack(e.direction)) {
-    commit(500 / speed);
+    commit(ap_cost::ATTACK / speed);
   }
 }
 
@@ -130,7 +129,7 @@ void Player::onEvent(DropCommandEvent &e) {
                   inventory.end());
   DropEvent me(shared_from_this(), e.item);
   eb::EventBus::FireEvent(me);
-  commit(200 / speed);
+  commit(ap_cost::DROP / speed);
 }
 
 void Player::onEvent(DigCommandEvent &e) {
@@ -151,7 +150,7 @@ void Player::onEvent(DigCommandEvent &e) {
 
 void Player::onEvent(WalkCommandEvent &e) {
   while (move(e.direction)) {
-    commit(1000 / speed);
+    commit(ap_cost::STEP / speed);
     auto item = std::find_if(currentLocation->objects.begin(),
                              currentLocation->objects.end(),
                              [&](std::shared_ptr<Object> o) {
