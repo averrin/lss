@@ -13,17 +13,28 @@ Enemy::Enemy(EnemySpec t) : Creature(), type(t) {
   damage_modifier = type.baseDamage_modifier;
 
   name = type.name;
+
+  equipment = std::make_shared<Equipment>();
+  equipment->slots = {
+      std::make_shared<Slot>(
+          "Hand", std::vector<WearableType>{WEAPON, WEAPON_LIGHT,
+                                                  WEAPON_TWOHANDED, SHIELD}),
+      std::make_shared<Slot>(
+          "Hand", std::vector<WearableType>{WEAPON, WEAPON_LIGHT,
+                                                  WEAPON_TWOHANDED, SHIELD}),
+      std::make_shared<Slot>("Body", std::vector<WearableType>{BODY}),
+      std::make_shared<Slot>("--", std::vector<WearableType>{ENEMY}),
+      std::make_shared<Slot>("--", std::vector<WearableType>{ENEMY}),
+      std::make_shared<Slot>("--", std::vector<WearableType>{ENEMY}),
+  };
 }
 
 Enemy::~Enemy() { registration->removeHandler(); }
 
-std::optional<std::shared_ptr<Item>> Enemy::drop() {
-  // auto item = std::make_shared<Item>(ItemType::CORPSE);
+std::optional<Items> Enemy::drop() {
   if (type.loot.size() == 0)
     return std::nullopt;
-  auto item = type.loot.front();
-  item->currentCell = currentCell;
-  return item;
+  return type.loot;
 }
 
 bool Enemy::interact(std::shared_ptr<Object> actor) {

@@ -21,9 +21,13 @@ void Location::onEvent(EnemyDiedEvent &e) {
   auto sender = e.getSender();
   if (auto enemy = std::dynamic_pointer_cast<Enemy>(sender)) {
     enemy->currentCell->type = CellType::FLOOR_BLOOD;
-    auto item = enemy->drop();
-    if (item != std::nullopt) {
-      objects.push_back(std::make_shared<Item>(**item));
+    auto loot = enemy->drop();
+    if (loot != std::nullopt) {
+      for (auto item : *loot) {
+        auto new_item = std::make_shared<Item>(*item);
+        new_item->currentCell = enemy->currentCell;
+        objects.push_back(new_item);
+      }
     }
   }
   objects.erase(std::remove(objects.begin(), objects.end(), sender),

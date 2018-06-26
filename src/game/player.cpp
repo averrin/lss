@@ -4,6 +4,7 @@
 #include "lss/game/costs.hpp"
 #include "lss/game/enemy.hpp"
 #include "lss/game/slot.hpp"
+#include "lss/game/spell.hpp"
 #include <memory>
 
 CommitEvent::CommitEvent(eb::ObjectPtr s, int ap)
@@ -43,6 +44,7 @@ Player::Player() : Creature() {
                              std::vector<WearableType>{LEFT_GAUNTLET}),
       std::make_shared<Slot>("Right ring", std::vector<WearableType>{RING}),
       std::make_shared<Slot>("Left ring", std::vector<WearableType>{RING}),
+      std::make_shared<Slot>("Body", std::vector<WearableType>{BODY}),
       std::make_shared<Slot>("Greaves", std::vector<WearableType>{GREAVES}),
       std::make_shared<Slot>("Boots", std::vector<WearableType>{BOOTS}),
       std::make_shared<Slot>("Light", std::vector<WearableType>{LIGHT})};
@@ -79,14 +81,15 @@ bool Player::unequip(std::shared_ptr<Slot> slot) {
 
 bool Player::equip(std::shared_ptr<Slot> slot, std::shared_ptr<Item> item) {
   // auto ptr = shared_from_this();
-  fmt::print("Player equip: {}\n", item->type.name);
   // TODO: do it another way (remember about meeleeDamage effect)
-  equipment->equip(slot, item);
+  if (equipment->equip(slot, item)) {
+    commit(ap_cost::EQUIP / speed);
+    return true;
+  }
+  return false;
 
   // ItemTakenEvent e(ptr, item);
   // eb::EventBus::FireEvent(e);
-  commit(ap_cost::EQUIP / speed);
-  return true;
 }
 
 void Player::onEvent(MoveCommandEvent &e) {
@@ -162,6 +165,7 @@ void Player::onEvent(UnEquipCommandEvent &e) { unequip(e.slot); }
 void Player::onEvent(WaitCommandEvent &e) { commit(ap_cost::STEP); }
 void Player::onEvent(ZapCommandEvent &e) {
   if (e.spell == nullptr) return;
+  commit(e.spell->cost);
 }
 
 bool Player::interact(std::shared_ptr<Object> actor) {

@@ -57,7 +57,7 @@ public:
   ~Enemy();
   eb::HandlerRegistrationPtr registration;
   bool interact(std::shared_ptr<Object>) override;
-  std::optional<std::shared_ptr<Item>> drop();
+  std::optional<Items> drop();
 
   Direction cd = Direction::W;
   int actionPoints = 0;

@@ -4,8 +4,9 @@
 
 class Spell : public Object {
 public:
-    Spell(std::string n) : Object(), name(n) {}
+    Spell(std::string n, int c = 0) : Object(), name(n), cost(c) {}
     std::string name;
+    int cost;
 };
 
 namespace Spells {
