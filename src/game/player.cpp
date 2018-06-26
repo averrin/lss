@@ -8,12 +8,8 @@
 
 CommitEvent::CommitEvent(eb::ObjectPtr s, int ap)
     : eb::Event(s), actionPoints(ap) {}
-ItemTakenEvent::ItemTakenEvent(eb::ObjectPtr s, std::shared_ptr<Item> i)
-    : eb::Event(s), item(i) {}
 DigEvent::DigEvent(eb::ObjectPtr s, std::shared_ptr<Cell> c)
     : eb::Event(s), cell(c) {}
-DropEvent::DropEvent(eb::ObjectPtr s, std::shared_ptr<Item> i)
-    : eb::Event(s), item(i) {}
 
 Player::Player() : Creature() {
   eb::EventBus::AddHandler<MoveCommandEvent>(*this);
@@ -57,6 +53,8 @@ Player::Player() : Creature() {
   damage_edges = 1;
   damage_modifier = 0;
 
+  name = "Unnamed hero";
+
   auto dagger = std::make_shared<Item>(
       ItemType::DAGGER, Effects{std::make_shared<MeleeDamage>(1, 4, 0)});
   inventory.push_back(dagger);
@@ -91,26 +89,6 @@ bool Player::equip(std::shared_ptr<Slot> slot, std::shared_ptr<Item> item) {
   return true;
 }
 
-bool Player::pick(std::shared_ptr<Item> item) {
-  auto ptr = shared_from_this();
-
-  ItemTakenEvent e(ptr, item);
-  eb::EventBus::FireEvent(e);
-
-  if (auto it = std::find_if(inventory.begin(), inventory.end(),
-                             [item](std::shared_ptr<Item> i) {
-                               return item->getTitle() == i->getTitle();
-                             });
-      it != inventory.end() && item != 0) {
-    (*it)->count += item->count;
-  } else {
-    inventory.push_back(item);
-  }
-
-  commit(ap_cost::PICK / speed);
-  return true;
-}
-
 void Player::onEvent(MoveCommandEvent &e) {
   if (move(e.direction, true)) {
     commit(ap_cost::STEP / speed);
@@ -126,11 +104,7 @@ void Player::onEvent(AttackCommandEvent &e) {
 void Player::onEvent(DropCommandEvent &e) {
   if (e.item == nullptr)
     return;
-  fmt::print("drop in player\n");
-  inventory.erase(std::remove(inventory.begin(), inventory.end(), e.item),
-                  inventory.end());
-  DropEvent me(shared_from_this(), e.item);
-  eb::EventBus::FireEvent(me);
+  drop(e.item);
   commit(ap_cost::DROP / speed);
 }
 
@@ -173,6 +147,7 @@ void Player::onEvent(PickCommandEvent &e) {
                            });
   if (item != currentLocation->objects.end()) {
     pick(std::dynamic_pointer_cast<Item>(*item));
+    commit(ap_cost::PICK / speed);
   }
 }
 

@@ -4,8 +4,6 @@
 #include <memory>
 
 #include "lss/game/creature.hpp"
-#include "lss/game/equipment.hpp"
-#include "lss/game/item.hpp"
 
 typedef std::vector<std::shared_ptr<Item>> Items;
 
@@ -22,14 +20,8 @@ class Player : public Creature,
                public eb::EventHandler<PickCommandEvent> {
 public:
   Player();
-  std::string name = "Unnamed hero";
-
-  Items inventory;
-  std::shared_ptr<Equipment> equipment;
-  std::map<std::shared_ptr<Item>, Effects> activeEffects;
   bool monsterSense = false;
 
-  bool pick(std::shared_ptr<Item>);
   bool equip(std::shared_ptr<Slot>, std::shared_ptr<Item>);
   bool unequip(std::shared_ptr<Slot>);
   bool interact(std::shared_ptr<Object>) override;

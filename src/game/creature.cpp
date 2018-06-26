@@ -16,6 +16,10 @@ LeaveCellEvent::LeaveCellEvent(eb::ObjectPtr s, std::shared_ptr<Cell> c)
     : eb::Event(s), cell(c) {}
 EnterCellEvent::EnterCellEvent(eb::ObjectPtr s, std::shared_ptr<Cell> c)
     : eb::Event(s), cell(c) {}
+DropEvent::DropEvent(eb::ObjectPtr s, std::shared_ptr<Item> i)
+    : eb::Event(s), item(i) {}
+ItemTakenEvent::ItemTakenEvent(eb::ObjectPtr s, std::shared_ptr<Item> i)
+    : eb::Event(s), item(i) {}
 
 std::shared_ptr<Cell> Creature::getCell(Direction d) {
   auto cells = currentLocation->cells;
@@ -58,6 +62,34 @@ int Creature::getDamage(std::shared_ptr<Object>) {
   damage += damage_modifier;
   return damage;
 }
+
+bool Creature::drop(std::shared_ptr<Item> item) {
+  inventory.erase(std::remove(inventory.begin(), inventory.end(), item),
+                  inventory.end());
+  DropEvent me(shared_from_this(), item);
+  eb::EventBus::FireEvent(me);
+  return true;
+}
+
+bool Creature::pick(std::shared_ptr<Item> item) {
+  auto ptr = shared_from_this();
+
+  ItemTakenEvent e(ptr, item);
+  eb::EventBus::FireEvent(e);
+
+  if (auto it = std::find_if(inventory.begin(), inventory.end(),
+                             [item](std::shared_ptr<Item> i) {
+                               return item->getTitle() == i->getTitle();
+                             });
+      it != inventory.end() && item != 0) {
+    (*it)->count += item->count;
+  } else {
+    inventory.push_back(item);
+  }
+
+  return true;
+}
+
 
 bool Creature::attack(Direction d) {
   auto nc = getCell(d);

@@ -3,6 +3,8 @@
 #include <algorithm>
 
 #include "lss/game/object.hpp"
+#include "lss/game/equipment.hpp"
+#include "lss/game/item.hpp"
 
 class Creature : public Object {
 public:
@@ -23,6 +25,13 @@ public:
   // TODO: add setters-getters for attributes. Keep effects in mind
   // TODO: move equip-inventory logic here. get loot from inventory and apply
   // effects from items
+  std::string name = "Unnamed";
+
+  Items inventory;
+  std::shared_ptr<Equipment> equipment;
+  bool pick(std::shared_ptr<Item>);
+  bool drop(std::shared_ptr<Item>);
+
   int hp;
   int hp_max;
   int damage_dices;

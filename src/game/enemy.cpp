@@ -11,6 +11,8 @@ Enemy::Enemy(EnemySpec t) : Creature(), type(t) {
   damage_dices = type.baseDamage_dices;
   damage_edges = type.baseDamage_edges;
   damage_modifier = type.baseDamage_modifier;
+
+  name = type.name;
 }
 
 Enemy::~Enemy() { registration->removeHandler(); }

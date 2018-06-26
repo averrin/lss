@@ -11,7 +11,6 @@ enum WearableType {
   WEAPON_LIGHT,
   WEAPON_TWOHANDED,
   SHIELD,
-  // LEFT_HAND, RIGHT_HAND,
   LEFT_GAUNTLET,
   RIGHT_GAUNTLET,
   BODY,
@@ -20,7 +19,8 @@ enum WearableType {
   RING,
   CLOAK,
   TWO_HANDED,
-  LIGHT
+  LIGHT,
+  ENEMY
 };
 
 #endif // __WEARABLETYPE_H_
