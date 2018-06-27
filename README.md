@@ -13,6 +13,16 @@ Yet another unfinished roguelike game.
 * `export cinder_DIR=../../Cinder/lib/linux/x86_64/ogl/Debug`
 * `cmake ../linux; make -j4`
 
+## TODO
+- [ ] Game over mode
+- [ ] Fix attributes and effects
+- [ ] Passive, patrol and "hero search" AI
+- [ ] Map generator
+- [ ] Creature traits (for skills and enemy tricks)
+- [ ] Fields of view, torches, grue and other light-related things
+- [ ] Leveling
+- [ ] Hundreds of other features...
+
 ## Controls
 * / — insert mode
 * q — quit [`/quit`, `/q`]
