@@ -55,6 +55,12 @@ void LSSApp::setup() {
   inventoryFrame->setMaxSize(getWindowWidth(),
                              getWindowHeight() - StatusLine::HEIGHT);
 
+  gameOverFrame = kp::pango::CinderPango::create();
+  gameOverFrame->setMinSize(getWindowWidth(),
+                            getWindowHeight() - StatusLine::HEIGHT);
+  gameOverFrame->setMaxSize(getWindowWidth(),
+                             getWindowHeight() - StatusLine::HEIGHT);
+
   heroFrame = kp::pango::CinderPango::create();
   heroFrame->setMinSize(getWindowWidth(), HeroLine::HEIGHT);
   heroFrame->setMaxSize(getWindowWidth(), HeroLine::HEIGHT);
@@ -75,6 +81,9 @@ void LSSApp::setup() {
   inventoryMode = std::make_shared<InventoryMode>(this);
   inventoryState = std::make_shared<State>();
 
+  gameOverMode = std::make_shared<GameOverMode>(this);
+  gameOverState = std::make_shared<State>();
+
   statusState = std::make_shared<State>();
   statusLine = std::make_shared<StatusLine>(statusState);
 
@@ -86,6 +95,7 @@ void LSSApp::setup() {
   objectSelectState->currentPalette = palettes::DARK;
   helpState->currentPalette = palettes::DARK;
   inventoryState->currentPalette = palettes::DARK;
+  gameOverState->currentPalette = palettes::DARK;
 
   statusLine->setContent(State::normal_mode);
 
@@ -331,6 +341,9 @@ void LSSApp::keyDown(KeyEvent event) {
   case Modes::OBJECTSELECT:
     objectSelectMode->processKey(event);
     break;
+  case Modes::GAMEOVER:
+    gameOverMode->processKey(event);
+    break;
   }
 }
 
@@ -404,6 +417,9 @@ void LSSApp::update() {
   case Modes::INVENTORY:
     inventoryState->render(inventoryFrame);
     break;
+  case Modes::GAMEOVER:
+    gameOverState->render(gameOverFrame);
+    break;
   }
 
   if (statusFrame != nullptr) {
@@ -443,6 +459,11 @@ void LSSApp::draw() {
   case Modes::INVENTORY:
     inventoryFrame->setDefaultTextColor(state->currentPalette.fgColor);
     gl::draw(inventoryFrame->getTexture(), vec2(HOffset, VOffset));
+    break;
+  case Modes::GAMEOVER:
+    gameOverFrame->setDefaultTextColor(state->currentPalette.fgColor);
+    gameOverFrame->setTextAlignment(kp::pango::TextAlignment::CENTER);
+    gl::draw(gameOverFrame->getTexture(), vec2(HOffset, VOffset));
     break;
   }
 

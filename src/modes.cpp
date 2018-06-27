@@ -80,6 +80,12 @@ bool ObjectSelectMode::processKey(KeyEvent event) {
 }
 
 bool GameOverMode::processKey(KeyEvent event) {
+  switch (event.getCode()) {
+  case KeyEvent::KEY_q:
+    app->processCommand("quit");
+    return true;
+    break;
+  }
   return false;
 }
 
@@ -208,6 +214,13 @@ void HelpMode::render(std::shared_ptr<State> state) {
   state->appendContent(State::END_LINE);
   state->appendContent(State::END_LINE);
   state->appendContent(State::HELP);
+}
+
+void GameOverMode::render(std::shared_ptr<State> state) {
+  state->setContent({});
+  state->appendContent(State::END_LINE);
+  state->appendContent(State::END_LINE);
+  state->appendContent(State::GAMEOVER);
 }
 
 void InventoryMode::render(std::shared_ptr<State> state) {

@@ -23,9 +23,20 @@ public:
   int damage;
 };
 
+class HeroTakeDamageEvent : public eb::Event {
+public:
+  HeroTakeDamageEvent(eb::ObjectPtr, int);
+  int damage;
+};
+
 class EnemyDiedEvent : public eb::Event {
 public:
   EnemyDiedEvent(eb::ObjectPtr);
+};
+
+class HeroDiedEvent : public eb::Event {
+public:
+  HeroDiedEvent(eb::ObjectPtr);
 };
 
 class ItemTakenEvent : public eb::Event {

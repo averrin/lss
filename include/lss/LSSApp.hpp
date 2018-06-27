@@ -56,6 +56,7 @@ public:
   kp::pango::CinderPangoRef helpFrame;
   kp::pango::CinderPangoRef inventoryFrame;
   kp::pango::CinderPangoRef heroFrame;
+  kp::pango::CinderPangoRef gameOverFrame;
 
   ModeManager modeManager = ModeManager();
   std::shared_ptr<EventReactor> reactor;
@@ -66,6 +67,7 @@ public:
   std::shared_ptr<ObjectSelectMode> objectSelectMode;
   std::shared_ptr<HelpMode> helpMode;
   std::shared_ptr<InventoryMode> inventoryMode;
+  std::shared_ptr<GameOverMode> gameOverMode;
 
   std::shared_ptr<StatusLine> statusLine;
   std::shared_ptr<HeroLine> heroLine;
@@ -76,6 +78,7 @@ public:
   std::shared_ptr<State> helpState;
   std::shared_ptr<State> inventoryState;
   std::shared_ptr<State> heroState;
+  std::shared_ptr<State> gameOverState;
 
   std::shared_ptr<Player> hero;
 

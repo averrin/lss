@@ -11,6 +11,11 @@ CommitEvent::CommitEvent(eb::ObjectPtr s, int ap)
     : eb::Event(s), actionPoints(ap) {}
 DigEvent::DigEvent(eb::ObjectPtr s, std::shared_ptr<Cell> c)
     : eb::Event(s), cell(c) {}
+HeroDiedEvent::HeroDiedEvent(eb::ObjectPtr s)
+    : eb::Event(s) {}
+
+HeroTakeDamageEvent::HeroTakeDamageEvent(eb::ObjectPtr s, int d)
+    : eb::Event(s), damage(d) {}
 
 Player::Player() : Creature() {
   eb::EventBus::AddHandler<MoveCommandEvent>(*this);
@@ -175,12 +180,13 @@ bool Player::interact(std::shared_ptr<Object> actor) {
   if (hp > 0) {
     auto damage = enemy->getDamage(shared_from_this());
     hp -= damage;
-    // EnemyTakeDamageEvent e(ptr, damage);
-    // eb::EventBus::FireEvent(e);
+    HeroTakeDamageEvent e(ptr, damage);
+    eb::EventBus::FireEvent(e);
   }
   if (hp <= 0) {
     passThrough = true;
-    MessageEvent e2(ptr, "YOU DIED!!");
+    HeroDiedEvent e2(ptr);
+    // MessageEvent e2(ptr, "YOU DIED!!");
     eb::EventBus::FireEvent(e2);
   }
   commit(0);

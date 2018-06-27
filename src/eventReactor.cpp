@@ -263,3 +263,8 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     app->invalidate();
   }
 }
+
+void EventReactor::onEvent(HeroDiedEvent &e) {
+  app->modeManager.toGameOver();
+  app->gameOverMode->render(app->gameOverState);
+}
