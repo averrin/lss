@@ -44,6 +44,6 @@ Yet another unfinished roguelike game.
 * i — inventory [`/inventory`, `/i`]
 * . — wait [`/wait`]
 * z — cast spell [`/zap`, `/z`]
-* < — go up [`/up`]
-* > — go down [`/down`]
+* &lt; — go up [`/up`]
+* &gt; — go down [`/down`]
 
