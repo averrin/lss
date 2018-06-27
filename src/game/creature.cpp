@@ -4,6 +4,7 @@
 #include "lss/game/enemy.hpp"
 #include "lss/game/events.hpp"
 #include "lss/game/player.hpp"
+#include "lss/game/fov.hpp"
 
 #include "EventBus.hpp"
 #include "fmt/format.h"
@@ -140,15 +141,20 @@ bool Creature::move(Direction d, bool autoAction) {
 
 void Creature::calcViewField() {
   viewField.clear();
+  std::vector<std::shared_ptr<Cell>> temp;
   auto cc = currentCell;
-  for (auto r : currentLocation->cells) {
-    for (auto c : r) {
+  fov::Vec heroPoint {currentCell->x, currentCell->y};
+  fov::Vec bounds {(int)currentLocation->cells.front().size(), (int)currentLocation->cells.size()};
+  auto field = fov::refresh(heroPoint, bounds, currentLocation->cells);
+  for (auto v : field) {
+    auto c = currentLocation->cells[v.y][v.x];
+      temp.push_back(c);
+  }
+  for (auto c : temp) {
       auto d = sqrt(pow(cc->x - c->x, 2) + pow(cc->y - c->y, 2));
       if (d >= visibilityDistance) {
         continue;
       }
-      // TODO: implement correct fov computation
       viewField.push_back(c);
-    }
   }
 }

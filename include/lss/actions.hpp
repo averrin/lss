@@ -18,6 +18,7 @@ struct Modes {
     OBJECTSELECT,
     INVENTORY,
     HELP,
+    GAMEOVER,
   };
   ModeName currentMode = ModeName::NORMAL;
 };

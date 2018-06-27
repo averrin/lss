@@ -48,6 +48,9 @@ struct modes {
     auto is_help_event = [](EnableModeEvent e) {
       return e.mode == Modes::HELP;
     };
+    auto is_go_event = [](EnableModeEvent e) {
+      return e.mode == Modes::GAMEOVER;
+    };
 
     auto set_hints = [](std::shared_ptr<Modes> m) {
       std::cout << "Set HINTS mode" << std::endl;
@@ -81,6 +84,10 @@ struct modes {
       std::cout << "Set HELP mode" << std::endl;
       m->currentMode = Modes::HELP;
     };
+    auto set_go = [](std::shared_ptr<Modes> m) {
+      std::cout << "Set GAMEOVER mode" << std::endl;
+      m->currentMode = Modes::GAMEOVER;
+    };
 
     // clang-format off
         return make_transition_table(
@@ -91,6 +98,7 @@ struct modes {
             , "normal"_s + event<EnableModeEvent> [is_object_select_event] / set_object_select  = "object_select"_s
             , "normal"_s + event<EnableModeEvent> [is_inventory_event] / set_inventory  = "inventory"_s
             , "normal"_s + event<EnableModeEvent> [is_help_event] / set_help  = "inventory"_s
+            , "normal"_s + event<EnableModeEvent> [is_go_event] / set_go  = "game_over"_s
 
             , "hints"_s + event<KeyPressedEvent> [is_esc] / set_normal = "normal"_s
             , "leader"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
@@ -123,6 +131,7 @@ public:
   void toHelp();
   void toInventory();
   void toDirection();
+  void toGameOver();
   void toObjectSelect();
   std::shared_ptr<Modes> modeFlags = std::make_shared<Modes>();
 
@@ -214,4 +223,10 @@ public:
   void render(std::shared_ptr<State>);
 };
 
+class GameOverMode : public TextMode {
+public:
+  GameOverMode(LSSApp *app) : TextMode(app){};
+  void render(std::shared_ptr<State>);
+  bool processKey(KeyEvent e);
+};
 #endif // __MODES_H_

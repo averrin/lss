@@ -15,7 +15,7 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-std::string VERSION = "0.0.5 by Averrin";
+std::string VERSION = "0.0.6 by Averrin";
 
 int HOffset = 24;
 int VOffset = 24;

@@ -58,6 +58,10 @@ void ModeManager::toObjectSelect() {
   state_machine.process_event(EnableModeEvent{Modes::OBJECTSELECT});
 }
 
+void ModeManager::toGameOver() {
+  state_machine.process_event(EnableModeEvent{Modes::GAMEOVER});
+}
+
 void HintsMode::processEvent(std::shared_ptr<LssEvent> event) {}
 
 Mode::Mode(LSSApp *a) : app(a){};
@@ -72,6 +76,10 @@ bool ObjectSelectMode::processKey(KeyEvent event) {
       return true;
     }
   }
+  return false;
+}
+
+bool GameOverMode::processKey(KeyEvent event) {
   return false;
 }
 

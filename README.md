@@ -16,6 +16,7 @@ Yet another unfinished roguelike game.
 ## TODO
 - [ ] Game over mode
 - [ ] Fix attributes and effects
+- [ ] Better event log
 - [ ] Passive, patrol and "hero search" AI
 - [ ] Map generator
 - [ ] Creature traits (for skills and enemy tricks)
