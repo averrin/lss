@@ -2,7 +2,7 @@
 
 #include "lss/LSSApp.hpp"
 #include "lss/actions.hpp"
-#include "lss/command.hpp"
+#include "lss/commands.hpp"
 #include "lss/modes.hpp"
 
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
@@ -92,15 +92,25 @@ bool NormalMode::processKey(KeyEvent event) {
     app->processCommand(*d);
   } break;
   case KeyEvent::KEY_PERIOD:
-    app->processCommand("wait");
-    app->invalidate();
+    if (event.isShiftDown()) {
+      app->processCommand("down");
+    } else {
+      app->processCommand("wait");
+      app->invalidate();
+    }
     break;
   case KeyEvent::KEY_q:
     app->processCommand("quit");
     break;
   case KeyEvent::KEY_p:
-  case KeyEvent::KEY_COMMA:
     app->processCommand("pick");
+    break;
+  case KeyEvent::KEY_COMMA:
+    if (event.isShiftDown()) {
+      app->processCommand("up");
+    } else {
+      app->processCommand("pick");
+    }
     break;
   case KeyEvent::KEY_d:
     if (!event.isShiftDown()) {

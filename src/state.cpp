@@ -72,7 +72,7 @@ const Fragments State::START = {F("<tt>")};
 const Fragments State::END = {F("</tt>")};
 const Fragments State::END_LINE = {F("<br>")};
 
-const Fragments State::normal_mode = {F("<span>NORMAL</span>")};
+const Fragments State::normal_mode = {F("")};
 const Fragments State::hints_mode = {F("<span color='{{green}}'>HINTS</span>")};
 const Fragments State::direction_mode = {
     F("<span color='{{green}}'>Choose direction: <span "

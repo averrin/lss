@@ -35,7 +35,7 @@ std::string Fragment::render(State *state) {
   tpl.setValue("wall_color_seen", state->currentPalette.wall_color_seen);
   tpl.setValue("hero_color", state->currentPalette.hero_color);
 
-  for (auto [key, value] : args) {
+  for (auto[key, value] : args) {
     std::visit([&](auto const &val) { tpl.setValue(key, val); }, value);
   }
 
@@ -59,9 +59,7 @@ std::map<ItemSpec, std::string> itemColors = {
 };
 
 std::map<EnemySpec, std::string> enemySigns = {
-    {EnemyType::GOBLIN, "g"},
-    {EnemyType::ORK, "o"},
-    {EnemyType::PIXI, "p"},
+    {EnemyType::GOBLIN, "g"}, {EnemyType::ORK, "o"}, {EnemyType::PIXI, "p"},
 };
 
 std::map<EnemySpec, std::string> enemyColors = {
@@ -71,10 +69,9 @@ std::map<EnemySpec, std::string> enemyColors = {
 };
 
 std::map<CellType, std::string> cellSigns = {
-    {CellType::FLOOR, "⋅"s},
-    {CellType::FLOOR_BLOOD, "⋅"s},
-    {CellType::WALL, "#"s},
-    {CellType::UNKNOWN_CELL, " "s},
+    {CellType::FLOOR, "⋅"s},         {CellType::FLOOR_BLOOD, "⋅"s},
+    {CellType::WALL, "#"s},          {CellType::UNKNOWN_CELL, " "s},
+    {CellType::DOWNSTAIRS, "&gt;"s}, {CellType::UPSTAIRS, "&lt;"s},
 };
 
 std::map<CellType, std::map<bool, std::string>> cellColors = {
@@ -82,6 +79,8 @@ std::map<CellType, std::map<bool, std::string>> cellColors = {
     {CellType::FLOOR_BLOOD, {{false, "darkred"}, {true, "#333"}}},
     {CellType::WALL, {{false, "#aaa"}, {true, "#666"}}},
     {CellType::UNKNOWN_CELL, {{false, "#555"}, {true, "#777"}}},
+    {CellType::DOWNSTAIRS, {{false, "#aaa"}, {true, "#666"}}},
+    {CellType::UPSTAIRS, {{false, "#aaa"}, {true, "#666"}}},
 };
 
 std::map<CellType, std::map<bool, std::string>> cellWeights = {
@@ -89,6 +88,8 @@ std::map<CellType, std::map<bool, std::string>> cellWeights = {
     {CellType::FLOOR_BLOOD, {{false, "normal"}, {true, "normal"}}},
     {CellType::WALL, {{false, "bold"}, {true, "bold"}}},
     {CellType::UNKNOWN_CELL, {{false, "normal"}, {true, "normal"}}},
+    {CellType::DOWNSTAIRS, {{false, "normal"}, {true, "normal"}}},
+    {CellType::UPSTAIRS, {{false, "normal"}, {true, "normal"}}},
 };
 
 std::map<std::string, tpl_arg> getCellArgs(CellType type, bool seen) {

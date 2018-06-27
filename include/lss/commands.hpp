@@ -88,4 +88,16 @@ public:
   std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
 };
 
+class UpCommand : public Command {
+public:
+  UpCommand();
+  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
+};
+
+class DownCommand : public Command {
+public:
+  DownCommand();
+  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
+};
+
 #endif // __COMMAND_H_

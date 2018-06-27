@@ -1,6 +1,6 @@
 #include "lss/game/player.hpp"
 #include "EventBus.hpp"
-#include "lss/command.hpp"
+#include "lss/commands.hpp"
 #include "lss/game/costs.hpp"
 #include "lss/game/enemy.hpp"
 #include "lss/game/slot.hpp"
@@ -164,7 +164,8 @@ void Player::onEvent(EquipCommandEvent &e) {
 void Player::onEvent(UnEquipCommandEvent &e) { unequip(e.slot); }
 void Player::onEvent(WaitCommandEvent &e) { commit(ap_cost::STEP); }
 void Player::onEvent(ZapCommandEvent &e) {
-  if (e.spell == nullptr) return;
+  if (e.spell == nullptr)
+    return;
   commit(e.spell->cost);
 }
 

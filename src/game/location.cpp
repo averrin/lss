@@ -100,6 +100,41 @@ void Location::onEvent(EnterCellEvent &e) {
   updateView(hero);
 }
 
+void Location::enter(std::shared_ptr<Player> hero) {
+  hero->currentCell = hero->currentLocation->cells[15][30];
+  hero->calcViewField();
+  hero->currentLocation->updateView(hero);
+
+  for (auto o : objects) {
+    if (auto enemy = std::dynamic_pointer_cast<Enemy>(o)) {
+        enemy->registration = eb::EventBus::AddHandler<CommitEvent>(*enemy, hero);
+    }
+  }
+
+  handlers.push_back(
+      eb::EventBus::AddHandler<EnemyDiedEvent>(*hero->currentLocation));
+  handlers.push_back(
+      eb::EventBus::AddHandler<ItemTakenEvent>(*hero->currentLocation));
+  handlers.push_back(
+      eb::EventBus::AddHandler<EnterCellEvent>(*hero->currentLocation, hero));
+  handlers.push_back(
+      eb::EventBus::AddHandler<DigEvent>(*hero->currentLocation, hero));
+  handlers.push_back(
+      eb::EventBus::AddHandler<DropEvent>(*hero->currentLocation));
+}
+
+void Location::leave(std::shared_ptr<Player> hero) {
+  for (auto r : handlers) {
+    r->removeHandler();
+  }
+
+  for (auto o : objects) {
+    if (auto enemy = std::dynamic_pointer_cast<Enemy>(o)) {
+        enemy->registration->removeHandler();
+    }
+  }
+}
+
 void Location::updateView(std::shared_ptr<Player> hero) {
   for (auto r : cells) {
     for (auto c : r) {

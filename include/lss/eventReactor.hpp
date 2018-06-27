@@ -13,6 +13,7 @@ class EventReactor : public eb::EventHandler<eb::Event>,
                      public eb::EventHandler<InventoryCommandEvent>,
                      public eb::EventHandler<CommitEvent>,
                      public eb::EventHandler<ZapCommandEvent>,
+                     public eb::EventHandler<StairEvent>,
                      public eb::EventHandler<QuitCommandEvent> {
 public:
   EventReactor(LSSApp *a) : app(a) {
@@ -24,6 +25,7 @@ public:
     eb::EventBus::AddHandler<HelpCommandEvent>(*this);
     eb::EventBus::AddHandler<InventoryCommandEvent>(*this);
     eb::EventBus::AddHandler<CommitEvent>(*this);
+    eb::EventBus::AddHandler<StairEvent>(*this);
   }
   LSSApp *app;
 
@@ -35,11 +37,12 @@ public:
   virtual void onEvent(DropCommandEvent &e) override;
   virtual void onEvent(ZapCommandEvent &e) override;
   virtual void onEvent(CommitEvent &e) override;
+  virtual void onEvent(StairEvent &e) override;
 
   bool slotCallback(std::shared_ptr<Object>);
   bool itemCallback(std::shared_ptr<Slot>, std::shared_ptr<Object>);
 
-        void castSpell(std::shared_ptr<Spell>);
+  void castSpell(std::shared_ptr<Spell>);
 };
 
 #endif // __EVENTREACTOR_H_

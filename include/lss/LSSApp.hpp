@@ -17,7 +17,7 @@
 #include "cinder/gl/gl.h"
 
 #include "CinderPango.h"
-#include "lss/command.hpp"
+#include "lss/commands.hpp"
 #include "lss/modes.hpp"
 #include "lss/state.hpp"
 
@@ -47,7 +47,8 @@ public:
   void invalidate();
   bool processCommand(std::string);
   void setListeners();
-  void loadMap();
+  std::map<std::string, std::shared_ptr<Location>> locations;
+  std::shared_ptr<Location> loadMap(std::string);
 
   kp::pango::CinderPangoRef gameFrame;
   kp::pango::CinderPangoRef statusFrame;

@@ -1,4 +1,5 @@
 #include "lss/eventReactor.hpp"
+#include "lss/game/cell.hpp"
 #include "lss/game/spell.hpp"
 #include "lss/state.hpp"
 #include "lss/utils.hpp"
@@ -11,6 +12,34 @@ QuitCommandEvent::QuitCommandEvent() : CommandEvent(nullptr) {}
 std::optional<std::shared_ptr<CommandEvent>>
 QuitCommand::getEvent(std::string s) {
   return std::make_shared<QuitCommandEvent>();
+}
+
+void EventReactor::onEvent(StairEvent &e) {
+  if (app->hero->currentCell->type == CellType::UPSTAIRS && e.dir == StairType::UP) {
+    app->hero->currentLocation = app->locations["start"];
+    app->hero->currentLocation->enter(app->hero);
+
+    app->state->fragments.assign(
+        app->hero->currentLocation->cells.size() *
+            (app->hero->currentLocation->cells.front().size() + 1),
+        std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false));
+    app->hero->commit(0);
+    app->invalidate();
+  } else if (app->hero->currentCell->type == CellType::DOWNSTAIRS && e.dir == StairType::DOWN) {
+    app->hero->currentLocation = app->locations["second"];
+    app->hero->currentLocation->enter(app->hero);
+
+    app->state->fragments.assign(
+        app->hero->currentLocation->cells.size() *
+            (app->hero->currentLocation->cells.front().size() + 1),
+        std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false));
+    app->hero->commit(0);
+    app->invalidate();
+  } else {
+    MessageEvent me(nullptr, "There is no suitable stair.");
+    eb::EventBus::FireEvent(me);
+    return;
+  }
 }
 
 void EventReactor::onEvent(eb::Event &e) { app->invalidate(); }
@@ -202,12 +231,11 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
   app->statusLine->setContent(State::text_mode);
 }
 
-std::shared_ptr<Enemy> mkEnemy(std::shared_ptr<Cell> c,
+std::shared_ptr<Enemy> mkEnemy(std::shared_ptr<Location> location,std::shared_ptr<Cell> c,
                                std::shared_ptr<Player> hero, EnemySpec type) {
   auto enemy = std::make_shared<Enemy>(type);
   enemy->currentCell = c;
-  enemy->currentLocation = hero->currentLocation;
-  enemy->registration = eb::EventBus::AddHandler<CommitEvent>(*enemy, hero);
+  enemy->currentLocation = location;
   return enemy;
 }
 
@@ -228,11 +256,10 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     }
     app->statusLine->setContent({F("Enemy freezed!")});
   } else if (spell == Spells::SUMMON_ORK) {
-    auto c =
-        app->hero->currentLocation
-            ->cells[app->hero->currentCell->y + 1][app->hero->currentCell->x];
+    auto c = app->hero->currentLocation->cells[app->hero->currentCell->y + 1]
+                                              [app->hero->currentCell->x];
     app->hero->currentLocation->objects.push_back(
-        mkEnemy(c, app->hero, EnemyType::ORK));
+        mkEnemy(app->hero->currentLocation, c, app->hero, EnemyType::ORK));
     app->invalidate();
   }
 }

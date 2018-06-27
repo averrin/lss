@@ -89,7 +89,21 @@ void LSSApp::setup() {
 
   statusLine->setContent(State::normal_mode);
 
-  loadMap();
+  hero = std::make_shared<Player>();
+  locations = {
+      {"start", loadMap("./dungeon2.ascii")},
+      {"second", loadMap("./dungeon.ascii")},
+  };
+  hero->currentLocation = locations["start"];
+  hero->currentLocation->enter(hero);
+
+  state->fragments.assign(
+      hero->currentLocation->cells.size() *
+          (hero->currentLocation->cells.front().size() + 1),
+      std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false));
+
+  hero->commit(0);
+
   invalidate();
   setListeners();
 
@@ -106,29 +120,29 @@ void LSSApp::setup() {
   commands.push_back(std::make_shared<DropCommand>());
   commands.push_back(std::make_shared<WaitCommand>());
   commands.push_back(std::make_shared<ZapCommand>());
+  commands.push_back(std::make_shared<UpCommand>());
+  commands.push_back(std::make_shared<DownCommand>());
 }
 
-std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Cell> c,
+std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Location> location,std::shared_ptr<Cell> c,
                                  std::shared_ptr<Player> hero, EnemySpec type) {
   auto enemy = std::make_shared<Enemy>(type);
   enemy->currentCell = c;
-  enemy->currentLocation = hero->currentLocation;
-  enemy->registration = eb::EventBus::AddHandler<CommitEvent>(*enemy, hero);
+  enemy->currentLocation = location;
   return enemy;
 }
 
-void LSSApp::loadMap() {
-  hero = std::make_shared<Player>();
-  hero->currentLocation = std::make_shared<Location>();
-  hero->currentLocation->player = hero;
+std::shared_ptr<Location> LSSApp::loadMap(std::string filename) {
+  auto location = std::make_shared<Location>();
+  location->player = hero;
 
   std::string line;
-  std::ifstream dungeon_file("./dungeon.ascii");
+  std::ifstream dungeon_file(filename);
   int n = 0, i = 0;
   if (dungeon_file.is_open()) {
     n = 0;
     while (getline(dungeon_file, line)) {
-      hero->currentLocation->cells.push_back({});
+      location->cells.push_back({});
       i = 0;
       for (auto ch : line) {
         auto c = std::make_shared<Cell>(i, n, CellType::WALL);
@@ -143,6 +157,16 @@ void LSSApp::loadMap() {
           c->passThrough = true;
           c->seeThrough = true;
           break;
+        case '<':
+          c->type = CellType::UPSTAIRS;
+          c->passThrough = true;
+          c->seeThrough = false;
+          break;
+        case '>':
+          c->type = CellType::DOWNSTAIRS;
+          c->passThrough = true;
+          c->seeThrough = true;
+          break;
         case '#':
           c->type = CellType::WALL;
           c->passThrough = false;
@@ -153,28 +177,25 @@ void LSSApp::loadMap() {
           door->currentCell = c;
           c->type = CellType::FLOOR;
           c->passThrough = true;
-          hero->currentLocation->objects.push_back(door);
+          location->objects.push_back(door);
         } break;
         case 'o': {
           c->type = CellType::FLOOR;
           c->passThrough = true;
-          hero->currentLocation->objects.push_back(
-              makeEnemy(c, hero, EnemyType::ORK));
+          location->objects.push_back(makeEnemy(location, c, hero, EnemyType::ORK));
         } break;
         case 'g': {
           c->type = CellType::FLOOR;
           c->passThrough = true;
-          hero->currentLocation->objects.push_back(
-              makeEnemy(c, hero, EnemyType::GOBLIN));
+          location->objects.push_back(makeEnemy(location, c, hero, EnemyType::GOBLIN));
         } break;
         case 'p': {
           c->type = CellType::FLOOR;
           c->passThrough = true;
-          hero->currentLocation->objects.push_back(
-              makeEnemy(c, hero, EnemyType::PIXI));
+          location->objects.push_back(makeEnemy(location, c, hero, EnemyType::PIXI));
         } break;
         }
-        hero->currentLocation->cells[n].push_back(c);
+        location->cells[n].push_back(c);
         i++;
       }
       n++;
@@ -182,36 +203,21 @@ void LSSApp::loadMap() {
     dungeon_file.close();
   }
 
-  hero->currentCell = hero->currentLocation->cells[15][30];
-  hero->calcViewField();
-  hero->currentLocation->updateView(hero);
+  // auto axe = std::make_shared<Item>(ItemType::PICK_AXE);
+  // axe->currentCell = location->cells[16][31];
+  // location->objects.push_back(axe);
 
-  auto axe = std::make_shared<Item>(ItemType::PICK_AXE);
-  axe->currentCell = hero->currentLocation->cells[16][31];
-  hero->currentLocation->objects.push_back(axe);
+  // auto sword = std::make_shared<Item>(
+  //     ItemType::SWORD, Effects{std::make_shared<SpecialPrefix>("rusty"),
+  //                              std::make_shared<MeleeDamage>(1, 6, 1),
+  //                              std::make_shared<HPModifier>(5)});
+  // sword->currentCell = location->cells[15][32];
+  // location->objects.push_back(sword);
 
-  auto sword = std::make_shared<Item>(
-      ItemType::SWORD, Effects{std::make_shared<SpecialPrefix>("rusty"),
-                               std::make_shared<MeleeDamage>(1, 6, 1),
-                               std::make_shared<HPModifier>(5)});
-  sword->currentCell = hero->currentLocation->cells[15][32];
-  hero->currentLocation->objects.push_back(sword);
-
-  state->fragments.assign(
-      n * (i + 1), std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false));
-
-  hero->commit(0);
+  return location;
 }
 
-void LSSApp::setListeners() {
-  reactor = std::make_shared<EventReactor>(this);
-
-  eb::EventBus::AddHandler<EnemyDiedEvent>(*hero->currentLocation);
-  eb::EventBus::AddHandler<ItemTakenEvent>(*hero->currentLocation);
-  eb::EventBus::AddHandler<EnterCellEvent>(*hero->currentLocation, hero);
-  eb::EventBus::AddHandler<DigEvent>(*hero->currentLocation, hero);
-  eb::EventBus::AddHandler<DropEvent>(*hero->currentLocation);
-}
+void LSSApp::setListeners() { reactor = std::make_shared<EventReactor>(this); }
 
 void LSSApp::invalidate() {
   auto t0 = std::chrono::system_clock::now();
@@ -321,6 +327,7 @@ void LSSApp::keyDown(KeyEvent event) {
 }
 
 bool LSSApp::processCommand(std::string cmd) {
+  // fmt::print("Command: {}\n", cmd);
   auto s = utils::split(cmd, ' ').front();
   auto c = std::find_if(commands.begin(), commands.end(),
                         [s](std::shared_ptr<Command> c) {
@@ -360,6 +367,8 @@ bool LSSApp::processCommand(std::string cmd) {
   } else if (auto e = dynamic_pointer_cast<WaitCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
   } else if (auto e = dynamic_pointer_cast<ZapCommandEvent>(*event)) {
+    eb::EventBus::FireEvent(*e);
+  } else if (auto e = dynamic_pointer_cast<StairEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
   }
   invalidate();

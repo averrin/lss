@@ -2,20 +2,23 @@
 #define __CREATURE_H_
 #include <algorithm>
 
-#include "lss/game/object.hpp"
 #include "lss/game/equipment.hpp"
 #include "lss/game/item.hpp"
+#include "lss/game/object.hpp"
 
 enum AttributeType {
-  HP, HP_MAX, SPEED, VISIBILITY_DISTANCE,
+  HP,
+  HP_MAX,
+  SPEED,
+  VISIBILITY_DISTANCE,
 };
 
 class Creature;
-class Attribute: public Object {
+class Attribute : public Object {
 public:
-    Attribute(AttributeType t): type(t) {}
-    AttributeType type;
-    float get(Creature);
+  Attribute(AttributeType t) : type(t) {}
+  AttributeType type;
+  float get(Creature);
 };
 
 class Creature : public Object {
@@ -51,13 +54,16 @@ public:
   float speed = 1.f;
   float visibilityDistance = 5.5f;
 
-  std::shared_ptr<Attribute> HP = std::make_shared<Attribute>(AttributeType::HP);
-  std::shared_ptr<Attribute> HP_MAX = std::make_shared<Attribute>(AttributeType::HP_MAX);
-  std::shared_ptr<Attribute> SPEED = std::make_shared<Attribute>(AttributeType::SPEED);
-  std::shared_ptr<Attribute> VISIBILITY_DISTANCE = std::make_shared<Attribute>(AttributeType::VISIBILITY_DISTANCE);
+  std::shared_ptr<Attribute> HP =
+      std::make_shared<Attribute>(AttributeType::HP);
+  std::shared_ptr<Attribute> HP_MAX =
+      std::make_shared<Attribute>(AttributeType::HP_MAX);
+  std::shared_ptr<Attribute> SPEED =
+      std::make_shared<Attribute>(AttributeType::SPEED);
+  std::shared_ptr<Attribute> VISIBILITY_DISTANCE =
+      std::make_shared<Attribute>(AttributeType::VISIBILITY_DISTANCE);
 
   std::shared_ptr<Cell> getCell(Direction);
 };
-
 
 #endif // __CREATURE_H_

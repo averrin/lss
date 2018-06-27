@@ -1,7 +1,7 @@
 #include <sstream>
 #include <utility>
 
-#include "lss/command.hpp"
+#include "lss/commands.hpp"
 #include "lss/game/events.hpp"
 #include "lss/utils.hpp"
 
@@ -24,6 +24,8 @@ InventoryCommand::InventoryCommand() : Command({"inventory", "i"s}) {}
 DropCommand::DropCommand() : Command({"drop", "dr"s}) {}
 WaitCommand::WaitCommand() : Command({"wait"}) {}
 ZapCommand::ZapCommand() : Command({"zap", "z"s}) {}
+UpCommand::UpCommand() : Command({"up"}) {}
+DownCommand::DownCommand() : Command({"down"}) {}
 
 WalkCommandEvent::WalkCommandEvent(Direction d)
     : CommandEvent(nullptr), direction(d) {}
@@ -153,4 +155,15 @@ WaitCommandEvent::WaitCommandEvent() : CommandEvent(nullptr) {}
 std::optional<std::shared_ptr<CommandEvent>>
 WaitCommand::getEvent(std::string s) {
   return std::make_shared<WaitCommandEvent>();
+}
+
+StairEvent::StairEvent(StairType st) : CommandEvent(nullptr), dir(st) {}
+std::optional<std::shared_ptr<CommandEvent>>
+UpCommand::getEvent(std::string s) {
+  return std::make_shared<StairEvent>(StairType::UP);
+}
+
+std::optional<std::shared_ptr<CommandEvent>>
+DownCommand::getEvent(std::string s) {
+  return std::make_shared<StairEvent>(StairType::DOWN);
 }

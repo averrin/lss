@@ -6,6 +6,7 @@
 #include "micropather/micropather.h"
 
 #include "EventHandler.hpp"
+#include "EventRegisttration.hpp"
 
 class Player;
 class Location : public micropather::Graph,
@@ -22,6 +23,9 @@ public:
 
   void updateView(std::shared_ptr<Player>);
   void reveal();
+  void enter(std::shared_ptr<Player>);
+  void leave(std::shared_ptr<Player>);
+  std::vector<eb::HandlerRegistrationPtr> handlers;
 
   virtual void onEvent(EnemyDiedEvent &e) override;
   virtual void onEvent(ItemTakenEvent &e) override;

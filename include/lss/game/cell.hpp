@@ -8,6 +8,8 @@ enum CellType {
   FLOOR,
   FLOOR_BLOOD,
   WALL,
+  DOWNSTAIRS,
+  UPSTAIRS,
 };
 
 enum VisibilityState { UNKNOWN, SEEN, VISIBLE };

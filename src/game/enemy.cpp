@@ -18,10 +18,10 @@ Enemy::Enemy(EnemySpec t) : Creature(), type(t) {
   equipment->slots = {
       std::make_shared<Slot>(
           "Hand", std::vector<WearableType>{WEAPON, WEAPON_LIGHT,
-                                                  WEAPON_TWOHANDED, SHIELD}),
+                                            WEAPON_TWOHANDED, SHIELD}),
       std::make_shared<Slot>(
           "Hand", std::vector<WearableType>{WEAPON, WEAPON_LIGHT,
-                                                  WEAPON_TWOHANDED, SHIELD}),
+                                            WEAPON_TWOHANDED, SHIELD}),
       std::make_shared<Slot>("Body", std::vector<WearableType>{BODY}),
       std::make_shared<Slot>("--", std::vector<WearableType>{ENEMY}),
       std::make_shared<Slot>("--", std::vector<WearableType>{ENEMY}),
@@ -88,13 +88,13 @@ void Enemy::onEvent(CommitEvent &e) {
   // TODO: add lastheropoint and attack hero if its near
   auto stepCost = ap_cost::STEP / speed;
   auto attackCost = ap_cost::ATTACK / speed;
+  auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
 
   // TODO: implement passive ai
-  if (type.aiType == AIType::AGGRESSIVE) {
+  if (type.aiType == AIType::AGGRESSIVE && hero->currentLocation == currentLocation) {
     auto pather = new micropather::MicroPather(currentLocation.get());
     float totalCost = 0;
     pather->Reset();
-    auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
     int result = pather->Solve(currentCell.get(), hero->currentCell.get(),
                                &path, &totalCost);
     delete pather;

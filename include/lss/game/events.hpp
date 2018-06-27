@@ -161,4 +161,11 @@ public:
   ZapCommandEvent();
   std::shared_ptr<Spell> spell;
 };
+
+class StairEvent : public CommandEvent {
+public:
+  StairEvent(StairType);
+  StairEvent();
+  StairType dir;
+};
 #endif // __EVENTS_H_

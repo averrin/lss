@@ -90,7 +90,6 @@ bool Creature::pick(std::shared_ptr<Item> item) {
   return true;
 }
 
-
 bool Creature::attack(Direction d) {
   auto nc = getCell(d);
   auto opit = std::find_if(
