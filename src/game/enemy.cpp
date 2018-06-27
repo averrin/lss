@@ -88,10 +88,12 @@ void Enemy::onEvent(CommitEvent &e) {
   // TODO: add lastheropoint and attack hero if its near
   auto stepCost = ap_cost::STEP / speed;
   auto attackCost = ap_cost::ATTACK / speed;
+  auto waitCost = ap_cost::WAIT;
   auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
 
   // TODO: implement passive ai
-  if (type.aiType == AIType::AGGRESSIVE && hero->currentLocation == currentLocation) {
+  // fmt::print("{}\n", canSee(hero->currentCell));
+  if (type.aiType == AIType::AGGRESSIVE && hero->currentLocation == currentLocation && canSee(hero->currentCell)) {
     auto pather = new micropather::MicroPather(currentLocation.get());
     float totalCost = 0;
     pather->Reset();
@@ -127,6 +129,11 @@ void Enemy::onEvent(CommitEvent &e) {
         attack(cd);
         actionPoints -= attackCost;
       }
+    }
+  } else {
+    
+    while (actionPoints >= waitCost) {
+        actionPoints -= waitCost;
     }
   }
 }

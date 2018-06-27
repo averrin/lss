@@ -266,6 +266,13 @@ void LSSApp::invalidate() {
         ec->y * (hero->currentLocation->cells.front().size() + 1) + ec->x;
 
     if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
+      // for (auto dot : e->viewField) {
+      //   auto i =
+      //       dot->y * (hero->currentLocation->cells.front().size() + 1) +
+      //       dot->x;
+      //   state->fragments[i] = std::make_shared<CellSign>(CellType::FLOOR_BLOOD, false);
+      // }
+
       if (!hero->canSee(ec) && !hero->monsterSense)
         continue;
 
@@ -278,6 +285,7 @@ void LSSApp::invalidate() {
       //       dot->x;
       //   state->fragments[i] = std::make_shared<ItemSign>(ItemType::ROCK);
       // }
+
       state->fragments[index] = std::make_shared<EnemySign>(e->type);
 
     } else if (auto d = std::dynamic_pointer_cast<Door>(o);

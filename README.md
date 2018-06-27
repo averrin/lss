@@ -1,6 +1,6 @@
 # Long Story Short
 
-Yet another undinished roguelike game.
+Yet another unfinished roguelike game.
 
 ![screenshot](https://raw.githubusercontent.com/averrin/lss/master/screenshot.png)
 
@@ -34,4 +34,6 @@ Yet another undinished roguelike game.
 * i — inventory [`/inventory`, `/i`]
 * . — wait [`/wait`]
 * z — cast spell [`/zap`, `/z`]
+* < — go up [`/up`]
+* > — go down [`/down`]
 

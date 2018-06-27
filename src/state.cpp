@@ -124,4 +124,9 @@ const Fragments State::HELP = {F(
     "• <span color='{{orange}}' weight='bold'>z</span> — cast spell "
     "[`/zap`]<br>"
     "• <span color='{{orange}}' weight='bold'>i</span> — inventory "
-    "[`/inventory`, `/i`]<br>")};
+    "[`/inventory`, `/i`]<br>"
+    "• <span color='{{orange}}' weight='bold'>&lt;</span> — go up "
+    "[`/up`]<br>"
+    "• <span color='{{orange}}' weight='bold'>&gt;</span> — go down "
+    "[`/down`]<br>"
+  )};

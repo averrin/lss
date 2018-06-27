@@ -108,6 +108,7 @@ void Location::enter(std::shared_ptr<Player> hero) {
   for (auto o : objects) {
     if (auto enemy = std::dynamic_pointer_cast<Enemy>(o)) {
         enemy->registration = eb::EventBus::AddHandler<CommitEvent>(*enemy, hero);
+        enemy->calcViewField();
     }
   }
 
