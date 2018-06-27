@@ -81,6 +81,7 @@ public:
 
 class CommandEvent : public eb::Event {
 public:
+  CommandEvent(): eb::Event(nullptr) {};
   CommandEvent(eb::ObjectPtr);
 };
 

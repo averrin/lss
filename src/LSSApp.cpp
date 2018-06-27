@@ -322,8 +322,10 @@ void LSSApp::keyDown(KeyEvent event) {
 
 bool LSSApp::processCommand(std::string cmd) {
   auto s = utils::split(cmd, ' ').front();
+  fmt::print("before find\n");
   auto c = std::find_if(commands.begin(), commands.end(),
-                        [s](std::shared_ptr<Command> c) {
+                        [s](std::any a) {
+                          auto c = std::any_cast<std::shared_ptr<Command<CommandEvent>>>(a);
                           return std::find(c->aliases.begin(), c->aliases.end(),
                                            s) != c->aliases.end();
                         });
@@ -331,7 +333,8 @@ bool LSSApp::processCommand(std::string cmd) {
     statusLine->setContent(State::unknown_command);
     return false;
   }
-  auto command = *c;
+  fmt::print("before get event\n");
+  auto command = std::any_cast<std::shared_ptr<Command<CommandEvent>>>(*c);
   auto event = command->getEvent(cmd);
   if (event == std::nullopt)
     return false;

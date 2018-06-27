@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <string>
 #include <utility>
+#include <any>
 
 #include "cinder/Rand.h"
 #include "cinder/app/App.h"
@@ -78,7 +79,7 @@ public:
 
   std::shared_ptr<Player> hero;
 
-  std::vector<std::shared_ptr<Command<CommandEvent>>> commands;
+  std::vector<std::any> commands;
 
   std::string typedCommand;
   std::string pendingCommand;
