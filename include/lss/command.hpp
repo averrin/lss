@@ -7,85 +7,71 @@
 
 #include "Event.hpp"
 #include "lss/game/events.hpp"
+using namespace std::string_literals;
 
+template <class T>
 class Command {
 public:
-  Command(std::vector<std::string>);
+  Command(std::vector<std::string> a): aliases(a) {}
   std::vector<std::string> aliases;
-  virtual std::optional<std::shared_ptr<CommandEvent>>
-      getEvent(std::string) = 0;
+  virtual std::optional<std::shared_ptr<T>>
+  getEvent(std::string) { return std::make_shared<T>();};
 };
 
-class MoveCommand : public Command {
+class MoveCommand : public Command<MoveCommandEvent> {
 public:
-  MoveCommand();
-  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
+MoveCommand()
+    : Command({"move", "m"s, "n"s, "e"s, "s"s, "w"s, "nw", "ne", "se", "sw"}){}
+  std::optional<std::shared_ptr<MoveCommandEvent>> getEvent(std::string);
+};
+class DigCommand : public Command<DigCommandEvent> {
+public:
+DigCommand() : Command({"dig", "d"s}) {}
+  std::optional<std::shared_ptr<DigCommandEvent>> getEvent(std::string);
+};
+class WalkCommand : public Command<WalkCommandEvent> {
+public:
+WalkCommand() : Command({"walk"}) {}
+  std::optional<std::shared_ptr<WalkCommandEvent>> getEvent(std::string);
+};
+class AttackCommand : public Command<AttackCommandEvent> {
+public:
+AttackCommand() : Command({"attack", "a"s}) {}
+  std::optional<std::shared_ptr<AttackCommandEvent>> getEvent(std::string);
+};
+class QuitCommand:     public Command<QuitCommandEvent> {
+public:
+QuitCommand() : Command({"quit", "q"s}) {}
+};
+class PickCommand:     public Command<PickCommandEvent> {
+public:
+PickCommand() : Command({"pick", "p"s}) {}
+};
+class EquipCommand:    public Command<EquipCommandEvent> {
+public:
+EquipCommand() : Command({"equip", "eq"s}) {}
+};
+class HelpCommand:     public Command<HelpCommandEvent> {
+public:
+HelpCommand() : Command({"help", "h"s}) {}
+};
+class InventoryCommand: public Command<InventoryCommandEvent> {
+public:
+InventoryCommand() : Command({"inventory", "i"s}) {}
+};
+class DropCommand:     public Command<DropCommandEvent> {
+public:
+DropCommand() : Command({"drop", "dr"s}) {}
+};
+class WaitCommand:     public Command<WaitCommandEvent> {
+public:
+WaitCommand() : Command({"wait"}) {}
+};
+class ZapCommand:      public Command<ZapCommandEvent> {
+public:
+ZapCommand() : Command({"zap", "z"s}) {}
 };
 
-class QuitCommand : public Command {
-public:
-  QuitCommand();
-  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
-};
 
-class PickCommand : public Command {
-public:
-  PickCommand();
-  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
-};
-
-class DigCommand : public Command {
-public:
-  DigCommand();
-  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
-};
-
-class WalkCommand : public Command {
-public:
-  WalkCommand();
-  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
-};
-
-class AttackCommand : public Command {
-public:
-  AttackCommand();
-  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
-};
-
-class EquipCommand : public Command {
-public:
-  EquipCommand();
-  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
-};
-
-class HelpCommand : public Command {
-public:
-  HelpCommand();
-  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
-};
-
-class InventoryCommand : public Command {
-public:
-  InventoryCommand();
-  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
-};
-
-class DropCommand : public Command {
-public:
-  DropCommand();
-  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
-};
-
-class WaitCommand : public Command {
-public:
-  WaitCommand();
-  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
-};
-
-class ZapCommand : public Command {
-public:
-  ZapCommand();
-  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
-};
 
 #endif // __COMMAND_H_

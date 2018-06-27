@@ -9,26 +9,11 @@
 
 using namespace std::string_literals;
 
-Command::Command(std::vector<std::string> a) : aliases(a) {}
 CommandEvent::CommandEvent(eb::ObjectPtr s) : eb::Event(s) {}
-
-MoveCommand::MoveCommand()
-    : Command({"move", "m"s, "n"s, "e"s, "s"s, "w"s, "nw", "ne", "se", "sw"}) {}
-QuitCommand::QuitCommand() : Command({"quit", "q"s}) {}
-PickCommand::PickCommand() : Command({"pick", "p"s}) {}
-DigCommand::DigCommand() : Command({"dig", "d"s}) {}
-AttackCommand::AttackCommand() : Command({"attack", "a"s}) {}
-EquipCommand::EquipCommand() : Command({"equip", "eq"s}) {}
-HelpCommand::HelpCommand() : Command({"help", "h"s}) {}
-InventoryCommand::InventoryCommand() : Command({"inventory", "i"s}) {}
-DropCommand::DropCommand() : Command({"drop", "dr"s}) {}
-WaitCommand::WaitCommand() : Command({"wait"}) {}
-ZapCommand::ZapCommand() : Command({"zap", "z"s}) {}
 
 WalkCommandEvent::WalkCommandEvent(Direction d)
     : CommandEvent(nullptr), direction(d) {}
-WalkCommand::WalkCommand() : Command({"walk"}) {}
-std::optional<std::shared_ptr<CommandEvent>>
+std::optional<std::shared_ptr<WalkCommandEvent>>
 WalkCommand::getEvent(std::string cmd) {
   auto tokens = utils::split(cmd, ' ');
   std::string dirString = tokens.front();
@@ -47,7 +32,7 @@ WalkCommand::getEvent(std::string cmd) {
 
 DigCommandEvent::DigCommandEvent(Direction d)
     : CommandEvent(nullptr), direction(d) {}
-std::optional<std::shared_ptr<CommandEvent>>
+std::optional<std::shared_ptr<DigCommandEvent>>
 DigCommand::getEvent(std::string cmd) {
   auto tokens = utils::split(cmd, ' ');
   std::string dirString = tokens.front();
@@ -66,7 +51,7 @@ DigCommand::getEvent(std::string cmd) {
 
 MoveCommandEvent::MoveCommandEvent(Direction d)
     : CommandEvent(nullptr), direction(d) {}
-std::optional<std::shared_ptr<CommandEvent>>
+std::optional<std::shared_ptr<MoveCommandEvent>>
 MoveCommand::getEvent(std::string cmd) {
   auto tokens = utils::split(cmd, ' ');
   std::string dirString = tokens.front();
@@ -85,7 +70,7 @@ MoveCommand::getEvent(std::string cmd) {
 
 AttackCommandEvent::AttackCommandEvent(Direction d)
     : CommandEvent(nullptr), direction(d) {}
-std::optional<std::shared_ptr<CommandEvent>>
+std::optional<std::shared_ptr<AttackCommandEvent>>
 AttackCommand::getEvent(std::string cmd) {
   auto tokens = utils::split(cmd, ' ');
   std::string dirString = tokens.front();
@@ -103,19 +88,10 @@ AttackCommand::getEvent(std::string cmd) {
 }
 
 PickCommandEvent::PickCommandEvent() : CommandEvent(nullptr) {}
-std::optional<std::shared_ptr<CommandEvent>>
-PickCommand::getEvent(std::string s) {
-  return std::make_shared<PickCommandEvent>();
-}
-
 EquipCommandEvent::EquipCommandEvent() : CommandEvent(nullptr) {}
 EquipCommandEvent::EquipCommandEvent(std::shared_ptr<Slot> s,
                                      std::shared_ptr<Item> i)
     : CommandEvent(nullptr), item(i), slot(s) {}
-std::optional<std::shared_ptr<CommandEvent>>
-EquipCommand::getEvent(std::string s) {
-  return std::make_shared<EquipCommandEvent>();
-}
 
 UnEquipCommandEvent::UnEquipCommandEvent(std::shared_ptr<Slot> s)
     : CommandEvent(nullptr), slot(s) {}
@@ -123,34 +99,13 @@ UnEquipCommandEvent::UnEquipCommandEvent(std::shared_ptr<Slot> s)
 HelpCommandEvent::HelpCommandEvent() : CommandEvent(nullptr) {}
 InventoryCommandEvent::InventoryCommandEvent() : CommandEvent(nullptr) {}
 
-std::optional<std::shared_ptr<CommandEvent>>
-HelpCommand::getEvent(std::string s) {
-  return std::make_shared<HelpCommandEvent>();
-}
-
-std::optional<std::shared_ptr<CommandEvent>>
-InventoryCommand::getEvent(std::string s) {
-  return std::make_shared<InventoryCommandEvent>();
-}
 
 DropCommandEvent::DropCommandEvent() : CommandEvent(nullptr) {}
 DropCommandEvent::DropCommandEvent(std::shared_ptr<Item> i)
     : CommandEvent(nullptr), item(i) {}
-std::optional<std::shared_ptr<CommandEvent>>
-DropCommand::getEvent(std::string s) {
-  return std::make_shared<DropCommandEvent>();
-}
 
 ZapCommandEvent::ZapCommandEvent() : CommandEvent(nullptr) {}
 ZapCommandEvent::ZapCommandEvent(std::shared_ptr<Spell> i)
     : CommandEvent(nullptr), spell(i) {}
-std::optional<std::shared_ptr<CommandEvent>>
-ZapCommand::getEvent(std::string s) {
-  return std::make_shared<ZapCommandEvent>();
-}
 
 WaitCommandEvent::WaitCommandEvent() : CommandEvent(nullptr) {}
-std::optional<std::shared_ptr<CommandEvent>>
-WaitCommand::getEvent(std::string s) {
-  return std::make_shared<WaitCommandEvent>();
-}

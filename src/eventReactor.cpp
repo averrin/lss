@@ -8,10 +8,6 @@ std::shared_ptr<Fragment> F(std::string c) {
 }
 
 QuitCommandEvent::QuitCommandEvent() : CommandEvent(nullptr) {}
-std::optional<std::shared_ptr<CommandEvent>>
-QuitCommand::getEvent(std::string s) {
-  return std::make_shared<QuitCommandEvent>();
-}
 
 void EventReactor::onEvent(eb::Event &e) { app->invalidate(); }
 

@@ -78,7 +78,7 @@ public:
 
   std::shared_ptr<Player> hero;
 
-  std::vector<std::shared_ptr<Command>> commands;
+  std::vector<std::shared_ptr<Command<CommandEvent>>> commands;
 
   std::string typedCommand;
   std::string pendingCommand;

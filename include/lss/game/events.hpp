@@ -86,6 +86,7 @@ public:
 
 class MoveCommandEvent : public CommandEvent {
 public:
+    MoveCommandEvent() : CommandEvent(nullptr) {}
   MoveCommandEvent(Direction);
   Direction direction;
 };
@@ -102,18 +103,21 @@ public:
 
 class DigCommandEvent : public CommandEvent {
 public:
+    DigCommandEvent() : CommandEvent(nullptr) {}
   DigCommandEvent(Direction);
   Direction direction;
 };
 
 class WalkCommandEvent : public CommandEvent {
 public:
+  WalkCommandEvent() : CommandEvent(nullptr) {}
   WalkCommandEvent(Direction);
   Direction direction;
 };
 
 class AttackCommandEvent : public CommandEvent {
 public:
+  AttackCommandEvent() : CommandEvent(nullptr) {}
   AttackCommandEvent(Direction);
   Direction direction;
 };
