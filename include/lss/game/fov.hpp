@@ -27,15 +27,11 @@ class Shadow {
 public:
   double start, end;
 
-  Vec startPos, endPos;
-
   Shadow() {}
 
-  Shadow(double in_start, double in_end, Vec in_startPos, Vec in_endPos) {
+  Shadow(double in_start, double in_end) {
     start = in_start;
     end = in_end;
-    startPos = in_startPos;
-    endPos = in_endPos;
   }
 
   /// Returns `true` if [other] is completely covered by this shadow.

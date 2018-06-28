@@ -4,6 +4,8 @@
 #include "fmt/format.h"
 #include "lss/game/fov.hpp"
 
+// Huge thanks to LordKelvin
+
 namespace fov {
 class ShadowLine
 {
@@ -32,21 +34,8 @@ public:
             if(_shadows[index].start >= shadow.start)
                 break;
         }
-
-        // The new shadow is going here. See if it overlaps the previous or next.
-        bool overlappingPreviousSet = false;
-        if(index > 0 && _shadows[index - 1].end > shadow.start)
-        {
-            overlappingPreviousSet = true;
-        }
-
-        Shadow overlappingNext;
-        bool overlappingNextSet = false;
-        if(index < _shadows.size() && _shadows[index].start < shadow.end)
-        {
-            overlappingNext = _shadows[index];
-            overlappingNextSet = true;
-        }
+        auto overlappingPreviousSet = (index > 0 && _shadows[index - 1].end > shadow.start);
+        auto overlappingNextSet = (index < _shadows.size() && _shadows[index].start < shadow.end);
 
         // Insert and unify with overlapping shadows.
         if(overlappingNextSet)
@@ -54,15 +43,13 @@ public:
             if(overlappingPreviousSet)
             {
                 // Overlaps both, so unify one and delete the other.
-                _shadows[index - 1].end = overlappingNext.end;
-                _shadows[index - 1].endPos = overlappingNext.endPos;
+                _shadows[index - 1].end = _shadows[index].end;
                 _shadows.erase(_shadows.begin() + index);
             }
             else
             {
                 // Only overlaps the next shadow, so unify it with that.
-                overlappingNext.start = shadow.start;
-                overlappingNext.startPos = shadow.startPos;
+                _shadows[index].start = shadow.start;
             }
         }
         else
@@ -71,7 +58,6 @@ public:
             {
                 // Only overlaps the previous shadow, so unify it with that.
                 _shadows[index - 1].end = shadow.end;
-                _shadows[index - 1].endPos = shadow.endPos;
             }
             else
             {
@@ -120,8 +106,7 @@ Shadow _projectTile(int row, int col)
     // The bottom edge of row 0 is 1 wide.
     auto bottomRight = (double)(col + 1) / (row + 1);
 
-    return Shadow(topLeft, bottomRight,
-            Vec(col, row + 2), Vec(col + 1, row + 1));
+    return Shadow(topLeft, bottomRight);
 }
 
 std::list<Vec> refreshOctant(Vec start, int octant, Vec bounds, Cells cells, int maxRows = 999)
