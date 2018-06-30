@@ -30,6 +30,10 @@ Player::Player() : Creature() {
   eb::EventBus::AddHandler<ZapCommandEvent>(*this);
 
   equipment = std::make_shared<Equipment>();
+  auto right_hand_slot = 
+      std::make_shared<Slot>(
+          "Right hand", std::vector<WearableType>{WEAPON, WEAPON_LIGHT,
+                                                  WEAPON_TWOHANDED, SHIELD});
   equipment->slots = {
       std::make_shared<Slot>("Head", std::vector<WearableType>{HEAD}),
       std::make_shared<Slot>("Neck", std::vector<WearableType>{NECK}),
@@ -38,9 +42,7 @@ Player::Player() : Creature() {
                              std::vector<WearableType>{RIGHT_PAULDRON}),
       std::make_shared<Slot>("Left pauldron",
                              std::vector<WearableType>{LEFT_PAULDRON}),
-      std::make_shared<Slot>(
-          "Right hand", std::vector<WearableType>{WEAPON, WEAPON_LIGHT,
-                                                  WEAPON_TWOHANDED, SHIELD}),
+      right_hand_slot,
       std::make_shared<Slot>("Left hand",
                              std::vector<WearableType>{WEAPON_LIGHT, SHIELD}),
       std::make_shared<Slot>("Right gauntlet",
@@ -64,11 +66,20 @@ Player::Player() : Creature() {
   name = "Unnamed hero";
 
   auto dagger = std::make_shared<Item>(
-      ItemType::DAGGER, Effects{std::make_shared<MeleeDamage>(1, 4, 0)});
+      ItemType::DAGGER, Effects{std::make_shared<MeleeDamage>(2, 4, 3)});
   inventory.push_back(dagger);
+  right_hand_slot->equip(dagger);
   auto torch = std::make_shared<Item>(
       ItemType::TORCH, Effects{std::make_shared<VisibilityModifier>(5.f)});
   inventory.push_back(torch);
+}
+
+std::string Player::getDmgDesc() {
+  auto m = damage_modifier;
+  auto d = damage_dices;
+  auto e = damage_edges;
+  auto haveLeft = false;
+  return fmt::format("+{} {}d{}{}", m, d, e, haveLeft ? " ()" : "");
 }
 
 void Player::commit(int ap) {
@@ -78,9 +89,6 @@ void Player::commit(int ap) {
 }
 
 bool Player::unequip(std::shared_ptr<Slot> slot) {
-  for (auto e : slot->item->effects) {
-    e->undo(this);
-  }
   equipment->unequip(slot);
   return true;
 }
@@ -95,7 +103,6 @@ bool Player::haveLight() {
 bool Player::equip(std::shared_ptr<Slot> slot, std::shared_ptr<Item> item) {
   // auto ptr = shared_from_this();
   if (equipment->equip(slot, item)) {
-    calcViewField();
     commit(ap_cost::EQUIP / SPEED(this));
     return true;
   }

@@ -47,6 +47,8 @@ public:
       Attribute(AttributeType::SPEED);
   Attribute VISIBILITY_DISTANCE =
       Attribute(AttributeType::VISIBILITY_DISTANCE);
+  Attribute DMG =
+      Attribute(AttributeType::DAMAGE);
 
   std::shared_ptr<Cell> getCell(Direction);
 };

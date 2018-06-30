@@ -8,6 +8,7 @@ enum AttributeType {
   HP_MAX,
   SPEED,
   VISIBILITY_DISTANCE,
+  DAMAGE,
 };
 
 class Creature;

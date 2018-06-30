@@ -28,6 +28,7 @@ public:
   void commit(int ap);
 
   bool haveLight();
+  std::string getDmgDesc();
 
   virtual void onEvent(MoveCommandEvent &e) override;
   virtual void onEvent(PickCommandEvent &e) override;

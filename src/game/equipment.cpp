@@ -11,7 +11,7 @@ bool Equipment::equip(std::shared_ptr<Slot> slot, std::shared_ptr<Item> item) {
         slots.begin(), slots.end(), [slot](std::shared_ptr<Slot> s) {
           return s != slot &&
                  std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
-                           WEAPON) != s->acceptTypes.end();
+                           WEAPON_LIGHT) != s->acceptTypes.end();
         });
     if (secondary != slots.end()) {
       (*secondary)->unequip();
