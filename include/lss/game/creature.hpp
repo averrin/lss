@@ -39,6 +39,9 @@ public:
   float speed = 1.f;
   float visibilityDistance = 5.5f;
 
+  std::optional<std::tuple<std::shared_ptr<Slot>, int, int, int>> getPrimaryDmg();
+  std::optional<std::tuple<std::shared_ptr<Slot>, int, int, int>> getSecondaryDmg(std::shared_ptr<Slot>);
+
   Attribute HP =
       Attribute(AttributeType::HP);
   Attribute HP_MAX =

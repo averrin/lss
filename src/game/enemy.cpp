@@ -29,7 +29,11 @@ Enemy::Enemy(EnemySpec t) : Creature(), type(t) {
   };
 }
 
-Enemy::~Enemy() { registration->removeHandler(); }
+Enemy::~Enemy() {
+  if (registration != nullptr) {
+    registration->removeHandler();
+  }
+}
 
 std::optional<Items> Enemy::drop() {
   if (type.loot.size() == 0)

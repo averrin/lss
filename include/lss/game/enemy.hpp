@@ -39,7 +39,7 @@ EnemySpec const GOBLIN = {
     Items{std::make_shared<Item>(ItemType::GOLD_COINS, 200)}};
 EnemySpec const ORK = {
     "ork",
-    1, 15, 1, 6, 1,
+    1, 35, 1, 6, 1,
     Items{std::make_shared<Item>(ItemType::CORPSE)}};
 EnemySpec const PIXI = {
     "pixi",

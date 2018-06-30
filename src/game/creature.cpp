@@ -84,12 +84,100 @@ std::shared_ptr<Cell> Creature::getCell(Direction d) {
   return cell;
 }
 
-int Creature::getDamage(std::shared_ptr<Object>) {
-  auto damage = 0;
-  for (auto n = 0; n < damage_dices; n++) {
-    damage += rand() % damage_edges + 1;
+std::optional<std::tuple<std::shared_ptr<Slot>, int, int, int>>
+Creature::getPrimaryDmg() {
+
+  auto primarySlot = std::find_if(
+      equipment->slots.begin(), equipment->slots.end(),
+      [](std::shared_ptr<Slot> s) {
+        return s->item != nullptr &&
+               std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
+                         WEAPON) != s->acceptTypes.end();
+      });
+  if (primarySlot != equipment->slots.end()) {
+    auto primaryWeapon = (*primarySlot)->item;
+    auto meleeDmg = std::find_if(
+        primaryWeapon->effects.begin(), primaryWeapon->effects.end(),
+        [](std::shared_ptr<Effect> e) {
+          return e->special && std::dynamic_pointer_cast<MeleeDamage>(e);
+        });
+    if (meleeDmg != primaryWeapon->effects.end()) {
+      auto dmg = std::dynamic_pointer_cast<MeleeDamage>(*meleeDmg);
+      return std::make_tuple(*primarySlot, dmg->modifier, dmg->dices,
+                             dmg->edges);
+    }
   }
-  damage += damage_modifier;
+
+  return std::nullopt;
+}
+
+std::optional<std::tuple<std::shared_ptr<Slot>, int, int, int>>
+Creature::getSecondaryDmg(std::shared_ptr<Slot> primarySlot) {
+  if (primarySlot == nullptr) {
+    primarySlot = *std::find_if(
+        equipment->slots.begin(), equipment->slots.end(),
+        [](std::shared_ptr<Slot> s) {
+          return std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
+                           WEAPON) != s->acceptTypes.end();
+        });
+  }
+  auto secondarySlot = std::find_if(
+      equipment->slots.begin(), equipment->slots.end(),
+      [primarySlot](std::shared_ptr<Slot> s) {
+        return s->item != nullptr && s != primarySlot &&
+               std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
+                         WEAPON_LIGHT) != s->acceptTypes.end();
+      });
+  auto secondaryWeapon = (*secondarySlot)->item;
+
+  auto secondaryMeleeDmg = std::find_if(
+      secondaryWeapon->effects.begin(), secondaryWeapon->effects.end(),
+      [](std::shared_ptr<Effect> e) {
+        return e->special && std::dynamic_pointer_cast<MeleeDamage>(e);
+      });
+  if (secondaryMeleeDmg != secondaryWeapon->effects.end()) {
+    auto dmg = std::dynamic_pointer_cast<MeleeDamage>(*secondaryMeleeDmg);
+    return std::make_tuple(*secondarySlot, dmg->modifier, dmg->dices,
+                           dmg->edges);
+  }
+
+  return std::nullopt;
+}
+
+int hitRoll(int m, int d, int e) {
+  auto damage = 0;
+  for (auto n = 0; n < d; n++) {
+    damage += rand() % e + 1;
+  }
+  damage += m;
+  fmt::print("hit roll: {}\n", damage);
+  return damage;
+}
+
+int Creature::getDamage(std::shared_ptr<Object>) {
+  int damage = 0;
+  auto primaryDmg = getPrimaryDmg();
+  if (primaryDmg != std::nullopt) {
+    auto [primarySlot, m, d, e] = *primaryDmg;
+    damage += hitRoll(m, d, e);
+  }
+  auto haveLeft =
+      std::count_if(
+          equipment->slots.begin(), equipment->slots.end(),
+          [](std::shared_ptr<Slot> s) {
+            return s->item != nullptr &&
+                   s->item->type.wearableType !=
+                       WearableType::WEAPON_TWOHANDED &&
+                   std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
+                             WEAPON_LIGHT) != s->acceptTypes.end() &&
+                   std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
+                             WEAPON) == s->acceptTypes.end();
+          }) > 0;
+  auto secondaryDmg = getSecondaryDmg(nullptr);
+  if (secondaryDmg != std::nullopt && haveLeft) {
+    auto [secondarySlot, m, d, e] = *secondaryDmg;
+    damage += hitRoll(m, d, e);
+  }
   return damage;
 }
 

@@ -79,65 +79,41 @@ Player::Player() : Creature() {
 }
 
 std::string Player::getDmgDesc() {
-  auto m = damage_modifier;
-  auto d = damage_dices;
-  auto e = damage_edges;
-  auto haveLeft =
-      std::count_if(equipment->slots.begin(), equipment->slots.end(),
-                    [](std::shared_ptr<Slot> s) {
-                      return s->item != nullptr &&
-                             s->item->type.wearableType !=
-                                 WearableType::WEAPON_TWOHANDED &&
-                             std::find(s->acceptTypes.begin(),
-                                       s->acceptTypes.end(),
-                                       WEAPON_LIGHT) != s->acceptTypes.end();
-                    }) > 1;
-  int m2, d2, e2;
-  auto primarySlot = std::find_if(
-      equipment->slots.begin(), equipment->slots.end(),
-      [](std::shared_ptr<Slot> s) {
-        return s->item != nullptr &&
-               std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
-                         WEAPON) != s->acceptTypes.end();
-      });
-  if (primarySlot != equipment->slots.end()) {
-    auto primaryWeapon = (*primarySlot)->item;
-    auto meleeDmg = std::find_if(
-        primaryWeapon->effects.begin(), primaryWeapon->effects.end(),
-        [](std::shared_ptr<Effect> e) {
-          return e->special && std::dynamic_pointer_cast<MeleeDamage>(e);
-        });
-    if (meleeDmg != primaryWeapon->effects.end()) {
-      auto dmg = std::dynamic_pointer_cast<MeleeDamage>(*meleeDmg);
-      m = dmg->modifier;
-      d = dmg->dices;
-      e = dmg->edges;
-    }
-    if (haveLeft) {
-      auto secondarySlot = std::find_if(
-          equipment->slots.begin(), equipment->slots.end(),
-          [primarySlot](std::shared_ptr<Slot> s) {
-            return s->item != nullptr && s != *primarySlot &&
-                   std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
-                             WEAPON_LIGHT) != s->acceptTypes.end();
-          });
-      auto secondaryWeapon = (*secondarySlot)->item;
+  auto primaryDmg = getPrimaryDmg();
 
-      auto secondaryMeleeDmg = std::find_if(
-          secondaryWeapon->effects.begin(), secondaryWeapon->effects.end(),
-          [](std::shared_ptr<Effect> e) {
-            return e->special && std::dynamic_pointer_cast<MeleeDamage>(e);
-          });
-      if (secondaryMeleeDmg != secondaryWeapon->effects.end()) {
-        auto dmg2 = std::dynamic_pointer_cast<MeleeDamage>(*secondaryMeleeDmg);
-        m2 = dmg2->modifier;
-        d2 = dmg2->dices;
-        e2 = dmg2->edges;
-      }
+  auto haveLeft =
+      std::count_if(
+          equipment->slots.begin(), equipment->slots.end(),
+          [](std::shared_ptr<Slot> s) {
+            return s->item != nullptr &&
+                   s->item->type.wearableType !=
+                       WearableType::WEAPON_TWOHANDED &&
+                   std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
+                             WEAPON_LIGHT) != s->acceptTypes.end() &&
+                   std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
+                             WEAPON) == s->acceptTypes.end();
+          }) > 0;
+
+  if (primaryDmg != std::nullopt && haveLeft) {
+    auto [primarySlot, m, d, e] = *primaryDmg;
+    auto secondaryDmg = getSecondaryDmg(primarySlot);
+    if (secondaryDmg != std::nullopt) {
+      auto [secondarySlot, m2, d2, e2] = *secondaryDmg;
+      return fmt::format("+{} {}d{}{}", m, d, e,
+                         haveLeft ? fmt::format(" (+{} {}d{})", m2, d2, e2)
+                                  : "");
     }
+  } else if (haveLeft) {
+    auto secondaryDmg = getSecondaryDmg(nullptr);
+    if (secondaryDmg != std::nullopt) {
+      auto [secondarySlot, m2, d2, e2] = *secondaryDmg;
+      return fmt::format("~ +{} {}d{}", m2, d2, e2);
+    }
+  } else if (primaryDmg != std::nullopt) {
+    auto [primarySlot, m, d, e] = *primaryDmg;
+    return fmt::format("+{} {}d{}", m, d, e);
   }
-  return fmt::format("+{} {}d{}{}", m, d, e,
-                     haveLeft ? fmt::format(" (+{} {}d{})", m2, d2, e2) : "");
+  return fmt::format("+{} {}d{}", damage_modifier, damage_dices, damage_edges);
 }
 
 void Player::commit(int ap) {
