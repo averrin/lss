@@ -28,4 +28,9 @@ public:
 
 typedef std::vector<std::shared_ptr<Item>> Items;
 
+
+namespace Prototype {
+  const std::shared_ptr<Item> TORCH = std::make_shared<Item>(ItemType::TORCH, Effects{std::make_shared<VisibilityModifier>(2.5f)} );
+}
+
 #endif // __ITEM_H_

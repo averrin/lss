@@ -6,6 +6,7 @@ const int STEP = 1000;
 const int WAIT = 500;
 const int ATTACK = 500;
 const int EQUIP = 200;
+const int UNEQUIP = 200;
 const int PICK = 200;
 const int DROP = 200;
 } // namespace ap_cost

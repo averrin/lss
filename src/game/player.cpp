@@ -11,8 +11,7 @@ CommitEvent::CommitEvent(eb::ObjectPtr s, int ap)
     : eb::Event(s), actionPoints(ap) {}
 DigEvent::DigEvent(eb::ObjectPtr s, std::shared_ptr<Cell> c)
     : eb::Event(s), cell(c) {}
-HeroDiedEvent::HeroDiedEvent(eb::ObjectPtr s)
-    : eb::Event(s) {}
+HeroDiedEvent::HeroDiedEvent(eb::ObjectPtr s) : eb::Event(s) {}
 
 HeroTakeDamageEvent::HeroTakeDamageEvent(eb::ObjectPtr s, int d)
     : eb::Event(s), damage(d) {}
@@ -30,10 +29,11 @@ Player::Player() : Creature() {
   eb::EventBus::AddHandler<ZapCommandEvent>(*this);
 
   equipment = std::make_shared<Equipment>();
-  auto right_hand_slot = 
-      std::make_shared<Slot>(
-          "Right hand", std::vector<WearableType>{WEAPON, WEAPON_LIGHT,
-                                                  WEAPON_TWOHANDED, SHIELD});
+  auto right_hand_slot = std::make_shared<Slot>(
+      "Right hand", std::vector<WearableType>{WEAPON, WEAPON_LIGHT,
+                                              WEAPON_TWOHANDED, SHIELD});
+  auto left_hand_slot = std::make_shared<Slot>(
+      "Left hand", std::vector<WearableType>{WEAPON_LIGHT, SHIELD});
   equipment->slots = {
       std::make_shared<Slot>("Head", std::vector<WearableType>{HEAD}),
       std::make_shared<Slot>("Neck", std::vector<WearableType>{NECK}),
@@ -43,8 +43,7 @@ Player::Player() : Creature() {
       std::make_shared<Slot>("Left pauldron",
                              std::vector<WearableType>{LEFT_PAULDRON}),
       right_hand_slot,
-      std::make_shared<Slot>("Left hand",
-                             std::vector<WearableType>{WEAPON_LIGHT, SHIELD}),
+      left_hand_slot,
       std::make_shared<Slot>("Right gauntlet",
                              std::vector<WearableType>{RIGHT_GAUNTLET}),
       std::make_shared<Slot>("Left gauntlet",
@@ -66,20 +65,79 @@ Player::Player() : Creature() {
   name = "Unnamed hero";
 
   auto dagger = std::make_shared<Item>(
-      ItemType::DAGGER, Effects{std::make_shared<MeleeDamage>(2, 4, 3)});
+      ItemType::DAGGER, Effects{std::make_shared<MeleeDamage>(1, 2, 2)});
   inventory.push_back(dagger);
-  right_hand_slot->equip(dagger);
-  auto torch = std::make_shared<Item>(
-      ItemType::TORCH, Effects{std::make_shared<VisibilityModifier>(5.f)});
-  inventory.push_back(torch);
+  auto sword = std::make_shared<Item>(
+      ItemType::SWORD, Effects{std::make_shared<MeleeDamage>(2, 4, 3)});
+  inventory.push_back(sword);
+  // right_hand_slot->equip(dagger);
+  inventory.push_back(Prototype::TORCH);
+
+  auto axe = std::make_shared<Item>(
+      ItemType::GREAT_AXE, Effects{std::make_shared<MeleeDamage>(4, 6, 7)});
+  inventory.push_back(axe);
 }
 
 std::string Player::getDmgDesc() {
   auto m = damage_modifier;
   auto d = damage_dices;
   auto e = damage_edges;
-  auto haveLeft = false;
-  return fmt::format("+{} {}d{}{}", m, d, e, haveLeft ? " ()" : "");
+  auto haveLeft =
+      std::count_if(equipment->slots.begin(), equipment->slots.end(),
+                    [](std::shared_ptr<Slot> s) {
+                      return s->item != nullptr &&
+                             s->item->type.wearableType !=
+                                 WearableType::WEAPON_TWOHANDED &&
+                             std::find(s->acceptTypes.begin(),
+                                       s->acceptTypes.end(),
+                                       WEAPON_LIGHT) != s->acceptTypes.end();
+                    }) > 1;
+  int m2, d2, e2;
+  auto primarySlot = std::find_if(
+      equipment->slots.begin(), equipment->slots.end(),
+      [](std::shared_ptr<Slot> s) {
+        return s->item != nullptr &&
+               std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
+                         WEAPON) != s->acceptTypes.end();
+      });
+  if (primarySlot != equipment->slots.end()) {
+    auto primaryWeapon = (*primarySlot)->item;
+    auto meleeDmg = std::find_if(
+        primaryWeapon->effects.begin(), primaryWeapon->effects.end(),
+        [](std::shared_ptr<Effect> e) {
+          return e->special && std::dynamic_pointer_cast<MeleeDamage>(e);
+        });
+    if (meleeDmg != primaryWeapon->effects.end()) {
+      auto dmg = std::dynamic_pointer_cast<MeleeDamage>(*meleeDmg);
+      m = dmg->modifier;
+      d = dmg->dices;
+      e = dmg->edges;
+    }
+    if (haveLeft) {
+      auto secondarySlot = std::find_if(
+          equipment->slots.begin(), equipment->slots.end(),
+          [primarySlot](std::shared_ptr<Slot> s) {
+            return s->item != nullptr && s != *primarySlot &&
+                   std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
+                             WEAPON_LIGHT) != s->acceptTypes.end();
+          });
+      auto secondaryWeapon = (*secondarySlot)->item;
+
+      auto secondaryMeleeDmg = std::find_if(
+          secondaryWeapon->effects.begin(), secondaryWeapon->effects.end(),
+          [](std::shared_ptr<Effect> e) {
+            return e->special && std::dynamic_pointer_cast<MeleeDamage>(e);
+          });
+      if (secondaryMeleeDmg != secondaryWeapon->effects.end()) {
+        auto dmg2 = std::dynamic_pointer_cast<MeleeDamage>(*secondaryMeleeDmg);
+        m2 = dmg2->modifier;
+        d2 = dmg2->dices;
+        e2 = dmg2->edges;
+      }
+    }
+  }
+  return fmt::format("+{} {}d{}{}", m, d, e,
+                     haveLeft ? fmt::format(" (+{} {}d{})", m2, d2, e2) : "");
 }
 
 void Player::commit(int ap) {
@@ -90,14 +148,16 @@ void Player::commit(int ap) {
 
 bool Player::unequip(std::shared_ptr<Slot> slot) {
   equipment->unequip(slot);
+  commit(ap_cost::UNEQUIP / SPEED(this));
   return true;
 }
 
 bool Player::haveLight() {
   return std::find_if(inventory.begin(), inventory.end(),
-                   [](std::shared_ptr<Item> item) {
-                     return item->type == ItemType::TORCH && item->equipped;
-                   }) != inventory.end();
+                      [](std::shared_ptr<Item> item) {
+                        return item->type.wearableType == WearableType::LIGHT &&
+                               item->equipped;
+                      }) != inventory.end();
 }
 
 bool Player::equip(std::shared_ptr<Slot> slot, std::shared_ptr<Item> item) {
@@ -164,19 +224,20 @@ void Player::onEvent(WalkCommandEvent &e) {
 }
 
 void Player::onEvent(PickCommandEvent &e) {
-  auto item = std::find_if(currentLocation->objects.begin(),
-                           currentLocation->objects.end(),
-                           [&](std::shared_ptr<Object> o) {
-                             return (std::dynamic_pointer_cast<Item>(o) || std::dynamic_pointer_cast<TorchStand>(o)) &&
-                                    o->currentCell == currentCell;
-                           });
+  auto item = std::find_if(
+      currentLocation->objects.begin(), currentLocation->objects.end(),
+      [&](std::shared_ptr<Object> o) {
+        return (std::dynamic_pointer_cast<Item>(o) ||
+                std::dynamic_pointer_cast<TorchStand>(o)) &&
+               o->currentCell == currentCell;
+      });
   if (item != currentLocation->objects.end()) {
     if (std::dynamic_pointer_cast<TorchStand>(*item)) {
-      auto torch = std::make_shared<Item>(
-        ItemType::TORCH, Effects{std::make_shared<VisibilityModifier>(5.f)});
-      pick(torch);
-      currentLocation->objects.erase(std::remove(currentLocation->objects.begin(), currentLocation->objects.end(), *item),
-                currentLocation->objects.end());
+      pick(Prototype::TORCH);
+      currentLocation->objects.erase(
+          std::remove(currentLocation->objects.begin(),
+                      currentLocation->objects.end(), *item),
+          currentLocation->objects.end());
     } else {
       pick(std::dynamic_pointer_cast<Item>(*item));
     }

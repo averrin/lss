@@ -94,7 +94,8 @@ void Enemy::onEvent(CommitEvent &e) {
 
   // TODO: implement passive ai
   // fmt::print("{}\n", canSee(hero->currentCell));
-  if (type.aiType == AIType::AGGRESSIVE && hero->currentLocation == currentLocation && canSee(hero->currentCell)) {
+  if (type.aiType == AIType::AGGRESSIVE &&
+      hero->currentLocation == currentLocation && canSee(hero->currentCell)) {
     auto pather = new micropather::MicroPather(currentLocation.get());
     float totalCost = 0;
     pather->Reset();
@@ -132,9 +133,9 @@ void Enemy::onEvent(CommitEvent &e) {
       }
     }
   } else {
-    
+
     while (actionPoints >= waitCost) {
-        actionPoints -= waitCost;
+      actionPoints -= waitCost;
     }
   }
 }

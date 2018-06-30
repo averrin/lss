@@ -27,8 +27,10 @@ bool Equipment::unequip(std::shared_ptr<Slot> slot) {
     auto secondary = std::find_if(
         slots.begin(), slots.end(), [slot](std::shared_ptr<Slot> s) {
           return s != slot &&
-                 std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
-                           WEAPON) != s->acceptTypes.end();
+                 (std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
+                            WEAPON) != s->acceptTypes.end() ||
+                  std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
+                            WEAPON_LIGHT) != s->acceptTypes.end());
         });
     if (secondary != slots.end()) {
       (*secondary)->unequip();

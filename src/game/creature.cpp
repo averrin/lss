@@ -3,38 +3,39 @@
 #include "lss/game/creature.hpp"
 #include "lss/game/enemy.hpp"
 #include "lss/game/events.hpp"
-#include "lss/game/player.hpp"
 #include "lss/game/fov.hpp"
+#include "lss/game/player.hpp"
 
 #include "EventBus.hpp"
 #include "fmt/format.h"
 
 Creature::Creature() { passThrough = false; }
 
-float Attribute::operator()(Creature* c) {
+float Attribute::operator()(Creature *c) {
   float base = 0;
   switch (type) {
-    case AttributeType::VISIBILITY_DISTANCE:
-      base = c->visibilityDistance;
-      break;
-    case AttributeType::SPEED:
-      base = c->speed;
-      break;
-    case AttributeType::HP:
-      base = c->hp;
-      break;
-    case AttributeType::HP_MAX:
-      base = c->hp_max;
-      break;
+  case AttributeType::VISIBILITY_DISTANCE:
+    base = c->visibilityDistance;
+    break;
+  case AttributeType::SPEED:
+    base = c->speed;
+    break;
+  case AttributeType::HP:
+    base = c->hp;
+    break;
+  case AttributeType::HP_MAX:
+    base = c->hp_max;
+    break;
   }
 
   for (auto s : c->equipment->slots) {
-    if (s->item == nullptr) continue;
+    if (s->item == nullptr)
+      continue;
     for (auto e : s->item->effects) {
-      if (e->type != type) continue;
+      if (e->type != type)
+        continue;
       base += e->modifier;
     }
-
   }
   return base;
 }

@@ -3,15 +3,14 @@
 
 #include "EventBus.hpp"
 #include "lss/game/enemy.hpp"
+#include "lss/game/item.hpp"
 #include "lss/game/location.hpp"
 #include "lss/game/player.hpp"
-#include "lss/game/item.hpp"
 #include "lss/utils.hpp"
 
 float getDistance(std::shared_ptr<Cell> c, std::shared_ptr<Cell> cc) {
   return sqrt(pow(cc->x - c->x, 2) + pow(cc->y - c->y, 2));
 }
-
 
 Location::Location() {}
 
@@ -111,8 +110,8 @@ void Location::enter(std::shared_ptr<Player> hero) {
 
   for (auto o : objects) {
     if (auto enemy = std::dynamic_pointer_cast<Enemy>(o)) {
-        enemy->registration = eb::EventBus::AddHandler<CommitEvent>(*enemy, hero);
-        enemy->calcViewField();
+      enemy->registration = eb::EventBus::AddHandler<CommitEvent>(*enemy, hero);
+      enemy->calcViewField();
     }
   }
   updateView(hero);
@@ -137,13 +136,13 @@ void Location::leave(std::shared_ptr<Player> hero) {
 
   for (auto o : objects) {
     if (auto enemy = std::dynamic_pointer_cast<Enemy>(o)) {
-        enemy->registration->removeHandler();
+      enemy->registration->removeHandler();
     }
   }
 }
 
 void Location::updateLight(std::shared_ptr<Player> hero) {
-  auto vd = 5.5f;
+  auto vd = 4.5f;
   auto heroVD = hero->VISIBILITY_DISTANCE(hero.get());
   auto haveLight = hero->haveLight();
   auto torches = utils::castObjects<TorchStand>(objects);
@@ -205,7 +204,8 @@ void Location::AdjacentCost(void *state,
       if (obstacle != objects.end())
         continue;
       micropather::StateCost nodeCost = {
-          (void *)&(*n), LeastCostEstimate(state, (void *)&(*n)),
+          (void *)&(*n),
+          LeastCostEstimate(state, (void *)&(*n)),
       };
       neighbors->push_back(nodeCost);
     }

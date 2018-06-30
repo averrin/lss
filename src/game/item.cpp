@@ -30,12 +30,14 @@ std::string Item::getTitle() {
     }
   }
   return fmt::format(
-      "{}{}{}{}", specialPrefix.size() == 0
-                      ? ""
-                      : fmt::format("{} ", utils::join(specialPrefix, " ")),
-      type.name, specialPostfix.size() == 0
-                     ? ""
-                     : fmt::format(" {}", utils::join(specialPostfix, " ")),
+      "{}{}{}{}",
+      specialPrefix.size() == 0
+          ? ""
+          : fmt::format("{} ", utils::join(specialPrefix, " ")),
+      type.name,
+      specialPostfix.size() == 0
+          ? ""
+          : fmt::format(" {}", utils::join(specialPostfix, " ")),
       effectNames.size() == 0
           ? ""
           : fmt::format(" {{{}}}", utils::join(effectNames, " ,")));

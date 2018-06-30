@@ -21,6 +21,7 @@ namespace ItemType {
 ItemSpec const CORPSE = {"corpse", false};
 ItemSpec const ROCK = {"rock", false};
 ItemSpec const PICK_AXE = {"pick axe", true, WearableType::WEAPON_TWOHANDED};
+ItemSpec const GREAT_AXE = {"great axe", true, WearableType::WEAPON_TWOHANDED};
 ItemSpec const SWORD = {"sword", true, WearableType::WEAPON};
 ItemSpec const DAGGER = {"dagger", true, WearableType::WEAPON_LIGHT};
 ItemSpec const GOLD_RING = {"ring", true, WearableType::RING};
