@@ -19,6 +19,7 @@ Yet another unfinished roguelike game.
 - [X] Fields of view and torches
 - [ ] Better event log
 - [ ] Passive, patrol and "hero search" AI, stealth
+- [ ] Ranged selection and weapons
 - [ ] Map generator
 - [ ] Creature traits (for skills and enemy tricks)
 - [ ] Leveling
