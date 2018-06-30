@@ -6,21 +6,6 @@
 #include "lss/game/item.hpp"
 #include "lss/game/object.hpp"
 
-enum AttributeType {
-  HP,
-  HP_MAX,
-  SPEED,
-  VISIBILITY_DISTANCE,
-};
-
-class Creature;
-class Attribute : public Object {
-public:
-  Attribute(AttributeType t) : type(t) {}
-  AttributeType type;
-  float get(Creature);
-};
-
 class Creature : public Object {
 public:
   Creature();

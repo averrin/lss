@@ -24,7 +24,7 @@ void EventReactor::onEvent(StairEvent &e) {
             (app->hero->currentLocation->cells.front().size() + 1),
         std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false));
     app->hero->commit(0);
-    app->invalidate();
+    app->invalidate("enter");
   } else if (app->hero->currentCell->type == CellType::DOWNSTAIRS && e.dir == StairType::DOWN) {
     app->hero->currentLocation = app->locations["second"];
     app->hero->currentLocation->enter(app->hero);
@@ -34,7 +34,7 @@ void EventReactor::onEvent(StairEvent &e) {
             (app->hero->currentLocation->cells.front().size() + 1),
         std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false));
     app->hero->commit(0);
-    app->invalidate();
+    app->invalidate("enter");
   } else {
     MessageEvent me(nullptr, "There is no suitable stair.");
     eb::EventBus::FireEvent(me);
@@ -42,9 +42,9 @@ void EventReactor::onEvent(StairEvent &e) {
   }
 }
 
-void EventReactor::onEvent(eb::Event &e) { app->invalidate(); }
+void EventReactor::onEvent(eb::Event &e) { app->invalidate("eb::event"); }
 
-void EventReactor::onEvent(CommitEvent &e) { app->invalidate(); }
+void EventReactor::onEvent(CommitEvent &e) { app->invalidate("commit"); }
 
 void EventReactor::onEvent(QuitCommandEvent &e) { exit(0); }
 
@@ -243,15 +243,15 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
   if (spell == Spells::REVEAL) {
     app->hero->currentLocation->reveal();
     app->hero->monsterSense = true;
-    app->invalidate();
+    app->invalidate("reveal");
     app->hero->monsterSense = false;
   } else if (spell == Spells::MONSTER_SENSE) {
     app->hero->monsterSense = !app->hero->monsterSense;
-    app->invalidate();
+    app->invalidate("monster sense");
   } else if (spell == Spells::MONSTER_FREEZE) {
     for (auto o : app->hero->currentLocation->objects) {
       if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
-        e->type.aiType = AIType::NONE;
+        e->type.aiType = AIType::NO_AI;
       }
     }
     app->statusLine->setContent({F("Enemy freezed!")});
@@ -260,7 +260,7 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
                                               [app->hero->currentCell->x];
     app->hero->currentLocation->objects.push_back(
         mkEnemy(app->hero->currentLocation, c, app->hero, EnemyType::ORK));
-    app->invalidate();
+    app->invalidate("summon ork");
   }
 }
 

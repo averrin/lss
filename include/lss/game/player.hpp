@@ -27,6 +27,8 @@ public:
   bool interact(std::shared_ptr<Object>) override;
   void commit(int ap);
 
+  bool haveLight();
+
   virtual void onEvent(MoveCommandEvent &e) override;
   virtual void onEvent(PickCommandEvent &e) override;
   virtual void onEvent(DigCommandEvent &e) override;

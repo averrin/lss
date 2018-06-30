@@ -13,6 +13,7 @@ bool Door::interact(std::shared_ptr<Object> actor) {
     opened = true;
     passThrough = true;
     seeThrough = true;
+    currentCell->seeThrough = true;
     DoorOpenedEvent e(shared_from_this());
     eb::EventBus::FireEvent(e);
     return true;

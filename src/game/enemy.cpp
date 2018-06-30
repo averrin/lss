@@ -84,6 +84,7 @@ void Enemy::onEvent(CommitEvent &e) {
   if (e.actionPoints == 0)
     return;
   actionPoints += e.actionPoints;
+  calcViewField();
 
   // TODO: add lastheropoint and attack hero if its near
   auto stepCost = ap_cost::STEP / speed;

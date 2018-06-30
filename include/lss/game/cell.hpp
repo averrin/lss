@@ -19,6 +19,7 @@ public:
   Cell(int, int, CellType);
   CellType type;
   VisibilityState visibilityState;
+  bool illuminated = false;
 
   int x;
   int y;

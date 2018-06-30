@@ -45,6 +45,10 @@ public:
   void keyDown(KeyEvent event) override;
   void draw() override;
   void invalidate();
+    void invalidate(std::string reason) {
+      fmt::print("reason: {}\n", reason);
+      invalidate();
+    }
   bool processCommand(std::string);
   void setListeners();
   std::map<std::string, std::shared_ptr<Location>> locations;

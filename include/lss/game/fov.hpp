@@ -1,11 +1,10 @@
 #ifndef __FOV_H_
 #define __FOV_H_
+#include "lss/game/cell.hpp"
 #include <list>
 #include <vector>
-#include "lss/game/cell.hpp"
 
 namespace fov {
-
 
 class Vec {
 public:

@@ -84,10 +84,18 @@ bool Player::unequip(std::shared_ptr<Slot> slot) {
   return true;
 }
 
+bool Player::haveLight() {
+  return std::find_if(inventory.begin(), inventory.end(),
+                   [](std::shared_ptr<Item> item) {
+                     return item->type == ItemType::TORCH && item->equipped;
+                   }) != inventory.end();
+}
+
 bool Player::equip(std::shared_ptr<Slot> slot, std::shared_ptr<Item> item) {
   // auto ptr = shared_from_this();
   // TODO: do it another way (remember about meeleeDamage effect)
   if (equipment->equip(slot, item)) {
+    calcViewField();
     commit(ap_cost::EQUIP / speed);
     return true;
   }
@@ -100,6 +108,8 @@ bool Player::equip(std::shared_ptr<Slot> slot, std::shared_ptr<Item> item) {
 void Player::onEvent(MoveCommandEvent &e) {
   if (move(e.direction, true)) {
     commit(ap_cost::STEP / speed);
+  } else {
+    commit(0);
   }
 }
 
@@ -150,11 +160,19 @@ void Player::onEvent(PickCommandEvent &e) {
   auto item = std::find_if(currentLocation->objects.begin(),
                            currentLocation->objects.end(),
                            [&](std::shared_ptr<Object> o) {
-                             return std::dynamic_pointer_cast<Item>(o) &&
+                             return (std::dynamic_pointer_cast<Item>(o) || std::dynamic_pointer_cast<TorchStand>(o)) &&
                                     o->currentCell == currentCell;
                            });
   if (item != currentLocation->objects.end()) {
-    pick(std::dynamic_pointer_cast<Item>(*item));
+    if (std::dynamic_pointer_cast<TorchStand>(*item)) {
+      auto torch = std::make_shared<Item>(
+        ItemType::TORCH, Effects{std::make_shared<VisibilityModifier>(5.f)});
+      pick(torch);
+      currentLocation->objects.erase(std::remove(currentLocation->objects.begin(), currentLocation->objects.end(), *item),
+                currentLocation->objects.end());
+    } else {
+      pick(std::dynamic_pointer_cast<Item>(*item));
+    }
     commit(ap_cost::PICK / speed);
   }
 }

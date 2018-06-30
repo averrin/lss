@@ -11,6 +11,25 @@
 
 Creature::Creature() { passThrough = false; }
 
+float Attribute::operator()(Creature* c) {
+  float base = 0;
+  switch (type) {
+    case AttributeType::VISIBILITY_DISTANCE:
+      base = c->visibilityDistance;
+      break;
+  }
+
+  for (auto s : c->equipment->slots) {
+    if (s->item == nullptr) continue;
+    for (auto e : s->item->effects) {
+      if (e->type != type) continue;
+      base += e->modifier;
+    }
+
+  }
+  return base;
+}
+
 bool Creature::interact(std::shared_ptr<Object> actor) { return false; }
 
 LeaveCellEvent::LeaveCellEvent(eb::ObjectPtr s, std::shared_ptr<Cell> c)
@@ -140,21 +159,8 @@ bool Creature::move(Direction d, bool autoAction) {
 }
 
 void Creature::calcViewField() {
+  auto vd = (*VISIBILITY_DISTANCE)(this);
   viewField.clear();
   std::vector<std::shared_ptr<Cell>> temp;
-  auto cc = currentCell;
-  fov::Vec heroPoint {currentCell->x, currentCell->y};
-  fov::Vec bounds {(int)currentLocation->cells.front().size(), (int)currentLocation->cells.size()};
-  auto field = fov::refresh(heroPoint, bounds, currentLocation->cells);
-  for (auto v : field) {
-    auto c = currentLocation->cells[v.y][v.x];
-      temp.push_back(c);
-  }
-  for (auto c : temp) {
-      auto d = sqrt(pow(cc->x - c->x, 2) + pow(cc->y - c->y, 2));
-      if (d >= visibilityDistance) {
-        continue;
-      }
-      viewField.push_back(c);
-  }
+  viewField = currentLocation->getVisible(currentCell, vd);
 }

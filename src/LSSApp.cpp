@@ -114,7 +114,7 @@ void LSSApp::setup() {
 
   hero->commit(0);
 
-  invalidate();
+  invalidate("init");
   setListeners();
 
   /* Commands */
@@ -204,6 +204,14 @@ std::shared_ptr<Location> LSSApp::loadMap(std::string filename) {
           c->passThrough = true;
           location->objects.push_back(makeEnemy(location, c, hero, EnemyType::PIXI));
         } break;
+        case '*': {
+          c->type = CellType::FLOOR;
+          c->passThrough = true;
+          c->seeThrough = true;
+          auto torch = std::make_shared<TorchStand>();
+          torch->currentCell = c;
+          location->objects.push_back(torch);
+        } break;
         }
         location->cells[n].push_back(c);
         i++;
@@ -230,7 +238,10 @@ std::shared_ptr<Location> LSSApp::loadMap(std::string filename) {
 void LSSApp::setListeners() { reactor = std::make_shared<EventReactor>(this); }
 
 void LSSApp::invalidate() {
+  fmt::print("invalidate\n");
   auto t0 = std::chrono::system_clock::now();
+  hero->currentLocation->updateView(hero);
+  hero->calcViewField();
   auto row = 0;
   auto index = 0;
   for (auto r : hero->currentLocation->cells) {
@@ -304,6 +315,9 @@ void LSSApp::invalidate() {
     } else if (auto i = std::dynamic_pointer_cast<Item>(o);
                i && hero->canSee(ec)) {
       state->fragments[index] = std::make_shared<ItemSign>(i->type);
+    } else if (auto t = std::dynamic_pointer_cast<TorchStand>(o);
+               t && hero->canSee(ec)) {
+      state->fragments[index] = std::make_shared<ItemSign>(t->type);
     }
   }
 
@@ -392,7 +406,6 @@ bool LSSApp::processCommand(std::string cmd) {
   } else if (auto e = dynamic_pointer_cast<StairEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
   }
-  invalidate();
   return true;
 }
 

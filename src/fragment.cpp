@@ -48,14 +48,14 @@ std::map<ItemSpec, std::string> itemSigns = {
     {ItemType::CORPSE, "%"},    {ItemType::ROCK, "*"},
     {ItemType::PICK_AXE, "("},  {ItemType::SWORD, "("},
     {ItemType::GOLD_RING, "="}, {ItemType::GOLD_COINS, "$"},
-    {ItemType::DAGGER, "("},    {ItemType::TORCH, "]"},
+    {ItemType::DAGGER, "("},    {ItemType::TORCH, "]"}, {ItemType::TORCH_STAND, "*"},
 };
 
 std::map<ItemSpec, std::string> itemColors = {
     {ItemType::CORPSE, "red"},     {ItemType::ROCK, "gray"},
     {ItemType::PICK_AXE, "white"}, {ItemType::SWORD, "#F7CA88"},
     {ItemType::GOLD_RING, "gold"}, {ItemType::GOLD_COINS, "gold"},
-    {ItemType::DAGGER, "gray"},    {ItemType::TORCH, "orange"},
+    {ItemType::DAGGER, "gray"},    {ItemType::TORCH, "orange"}, {ItemType::TORCH_STAND, "orange"},
 };
 
 std::map<EnemySpec, std::string> enemySigns = {
@@ -75,9 +75,9 @@ std::map<CellType, std::string> cellSigns = {
 };
 
 std::map<CellType, std::map<bool, std::string>> cellColors = {
-    {CellType::FLOOR, {{false, "#555"}, {true, "#333"}}},
-    {CellType::FLOOR_BLOOD, {{false, "darkred"}, {true, "#333"}}},
-    {CellType::WALL, {{false, "#aaa"}, {true, "#666"}}},
+    {CellType::FLOOR, {{false, "#555"}, {true, "#2f2f2f"}}},
+    {CellType::FLOOR_BLOOD, {{false, "darkred"}, {true, "#2f2f2f"}}},
+    {CellType::WALL, {{false, "#aaa"}, {true, "#555"}}},
     {CellType::UNKNOWN_CELL, {{false, "#555"}, {true, "#777"}}},
     {CellType::DOWNSTAIRS, {{false, "#aaa"}, {true, "#666"}}},
     {CellType::UPSTAIRS, {{false, "#aaa"}, {true, "#666"}}},

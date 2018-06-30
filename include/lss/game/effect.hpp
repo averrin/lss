@@ -3,49 +3,52 @@
 #include <memory>
 #include <vector>
 
+#include "lss/game/attribute.hpp"
+
 #include "fmt/format.h"
 
 class Player;
 class Effect {
 public:
-  Effect(){};
-  Effect(bool s) : special(s) {}
+  Effect(AttributeType at, float m) : type(at), modifier(m){};
+  Effect(AttributeType at, bool s) : type(at), special(s) {}
+  Effect(AttributeType at, bool s, float m)
+      : type(at), special(s), modifier(m) {}
   virtual void apply(Player *) = 0;
   virtual void undo(Player *) = 0;
   virtual std::string getTitle() = 0;
   bool special = false;
+  AttributeType type;
+  float modifier;
 };
 
 class SpeedModifier : public Effect {
 public:
-  SpeedModifier(float m) : Effect(), modifier(m){};
+  SpeedModifier(float m) : Effect(AttributeType::SPEED, m){};
   void apply(Player *);
   void undo(Player *);
   std::string getTitle();
-  float modifier;
 };
 
 class HPModifier : public Effect {
 public:
-  HPModifier(float m) : Effect(), modifier(m){};
+  HPModifier(float m) : Effect(AttributeType::HP_MAX, m){};
   void apply(Player *);
   void undo(Player *);
   std::string getTitle();
-  float modifier;
 };
 
 class VisibilityModifier : public Effect {
 public:
-  VisibilityModifier(float m) : Effect(), modifier(m){};
+  VisibilityModifier(float m) : Effect(AttributeType::VISIBILITY_DISTANCE, m){};
   void apply(Player *);
   void undo(Player *);
   std::string getTitle();
-  float modifier;
 };
 
 class SpecialPostfix : public Effect {
 public:
-  SpecialPostfix(std::string n) : Effect(true), name(n){};
+  SpecialPostfix(std::string n) : Effect(AttributeType::NONE, true), name(n){};
   void apply(Player *){};
   void undo(Player *){};
   std::string getTitle() { return name; };
@@ -54,7 +57,7 @@ public:
 
 class SpecialPrefix : public Effect {
 public:
-  SpecialPrefix(std::string n) : Effect(true), name(n){};
+  SpecialPrefix(std::string n) : Effect(AttributeType::NONE, true), name(n){};
   void apply(Player *){};
   void undo(Player *){};
   std::string getTitle() { return name; };
@@ -64,7 +67,7 @@ public:
 class MeleeDamage : public Effect {
 public:
   MeleeDamage(int d, int e, int m)
-      : Effect(true), modifier(m), dices(d), edges(e){};
+      : Effect(AttributeType::NONE, m, true), dices(d), edges(e){};
   void apply(Player *);
   void undo(Player *);
   std::string getTitle();

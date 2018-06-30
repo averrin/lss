@@ -10,7 +10,7 @@
 #include "micropather/micropather.h"
 
 enum AIType {
-  NONE,
+  NO_AI,
   AGGRESSIVE,
   PASSIVE,
 };

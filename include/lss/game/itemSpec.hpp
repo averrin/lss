@@ -26,6 +26,7 @@ ItemSpec const DAGGER = {"dagger", true, WearableType::WEAPON_LIGHT};
 ItemSpec const GOLD_RING = {"ring", true, WearableType::RING};
 ItemSpec const TORCH = {"torch", true, WearableType::LIGHT};
 ItemSpec const GOLD_COINS = {"gold coins", false};
+ItemSpec const TORCH_STAND = {"torch stand", false};
 }; // namespace ItemType
 
 #endif // __ITEMSPEC_H_

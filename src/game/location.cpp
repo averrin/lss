@@ -5,6 +5,13 @@
 #include "lss/game/enemy.hpp"
 #include "lss/game/location.hpp"
 #include "lss/game/player.hpp"
+#include "lss/game/item.hpp"
+#include "lss/utils.hpp"
+
+float getDistance(std::shared_ptr<Cell> c, std::shared_ptr<Cell> cc) {
+  return sqrt(pow(cc->x - c->x, 2) + pow(cc->y - c->y, 2));
+}
+
 
 Location::Location() {}
 
@@ -136,7 +143,30 @@ void Location::leave(std::shared_ptr<Player> hero) {
   }
 }
 
+void Location::updateLight(std::shared_ptr<Player> hero) {
+  auto vd = 5.5f;
+  auto heroVD = (*hero->VISIBILITY_DISTANCE)(hero.get());
+  auto haveLight = hero->haveLight();
+  auto torches = utils::castObjects<TorchStand>(objects);
+
+  for (auto r : cells) {
+    for (auto c : r) {
+      c->illuminated = false;
+      if (haveLight && getDistance(c, hero->currentCell) <= heroVD) {
+        c->illuminated = true;
+        continue;
+      }
+    }
+  }
+  for (auto t : torches) {
+    for (auto c : getVisible(t->currentCell, vd)) {
+      c->illuminated = true;
+    }
+  }
+}
+
 void Location::updateView(std::shared_ptr<Player> hero) {
+  updateLight(hero);
   for (auto r : cells) {
     for (auto c : r) {
       if (hero->canSee(c)) {
