@@ -59,6 +59,7 @@ Player::Player() : Creature() {
   damage_dices = 1;
   damage_edges = 1;
   damage_modifier = 0;
+  visibilityDistance = 3.f;
 
   name = "Unnamed hero";
 
@@ -93,10 +94,9 @@ bool Player::haveLight() {
 
 bool Player::equip(std::shared_ptr<Slot> slot, std::shared_ptr<Item> item) {
   // auto ptr = shared_from_this();
-  // TODO: do it another way (remember about meeleeDamage effect)
   if (equipment->equip(slot, item)) {
     calcViewField();
-    commit(ap_cost::EQUIP / speed);
+    commit(ap_cost::EQUIP / SPEED(this));
     return true;
   }
   return false;
@@ -107,7 +107,7 @@ bool Player::equip(std::shared_ptr<Slot> slot, std::shared_ptr<Item> item) {
 
 void Player::onEvent(MoveCommandEvent &e) {
   if (move(e.direction, true)) {
-    commit(ap_cost::STEP / speed);
+    commit(ap_cost::STEP / SPEED(this));
   } else {
     commit(0);
   }
@@ -115,7 +115,7 @@ void Player::onEvent(MoveCommandEvent &e) {
 
 void Player::onEvent(AttackCommandEvent &e) {
   if (attack(e.direction)) {
-    commit(ap_cost::ATTACK / speed);
+    commit(ap_cost::ATTACK / SPEED(this));
   }
 }
 
@@ -123,7 +123,7 @@ void Player::onEvent(DropCommandEvent &e) {
   if (e.item == nullptr)
     return;
   drop(e.item);
-  commit(ap_cost::DROP / speed);
+  commit(ap_cost::DROP / SPEED(this));
 }
 
 void Player::onEvent(DigCommandEvent &e) {
@@ -144,7 +144,7 @@ void Player::onEvent(DigCommandEvent &e) {
 
 void Player::onEvent(WalkCommandEvent &e) {
   while (move(e.direction)) {
-    commit(ap_cost::STEP / speed);
+    commit(ap_cost::STEP / SPEED(this));
     auto item = std::find_if(currentLocation->objects.begin(),
                              currentLocation->objects.end(),
                              [&](std::shared_ptr<Object> o) {
@@ -173,7 +173,7 @@ void Player::onEvent(PickCommandEvent &e) {
     } else {
       pick(std::dynamic_pointer_cast<Item>(*item));
     }
-    commit(ap_cost::PICK / speed);
+    commit(ap_cost::PICK / SPEED(this));
   }
 }
 

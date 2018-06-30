@@ -39,8 +39,8 @@ protected:
 
 class CellSign : public Fragment {
 public:
-  CellSign(CellType, bool);
-  void update(CellType, bool);
+  CellSign(CellType, bool, bool);
+  void update(CellType, bool, bool);
 };
 
 class HeroSign : public Fragment {

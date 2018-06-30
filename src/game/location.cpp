@@ -104,13 +104,10 @@ void Location::onEvent(EnterCellEvent &e) {
     eb::EventBus::FireEvent(ie);
   }
   auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
-  updateView(hero);
 }
 
 void Location::enter(std::shared_ptr<Player> hero) {
   hero->currentCell = hero->currentLocation->cells[15][30];
-  hero->calcViewField();
-  hero->currentLocation->updateView(hero);
 
   for (auto o : objects) {
     if (auto enemy = std::dynamic_pointer_cast<Enemy>(o)) {
@@ -118,6 +115,8 @@ void Location::enter(std::shared_ptr<Player> hero) {
         enemy->calcViewField();
     }
   }
+  updateView(hero);
+  hero->commit(0);
 
   handlers.push_back(
       eb::EventBus::AddHandler<EnemyDiedEvent>(*hero->currentLocation));
@@ -145,7 +144,7 @@ void Location::leave(std::shared_ptr<Player> hero) {
 
 void Location::updateLight(std::shared_ptr<Player> hero) {
   auto vd = 5.5f;
-  auto heroVD = (*hero->VISIBILITY_DISTANCE)(hero.get());
+  auto heroVD = hero->VISIBILITY_DISTANCE(hero.get());
   auto haveLight = hero->haveLight();
   auto torches = utils::castObjects<TorchStand>(objects);
 

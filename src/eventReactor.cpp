@@ -22,7 +22,7 @@ void EventReactor::onEvent(StairEvent &e) {
     app->state->fragments.assign(
         app->hero->currentLocation->cells.size() *
             (app->hero->currentLocation->cells.front().size() + 1),
-        std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false));
+        std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false, false));
     app->hero->commit(0);
     app->invalidate("enter");
   } else if (app->hero->currentCell->type == CellType::DOWNSTAIRS && e.dir == StairType::DOWN) {
@@ -32,9 +32,10 @@ void EventReactor::onEvent(StairEvent &e) {
     app->state->fragments.assign(
         app->hero->currentLocation->cells.size() *
             (app->hero->currentLocation->cells.front().size() + 1),
-        std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false));
+        std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false, false));
+
+    app->hero->currentLocation->updateView(app->hero);
     app->hero->commit(0);
-    app->invalidate("enter");
   } else {
     MessageEvent me(nullptr, "There is no suitable stair.");
     eb::EventBus::FireEvent(me);

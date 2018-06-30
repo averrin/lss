@@ -110,7 +110,7 @@ void LSSApp::setup() {
   state->fragments.assign(
       hero->currentLocation->cells.size() *
           (hero->currentLocation->cells.front().size() + 1),
-      std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false));
+      std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false, false));
 
   hero->commit(0);
 
@@ -238,30 +238,29 @@ std::shared_ptr<Location> LSSApp::loadMap(std::string filename) {
 void LSSApp::setListeners() { reactor = std::make_shared<EventReactor>(this); }
 
 void LSSApp::invalidate() {
-  fmt::print("invalidate\n");
   auto t0 = std::chrono::system_clock::now();
-  hero->currentLocation->updateView(hero);
   hero->calcViewField();
+  hero->currentLocation->updateView(hero);
   auto row = 0;
   auto index = 0;
+  auto cc = hero->currentCell;
   for (auto r : hero->currentLocation->cells) {
     auto column = 0;
     for (auto c : r) {
-      auto cc = hero->currentCell;
       auto f = state->fragments[index];
       switch (c->visibilityState) {
       case VisibilityState::UNKNOWN:
         if (hero->monsterSense &&
             !std::dynamic_pointer_cast<CellSign>(state->fragments[index])) {
           state->fragments[index] =
-              std::make_shared<CellSign>(UNKNOWN_CELL, false);
+              std::make_shared<CellSign>(UNKNOWN_CELL, false, false);
         }
         break;
       case VisibilityState::SEEN:
-        state->fragments[index] = std::make_shared<CellSign>(c->type, true);
+        state->fragments[index] = std::make_shared<CellSign>(c->type, true, false);
         break;
       case VisibilityState::VISIBLE:
-        state->fragments[index] = std::make_shared<CellSign>(c->type, false);
+        state->fragments[index] = std::make_shared<CellSign>(c->type, false, c->illuminated);
         break;
       }
       column++;

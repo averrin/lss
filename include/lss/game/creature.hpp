@@ -39,14 +39,14 @@ public:
   float speed = 1.f;
   float visibilityDistance = 5.5f;
 
-  std::shared_ptr<Attribute> HP =
-      std::make_shared<Attribute>(AttributeType::HP);
-  std::shared_ptr<Attribute> HP_MAX =
-      std::make_shared<Attribute>(AttributeType::HP_MAX);
-  std::shared_ptr<Attribute> SPEED =
-      std::make_shared<Attribute>(AttributeType::SPEED);
-  std::shared_ptr<Attribute> VISIBILITY_DISTANCE =
-      std::make_shared<Attribute>(AttributeType::VISIBILITY_DISTANCE);
+  Attribute HP =
+      Attribute(AttributeType::HP);
+  Attribute HP_MAX =
+      Attribute(AttributeType::HP_MAX);
+  Attribute SPEED =
+      Attribute(AttributeType::SPEED);
+  Attribute VISIBILITY_DISTANCE =
+      Attribute(AttributeType::VISIBILITY_DISTANCE);
 
   std::shared_ptr<Cell> getCell(Direction);
 };

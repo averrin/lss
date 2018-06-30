@@ -46,7 +46,7 @@ public:
   void draw() override;
   void invalidate();
     void invalidate(std::string reason) {
-      fmt::print("reason: {}\n", reason);
+      // fmt::print("reason: {}\n", reason);
       invalidate();
     }
   bool processCommand(std::string);

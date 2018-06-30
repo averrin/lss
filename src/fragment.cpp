@@ -83,6 +83,15 @@ std::map<CellType, std::map<bool, std::string>> cellColors = {
     {CellType::UPSTAIRS, {{false, "#aaa"}, {true, "#666"}}},
 };
 
+std::map<CellType, std::string> cellColorsIlluminated = {
+    {CellType::FLOOR, "#765"},
+    {CellType::FLOOR_BLOOD, "darkred"},
+    {CellType::WALL, "#cba"},
+    {CellType::UNKNOWN_CELL, "#555"},
+    {CellType::DOWNSTAIRS, "#cba"},
+    {CellType::UPSTAIRS, "#cba"},
+};
+
 std::map<CellType, std::map<bool, std::string>> cellWeights = {
     {CellType::FLOOR, {{false, "normal"}, {true, "normal"}}},
     {CellType::FLOOR_BLOOD, {{false, "normal"}, {true, "normal"}}},
@@ -92,19 +101,29 @@ std::map<CellType, std::map<bool, std::string>> cellWeights = {
     {CellType::UPSTAIRS, {{false, "normal"}, {true, "normal"}}},
 };
 
-std::map<std::string, tpl_arg> getCellArgs(CellType type, bool seen) {
+std::map<std::string, tpl_arg> getCellArgs(CellType type, bool seen, bool illuminated) {
+  std::string color;
+  if (seen) {
+    color = cellColors[type][seen];
+  } else {
+    if (illuminated) {
+      color = cellColorsIlluminated[type];
+    } else {
+      color = cellColors[type][seen];
+    }
+  }
   return {
       {"sign", cellSigns[type]},
-      {"color", cellColors[type][seen]},
+      {"color", color},
       {"weight", cellWeights[type][seen]},
   };
 }
 
-CellSign::CellSign(CellType type, bool seen)
+CellSign::CellSign(CellType type, bool seen, bool illuminated)
     : Fragment("<span color='{{color}}' weight='{{weight}}'>{{sign}}</span>",
-               getCellArgs(type, seen)) {}
-void CellSign::update(CellType type, bool seen) {
-  auto new_args = getCellArgs(type, seen);
+               getCellArgs(type, seen, illuminated)) {}
+void CellSign::update(CellType type, bool seen, bool illuminated) {
+  auto new_args = getCellArgs(type, seen, illuminated);
   if (std::get<std::string>(args["color"]) !=
           std::get<std::string>(new_args["color"]) ||
       std::get<std::string>(args["sign"]) !=

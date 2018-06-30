@@ -17,6 +17,15 @@ float Attribute::operator()(Creature* c) {
     case AttributeType::VISIBILITY_DISTANCE:
       base = c->visibilityDistance;
       break;
+    case AttributeType::SPEED:
+      base = c->speed;
+      break;
+    case AttributeType::HP:
+      base = c->hp;
+      break;
+    case AttributeType::HP_MAX:
+      base = c->hp_max;
+      break;
   }
 
   for (auto s : c->equipment->slots) {
@@ -159,7 +168,7 @@ bool Creature::move(Direction d, bool autoAction) {
 }
 
 void Creature::calcViewField() {
-  auto vd = (*VISIBILITY_DISTANCE)(this);
+  auto vd = VISIBILITY_DISTANCE(this);
   viewField.clear();
   std::vector<std::shared_ptr<Cell>> temp;
   viewField = currentLocation->getVisible(currentCell, vd);
