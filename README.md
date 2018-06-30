@@ -14,13 +14,13 @@ Yet another unfinished roguelike game.
 * `cmake ../linux; make -j4`
 
 ## TODO
-- [ ] Game over mode
-- [ ] Fix attributes and effects
+- [X] Game over mode
+- [X] Fix attributes and effects
+- [X] Fields of view and torches
 - [ ] Better event log
-- [ ] Passive, patrol and "hero search" AI
+- [ ] Passive, patrol and "hero search" AI, stealth
 - [ ] Map generator
 - [ ] Creature traits (for skills and enemy tricks)
-- [ ] Fields of view, torches, grue and other light-related things
 - [ ] Leveling
 - [ ] Hundreds of other features...
 
