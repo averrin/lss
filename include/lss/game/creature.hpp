@@ -5,12 +5,14 @@
 #include "lss/game/equipment.hpp"
 #include "lss/game/item.hpp"
 #include "lss/game/object.hpp"
+#include "lss/game/trait.hpp"
 
 class Creature : public Object {
 public:
   Creature();
   std::vector<std::shared_ptr<Cell>> viewField;
   std::shared_ptr<Location> currentLocation;
+  std::vector<Trait> traits;
 
   bool move(Direction, bool autoAction = false);
   bool attack(Direction);
@@ -41,6 +43,9 @@ public:
 
   std::optional<std::tuple<std::shared_ptr<Slot>, int, int, int>> getPrimaryDmg();
   std::optional<std::tuple<std::shared_ptr<Slot>, int, int, int>> getSecondaryDmg(std::shared_ptr<Slot>);
+  bool hasTrait(Trait t) {
+    return std::find(traits.begin(), traits.end(), t) != traits.end();
+  }
 
   Attribute HP =
       Attribute(AttributeType::HP);

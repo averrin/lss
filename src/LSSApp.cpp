@@ -32,6 +32,7 @@ void LSSApp::setup() {
   gameFrame->setMaxSize(getWindowWidth(),
                         getWindowHeight() - StatusLine::HEIGHT);
   gameFrame->setSpacing(gameFrame->getSpacing() - 4.0);
+  gameFrame->disableWrap();
 
   statusFrame = kp::pango::CinderPango::create();
   statusFrame->setMinSize(getWindowWidth(), StatusLine::HEIGHT);
@@ -327,6 +328,12 @@ void LSSApp::invalidate() {
   }
 
   state->invalidate();
+
+  // auto t1 = std::chrono::system_clock::now();
+  // using milliseconds = std::chrono::duration<double, std::milli>;
+  // milliseconds ms = t1 - t0;
+  //   std::cout << "invalidate time taken: " << rang::fg::green
+  //             << ms.count() << rang::style::reset << '\n';
 }
 
 void LSSApp::mouseDown(MouseEvent event) {}

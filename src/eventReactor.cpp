@@ -210,6 +210,8 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
   app->objectSelectMode->setObjects(utils::castObjects<Object>(
       std::vector<std::shared_ptr<Spell>>{Spells::REVEAL, Spells::MONSTER_SENSE,
                                           Spells::MONSTER_FREEZE,
+                                          Spells::TOGGLE_DUAL_WIELD,
+                                          Spells::TOGGLE_NIGHT_VISION,
                                           Spells::SUMMON_ORK}));
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
@@ -244,11 +246,11 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
   if (spell == Spells::REVEAL) {
     app->hero->currentLocation->reveal();
     app->hero->monsterSense = true;
+    app->hero->commit(0);
     app->invalidate("reveal");
     app->hero->monsterSense = false;
   } else if (spell == Spells::MONSTER_SENSE) {
     app->hero->monsterSense = !app->hero->monsterSense;
-    app->invalidate("monster sense");
   } else if (spell == Spells::MONSTER_FREEZE) {
     for (auto o : app->hero->currentLocation->objects) {
       if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
@@ -261,7 +263,20 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
                                               [app->hero->currentCell->x];
     app->hero->currentLocation->objects.push_back(
         mkEnemy(app->hero->currentLocation, c, app->hero, EnemyType::ORK));
-    app->invalidate("summon ork");
+  } else if (spell == Spells::TOGGLE_DUAL_WIELD) {
+    if (app->hero->hasTrait(Traits::DUAL_WIELD)) {
+      app->hero->traits.erase(std::remove(app->hero->traits.begin(), app->hero->traits.end(), Traits::DUAL_WIELD));
+    } else {
+      app->hero->traits.push_back(Traits::DUAL_WIELD);
+    }
+    app->hero->commit(0);
+  } else if (spell == Spells::TOGGLE_NIGHT_VISION) {
+    if (app->hero->hasTrait(Traits::NIGHT_VISION)) {
+      app->hero->traits.erase(std::remove(app->hero->traits.begin(), app->hero->traits.end(), Traits::NIGHT_VISION));
+    } else {
+      app->hero->traits.push_back(Traits::NIGHT_VISION);
+    }
+    app->hero->commit(0);
   }
 }
 

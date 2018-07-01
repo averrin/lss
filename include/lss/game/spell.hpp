@@ -14,6 +14,8 @@ const auto REVEAL = std::make_shared<Spell>("Reveal");
 const auto MONSTER_SENSE = std::make_shared<Spell>("Monster Sense");
 const auto MONSTER_FREEZE = std::make_shared<Spell>("Monster Freeze");
 const auto SUMMON_ORK = std::make_shared<Spell>("Summon Ork");
+const auto TOGGLE_DUAL_WIELD = std::make_shared<Spell>("Toggle Dual Wield trait");
+const auto TOGGLE_NIGHT_VISION = std::make_shared<Spell>("Toggle Night Vision trait");
 } // namespace Spells
 
 #endif // __SPELL_H_

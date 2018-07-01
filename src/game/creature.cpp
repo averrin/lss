@@ -176,7 +176,11 @@ int Creature::getDamage(std::shared_ptr<Object>) {
   auto secondaryDmg = getSecondaryDmg(nullptr);
   if (secondaryDmg != std::nullopt && haveLeft) {
     auto [secondarySlot, m, d, e] = *secondaryDmg;
-    damage += hitRoll(m, d, e);
+    if (hasTrait(Traits::DUAL_WIELD)) {
+      damage += hitRoll(m, d, e);
+    } else {
+      damage += m;
+    }
   }
   return damage;
 }
@@ -258,6 +262,9 @@ bool Creature::move(Direction d, bool autoAction) {
 
 void Creature::calcViewField() {
   auto vd = VISIBILITY_DISTANCE(this);
+  if (hasTrait(Traits::NIGHT_VISION)) {
+    vd = 1000;
+  }
   viewField.clear();
   std::vector<std::shared_ptr<Cell>> temp;
   viewField = currentLocation->getVisible(currentCell, vd);

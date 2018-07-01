@@ -100,14 +100,14 @@ std::string Player::getDmgDesc() {
     if (secondaryDmg != std::nullopt) {
       auto [secondarySlot, m2, d2, e2] = *secondaryDmg;
       return fmt::format("+{} {}d{}{}", m, d, e,
-                         haveLeft ? fmt::format(" (+{} {}d{})", m2, d2, e2)
-                                  : "");
+                         hasTrait(Traits::DUAL_WIELD) ? fmt::format(" (+{} {}d{})", m2, d2, e2)
+                                  : fmt::format(" (+{})", m2));
     }
   } else if (haveLeft) {
     auto secondaryDmg = getSecondaryDmg(nullptr);
     if (secondaryDmg != std::nullopt) {
       auto [secondarySlot, m2, d2, e2] = *secondaryDmg;
-      return fmt::format("~ +{} {}d{}", m2, d2, e2);
+      return hasTrait(Traits::DUAL_WIELD) ? fmt::format("~ +{} {}d{}", m2, d2, e2) : fmt::format("~ +{}", m2);
     }
   } else if (primaryDmg != std::nullopt) {
     auto [primarySlot, m, d, e] = *primaryDmg;
