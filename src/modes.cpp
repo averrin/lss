@@ -156,6 +156,7 @@ bool NormalMode::processKey(KeyEvent event) {
     app->processCommand("zap");
     break;
   case KeyEvent::KEY_r:
+    app->hero->currentLocation->leave(app->hero);
     app->hero->currentLocation = app->generator->getLocation();
     app->hero->currentLocation->enter(app->hero, app->hero->currentLocation->enterCell);
     app->state->fragments.assign(

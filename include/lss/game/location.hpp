@@ -11,6 +11,7 @@
 #include "EventRegisttration.hpp"
 
 class Player;
+class Room;
 class Location : public micropather::Graph,
                  public eb::EventHandler<EnemyDiedEvent>,
                  public eb::EventHandler<ItemTakenEvent>,
@@ -25,6 +26,7 @@ public:
 
   std::shared_ptr<Cell> enterCell;
   std::shared_ptr<Cell> exitCell;
+  std::vector<std::shared_ptr<Room>> rooms;
 
   void updateView(std::shared_ptr<Player>);
   void updateLight(std::shared_ptr<Player>);
@@ -35,12 +37,24 @@ public:
 
   std::vector<std::shared_ptr<Cell>> getNeighbors(std::shared_ptr<Cell> cell) {
     std::vector<std::shared_ptr<Cell>> nbrs;
-    if (cell->y > 0 && cell->x > 0 && cell->x < cells.front().size() - 1 &&
-        cell->y < cells.size() - 1) {
-      nbrs = {cells[cell->y - 1][cell->x],     cells[cell->y - 1][cell->x - 1],
-              cells[cell->y + 1][cell->x - 1], cells[cell->y][cell->x - 1],
-              cells[cell->y][cell->x + 1],     cells[cell->y + 1][cell->x + 1],
-              cells[cell->y - 1][cell->x + 1], cells[cell->y + 1][cell->x]};
+    if (cell->x > 0) {
+      if (cell->y > 0) {
+        nbrs.push_back(cells[cell->y - 1][cell->x - 1]);
+        nbrs.push_back(cells[cell->y - 1][cell->x]);
+        nbrs.push_back(cells[cell->y][cell->x - 1]);
+
+        if (cell->x < cells.front().size() - 1) {
+          nbrs.push_back(cells[cell->y - 1][cell->x + 1]);
+          nbrs.push_back(cells[cell->y][cell->x + 1]);
+        }
+      }
+      if (cell->y < cells.size() - 1) {
+        if (cell->x < cells.front().size() - 1) {
+          nbrs.push_back(cells[cell->y + 1][cell->x + 1]);
+          nbrs.push_back(cells[cell->y + 1][cell->x - 1]);
+        }
+        nbrs.push_back(cells[cell->y + 1][cell->x]);
+      }
     }
     return nbrs;
   }

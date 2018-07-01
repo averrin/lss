@@ -6,7 +6,8 @@
 class Generator {
 public:
     Generator();
-    Cells getRoom(int, int);
+    std::shared_ptr<Room> getRoom();
+    std::shared_ptr<Room> makePassage(std::shared_ptr<Cell>, Direction, int);
     Cells getFloor();
     std::shared_ptr<Location> getLocation();
     void placeRoom();

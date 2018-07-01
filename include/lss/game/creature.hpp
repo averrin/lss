@@ -17,7 +17,7 @@ public:
   bool move(Direction, bool autoAction = false);
   bool attack(Direction);
   bool canSee(std::shared_ptr<Cell> c) {
-    return std::find(viewField.begin(), viewField.end(), c) != viewField.end();
+    return std::find(viewField.begin(), viewField.end(), c) != viewField.end() || hasTrait(Traits::MIND_SIGHT);
   };
   void calcViewField();
   bool interact(std::shared_ptr<Object>);

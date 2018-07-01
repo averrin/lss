@@ -16,6 +16,7 @@ QuitCommand::getEvent(std::string s) {
 
 void EventReactor::onEvent(StairEvent &e) {
   if (app->hero->currentCell->type == CellType::UPSTAIRS && e.dir == StairType::UP) {
+    app->hero->currentLocation->leave(app->hero);
     app->hero->currentLocation = app->locations["start"];
     app->hero->currentLocation->enter(app->hero, app->hero->currentLocation->exitCell);
 
@@ -26,6 +27,7 @@ void EventReactor::onEvent(StairEvent &e) {
     app->hero->commit(0);
     app->invalidate("enter");
   } else if (app->hero->currentCell->type == CellType::DOWNSTAIRS && e.dir == StairType::DOWN) {
+    app->hero->currentLocation->leave(app->hero);
     app->hero->currentLocation = app->locations["second"];
     app->hero->currentLocation->enter(app->hero, app->hero->currentLocation->enterCell);
 
@@ -219,6 +221,7 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
                                           Spells::MONSTER_FREEZE,
                                           Spells::TOGGLE_DUAL_WIELD,
                                           Spells::TOGGLE_NIGHT_VISION,
+                                          Spells::TOGGLE_MIND_SIGHT,
                                           Spells::SUMMON_ORK}));
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
@@ -286,6 +289,13 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
       app->hero->traits.erase(std::remove(app->hero->traits.begin(), app->hero->traits.end(), Traits::NIGHT_VISION));
     } else {
       app->hero->traits.push_back(Traits::NIGHT_VISION);
+    }
+    app->hero->commit(0);
+  } else if (spell == Spells::TOGGLE_MIND_SIGHT) {
+    if (app->hero->hasTrait(Traits::MIND_SIGHT)) {
+      app->hero->traits.erase(std::remove(app->hero->traits.begin(), app->hero->traits.end(), Traits::MIND_SIGHT));
+    } else {
+      app->hero->traits.push_back(Traits::MIND_SIGHT);
     }
     app->hero->commit(0);
   }

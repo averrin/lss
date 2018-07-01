@@ -177,7 +177,7 @@ void Location::updateView(std::shared_ptr<Player> hero) {
   updateLight(hero);
   for (auto r : cells) {
     for (auto c : r) {
-      if (hero->canSee(c)) {
+      if (hero->canSee(c) || hero->hasTrait(Traits::MIND_SIGHT)) {
         c->visibilityState = VisibilityState::VISIBLE;
       } else if (c->visibilityState == VisibilityState::VISIBLE) {
         c->visibilityState = VisibilityState::SEEN;
