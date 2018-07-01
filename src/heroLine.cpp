@@ -17,6 +17,6 @@ void HeroLine::onEvent(CommitEvent &e) {
   setContent({F(fmt::format("<b>{}</b>", hero->name)),
               F(fmt::format("   <b>HP</b>:{}/{}   <b>SPD</b>:{}   <b>DMG</b>:{}   <b>DEF</b>:{}", hero->HP(hero.get()),
                             hero->HP_MAX(hero.get()), hero->SPEED(hero.get()), hero->getDmgDesc(), hero->DEF(hero.get()))),
-              F(fmt::format("{}", hero->haveLight() ? "   L" : "")),
+              F(fmt::format("{}", hero->hasLight() ? "   L" : "")),
     });
 }

@@ -278,3 +278,11 @@ void Creature::calcViewField() {
   std::vector<std::shared_ptr<Cell>> temp;
   viewField = currentLocation->getVisible(currentCell, vd);
 }
+
+bool Creature::hasLight() {
+  return std::find_if(inventory.begin(), inventory.end(),
+                      [](std::shared_ptr<Item> item) {
+                        return item->type.wearableType == WearableType::LIGHT &&
+                               item->equipped;
+                      }) != inventory.end();
+}

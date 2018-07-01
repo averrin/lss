@@ -144,20 +144,30 @@ void Location::leave(std::shared_ptr<Player> hero) {
 void Location::updateLight(std::shared_ptr<Player> hero) {
   auto vd = 4.5f;
   auto heroVD = hero->VISIBILITY_DISTANCE(hero.get());
-  auto haveLight = hero->haveLight();
-  auto torches = utils::castObjects<TorchStand>(objects);
+  auto hasLight = hero->hasLight();
+  auto enemies = utils::castObjects<Enemy>(objects);
+  std::vector<std::shared_ptr<Cell>> torches;
+  for (auto ts : utils::castObjects<TorchStand>(objects)) {
+      torches.push_back(ts->currentCell);
+  }
+  for (auto e : enemies) {
+    if (e->hasLight()) {
+      torches.push_back(e->currentCell);
+    }
+  }
+
 
   for (auto r : cells) {
     for (auto c : r) {
       c->illuminated = false;
-      if (haveLight && getDistance(c, hero->currentCell) <= heroVD) {
+      if (hasLight && getDistance(c, hero->currentCell) <= heroVD) {
         c->illuminated = true;
         continue;
       }
     }
   }
   for (auto t : torches) {
-    for (auto c : getVisible(t->currentCell, vd)) {
+    for (auto c : getVisible(t, vd)) {
       c->illuminated = true;
     }
   }
@@ -189,10 +199,14 @@ void Location::AdjacentCost(void *state,
   if (cell->y > 0 && cell->x > 0 && cell->x < cells.front().size() - 1 &&
       cell->y < cells.size() - 1) {
     std::vector<std::shared_ptr<Cell>> nbrs = {
-        cells[cell->y - 1][cell->x],     cells[cell->y - 1][cell->x - 1],
-        cells[cell->y + 1][cell->x - 1], cells[cell->y][cell->x - 1],
-        cells[cell->y][cell->x + 1],     cells[cell->y + 1][cell->x + 1],
-        cells[cell->y + 1][cell->x + 1], cells[cell->y + 1][cell->x]};
+        cells[cell->y - 1][cell->x],    
+        cells[cell->y - 1][cell->x - 1],
+        cells[cell->y + 1][cell->x - 1],
+        cells[cell->y][cell->x - 1],
+        cells[cell->y][cell->x + 1],    
+        cells[cell->y + 1][cell->x + 1],
+        cells[cell->y - 1][cell->x + 1],
+        cells[cell->y + 1][cell->x]};
 
     for (auto n : nbrs) {
       if (!n->passThrough)

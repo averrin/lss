@@ -26,6 +26,7 @@ public:
   int baseDamage_modifier;
   Items loot;
   std::vector<Trait> traits;
+  Items equipped;
   AIType aiType = AGGRESSIVE;
 
   friend bool operator<(const EnemySpec &lhs, const EnemySpec &rhs) {
@@ -43,7 +44,9 @@ EnemySpec const GOBLIN = {
 EnemySpec const ORK = {
     "ork",
     1, 35, 2, 1, 6, 1,
-    Items{std::make_shared<Item>(ItemType::CORPSE)}};
+    Items{std::make_shared<Item>(ItemType::CORPSE)},
+    {}, Items{Prototype::TORCH}
+};
 EnemySpec const PIXI = {
     "pixi",
     2, 1, 0, 1, 2, 0,

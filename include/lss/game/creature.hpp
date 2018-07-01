@@ -47,6 +47,7 @@ public:
   bool hasTrait(Trait t) {
     return std::find(traits.begin(), traits.end(), t) != traits.end();
   }
+  bool hasLight();
 
   Attribute HP =
       Attribute(AttributeType::HP);

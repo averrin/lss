@@ -19,10 +19,10 @@ Yet another unfinished roguelike game.
 - [X] Fields of view and torches
 - [X] Creature traits (for skills and enemy tricks)
 - [X] Armor
+- [X] Enemy with torches
 - [ ] Better event log
 - [ ] Weights
 - [ ] Passive, patrol and "hero search" AI, stealth
-- [ ] Enemy with torches
 - [ ] Chests and containers
 - [ ] Ranged selection and weapons
 - [ ] Map generator

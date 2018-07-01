@@ -25,10 +25,22 @@ Enemy::Enemy(EnemySpec t) : Creature(), type(t) {
           "Hand", std::vector<WearableType>{WEAPON, WEAPON_LIGHT,
                                             WEAPON_TWOHANDED, SHIELD}),
       std::make_shared<Slot>("Body", std::vector<WearableType>{BODY}),
+      std::make_shared<Slot>("Light", std::vector<WearableType>{LIGHT}),
       std::make_shared<Slot>("--", std::vector<WearableType>{ENEMY}),
       std::make_shared<Slot>("--", std::vector<WearableType>{ENEMY}),
       std::make_shared<Slot>("--", std::vector<WearableType>{ENEMY}),
   };
+  for (auto i : type.equipped) {
+    inventory.push_back(i);
+    for (auto s : equipment->slots) {
+      if (std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
+                   i->type.wearableType) != s->acceptTypes.end()) {
+        fmt::print("{} : {}\n", s->name, i->getTitle());
+        equipment->equip(s, i);
+        break;
+      }
+    }
+  }
 }
 
 Enemy::~Enemy() {

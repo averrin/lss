@@ -128,14 +128,6 @@ bool Player::unequip(std::shared_ptr<Slot> slot) {
   return true;
 }
 
-bool Player::haveLight() {
-  return std::find_if(inventory.begin(), inventory.end(),
-                      [](std::shared_ptr<Item> item) {
-                        return item->type.wearableType == WearableType::LIGHT &&
-                               item->equipped;
-                      }) != inventory.end();
-}
-
 bool Player::equip(std::shared_ptr<Slot> slot, std::shared_ptr<Item> item) {
   // auto ptr = shared_from_this();
   if (equipment->equip(slot, item)) {
