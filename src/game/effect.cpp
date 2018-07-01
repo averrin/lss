@@ -2,13 +2,13 @@
 #include "lss/game/player.hpp"
 
 std::string SpeedModifier::getTitle() {
-  return fmt::format("speed +{}", modifier);
+  return fmt::format("speed {:+g}", modifier);
 }
 
-std::string HPModifier::getTitle() { return fmt::format("hp +{}", modifier); }
+std::string HPModifier::getTitle() { return fmt::format("hp {:+g}", modifier); }
 
 std::string MeleeDamage::getTitle() {
-  return fmt::format("(+{}, {}d{})", modifier, dices, edges);
+  return fmt::format("({:+g}, {}d{})", modifier, dices, edges);
 }
 
 std::string VisibilityModifier::getTitle() {
@@ -16,5 +16,5 @@ std::string VisibilityModifier::getTitle() {
 }
 
 std::string ArmorValue::getTitle() {
-  return fmt::format("[+{}]", modifier);
+  return fmt::format("[{:+g}]", modifier);
 }

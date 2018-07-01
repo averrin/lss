@@ -12,6 +12,7 @@ public:
   ItemSpec type;
   Effects effects;
   int count = 0;
+    int durability;
 
   bool equipped = false;
   std::string name;
@@ -19,6 +20,10 @@ public:
   bool interact(std::shared_ptr<Object>);
   std::string getTitle();
   std::string getFullTitle();
+
+    std::shared_ptr<Item> clone() {
+      return std::make_shared<Item>(*this);
+    }
 };
 
 class TorchStand : public Object {

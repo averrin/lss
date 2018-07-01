@@ -60,7 +60,7 @@ public:
 
 class MeleeDamage : public Effect {
 public:
-  MeleeDamage(int d, int e, int m)
+  MeleeDamage(int m, int d, int e)
       : Effect(AttributeType::NONE, true, m), dices(d), edges(e){};
   std::string getTitle();
   int dices;

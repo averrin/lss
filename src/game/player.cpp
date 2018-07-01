@@ -70,11 +70,11 @@ Player::Player() : Creature() {
   auto sword = std::make_shared<Item>(
       ItemType::SWORD, Effects{std::make_shared<MeleeDamage>(2, 4, 3)});
   inventory.push_back(sword);
-  inventory.push_back(Prototype::TORCH);
-  inventory.push_back(Prototype::PLATE);
+  inventory.push_back(Prototype::TORCH->clone());
+  inventory.push_back(Prototype::PLATE->clone());
 
   auto axe = std::make_shared<Item>(
-      ItemType::GREAT_AXE, Effects{std::make_shared<MeleeDamage>(4, 6, 7)});
+    ItemType::GREAT_AXE, Effects{std::make_shared<MeleeDamage>(-1, 6, 7), std::make_shared<SpeedModifier>(-0.3f)});
   inventory.push_back(axe);
 }
 
@@ -99,24 +99,42 @@ std::string Player::getDmgDesc() {
     auto secondaryDmg = getSecondaryDmg(primarySlot);
     if (secondaryDmg != std::nullopt) {
       auto [secondarySlot, m2, d2, e2] = *secondaryDmg;
-      return fmt::format("+{} {}d{}{}", m, d, e,
-                         hasTrait(Traits::DUAL_WIELD) ? fmt::format(" (+{} {}d{})", m2, d2, e2)
-                                  : fmt::format(" (+{})", m2));
+      return fmt::format("{:+d} {}d{}{}", m, d, e,
+                         hasTrait(Traits::DUAL_WIELD) ? fmt::format(" ({:+d} {}d{})", m2, d2, e2)
+                                  : fmt::format(" ({:+d})", m2));
     }
   } else if (haveLeft) {
     auto secondaryDmg = getSecondaryDmg(nullptr);
     if (secondaryDmg != std::nullopt) {
       auto [secondarySlot, m2, d2, e2] = *secondaryDmg;
-      return hasTrait(Traits::DUAL_WIELD) ? fmt::format("~ +{} {}d{}", m2, d2, e2) : fmt::format("~ +{}", m2);
+      return hasTrait(Traits::DUAL_WIELD) ? fmt::format("~ {:+d} {}d{}", m2, d2, e2) : fmt::format("~ {:+d}", m2);
     }
   } else if (primaryDmg != std::nullopt) {
     auto [primarySlot, m, d, e] = *primaryDmg;
-    return fmt::format("+{} {}d{}", m, d, e);
+    return fmt::format("{:+d} {}d{}", m, d, e);
   }
-  return fmt::format("+{} {}d{}", damage_modifier, damage_dices, damage_edges);
+  return fmt::format("{:+d} {}d{}", damage_modifier, damage_dices, damage_edges);
 }
 
 void Player::commit(int ap) {
+  if (hasLight()) {
+    auto lightSlot = *std::find_if(
+        equipment->slots.begin(), equipment->slots.end(),
+        [](std::shared_ptr<Slot> s) {
+          return s->item != nullptr &&
+                std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
+                          LIGHT) != s->acceptTypes.end();
+        });
+    if (lightSlot->item != nullptr && lightSlot->item->durability != -1) {
+      lightSlot->item->durability -= ap / 10;
+      if (lightSlot->item->durability <= 0) {
+        lightSlot->item->durability = 0;
+        equipment->unequip(lightSlot);
+      }
+    }
+
+  }
+
   auto ptr = shared_from_this();
   CommitEvent e(ptr, ap);
   eb::EventBus::FireEvent(e);
@@ -201,7 +219,7 @@ void Player::onEvent(PickCommandEvent &e) {
       });
   if (item != currentLocation->objects.end()) {
     if (std::dynamic_pointer_cast<TorchStand>(*item)) {
-      pick(Prototype::TORCH);
+      pick(Prototype::TORCH->clone());
       currentLocation->objects.erase(
           std::remove(currentLocation->objects.begin(),
                       currentLocation->objects.end(), *item),

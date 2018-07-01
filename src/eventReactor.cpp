@@ -57,8 +57,13 @@ void EventReactor::onEvent(HelpCommandEvent &e) {
 }
 void EventReactor::onEvent(InventoryCommandEvent &e) {
   app->inventoryMode->setHeader(State::INVENTORY_HEADER.front());
-  app->inventoryMode->setObjects(
-      utils::castObjects<Object>(app->hero->inventory));
+  auto objects = utils::castObjects<Object>(app->hero->inventory);
+
+  std::sort(objects.begin(), objects.end(),
+            [](std::shared_ptr<Object> a, std::shared_ptr<Object> b) {
+              return std::dynamic_pointer_cast<Item>(a)->name < std::dynamic_pointer_cast<Item>(b)->name;
+            });
+  app->inventoryMode->setObjects(objects);
   app->inventoryMode->render(app->inventoryState);
   app->modeManager.toInventory();
   app->statusLine->setContent(State::text_mode);
@@ -174,7 +179,7 @@ void EventReactor::onEvent(EquipCommandEvent &e) {
     auto shortcut = fmt::format("<span weight='bold'>{}</span> -", letter);
     if (std::find_if(app->hero->inventory.begin(), app->hero->inventory.end(),
                      [slot](std::shared_ptr<Item> item) {
-                       return item->type.equipable &&
+                       return item->type.equipable && item->durability != 0 &&
                               std::find(slot->acceptTypes.begin(),
                                         slot->acceptTypes.end(),
                                         item->type.wearableType) !=
@@ -183,12 +188,14 @@ void EventReactor::onEvent(EquipCommandEvent &e) {
       shortcut = "   ";
       have_items = false;
     }
+    auto fromThisSlot = slot->item != nullptr && std::find(slot->acceptTypes.begin(), slot->acceptTypes.end(),
+                         slot->item->type.wearableType) != slot->acceptTypes.end();
 
     return fmt::format("<span color='{}'>{} {:16} :</span> {}",
                        have_items ? "{{orange}}" : "gray", shortcut, slot->name,
                        slot->item == nullptr
                            ? (have_items ? "-" : "<span color='gray'>-</span>")
-                           : slot->item->getTitle());
+                           : (fromThisSlot ? slot->item->getTitle() : "<span color='gray'>item from other slot</span>"));
   };
   app->objectSelectMode->setFormatter(formatter);
 

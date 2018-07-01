@@ -32,8 +32,13 @@ float Attribute::operator()(Creature *c) {
   }
 
   for (auto s : c->equipment->slots) {
-    if (s->item == nullptr)
+    if (s->item == nullptr || std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
+                               s->item->type.wearableType) == s->acceptTypes.end()) {
+      if (s->item != nullptr) {
+        fmt::print("Skip item {} in {}\n", s->item->name, s->name);
+      }
       continue;
+    }
     for (auto e : s->item->effects) {
       if (e->type != type)
         continue;
@@ -156,6 +161,9 @@ int hitRoll(int m, int d, int e) {
     damage += rand() % e + 1;
   }
   damage += m;
+  if (damage < 0) {
+    damage = 0;
+  }
   fmt::print("hit roll: {}\n", damage);
   return damage;
 }
@@ -212,7 +220,7 @@ bool Creature::pick(std::shared_ptr<Item> item) {
                              [item](std::shared_ptr<Item> i) {
                                return item->getTitle() == i->getTitle();
                              });
-      it != inventory.end() && item != 0) {
+      it != inventory.end() && item != 0 && item->count != 0) {
     (*it)->count += item->count;
   } else {
     inventory.push_back(item);
