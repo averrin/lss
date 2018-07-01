@@ -4,7 +4,6 @@
 Equipment::Equipment() {}
 
 bool Equipment::equip(std::shared_ptr<Slot> slot, std::shared_ptr<Item> item) {
-  fmt::print("Equipment equip: {} --> {}\n", item->type.name, slot->name);
   slot->equip(item);
   if (item->type.wearableType == WEAPON_TWOHANDED) {
     auto secondary = std::find_if(

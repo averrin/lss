@@ -239,6 +239,9 @@ std::shared_ptr<Enemy> mkEnemy(std::shared_ptr<Location> location,std::shared_pt
   auto enemy = std::make_shared<Enemy>(type);
   enemy->currentCell = c;
   enemy->currentLocation = location;
+
+  enemy->registration = eb::EventBus::AddHandler<CommitEvent>(*enemy, hero);
+  enemy->calcViewField();
   return enemy;
 }
 
@@ -262,7 +265,8 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     auto c = app->hero->currentLocation->cells[app->hero->currentCell->y + 1]
                                               [app->hero->currentCell->x];
     app->hero->currentLocation->objects.push_back(
-        mkEnemy(app->hero->currentLocation, c, app->hero, EnemyType::ORK));
+    mkEnemy(app->hero->currentLocation, c, app->hero, EnemyType::ORK));
+    app->hero->commit(0);
   } else if (spell == Spells::TOGGLE_DUAL_WIELD) {
     if (app->hero->hasTrait(Traits::DUAL_WIELD)) {
       app->hero->traits.erase(std::remove(app->hero->traits.begin(), app->hero->traits.end(), Traits::DUAL_WIELD));

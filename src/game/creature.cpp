@@ -26,6 +26,9 @@ float Attribute::operator()(Creature *c) {
   case AttributeType::HP_MAX:
     base = c->hp_max;
     break;
+  case AttributeType::DEFENSE:
+    base = c->defense;
+    break;
   }
 
   for (auto s : c->equipment->slots) {
@@ -128,6 +131,9 @@ Creature::getSecondaryDmg(std::shared_ptr<Slot> primarySlot) {
                std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
                          WEAPON_LIGHT) != s->acceptTypes.end();
       });
+  if (secondarySlot == equipment->slots.end()) {
+    return std::nullopt;
+  }
   auto secondaryWeapon = (*secondarySlot)->item;
 
   auto secondaryMeleeDmg = std::find_if(
@@ -181,6 +187,9 @@ int Creature::getDamage(std::shared_ptr<Object>) {
     } else {
       damage += m;
     }
+  }
+  if (damage == 0) {
+    damage = hitRoll(damage_modifier, damage_dices, damage_edges);
   }
   return damage;
 }

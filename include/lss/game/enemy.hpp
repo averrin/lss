@@ -20,10 +20,12 @@ public:
   std::string name;
   float baseSpeed;
   int baseHP;
+  int defense;
   int baseDamage_dices;
   int baseDamage_edges;
   int baseDamage_modifier;
   Items loot;
+  std::vector<Trait> traits;
   AIType aiType = AGGRESSIVE;
 
   friend bool operator<(const EnemySpec &lhs, const EnemySpec &rhs) {
@@ -35,15 +37,16 @@ public:
 namespace EnemyType {
 EnemySpec const GOBLIN = {
     "goblin",
-    0.5, 5, 1, 3, 0,
-    Items{std::make_shared<Item>(ItemType::GOLD_COINS, 200)}};
+    0.5, 5, 1, 1, 3, 0,
+    Items{std::make_shared<Item>(ItemType::GOLD_COINS, 200)},
+    {Traits::NIGHT_VISION}};
 EnemySpec const ORK = {
     "ork",
-    1, 35, 1, 6, 1,
+    1, 35, 2, 1, 6, 1,
     Items{std::make_shared<Item>(ItemType::CORPSE)}};
 EnemySpec const PIXI = {
     "pixi",
-    2, 1, 1, 2, 0,
+    2, 1, 0, 1, 2, 0,
     Items{std::make_shared<Item>(
         ItemType::GOLD_RING,
         Effects{std::make_shared<SpecialPostfix>("of lightning"),

@@ -13,6 +13,8 @@ Enemy::Enemy(EnemySpec t) : Creature(), type(t) {
   damage_modifier = type.baseDamage_modifier;
 
   name = type.name;
+  traits = type.traits;
+  defense = type.defense;
 
   equipment = std::make_shared<Equipment>();
   equipment->slots = {
@@ -46,6 +48,12 @@ bool Enemy::interact(std::shared_ptr<Object> actor) {
   auto ptr = shared_from_this();
   if (hp > 0) {
     auto damage = hero->getDamage(shared_from_this());
+    auto def = DEF(this);
+    if (damage - def < 0) {
+      damage = 0;
+    } else {
+      damage -= def;
+    }
     hp -= damage;
     EnemyTakeDamageEvent e(ptr, damage);
     eb::EventBus::FireEvent(e);

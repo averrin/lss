@@ -70,8 +70,8 @@ Player::Player() : Creature() {
   auto sword = std::make_shared<Item>(
       ItemType::SWORD, Effects{std::make_shared<MeleeDamage>(2, 4, 3)});
   inventory.push_back(sword);
-  // right_hand_slot->equip(dagger);
   inventory.push_back(Prototype::TORCH);
+  inventory.push_back(Prototype::PLATE);
 
   auto axe = std::make_shared<Item>(
       ItemType::GREAT_AXE, Effects{std::make_shared<MeleeDamage>(4, 6, 7)});
@@ -241,6 +241,12 @@ bool Player::interact(std::shared_ptr<Object> actor) {
   auto ptr = shared_from_this();
   if (hp > 0) {
     auto damage = enemy->getDamage(shared_from_this());
+    auto def = DEF(this);
+    if (damage - def < 0) {
+      damage = 0;
+    } else {
+      damage -= def;
+    }
     hp -= damage;
     HeroTakeDamageEvent e(ptr, damage);
     eb::EventBus::FireEvent(e);

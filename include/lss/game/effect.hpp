@@ -38,6 +38,12 @@ public:
   std::string getTitle();
 };
 
+class ArmorValue : public Effect {
+public:
+  ArmorValue(float m) : Effect(AttributeType::DEFENSE, true, m){};
+  std::string getTitle();
+};
+
 class SpecialPostfix : public Effect {
 public:
   SpecialPostfix(std::string n) : Effect(AttributeType::NONE, true), name(n){};

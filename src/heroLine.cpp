@@ -15,8 +15,8 @@ auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 void HeroLine::onEvent(CommitEvent &e) {
   auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
   setContent({F(fmt::format("<b>{}</b>", hero->name)),
-              F(fmt::format("   <b>HP</b>:{}/{}   <b>SPD</b>:{}   <b>DMG</b>:{}", hero->HP(hero.get()),
-                            hero->HP_MAX(hero.get()), hero->SPEED(hero.get()), hero->getDmgDesc())),
+              F(fmt::format("   <b>HP</b>:{}/{}   <b>SPD</b>:{}   <b>DMG</b>:{}   <b>DEF</b>:{}", hero->HP(hero.get()),
+                            hero->HP_MAX(hero.get()), hero->SPEED(hero.get()), hero->getDmgDesc(), hero->DEF(hero.get()))),
               F(fmt::format("{}", hero->haveLight() ? "   L" : "")),
     });
 }

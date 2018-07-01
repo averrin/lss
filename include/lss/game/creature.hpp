@@ -40,6 +40,7 @@ public:
   int damage_modifier;
   float speed = 1.f;
   float visibilityDistance = 5.5f;
+  int defense = 0;
 
   std::optional<std::tuple<std::shared_ptr<Slot>, int, int, int>> getPrimaryDmg();
   std::optional<std::tuple<std::shared_ptr<Slot>, int, int, int>> getSecondaryDmg(std::shared_ptr<Slot>);
@@ -57,6 +58,8 @@ public:
       Attribute(AttributeType::VISIBILITY_DISTANCE);
   Attribute DMG =
       Attribute(AttributeType::DAMAGE);
+  Attribute DEF =
+      Attribute(AttributeType::DEFENSE);
 
   std::shared_ptr<Cell> getCell(Direction);
 };

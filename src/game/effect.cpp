@@ -14,3 +14,7 @@ std::string MeleeDamage::getTitle() {
 std::string VisibilityModifier::getTitle() {
   return fmt::format("increase visibility", modifier);
 }
+
+std::string ArmorValue::getTitle() {
+  return fmt::format("[+{}]", modifier);
+}

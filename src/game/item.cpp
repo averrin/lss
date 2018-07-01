@@ -1,9 +1,9 @@
 #include "lss/game/item.hpp"
 #include "lss/utils.hpp"
 
-Item::Item(ItemSpec t) : Object(), type(t){};
-Item::Item(ItemSpec t, int c) : Object(), type(t), count(c){};
-Item::Item(ItemSpec t, Effects e) : Object(), type(t), effects(e){};
+Item::Item(ItemSpec t) : Object(), type(t), name(t.name){};
+Item::Item(ItemSpec t, int c) : Object(), type(t), count(c), name(t.name){};
+Item::Item(ItemSpec t, Effects e) : Object(), type(t), effects(e), name(t.name){};
 
 bool Item::interact(std::shared_ptr<Object> actor) { return false; }
 

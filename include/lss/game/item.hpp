@@ -14,6 +14,7 @@ public:
   int count = 0;
 
   bool equipped = false;
+  std::string name;
 
   bool interact(std::shared_ptr<Object>);
   std::string getTitle();
@@ -31,6 +32,7 @@ typedef std::vector<std::shared_ptr<Item>> Items;
 
 namespace Prototype {
   const std::shared_ptr<Item> TORCH = std::make_shared<Item>(ItemType::TORCH, Effects{std::make_shared<VisibilityModifier>(2.5f)} );
+  const std::shared_ptr<Item> PLATE = std::make_shared<Item>(ItemType::PLATE, Effects{std::make_shared<ArmorValue>(5)} );
 }
 
 #endif // __ITEM_H_
