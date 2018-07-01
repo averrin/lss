@@ -1,7 +1,7 @@
 ## Changelog
 
 ### 0.0.7
-- 
+- init dungeon generator
 
 ### 0.0.6
 - durability for torches
