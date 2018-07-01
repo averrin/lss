@@ -98,14 +98,19 @@ std::shared_ptr<Location> Generator::getLocation() {
   auto HEIGHT = 40;
 
   location->cells = fill(HEIGHT, WIDTH, CellType::UNKNOWN_CELL);
-  auto room = fill(10, 10, CellType::FLOOR);
-  paste(room, location, 25, 10);
+  auto rh = rand() % 20 + 3;
+  auto rw = rand() % 40 + 3;
+  
+  auto room = fill(rh, rw, CellType::FLOOR);
+  auto ry = rand() % (location->cells.size() - rh - 2) + 2;
+  auto rx = rand() % (location->cells.front().size() - rw - 2) + 2;
+  paste(room, location, rx, ry);
   placeWalls(location);
-  location->enterCell = location->cells[10][25];
+  location->enterCell = location->cells[ry+2][rx+2];
   location->enterCell->type = CellType::UPSTAIRS;
   location->enterCell->seeThrough = false;
 
-  location->exitCell = location->cells[19][34];
+  location->exitCell = location->cells[ry+rh-1][rx+rw-1];
   location->exitCell->type = CellType::DOWNSTAIRS;
 
   auto t1 = std::chrono::system_clock::now();

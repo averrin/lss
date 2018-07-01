@@ -26,12 +26,8 @@ void EventReactor::onEvent(StairEvent &e) {
     app->hero->commit(0);
     app->invalidate("enter");
   } else if (app->hero->currentCell->type == CellType::DOWNSTAIRS && e.dir == StairType::DOWN) {
-    fmt::print("|\n");
     app->hero->currentLocation = app->locations["second"];
-    fmt::print("{}.{}\n", app->hero->currentLocation->enterCell->x, app->hero->currentLocation->enterCell->y);
-    fmt::print("|\n");
     app->hero->currentLocation->enter(app->hero, app->hero->currentLocation->enterCell);
-    fmt::print("|\n");
 
     app->state->fragments.assign(
         app->hero->currentLocation->cells.size() *

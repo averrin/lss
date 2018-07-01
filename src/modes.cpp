@@ -155,6 +155,17 @@ bool NormalMode::processKey(KeyEvent event) {
   case KeyEvent::KEY_z:
     app->processCommand("zap");
     break;
+  case KeyEvent::KEY_r:
+    app->hero->currentLocation = app->generator->getLocation();
+    app->hero->currentLocation->enter(app->hero, app->hero->currentLocation->enterCell);
+    app->state->fragments.assign(
+        app->hero->currentLocation->cells.size() *
+            (app->hero->currentLocation->cells.front().size() + 1),
+        std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false, false));
+
+    app->hero->currentLocation->updateView(app->hero);
+    app->hero->commit(0);
+    break;
   case KeyEvent::KEY_SLASH:
     if (event.isShiftDown()) {
       app->processCommand("help");
