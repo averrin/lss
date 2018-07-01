@@ -32,8 +32,9 @@ float Attribute::operator()(Creature *c) {
   }
 
   for (auto s : c->equipment->slots) {
-    if (s->item == nullptr || std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
-                               s->item->type.wearableType) == s->acceptTypes.end()) {
+    if (s->item == nullptr ||
+        std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
+                  s->item->type.wearableType) == s->acceptTypes.end()) {
       if (s->item != nullptr) {
         fmt::print("Skip item {} in {}\n", s->item->name, s->name);
       }

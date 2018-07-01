@@ -120,7 +120,7 @@ std::map<std::string, tpl_arg> getCellArgs(CellType type, bool seen, bool illumi
 }
 
 CellSign::CellSign(CellType type, bool seen, bool illuminated)
-    : Fragment("<span color='{{color}}' weight='{{weight}}'>{{sign}}</span>",
+    : Fragment(type != CellType::UNKNOWN_CELL ? "<span color='{{color}}' weight='{{weight}}'>{{sign}}</span>" : cellSigns[type],
                getCellArgs(type, seen, illuminated)) {}
 void CellSign::update(CellType type, bool seen, bool illuminated) {
   auto new_args = getCellArgs(type, seen, illuminated);

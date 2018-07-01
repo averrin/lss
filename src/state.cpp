@@ -24,19 +24,19 @@ void State::appendContent(std::shared_ptr<Fragment> content) {
 
 void State::render(kp::pango::CinderPangoRef surface) {
   if (!damaged) {
-    auto t0 = std::chrono::system_clock::now();
     std::string DEFAULT_FONT = "FiraCode 12";
     surface->setDefaultTextFont(DEFAULT_FONT);
 
     surface->setText(cache);
+    auto t0 = std::chrono::system_clock::now();
     surface->render();
     auto t1 = std::chrono::system_clock::now();
     using milliseconds = std::chrono::duration<double, std::milli>;
     milliseconds ms = t1 - t0;
-    // if (ms.count() > 5) {
-    //   std::cout << "settext + render time taken: " << rang::fg::green
-    //             << ms.count() << rang::style::reset << '\n';
-    // }
+    if (ms.count() > 5) {
+      std::cout << "settext + render time taken: " << rang::fg::green
+                << ms.count() << rang::style::reset << '\n';
+    }
     return;
   }
 

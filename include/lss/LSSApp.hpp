@@ -28,8 +28,10 @@
 #include "fmt/format.h"
 #include "lss/ui/heroLine.hpp"
 #include "lss/ui/statusLine.hpp"
-#include "rang.hpp"
 
+#include "lss/generator/generator.hpp"
+
+#include "rang.hpp"
 #include "EventBus.hpp"
 #include "EventHandler.hpp"
 
@@ -45,10 +47,16 @@ public:
   void keyDown(KeyEvent event) override;
   void draw() override;
   void invalidate();
-    void invalidate(std::string reason) {
-      // fmt::print("reason: {}\n", reason);
-      invalidate();
-    }
+  void invalidate(std::string reason) {
+    // fmt::print("Invalidate reason: {}\n", reason);
+    auto t0 = std::chrono::system_clock::now();
+    invalidate();
+    auto t1 = std::chrono::system_clock::now();
+    using milliseconds = std::chrono::duration<double, std::milli>;
+    milliseconds ms = t1 - t0;
+      std::cout << "invalidate: " << rang::fg::green
+                << ms.count() << rang::style::reset << '\n';
+  }
   bool processCommand(std::string);
   void setListeners();
   std::map<std::string, std::shared_ptr<Location>> locations;
@@ -75,6 +83,8 @@ public:
 
   std::shared_ptr<StatusLine> statusLine;
   std::shared_ptr<HeroLine> heroLine;
+
+  std::shared_ptr<Generator> generator;
 
   std::shared_ptr<State> state;
   std::shared_ptr<State> statusState;

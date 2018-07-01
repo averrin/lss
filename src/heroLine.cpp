@@ -30,5 +30,6 @@ void HeroLine::onEvent(CommitEvent &e) {
               F(fmt::format("   <b>HP</b>:{}/{}   <b>SPD</b>:{}   <b>DMG</b>:{}   <b>DEF</b>:{}", hero->HP(hero.get()),
                             hero->HP_MAX(hero.get()), hero->SPEED(hero.get()), hero->getDmgDesc(), hero->DEF(hero.get()))),
               F(fmt::format("{}", hero->hasLight() ? fmt::format("   L&lt;{}&gt;", lightDurability) : "")),
+              F(fmt::format("   {}.{}", hero->currentCell->x, hero->currentCell->y)),
     });
 }

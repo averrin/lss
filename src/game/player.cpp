@@ -60,7 +60,7 @@ Player::Player() : Creature() {
   damage_dices = 1;
   damage_edges = 1;
   damage_modifier = 0;
-  visibilityDistance = 3.f;
+  visibilityDistance = 3.2f;
 
   name = "Unnamed hero";
 
@@ -74,7 +74,8 @@ Player::Player() : Creature() {
   inventory.push_back(Prototype::PLATE->clone());
 
   auto axe = std::make_shared<Item>(
-    ItemType::GREAT_AXE, Effects{std::make_shared<MeleeDamage>(-1, 6, 7), std::make_shared<SpeedModifier>(-0.3f)});
+      ItemType::GREAT_AXE, Effects{std::make_shared<MeleeDamage>(-1, 6, 7),
+                                   std::make_shared<SpeedModifier>(-0.3f)});
   inventory.push_back(axe);
 }
 
@@ -100,20 +101,24 @@ std::string Player::getDmgDesc() {
     if (secondaryDmg != std::nullopt) {
       auto [secondarySlot, m2, d2, e2] = *secondaryDmg;
       return fmt::format("{:+d} {}d{}{}", m, d, e,
-                         hasTrait(Traits::DUAL_WIELD) ? fmt::format(" ({:+d} {}d{})", m2, d2, e2)
-                                  : fmt::format(" ({:+d})", m2));
+                         hasTrait(Traits::DUAL_WIELD)
+                             ? fmt::format(" ({:+d} {}d{})", m2, d2, e2)
+                             : fmt::format(" ({:+d})", m2));
     }
   } else if (haveLeft) {
     auto secondaryDmg = getSecondaryDmg(nullptr);
     if (secondaryDmg != std::nullopt) {
       auto [secondarySlot, m2, d2, e2] = *secondaryDmg;
-      return hasTrait(Traits::DUAL_WIELD) ? fmt::format("~ {:+d} {}d{}", m2, d2, e2) : fmt::format("~ {:+d}", m2);
+      return hasTrait(Traits::DUAL_WIELD)
+                 ? fmt::format("~ {:+d} {}d{}", m2, d2, e2)
+                 : fmt::format("~ {:+d}", m2);
     }
   } else if (primaryDmg != std::nullopt) {
     auto [primarySlot, m, d, e] = *primaryDmg;
     return fmt::format("{:+d} {}d{}", m, d, e);
   }
-  return fmt::format("{:+d} {}d{}", damage_modifier, damage_dices, damage_edges);
+  return fmt::format("{:+d} {}d{}", damage_modifier, damage_dices,
+                     damage_edges);
 }
 
 void Player::commit(int ap) {
@@ -122,8 +127,8 @@ void Player::commit(int ap) {
         equipment->slots.begin(), equipment->slots.end(),
         [](std::shared_ptr<Slot> s) {
           return s->item != nullptr &&
-                std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
-                          LIGHT) != s->acceptTypes.end();
+                 std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
+                           LIGHT) != s->acceptTypes.end();
         });
     if (lightSlot->item != nullptr && lightSlot->item->durability != -1) {
       lightSlot->item->durability -= ap / 10;
@@ -132,7 +137,6 @@ void Player::commit(int ap) {
         equipment->unequip(lightSlot);
       }
     }
-
   }
 
   auto ptr = shared_from_this();

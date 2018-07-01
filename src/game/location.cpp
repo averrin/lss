@@ -105,8 +105,9 @@ void Location::onEvent(EnterCellEvent &e) {
   auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
 }
 
-void Location::enter(std::shared_ptr<Player> hero) {
-  hero->currentCell = hero->currentLocation->cells[15][30];
+void Location::enter(std::shared_ptr<Player> hero, std::shared_ptr<Cell> cell) {
+  player = hero;
+  hero->currentCell = cell;
 
   for (auto o : objects) {
     if (auto enemy = std::dynamic_pointer_cast<Enemy>(o)) {
@@ -148,14 +149,13 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
   auto enemies = utils::castObjects<Enemy>(objects);
   std::vector<std::shared_ptr<Cell>> torches;
   for (auto ts : utils::castObjects<TorchStand>(objects)) {
-      torches.push_back(ts->currentCell);
+    torches.push_back(ts->currentCell);
   }
   for (auto e : enemies) {
     if (e->hasLight()) {
       torches.push_back(e->currentCell);
     }
   }
-
 
   for (auto r : cells) {
     for (auto c : r) {
@@ -199,14 +199,10 @@ void Location::AdjacentCost(void *state,
   if (cell->y > 0 && cell->x > 0 && cell->x < cells.front().size() - 1 &&
       cell->y < cells.size() - 1) {
     std::vector<std::shared_ptr<Cell>> nbrs = {
-        cells[cell->y - 1][cell->x],    
-        cells[cell->y - 1][cell->x - 1],
-        cells[cell->y + 1][cell->x - 1],
-        cells[cell->y][cell->x - 1],
-        cells[cell->y][cell->x + 1],    
-        cells[cell->y + 1][cell->x + 1],
-        cells[cell->y - 1][cell->x + 1],
-        cells[cell->y + 1][cell->x]};
+        cells[cell->y - 1][cell->x],     cells[cell->y - 1][cell->x - 1],
+        cells[cell->y + 1][cell->x - 1], cells[cell->y][cell->x - 1],
+        cells[cell->y][cell->x + 1],     cells[cell->y + 1][cell->x + 1],
+        cells[cell->y - 1][cell->x + 1], cells[cell->y + 1][cell->x]};
 
     for (auto n : nbrs) {
       if (!n->passThrough)

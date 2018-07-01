@@ -34,7 +34,7 @@ Enemy::Enemy(EnemySpec t) : Creature(), type(t) {
     inventory.push_back(i);
     for (auto s : equipment->slots) {
       if (std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
-                   i->type.wearableType) != s->acceptTypes.end()) {
+                    i->type.wearableType) != s->acceptTypes.end()) {
         fmt::print("{} : {}\n", s->name, i->getTitle());
         equipment->equip(s, i);
         break;

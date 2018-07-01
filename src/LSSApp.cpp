@@ -31,7 +31,7 @@ void LSSApp::setup() {
   gameFrame->setMinSize(800, 600);
   gameFrame->setMaxSize(getWindowWidth(),
                         getWindowHeight() - StatusLine::HEIGHT);
-  gameFrame->setSpacing(gameFrame->getSpacing() - 4.0);
+  gameFrame->setSpacing(gameFrame->getSpacing() - 5.0);
   gameFrame->disableWrap();
 
   statusFrame = kp::pango::CinderPango::create();
@@ -102,11 +102,11 @@ void LSSApp::setup() {
 
   hero = std::make_shared<Player>();
   locations = {
-      {"start", loadMap("./dungeon2.ascii")},
+      {"start", generator->getLocation()},
       {"second", loadMap("./dungeon.ascii")},
   };
   hero->currentLocation = locations["start"];
-  hero->currentLocation->enter(hero);
+  hero->currentLocation->enter(hero, locations["start"]->enterCell);
 
   state->fragments.assign(
       hero->currentLocation->cells.size() *
@@ -145,7 +145,6 @@ std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Location> location,std::shared_
 
 std::shared_ptr<Location> LSSApp::loadMap(std::string filename) {
   auto location = std::make_shared<Location>();
-  location->player = hero;
 
   std::string line;
   std::ifstream dungeon_file(filename);
@@ -172,11 +171,13 @@ std::shared_ptr<Location> LSSApp::loadMap(std::string filename) {
           c->type = CellType::UPSTAIRS;
           c->passThrough = true;
           c->seeThrough = false;
+          location->enterCell = c;
           break;
         case '>':
           c->type = CellType::DOWNSTAIRS;
           c->passThrough = true;
           c->seeThrough = true;
+          location->exitCell = c;
           break;
         case '#':
           c->type = CellType::WALL;
@@ -239,7 +240,6 @@ std::shared_ptr<Location> LSSApp::loadMap(std::string filename) {
 void LSSApp::setListeners() { reactor = std::make_shared<EventReactor>(this); }
 
 void LSSApp::invalidate() {
-  auto t0 = std::chrono::system_clock::now();
   hero->calcViewField();
   hero->currentLocation->updateView(hero);
   auto row = 0;
@@ -249,6 +249,7 @@ void LSSApp::invalidate() {
     auto column = 0;
     for (auto c : r) {
       auto f = state->fragments[index];
+        // fmt::print("{}", c->type);
       switch (c->visibilityState) {
       case VisibilityState::UNKNOWN:
         if (hero->monsterSense &&
@@ -273,6 +274,7 @@ void LSSApp::invalidate() {
     }
     index++;
     row++;
+    // fmt::print("\n");
   }
 
   auto objects = hero->currentLocation->objects;
@@ -328,12 +330,6 @@ void LSSApp::invalidate() {
   }
 
   state->invalidate();
-
-  // auto t1 = std::chrono::system_clock::now();
-  // using milliseconds = std::chrono::duration<double, std::milli>;
-  // milliseconds ms = t1 - t0;
-  //   std::cout << "invalidate time taken: " << rang::fg::green
-  //             << ms.count() << rang::style::reset << '\n';
 }
 
 void LSSApp::mouseDown(MouseEvent event) {}

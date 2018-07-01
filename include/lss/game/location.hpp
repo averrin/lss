@@ -23,10 +23,13 @@ public:
   Objects objects;
   std::shared_ptr<Player> player;
 
+  std::shared_ptr<Cell> enterCell;
+  std::shared_ptr<Cell> exitCell;
+
   void updateView(std::shared_ptr<Player>);
   void updateLight(std::shared_ptr<Player>);
   void reveal();
-  void enter(std::shared_ptr<Player>);
+  void enter(std::shared_ptr<Player>, std::shared_ptr<Cell>);
   void leave(std::shared_ptr<Player>);
   std::vector<eb::HandlerRegistrationPtr> handlers;
 
@@ -37,7 +40,7 @@ public:
       nbrs = {cells[cell->y - 1][cell->x],     cells[cell->y - 1][cell->x - 1],
               cells[cell->y + 1][cell->x - 1], cells[cell->y][cell->x - 1],
               cells[cell->y][cell->x + 1],     cells[cell->y + 1][cell->x + 1],
-              cells[cell->y + 1][cell->x + 1], cells[cell->y + 1][cell->x]};
+              cells[cell->y - 1][cell->x + 1], cells[cell->y + 1][cell->x]};
     }
     return nbrs;
   }

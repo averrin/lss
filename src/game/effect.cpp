@@ -15,6 +15,4 @@ std::string VisibilityModifier::getTitle() {
   return fmt::format("increase visibility", modifier);
 }
 
-std::string ArmorValue::getTitle() {
-  return fmt::format("[{:+g}]", modifier);
-}
+std::string ArmorValue::getTitle() { return fmt::format("[{:+g}]", modifier); }

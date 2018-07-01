@@ -1,9 +1,13 @@
 #include "lss/game/item.hpp"
 #include "lss/utils.hpp"
 
-Item::Item(ItemSpec t) : Object(), type(t), name(t.name), durability(type.durability){};
-Item::Item(ItemSpec t, int c) : Object(), type(t), count(c), name(t.name), durability(type.durability){};
-Item::Item(ItemSpec t, Effects e) : Object(), type(t), effects(e), name(t.name), durability(type.durability){};
+Item::Item(ItemSpec t)
+    : Object(), type(t), name(t.name), durability(type.durability){};
+Item::Item(ItemSpec t, int c)
+    : Object(), type(t), count(c), name(t.name), durability(type.durability){};
+Item::Item(ItemSpec t, Effects e)
+    : Object(), type(t), effects(e), name(t.name),
+      durability(type.durability){};
 
 bool Item::interact(std::shared_ptr<Object> actor) { return false; }
 
@@ -43,6 +47,7 @@ std::string Item::getTitle() {
           : fmt::format(" {{{}}}", utils::join(effectNames, " ,")),
       durability == -1
           ? ""
-          : fmt::format(" &lt;{}&gt;", durability != 0 ? fmt::format("{}", durability) : "broken")
-               );
+          : fmt::format(" &lt;{}&gt;", durability != 0
+                                           ? fmt::format("{}", durability)
+                                           : "broken"));
 }
