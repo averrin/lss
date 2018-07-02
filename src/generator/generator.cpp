@@ -4,6 +4,7 @@
 #include "lss/generator/generator.hpp"
 #include "lss/generator/room.hpp"
 #include "lss/game/item.hpp"
+#include "lss/game/door.hpp"
 #include "rang.hpp"
 #include "fmt/format.h"
 
@@ -125,6 +126,29 @@ void fixOverlapped(std::shared_ptr<Location> location) {
   }
 }
 
+void placeDoors(std::shared_ptr<Location> location) {
+    for (auto r : location->cells) {
+      for (auto c : r) {
+        // fmt::print("{}", c->type);
+        if (c->type == CellType::FLOOR) {
+          if ((location->cells[c->y-1][c->x]->type == CellType::WALL && location->cells[c->y+1][c->x]->type == CellType::WALL)
+              || (location->cells[c->y][c->x-1]->type == CellType::WALL && location->cells[c->y][c->x+1]->type == CellType::WALL)
+          ) {
+            auto n = location->getNeighbors(c);
+            if (std::count_if(n.begin(), n.end(), [](std::shared_ptr<Cell> nc) {return nc->type == CellType::WALL;}) < 6) {
+              if (rand() % 100 > 80) continue;
+              auto door = std::make_shared<Door>();
+              door->currentCell = c;
+              c->type = CellType::FLOOR;
+              c->passThrough = true;
+              location->objects.push_back(door);
+            }
+          }
+        }
+      }
+    }
+}
+
 std::shared_ptr<Location> Generator::getLocation() {
   auto t0 = std::chrono::system_clock::now();
 
@@ -180,7 +204,6 @@ std::shared_ptr<Location> Generator::getLocation() {
 
   fixOverlapped(location);
 
-
   auto tc = rand() % 7 + 3;
   for (auto n = 0; n < tc; n++) {
     auto room = location->rooms[rand() % location->rooms.size()];
@@ -201,6 +224,7 @@ std::shared_ptr<Location> Generator::getLocation() {
   location->exitCell->type = CellType::DOWNSTAIRS;
 
   placeWalls(location);
+  placeDoors(location);
   auto t1 = std::chrono::system_clock::now();
   using milliseconds = std::chrono::duration<double, std::milli>;
   milliseconds ms = t1 - t0;

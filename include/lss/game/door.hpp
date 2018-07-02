@@ -8,7 +8,7 @@ public:
   Door();
   bool interact(std::shared_ptr<Object>);
 
-  bool opened;
+  bool opened = false;
   bool locked;
 };
 
