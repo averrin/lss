@@ -222,6 +222,7 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
                                           Spells::TOGGLE_DUAL_WIELD,
                                           Spells::TOGGLE_NIGHT_VISION,
                                           Spells::TOGGLE_MIND_SIGHT,
+                                          Spells::TOGGLE_MAGIC_TORCH,
                                           Spells::SUMMON_ORK}));
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
@@ -296,6 +297,14 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
       app->hero->traits.erase(std::remove(app->hero->traits.begin(), app->hero->traits.end(), Traits::MIND_SIGHT));
     } else {
       app->hero->traits.push_back(Traits::MIND_SIGHT);
+    }
+    app->hero->commit(0);
+  } else if (spell == Spells::TOGGLE_MAGIC_TORCH) {
+    app->hero->commit(0);
+    if (app->hero->hasTrait(Traits::MAGIC_TORCH)) {
+      app->hero->traits.erase(std::remove(app->hero->traits.begin(), app->hero->traits.end(), Traits::MAGIC_TORCH));
+    } else {
+      app->hero->traits.push_back(Traits::MAGIC_TORCH);
     }
     app->hero->commit(0);
   }

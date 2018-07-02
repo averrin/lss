@@ -14,6 +14,7 @@ namespace Traits {
     const Trait DUAL_WIELD = {"Dual wield"};
     const Trait NIGHT_VISION = {"Night vision"};
     const Trait MIND_SIGHT = {"Mind sight"};
+    const Trait MAGIC_TORCH = {"Magic torch"};
 }
 
 

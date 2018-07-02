@@ -122,7 +122,7 @@ std::string Player::getDmgDesc() {
 }
 
 void Player::commit(int ap) {
-  if (hasLight()) {
+  if (hasLight() && !hasTrait(Traits::MAGIC_TORCH)) {
     auto lightSlot = *std::find_if(
         equipment->slots.begin(), equipment->slots.end(),
         [](std::shared_ptr<Slot> s) {

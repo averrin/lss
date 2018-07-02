@@ -10,6 +10,8 @@
 
 Generator::Generator() {}
 
+int P_DOOR = 80;
+
 Cells fill(int h, int w, CellType type) {
   Cells cells;
   for (auto r = 0; r < h; r++) {
@@ -110,6 +112,75 @@ std::shared_ptr<Room> Generator::makePassage(std::shared_ptr<Cell> start, Direct
   return room;
 }
 
+void makeFloor(std::shared_ptr<Cell> cell) {
+    cell->type = CellType::FLOOR;
+    cell->seeThrough = true;
+    cell->passThrough = true;
+}
+
+void dig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start, Direction dir, int length) {
+  auto cell = start;
+  for (auto step = 0; step < length; step++) {
+    auto width = rand() % 6 + 2;
+    auto wind = rand() % (width >= 3 ? width / 2 : 3);
+    auto offset = rand() % 2 ? -1 : 1;
+    auto ox = cell->x;
+    auto oy = cell->y;
+    auto nx = ox;
+    auto ny = oy;
+    switch (dir) {
+      case Direction::N:
+        ox -= width / 2;
+        for (auto n = 0; n < width; n++) {
+          ox++;
+          if (oy < 0 || ox < 0 || oy > location->cells.size()-1 || ox > location->cells.front().size()-1) continue;
+          auto c = location->cells[oy][ox];
+          makeFloor(c);
+        }
+        ny -= 1;
+        nx += offset*wind;
+        break;
+      case Direction::S:
+        ox -= width / 2;
+        for (auto n = 0; n < width; n++) {
+          ox++;
+          if (oy < 0 || ox < 0 || oy > location->cells.size()-1 || ox > location->cells.front().size()-1) continue;
+          auto c = location->cells[oy][ox];
+          makeFloor(c);
+        }
+        ny += 1;
+        nx += offset*wind;
+        break;
+      case Direction::W:
+        oy -= width / 2;
+        for (auto n = 0; n < width; n++) {
+          oy++;
+          if (oy < 0 || ox < 0 || oy > location->cells.size()-1 || ox > location->cells.front().size()-1) continue;
+          auto c = location->cells[oy][ox];
+          makeFloor(c);
+        }
+        nx -= 1;
+        ny += offset*wind;
+        break;
+      case Direction::E:
+        oy -= width / 2;
+        for (auto n = 0; n < width; n++) {
+          oy++;
+          if (oy < 0 || ox < 0 || oy > location->cells.size()-1 || ox > location->cells.front().size()-1) continue;
+          auto c = location->cells[oy][ox];
+          makeFloor(c);
+        }
+        nx += 1;
+        ny += offset*wind;
+        break;
+    }
+          if (ny < 0 || nx < 0 || ny > location->cells.size()-1 || nx > location->cells.front().size()-1) {
+            break;
+          };
+    cell = location->cells[ny][nx];
+  }
+}
+
 void fixOverlapped(std::shared_ptr<Location> location) {
   auto bh = location->cells.size();
   auto bw = location->cells.front().size();
@@ -136,11 +207,12 @@ void placeDoors(std::shared_ptr<Location> location) {
           ) {
             auto n = location->getNeighbors(c);
             if (std::count_if(n.begin(), n.end(), [](std::shared_ptr<Cell> nc) {return nc->type == CellType::WALL;}) < 6) {
-              if (rand() % 100 > 80) continue;
+              if (rand() % 100 > P_DOOR) continue;
               auto door = std::make_shared<Door>();
               door->currentCell = c;
               c->type = CellType::FLOOR;
               c->passThrough = true;
+              c->seeThrough = false;
               location->objects.push_back(door);
             }
           }
@@ -154,7 +226,7 @@ std::shared_ptr<Location> Generator::getLocation() {
 
   auto location = std::make_shared<Location>();
   auto WIDTH = 120;
-  auto HEIGHT = 40;
+  auto HEIGHT = 60;
 
   auto rc = rand() % 7 + 3;
 
@@ -204,15 +276,6 @@ std::shared_ptr<Location> Generator::getLocation() {
 
   fixOverlapped(location);
 
-  auto tc = rand() % 7 + 3;
-  for (auto n = 0; n < tc; n++) {
-    auto room = location->rooms[rand() % location->rooms.size()];
-    auto cell = room->cells[rand() % room->height][rand() % room->width];
-    auto torch = std::make_shared<TorchStand>();
-    torch->currentCell = cell;
-    location->objects.push_back(torch);
-  }
-
   //FIXME: lost cells when rooms overlapped
   auto room = location->rooms[rand() % location->rooms.size()];
   location->enterCell = room->cells[rand() % room->height][rand() % room->width];
@@ -223,8 +286,28 @@ std::shared_ptr<Location> Generator::getLocation() {
   location->exitCell = room->cells[rand() % room->height][rand() % room->width];
   location->exitCell->type = CellType::DOWNSTAIRS;
 
+  fmt::print("N\n");
+  dig(location, location->enterCell, N, 30);
+  fmt::print("S\n");
+  dig(location, location->enterCell, S, 30);
+  fmt::print("W\n");
+  dig(location, location->enterCell, W, 30);
+  fmt::print("E\n");
+  dig(location, location->enterCell, E, 30);
+  fmt::print("done\n");
+
+  auto tc = rand() % 7 + 3;
+  for (auto n = 0; n < tc;) {
+    auto cell = location->cells[rand() % HEIGHT][rand() % WIDTH];
+    if (cell->type != CellType::FLOOR) continue;
+    n++;
+    auto torch = std::make_shared<TorchStand>();
+    torch->currentCell = cell;
+    location->objects.push_back(torch);
+  }
+
   placeWalls(location);
-  placeDoors(location);
+  // placeDoors(location);
   auto t1 = std::chrono::system_clock::now();
   using milliseconds = std::chrono::duration<double, std::milli>;
   milliseconds ms = t1 - t0;
