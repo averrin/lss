@@ -142,6 +142,7 @@ void Location::leave(std::shared_ptr<Player> hero) {
   }
 }
 
+//TODO: add shadows from objects [after cell specs]
 void Location::updateLight(std::shared_ptr<Player> hero) {
   auto vd = 4.5f;
   auto heroVD = hero->VISIBILITY_DISTANCE(hero.get());

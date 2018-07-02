@@ -20,12 +20,14 @@ Yet another unfinished roguelike game.
 - [X] Creature traits (for skills and enemy tricks)
 - [X] Armor
 - [X] Enemy with torches
+- [ ] Map generator
+- [ ] Cell & location features
+- [ ] Light/shadow-related traits
 - [ ] Better event log
 - [ ] Weights
 - [ ] Passive, patrol and "hero search" AI, stealth
 - [ ] Chests and containers
 - [ ] Ranged selection and weapons
-- [ ] Map generator
 - [ ] Randomized monsters and loot
 - [ ] Leveling
 - [ ] Hundreds of other features...

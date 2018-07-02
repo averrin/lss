@@ -118,11 +118,12 @@ void makeFloor(std::shared_ptr<Cell> cell) {
     cell->passThrough = true;
 }
 
-void dig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start, Direction dir, int length) {
+void dig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start, Direction dir, int length,
+         int minWidth, int jWidth, bool randomWind) {
   auto cell = start;
   for (auto step = 0; step < length; step++) {
-    auto width = rand() % 6 + 2;
-    auto wind = rand() % (width >= 3 ? width / 2 : 3);
+    auto width = (jWidth > 1 ? rand() % jWidth : 0) + minWidth;
+    auto wind = randomWind ? rand() % (width >= 3 ? width*3 / 4 : 2) : 0;
     auto offset = rand() % 2 ? -1 : 1;
     auto ox = cell->x;
     auto oy = cell->y;
@@ -181,12 +182,20 @@ void dig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start, Direct
   }
 }
 
+void randomDig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start, Direction dir, int length) {
+  int minWidth = 1;
+  int jWidth = 6;
+  bool randomWind = true;
+  dig(location, start, dir, length, minWidth, jWidth, randomWind);
+}
+
 void fixOverlapped(std::shared_ptr<Location> location) {
   auto bh = location->cells.size();
   auto bw = location->cells.front().size();
   for (auto room : location->rooms) {
     for (auto r : room->cells) {
-      for (auto c : r) {
+      auto row = r;
+      for (auto c : row) {
         if (c->y >= bh || c->x >= bw) {
           r.erase(std::remove(r.begin(), r.end(), c));
         } else {
@@ -276,25 +285,20 @@ std::shared_ptr<Location> Generator::getLocation() {
 
   fixOverlapped(location);
 
-  //FIXME: lost cells when rooms overlapped
   auto room = location->rooms[rand() % location->rooms.size()];
   location->enterCell = room->cells[rand() % room->height][rand() % room->width];
-  location->enterCell->type = CellType::UPSTAIRS;
-  location->enterCell->seeThrough = false;
 
   room = location->rooms[rand() % location->rooms.size()];
   location->exitCell = room->cells[rand() % room->height][rand() % room->width];
   location->exitCell->type = CellType::DOWNSTAIRS;
 
-  fmt::print("N\n");
-  dig(location, location->enterCell, N, 30);
-  fmt::print("S\n");
-  dig(location, location->enterCell, S, 30);
-  fmt::print("W\n");
-  dig(location, location->enterCell, W, 30);
-  fmt::print("E\n");
-  dig(location, location->enterCell, E, 30);
-  fmt::print("done\n");
+  randomDig(location, location->enterCell, N, 30);
+  randomDig(location, location->enterCell, S, 30);
+  randomDig(location, location->enterCell, W, 30);
+  randomDig(location, location->enterCell, E, 30);
+
+  location->enterCell->type = CellType::UPSTAIRS;
+  location->enterCell->seeThrough = false;
 
   auto tc = rand() % 7 + 3;
   for (auto n = 0; n < tc;) {
