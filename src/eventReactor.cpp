@@ -59,8 +59,10 @@ void EventReactor::onEvent(StairEvent &e) {
 
 void EventReactor::onEvent(eb::Event &e) { app->invalidate("eb::event"); }
 
-//FIXME: do not invalidate in 'walk-mode'
-void EventReactor::onEvent(CommitEvent &e) { app->invalidate("commit"); }
+void EventReactor::onEvent(CommitEvent &e) {
+  if (e.silent) return;
+  app->invalidate("commit");
+}
 
 void EventReactor::onEvent(QuitCommandEvent &e) { exit(0); }
 

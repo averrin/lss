@@ -7,8 +7,6 @@
 #include "lss/game/spell.hpp"
 #include <memory>
 
-CommitEvent::CommitEvent(eb::ObjectPtr s, int ap)
-    : eb::Event(s), actionPoints(ap) {}
 DigEvent::DigEvent(eb::ObjectPtr s, std::shared_ptr<Cell> c)
     : eb::Event(s), cell(c) {}
 HeroDiedEvent::HeroDiedEvent(eb::ObjectPtr s) : eb::Event(s) {}
@@ -120,7 +118,7 @@ std::string Player::getDmgDesc() {
                      damage_edges);
 }
 
-void Player::commit(int ap) {
+void Player::commit(int ap, bool s) {
   if (hasLight() && !hasTrait(Traits::MAGIC_TORCH)) {
     auto lightSlot = *std::find_if(
         equipment->slots.begin(), equipment->slots.end(),
@@ -139,7 +137,7 @@ void Player::commit(int ap) {
   }
 
   auto ptr = shared_from_this();
-  CommitEvent e(ptr, ap);
+  CommitEvent e(ptr, ap, s);
   eb::EventBus::FireEvent(e);
 }
 
@@ -200,7 +198,7 @@ void Player::onEvent(DigCommandEvent &e) {
 
 void Player::onEvent(WalkCommandEvent &e) {
   while (move(e.direction)) {
-    commit(ap_cost::STEP / SPEED(this));
+    commit(ap_cost::STEP / SPEED(this), true);
     auto item = std::find_if(currentLocation->objects.begin(),
                              currentLocation->objects.end(),
                              [&](std::shared_ptr<Object> o) {
@@ -210,6 +208,7 @@ void Player::onEvent(WalkCommandEvent &e) {
     if (item != currentLocation->objects.end())
       break;
   }
+  commit(0);
 }
 
 void Player::onEvent(PickCommandEvent &e) {

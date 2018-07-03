@@ -221,8 +221,6 @@ std::shared_ptr<Location> LSSApp::loadMap(std::string filename) {
 void LSSApp::setListeners() { reactor = std::make_shared<EventReactor>(this); }
 
 void LSSApp::invalidate() {
-  hero->calcViewField();
-  hero->currentLocation->updateView(hero);
   auto row = 0;
   auto index = 0;
   auto cc = hero->currentCell;

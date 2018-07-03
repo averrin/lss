@@ -14,6 +14,11 @@ float getDistance(std::shared_ptr<Cell> c, std::shared_ptr<Cell> cc) {
 
 Location::Location() {}
 
+void Location::onEvent(CommitEvent &e) {
+  player->calcViewField();
+  updateView(player);
+}
+
 void Location::onEvent(DropEvent &e) {
   if (e.item == nullptr)
     return;
@@ -119,15 +124,17 @@ void Location::enter(std::shared_ptr<Player> hero, std::shared_ptr<Cell> cell) {
   hero->commit(0);
 
   handlers.push_back(
-      eb::EventBus::AddHandler<EnemyDiedEvent>(*hero->currentLocation));
+      eb::EventBus::AddHandler<EnemyDiedEvent>(*this));
   handlers.push_back(
-      eb::EventBus::AddHandler<ItemTakenEvent>(*hero->currentLocation));
+      eb::EventBus::AddHandler<ItemTakenEvent>(*this));
   handlers.push_back(
-      eb::EventBus::AddHandler<EnterCellEvent>(*hero->currentLocation, hero));
+      eb::EventBus::AddHandler<EnterCellEvent>(*this, hero));
   handlers.push_back(
-      eb::EventBus::AddHandler<DigEvent>(*hero->currentLocation, hero));
+      eb::EventBus::AddHandler<DigEvent>(*this, hero));
   handlers.push_back(
-      eb::EventBus::AddHandler<DropEvent>(*hero->currentLocation));
+      eb::EventBus::AddHandler<DropEvent>(*this));
+  handlers.push_back(
+      eb::EventBus::AddHandler<CommitEvent>(*this));
 }
 
 void Location::leave(std::shared_ptr<Player> hero) {
