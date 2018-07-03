@@ -12,19 +12,16 @@ Generator::Generator() {}
 
 int P_DOOR = 80;
 
-Cells fill(int h, int w, CellType type) {
+Cells fill(int h, int w, CellSpec type) {
   Cells cells;
   for (auto r = 0; r < h; r++) {
     std::vector<std::shared_ptr<Cell>> row;
     for (auto c = 0; c < w; c++) {
       auto cell = std::make_shared<Cell>(c, r, type);
       cell->visibilityState = VisibilityState::UNKNOWN;
-      switch (type) {
-      case CellType::FLOOR:
-      case CellType::FLOOR_BLOOD:
+      if (type == CellType::FLOOR) {
         cell->seeThrough = true;
         cell->passThrough = true;
-        break;
       }
 
       row.push_back(cell);
@@ -52,14 +49,17 @@ void placeWalls(std::shared_ptr<Location> location) {
     for (auto cell : r) {
       if (cell->type == CellType::UNKNOWN_CELL) {
         auto n = location->getNeighbors(cell);
-        if (std::find_if(n.begin(), n.end(), [](std::shared_ptr<Cell> c) {
-              return c->type == CellType::FLOOR ||
-                     c->type == CellType::DOWNSTAIRS ||
-                     c->type == CellType::UPSTAIRS;
-            }) != n.end()) {
+        if (auto nc = std::find_if(n.begin(), n.end(),
+                                   [](std::shared_ptr<Cell> c) {
+                                     return c->type == CellType::FLOOR ||
+                                            c->type == CellType::DOWNSTAIRS ||
+                                            c->type == CellType::UPSTAIRS;
+                                   });
+            nc != n.end()) {
           cell->type = CellType::WALL;
           cell->seeThrough = false;
           cell->passThrough = false;
+          cell->features = (*nc)->features;
         }
       }
       if (cell == r.front() || cell == r.back()) {
@@ -121,9 +121,15 @@ void makeFloor(std::shared_ptr<Cell> cell) {
   cell->passThrough = true;
 }
 
+void makeFloor(std::shared_ptr<Cell> cell, std::vector<CellFeature> features) {
+  cell->features = features;
+  makeFloor(cell);
+}
+
 void dig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start,
          Direction dir, int length, int minWidth, int jWidth, bool randomWind) {
   auto cell = start;
+  std::vector<CellFeature> f = {CellFeature::CAVE};
   for (auto step = 0; step < length; step++) {
     auto width = (jWidth > 1 ? rand() % jWidth : 0) + minWidth;
     auto wind = randomWind ? rand() % (width >= 3 ? width * 3 / 4 : 2) : 0;
@@ -141,7 +147,7 @@ void dig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start,
             ox > location->cells.front().size() - 1)
           continue;
         auto c = location->cells[oy][ox];
-        makeFloor(c);
+        makeFloor(c, f);
       }
       ny -= 1;
       nx += offset * wind;
@@ -154,7 +160,7 @@ void dig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start,
             ox > location->cells.front().size() - 1)
           continue;
         auto c = location->cells[oy][ox];
-        makeFloor(c);
+        makeFloor(c, f);
       }
       ny += 1;
       nx += offset * wind;
@@ -167,7 +173,7 @@ void dig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start,
             ox > location->cells.front().size() - 1)
           continue;
         auto c = location->cells[oy][ox];
-        makeFloor(c);
+        makeFloor(c, f);
       }
       nx -= 1;
       ny += offset * wind;
@@ -180,7 +186,7 @@ void dig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start,
             ox > location->cells.front().size() - 1)
           continue;
         auto c = location->cells[oy][ox];
-        makeFloor(c);
+        makeFloor(c, f);
       }
       nx += 1;
       ny += offset * wind;

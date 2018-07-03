@@ -9,6 +9,8 @@ using namespace std::string_literals;
 
 Fragment::Fragment(std::string t, std::map<std::string, tpl_arg> a)
     : template_str(t), args(a){};
+Fragment::Fragment(std::string t, std::map<std::string, tpl_arg> a, bool n)
+    : template_str(t), args(a), needRender(n){};
 Fragment::Fragment(std::string t) : template_str(t){};
 Fragment::Fragment(std::string t, bool n) : template_str(t), needRender(n){};
 
@@ -39,7 +41,11 @@ std::string Fragment::render(State *state) {
     std::visit([&](auto const &val) { tpl.setValue(key, val); }, value);
   }
 
-  cache = "<span>" + tpl.render() + "</span>";
+  auto content = tpl.render();
+  if (content != "" && content != "<br>" && content[0] != '<') {
+    content = "<span>" + content + "</span>";
+  }
+  cache = content;
   damaged = false;
   return cache;
 }
@@ -70,71 +76,67 @@ std::map<EnemySpec, std::string> enemyColors = {
     {EnemyType::PIXI, "pink"},
 };
 
-std::map<CellType, std::string> cellSigns = {
-    {CellType::FLOOR, "⋅"s},         {CellType::FLOOR_BLOOD, "⋅"s},
-    {CellType::WALL, "#"s},          {CellType::UNKNOWN_CELL, " "s},
-    {CellType::DOWNSTAIRS, "&gt;"s}, {CellType::UPSTAIRS, "&lt;"s},
+std::map<CellSpec, std::string> cellSigns = {
+    {CellType::FLOOR, "⋅"s},        {CellType::WALL, "#"s},
+    {CellType::UNKNOWN_CELL, " "s}, {CellType::DOWNSTAIRS, "&gt;"s},
+    {CellType::UPSTAIRS, "&lt;"s},
 };
 
-std::map<CellType, std::map<bool, std::string>> cellColors = {
+std::map<CellSpec, std::map<bool, std::string>> cellColors = {
     {CellType::FLOOR, {{false, "#555"}, {true, "#2f2f2f"}}},
-    {CellType::FLOOR_BLOOD, {{false, "darkred"}, {true, "#2f2f2f"}}},
     {CellType::WALL, {{false, "#aaa"}, {true, "#555"}}},
-    {CellType::UNKNOWN_CELL, {{false, "#555"}, {true, "#777"}}},
     {CellType::DOWNSTAIRS, {{false, "#aaa"}, {true, "#666"}}},
     {CellType::UPSTAIRS, {{false, "#aaa"}, {true, "#666"}}},
 };
 
-std::map<CellType, std::string> cellColorsIlluminated = {
-    {CellType::FLOOR, "#765"},      {CellType::FLOOR_BLOOD, "darkred"},
-    {CellType::WALL, "#cba"},       {CellType::UNKNOWN_CELL, "#555"},
-    {CellType::DOWNSTAIRS, "#cba"}, {CellType::UPSTAIRS, "#cba"},
+std::map<CellSpec, std::string> cellColorsIlluminated = {
+    {CellType::FLOOR, "#765"},        {CellType::WALL, "#cba"},
+    {CellType::DOWNSTAIRS, "#cba"},
+    {CellType::UPSTAIRS, "#cba"},
 };
 
-std::map<CellType, std::map<bool, std::string>> cellWeights = {
+std::map<CellSpec, std::map<bool, std::string>> cellWeights = {
     {CellType::FLOOR, {{false, "normal"}, {true, "normal"}}},
-    {CellType::FLOOR_BLOOD, {{false, "normal"}, {true, "normal"}}},
     {CellType::WALL, {{false, "bold"}, {true, "bold"}}},
-    {CellType::UNKNOWN_CELL, {{false, "normal"}, {true, "normal"}}},
     {CellType::DOWNSTAIRS, {{false, "normal"}, {true, "normal"}}},
     {CellType::UPSTAIRS, {{false, "normal"}, {true, "normal"}}},
 };
 
-std::map<std::string, tpl_arg> getCellArgs(CellType type, bool seen,
-                                           bool illuminated) {
+std::map<std::string, tpl_arg> getCellArgs(std::shared_ptr<Cell> cell) {
   std::string color;
-  if (seen) {
-    color = cellColors[type][seen];
+  if (cell->visibilityState == VisibilityState::SEEN) {
+    color = cellColors[cell->type][true];
   } else {
-    if (illuminated) {
-      color = cellColorsIlluminated[type];
+    if (cell->illuminated) {
+      color = cellColorsIlluminated[cell->type];
     } else {
-      color = cellColors[type][seen];
+      color = cellColors[cell->type][false];
+    }
+
+    if (cell->hasFeature(CellFeature::CAVE)) {
+      color = "#897546";
+    }
+    if (cell->hasFeature(CellFeature::BLOOD)) {
+      color = "darkred";
     }
   }
   return {
-      {"sign", cellSigns[type]},
+      {"sign", cellSigns[cell->type]},
       {"color", color},
-      {"weight", cellWeights[type][seen]},
+      {"weight",
+       cellWeights[cell->type][cell->visibilityState == VisibilityState::SEEN]},
   };
 }
 
-CellSign::CellSign(CellType type, bool seen, bool illuminated)
+CellSign::CellSign(std::shared_ptr<Cell> cell)
     : Fragment(
-          type != CellType::UNKNOWN_CELL
-              ? "<span color='{{color}}' weight='{{weight}}'>{{sign}}</span>"
-              : cellSigns[type],
-          getCellArgs(type, seen, illuminated)) {}
-void CellSign::update(CellType type, bool seen, bool illuminated) {
-  auto new_args = getCellArgs(type, seen, illuminated);
-  if (std::get<std::string>(args["color"]) !=
-          std::get<std::string>(new_args["color"]) ||
-      std::get<std::string>(args["sign"]) !=
-          std::get<std::string>(new_args["sign"])) {
-    args = new_args;
-    damaged = true;
-  }
-}
+          cell->type == CellType::UNKNOWN_CELL ||
+                  cell->visibilityState == VisibilityState::UNKNOWN
+              ? cellSigns[cell->type]
+              : "<span color='{{color}}' weight='{{weight}}'>{{sign}}</span>",
+          getCellArgs(cell),
+          !(cell->type == CellType::UNKNOWN_CELL ||
+            cell->visibilityState == VisibilityState::UNKNOWN)) {}
 HeroSign::HeroSign()
     : Fragment("<span color='{{hero_color}}' weight='bold'>@</span>") {}
 EnemySign::EnemySign(EnemySpec type)

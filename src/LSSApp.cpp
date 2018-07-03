@@ -85,10 +85,10 @@ void LSSApp::setup() {
   hero->currentLocation = locations.front();
   hero->currentLocation->enter(hero, locations.front()->enterCell);
 
-  state->fragments.assign(
-      hero->currentLocation->cells.size() *
-          (hero->currentLocation->cells.front().size() + 1),
-      std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false, false));
+  state->fragments.assign(hero->currentLocation->cells.size() *
+                              (hero->currentLocation->cells.front().size() + 1),
+                          std::make_shared<CellSign>(
+                              std::make_shared<Cell>(CellType::UNKNOWN_CELL)));
 
   hero->commit(0);
 
@@ -235,17 +235,14 @@ void LSSApp::invalidate() {
       case VisibilityState::UNKNOWN:
         if (hero->monsterSense &&
             !std::dynamic_pointer_cast<CellSign>(state->fragments[index])) {
-          state->fragments[index] =
-              std::make_shared<CellSign>(UNKNOWN_CELL, false, false);
+          state->fragments[index] = std::make_shared<CellSign>(c);
         }
         break;
       case VisibilityState::SEEN:
-        state->fragments[index] =
-            std::make_shared<CellSign>(c->type, true, false);
+        state->fragments[index] = std::make_shared<CellSign>(c);
         break;
       case VisibilityState::VISIBLE:
-        state->fragments[index] =
-            std::make_shared<CellSign>(c->type, false, c->illuminated);
+        state->fragments[index] = std::make_shared<CellSign>(c);
         break;
       }
       column++;
@@ -396,46 +393,12 @@ bool LSSApp::processCommand(std::string cmd) {
 }
 
 void LSSApp::update() {
-  gl::clear(state->currentPalette.bgColor);
+
+  // gl::clear(state->currentPalette.bgColor);
   gl::enableAlphaBlendingPremult();
-
-  switch (modeManager.modeFlags->currentMode) {
-  case Modes::NORMAL:
-  case Modes::INSERT:
-  case Modes::DIRECTION:
-  case Modes::HINTS:
-  case Modes::LEADER:
-    state->render(gameFrame);
-    break;
-  case Modes::OBJECTSELECT:
-    objectSelectState->render(gameFrame);
-    break;
-  case Modes::HELP:
-    helpState->render(gameFrame);
-    break;
-  case Modes::INVENTORY:
-    inventoryState->render(gameFrame);
-    break;
-  case Modes::GAMEOVER:
-    gameOverState->render(gameFrame);
-    break;
-  }
-
-  if (statusFrame != nullptr) {
-    statusState->render(statusFrame);
-  }
-  if (heroFrame != nullptr) {
-    heroState->render(heroFrame);
-  }
-}
-
-void LSSApp::draw() {
-
-  gl::color(state->currentPalette.bgColor);
-  gl::drawSolidRect(
-      Rectf(0, 0, getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT));
-  gl::color(ColorA(1, 1, 1, 1));
   gameFrame->setSpacing(0);
+
+  auto s = state;
 
   switch (modeManager.modeFlags->currentMode) {
   case Modes::NORMAL:
@@ -444,6 +407,48 @@ void LSSApp::draw() {
   case Modes::HINTS:
   case Modes::LEADER:
     gameFrame->setSpacing(-5.0);
+    break;
+  case Modes::OBJECTSELECT:
+    s = objectSelectState;
+    break;
+  case Modes::HELP:
+    s = helpState;
+    break;
+  case Modes::INVENTORY:
+    s = inventoryState;
+    break;
+  case Modes::GAMEOVER:
+    s = gameOverState;
+    break;
+  }
+  if (lastMode == modeManager.modeFlags->currentMode && !s->damaged) {
+    return;
+  }
+
+  s->render(gameFrame);
+
+  if (statusFrame != nullptr) {
+    statusState->render(statusFrame);
+  }
+  if (heroFrame != nullptr) {
+    heroState->render(heroFrame);
+  }
+  lastMode = modeManager.modeFlags->currentMode;
+}
+
+void LSSApp::draw() {
+
+  gl::color(state->currentPalette.bgColor);
+  gl::drawSolidRect(
+      Rectf(0, 0, getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT));
+  gl::color(ColorA(1, 1, 1, 1));
+
+  switch (modeManager.modeFlags->currentMode) {
+  case Modes::NORMAL:
+  case Modes::INSERT:
+  case Modes::DIRECTION:
+  case Modes::HINTS:
+  case Modes::LEADER:
   case Modes::HELP:
   case Modes::OBJECTSELECT:
   case Modes::INVENTORY:

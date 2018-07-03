@@ -20,6 +20,7 @@ struct LssEvent {
 class Fragment {
 public:
   Fragment(std::string t, std::map<std::string, tpl_arg> args);
+  Fragment(std::string t, std::map<std::string, tpl_arg>, bool needRender);
   Fragment(std::string t, bool needRender);
   Fragment(std::string t);
   std::string render(State *s);
@@ -39,8 +40,7 @@ protected:
 
 class CellSign : public Fragment {
 public:
-  CellSign(CellType, bool, bool);
-  void update(CellType, bool, bool);
+  CellSign(std::shared_ptr<Cell>);
 };
 
 class HeroSign : public Fragment {

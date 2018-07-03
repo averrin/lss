@@ -38,8 +38,9 @@ public:
   static const Fragments GAMEOVER;
   static const Fragments INVENTORY_HEADER;
 
-private:
   bool damaged = true;
+
+private:
   std::string cache;
 };
 

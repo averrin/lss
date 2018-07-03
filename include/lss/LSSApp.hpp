@@ -48,7 +48,7 @@ public:
   void draw() override;
   void invalidate();
   void invalidate(std::string reason) {
-    // fmt::print("Invalidate reason: {}\n", reason);
+    fmt::print("Invalidate reason: {}\n", reason);
     auto t0 = std::chrono::system_clock::now();
     invalidate();
     auto t1 = std::chrono::system_clock::now();
@@ -70,6 +70,8 @@ public:
 
   ModeManager modeManager = ModeManager();
   std::shared_ptr<EventReactor> reactor;
+
+  Modes::ModeName lastMode;
 
   std::shared_ptr<NormalMode> normalMode;
   std::shared_ptr<DirectionMode> directionMode;

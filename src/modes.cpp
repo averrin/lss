@@ -163,7 +163,8 @@ bool NormalMode::processKey(KeyEvent event) {
     app->state->fragments.assign(
         app->hero->currentLocation->cells.size() *
             (app->hero->currentLocation->cells.front().size() + 1),
-        std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false, false));
+        std::make_shared<CellSign>(
+            std::make_shared<Cell>(CellType::UNKNOWN_CELL)));
 
     app->hero->currentLocation->updateView(app->hero);
     app->hero->commit(0);

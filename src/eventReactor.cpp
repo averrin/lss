@@ -28,7 +28,8 @@ void EventReactor::onEvent(StairEvent &e) {
     app->state->fragments.assign(
         app->hero->currentLocation->cells.size() *
             (app->hero->currentLocation->cells.front().size() + 1),
-        std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false, false));
+        std::make_shared<CellSign>(
+            std::make_shared<Cell>(CellType::UNKNOWN_CELL)));
     app->hero->commit(0);
     app->invalidate("enter");
   } else if (app->hero->currentCell->type == CellType::DOWNSTAIRS &&
@@ -44,7 +45,8 @@ void EventReactor::onEvent(StairEvent &e) {
     app->state->fragments.assign(
         app->hero->currentLocation->cells.size() *
             (app->hero->currentLocation->cells.front().size() + 1),
-        std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false, false));
+        std::make_shared<CellSign>(
+            std::make_shared<Cell>(CellType::UNKNOWN_CELL)));
 
     app->hero->currentLocation->updateView(app->hero);
     app->hero->commit(0);
@@ -57,6 +59,7 @@ void EventReactor::onEvent(StairEvent &e) {
 
 void EventReactor::onEvent(eb::Event &e) { app->invalidate("eb::event"); }
 
+//FIXME: do not invalidate in 'walk-mode'
 void EventReactor::onEvent(CommitEvent &e) { app->invalidate("commit"); }
 
 void EventReactor::onEvent(QuitCommandEvent &e) { exit(0); }

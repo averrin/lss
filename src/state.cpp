@@ -34,8 +34,8 @@ void State::render(kp::pango::CinderPangoRef surface) {
     using milliseconds = std::chrono::duration<double, std::milli>;
     milliseconds ms = t1 - t0;
     // if (ms.count() > 5) {
-    //   std::cout << "settext + render time taken: " << rang::fg::green
-    //             << ms.count() << rang::style::reset << '\n';
+    std::cout << "settext + render time taken: " << rang::fg::green
+              << ms.count() << rang::style::reset << '\n';
     // }
     return;
   }
@@ -51,13 +51,14 @@ void State::render(kp::pango::CinderPangoRef surface) {
       n++;
     }
   }
-  auto t1 = std::chrono::system_clock::now();
-  using milliseconds = std::chrono::duration<double, std::milli>;
-  milliseconds ms = t1 - t0;
-  // if (ms.count() > 15) {
+  // auto t1 = std::chrono::system_clock::now();
+  // using milliseconds = std::chrono::duration<double, std::milli>;
+  // milliseconds ms = t1 - t0;
+  // // if (ms.count() > 15) {
   //   std::cout << "template render time taken: " << rang::fg::green
   //             << ms.count() << rang::style::reset << '\n';
   // }
+  // std::cout << cache << std::endl;
   cache = "<tt>" + content + "</tt>";
 
   damaged = false;

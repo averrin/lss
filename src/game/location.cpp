@@ -26,7 +26,7 @@ void Location::onEvent(DropEvent &e) {
 void Location::onEvent(EnemyDiedEvent &e) {
   auto sender = e.getSender();
   if (auto enemy = std::dynamic_pointer_cast<Enemy>(sender)) {
-    enemy->currentCell->type = CellType::FLOOR_BLOOD;
+    enemy->currentCell->features.push_back(CellFeature::BLOOD);
     auto loot = enemy->drop();
     if (loot != std::nullopt) {
       for (auto item : *loot) {
@@ -160,7 +160,15 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
 
   for (auto r : cells) {
     for (auto c : r) {
+      c->seeThrough = c->type.seeThrough;
+      if (std::find_if(objects.begin(), objects.end(),
+                       [c](std::shared_ptr<Object> o) {
+                         return o->currentCell == c && !o->seeThrough;
+                       }) != objects.end()) {
+        c->seeThrough = false;
+      }
       c->illuminated = false;
+      // FIXME: not in distance, but only visible
       if (hasLight && getDistance(c, hero->currentCell) <= heroVD) {
         c->illuminated = true;
         continue;
