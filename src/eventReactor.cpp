@@ -15,12 +15,15 @@ QuitCommand::getEvent(std::string s) {
 }
 
 void EventReactor::onEvent(StairEvent &e) {
-  if (app->hero->currentCell->type == CellType::UPSTAIRS && e.dir == StairType::UP) {
-    if (app->currentLevel == 0) return;
+  if (app->hero->currentCell->type == CellType::UPSTAIRS &&
+      e.dir == StairType::UP) {
+    if (app->currentLevel == 0)
+      return;
     app->currentLevel--;
     app->hero->currentLocation->leave(app->hero);
     app->hero->currentLocation = app->locations[app->currentLevel];
-    app->hero->currentLocation->enter(app->hero, app->hero->currentLocation->exitCell);
+    app->hero->currentLocation->enter(app->hero,
+                                      app->hero->currentLocation->exitCell);
 
     app->state->fragments.assign(
         app->hero->currentLocation->cells.size() *
@@ -28,12 +31,15 @@ void EventReactor::onEvent(StairEvent &e) {
         std::make_shared<CellSign>(CellType::UNKNOWN_CELL, false, false));
     app->hero->commit(0);
     app->invalidate("enter");
-  } else if (app->hero->currentCell->type == CellType::DOWNSTAIRS && e.dir == StairType::DOWN) {
-    if (app->currentLevel == app->locations.size() - 1) return;
+  } else if (app->hero->currentCell->type == CellType::DOWNSTAIRS &&
+             e.dir == StairType::DOWN) {
+    if (app->currentLevel == app->locations.size() - 1)
+      return;
     app->currentLevel++;
     app->hero->currentLocation->leave(app->hero);
     app->hero->currentLocation = app->locations[app->currentLevel];
-    app->hero->currentLocation->enter(app->hero, app->hero->currentLocation->enterCell);
+    app->hero->currentLocation->enter(app->hero,
+                                      app->hero->currentLocation->enterCell);
 
     app->state->fragments.assign(
         app->hero->currentLocation->cells.size() *
@@ -67,7 +73,8 @@ void EventReactor::onEvent(InventoryCommandEvent &e) {
 
   std::sort(objects.begin(), objects.end(),
             [](std::shared_ptr<Object> a, std::shared_ptr<Object> b) {
-              return std::dynamic_pointer_cast<Item>(a)->name < std::dynamic_pointer_cast<Item>(b)->name;
+              return std::dynamic_pointer_cast<Item>(a)->name <
+                     std::dynamic_pointer_cast<Item>(b)->name;
             });
   app->inventoryMode->setObjects(objects);
   app->inventoryMode->render(app->inventoryState);
@@ -194,14 +201,19 @@ void EventReactor::onEvent(EquipCommandEvent &e) {
       shortcut = "   ";
       have_items = false;
     }
-    auto fromThisSlot = slot->item != nullptr && std::find(slot->acceptTypes.begin(), slot->acceptTypes.end(),
-                         slot->item->type.wearableType) != slot->acceptTypes.end();
+    auto fromThisSlot =
+        slot->item != nullptr &&
+        std::find(slot->acceptTypes.begin(), slot->acceptTypes.end(),
+                  slot->item->type.wearableType) != slot->acceptTypes.end();
 
-    return fmt::format("<span color='{}'>{} {:16} :</span> {}",
-                       have_items ? "{{orange}}" : "gray", shortcut, slot->name,
-                       slot->item == nullptr
-                           ? (have_items ? "-" : "<span color='gray'>-</span>")
-                           : (fromThisSlot ? slot->item->getTitle() : "<span color='gray'>item from other slot</span>"));
+    return fmt::format(
+        "<span color='{}'>{} {:16} :</span> {}",
+        have_items ? "{{orange}}" : "gray", shortcut, slot->name,
+        slot->item == nullptr
+            ? (have_items ? "-" : "<span color='gray'>-</span>")
+            : (fromThisSlot
+                   ? slot->item->getTitle()
+                   : "<span color='gray'>item from other slot</span>"));
   };
   app->objectSelectMode->setFormatter(formatter);
 
@@ -220,14 +232,12 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
 
   app->objectSelectMode->setHeader(F("Spells for zap: "));
 
-  app->objectSelectMode->setObjects(utils::castObjects<Object>(
-      std::vector<std::shared_ptr<Spell>>{Spells::REVEAL, Spells::MONSTER_SENSE,
-                                          Spells::MONSTER_FREEZE,
-                                          Spells::TOGGLE_DUAL_WIELD,
-                                          Spells::TOGGLE_NIGHT_VISION,
-                                          Spells::TOGGLE_MIND_SIGHT,
-                                          Spells::TOGGLE_MAGIC_TORCH,
-                                          Spells::SUMMON_ORK}));
+  app->objectSelectMode->setObjects(
+      utils::castObjects<Object>(std::vector<std::shared_ptr<Spell>>{
+          Spells::REVEAL, Spells::MONSTER_SENSE, Spells::MONSTER_FREEZE,
+          Spells::TOGGLE_DUAL_WIELD, Spells::TOGGLE_NIGHT_VISION,
+          Spells::TOGGLE_MIND_SIGHT, Spells::TOGGLE_MAGIC_TORCH,
+          Spells::SUMMON_ORK}));
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
     auto spell = std::dynamic_pointer_cast<Spell>(o);
@@ -249,7 +259,8 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
   app->statusLine->setContent(State::text_mode);
 }
 
-std::shared_ptr<Enemy> mkEnemy(std::shared_ptr<Location> location,std::shared_ptr<Cell> c,
+std::shared_ptr<Enemy> mkEnemy(std::shared_ptr<Location> location,
+                               std::shared_ptr<Cell> c,
                                std::shared_ptr<Player> hero, EnemySpec type) {
   auto enemy = std::make_shared<Enemy>(type);
   enemy->currentCell = c;
@@ -280,25 +291,31 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     auto c = app->hero->currentLocation->cells[app->hero->currentCell->y + 1]
                                               [app->hero->currentCell->x];
     app->hero->currentLocation->objects.push_back(
-    mkEnemy(app->hero->currentLocation, c, app->hero, EnemyType::ORK));
+        mkEnemy(app->hero->currentLocation, c, app->hero, EnemyType::ORK));
     app->hero->commit(0);
   } else if (spell == Spells::TOGGLE_DUAL_WIELD) {
     if (app->hero->hasTrait(Traits::DUAL_WIELD)) {
-      app->hero->traits.erase(std::remove(app->hero->traits.begin(), app->hero->traits.end(), Traits::DUAL_WIELD));
+      app->hero->traits.erase(std::remove(app->hero->traits.begin(),
+                                          app->hero->traits.end(),
+                                          Traits::DUAL_WIELD));
     } else {
       app->hero->traits.push_back(Traits::DUAL_WIELD);
     }
     app->hero->commit(0);
   } else if (spell == Spells::TOGGLE_NIGHT_VISION) {
     if (app->hero->hasTrait(Traits::NIGHT_VISION)) {
-      app->hero->traits.erase(std::remove(app->hero->traits.begin(), app->hero->traits.end(), Traits::NIGHT_VISION));
+      app->hero->traits.erase(std::remove(app->hero->traits.begin(),
+                                          app->hero->traits.end(),
+                                          Traits::NIGHT_VISION));
     } else {
       app->hero->traits.push_back(Traits::NIGHT_VISION);
     }
     app->hero->commit(0);
   } else if (spell == Spells::TOGGLE_MIND_SIGHT) {
     if (app->hero->hasTrait(Traits::MIND_SIGHT)) {
-      app->hero->traits.erase(std::remove(app->hero->traits.begin(), app->hero->traits.end(), Traits::MIND_SIGHT));
+      app->hero->traits.erase(std::remove(app->hero->traits.begin(),
+                                          app->hero->traits.end(),
+                                          Traits::MIND_SIGHT));
     } else {
       app->hero->traits.push_back(Traits::MIND_SIGHT);
     }
@@ -306,7 +323,9 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
   } else if (spell == Spells::TOGGLE_MAGIC_TORCH) {
     app->hero->commit(0);
     if (app->hero->hasTrait(Traits::MAGIC_TORCH)) {
-      app->hero->traits.erase(std::remove(app->hero->traits.begin(), app->hero->traits.end(), Traits::MAGIC_TORCH));
+      app->hero->traits.erase(std::remove(app->hero->traits.begin(),
+                                          app->hero->traits.end(),
+                                          Traits::MAGIC_TORCH));
     } else {
       app->hero->traits.push_back(Traits::MAGIC_TORCH);
     }

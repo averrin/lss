@@ -91,7 +91,8 @@ const Fragments State::HELP_HEADER = {F("<span weight='bold'>Help</span>")};
 const Fragments State::INVENTORY_HEADER = {
     F("<span weight='bold'>Inventory</span>")};
 
-const Fragments State::GAMEOVER = {F("<span weight='bold' color='red' size='large'>GAME OVER</span>")};
+const Fragments State::GAMEOVER = {
+    F("<span weight='bold' color='red' size='large'>GAME OVER</span>")};
 
 const Fragments State::HELP = {F(
     "<span weight='bold'>Controls</span><br>"
@@ -130,5 +131,4 @@ const Fragments State::HELP = {F(
     "• <span color='{{orange}}' weight='bold'>&lt;</span> — go up "
     "[`/up`]<br>"
     "• <span color='{{orange}}' weight='bold'>&gt;</span> — go down "
-    "[`/down`]<br>"
-  )};
+    "[`/down`]<br>")};

@@ -45,17 +45,19 @@ std::string Fragment::render(State *state) {
 }
 
 std::map<ItemSpec, std::string> itemSigns = {
-    {ItemType::CORPSE, "%"},    {ItemType::ROCK, "*"},
-    {ItemType::PICK_AXE, "("},  {ItemType::SWORD, "("},
-    {ItemType::GOLD_RING, "="}, {ItemType::GOLD_COINS, "$"},
-    {ItemType::DAGGER, "("},    {ItemType::TORCH, "]"}, {ItemType::TORCH_STAND, "*"},
+    {ItemType::CORPSE, "%"},      {ItemType::ROCK, "*"},
+    {ItemType::PICK_AXE, "("},    {ItemType::SWORD, "("},
+    {ItemType::GOLD_RING, "="},   {ItemType::GOLD_COINS, "$"},
+    {ItemType::DAGGER, "("},      {ItemType::TORCH, "]"},
+    {ItemType::TORCH_STAND, "*"},
 };
 
 std::map<ItemSpec, std::string> itemColors = {
-    {ItemType::CORPSE, "red"},     {ItemType::ROCK, "gray"},
-    {ItemType::PICK_AXE, "white"}, {ItemType::SWORD, "#F7CA88"},
-    {ItemType::GOLD_RING, "gold"}, {ItemType::GOLD_COINS, "gold"},
-    {ItemType::DAGGER, "gray"},    {ItemType::TORCH, "orange"}, {ItemType::TORCH_STAND, "orange"},
+    {ItemType::CORPSE, "red"},         {ItemType::ROCK, "gray"},
+    {ItemType::PICK_AXE, "white"},     {ItemType::SWORD, "#F7CA88"},
+    {ItemType::GOLD_RING, "gold"},     {ItemType::GOLD_COINS, "gold"},
+    {ItemType::DAGGER, "gray"},        {ItemType::TORCH, "orange"},
+    {ItemType::TORCH_STAND, "orange"},
 };
 
 std::map<EnemySpec, std::string> enemySigns = {
@@ -84,12 +86,9 @@ std::map<CellType, std::map<bool, std::string>> cellColors = {
 };
 
 std::map<CellType, std::string> cellColorsIlluminated = {
-    {CellType::FLOOR, "#765"},
-    {CellType::FLOOR_BLOOD, "darkred"},
-    {CellType::WALL, "#cba"},
-    {CellType::UNKNOWN_CELL, "#555"},
-    {CellType::DOWNSTAIRS, "#cba"},
-    {CellType::UPSTAIRS, "#cba"},
+    {CellType::FLOOR, "#765"},      {CellType::FLOOR_BLOOD, "darkred"},
+    {CellType::WALL, "#cba"},       {CellType::UNKNOWN_CELL, "#555"},
+    {CellType::DOWNSTAIRS, "#cba"}, {CellType::UPSTAIRS, "#cba"},
 };
 
 std::map<CellType, std::map<bool, std::string>> cellWeights = {
@@ -101,7 +100,8 @@ std::map<CellType, std::map<bool, std::string>> cellWeights = {
     {CellType::UPSTAIRS, {{false, "normal"}, {true, "normal"}}},
 };
 
-std::map<std::string, tpl_arg> getCellArgs(CellType type, bool seen, bool illuminated) {
+std::map<std::string, tpl_arg> getCellArgs(CellType type, bool seen,
+                                           bool illuminated) {
   std::string color;
   if (seen) {
     color = cellColors[type][seen];
@@ -120,8 +120,11 @@ std::map<std::string, tpl_arg> getCellArgs(CellType type, bool seen, bool illumi
 }
 
 CellSign::CellSign(CellType type, bool seen, bool illuminated)
-    : Fragment(type != CellType::UNKNOWN_CELL ? "<span color='{{color}}' weight='{{weight}}'>{{sign}}</span>" : cellSigns[type],
-               getCellArgs(type, seen, illuminated)) {}
+    : Fragment(
+          type != CellType::UNKNOWN_CELL
+              ? "<span color='{{color}}' weight='{{weight}}'>{{sign}}</span>"
+              : cellSigns[type],
+          getCellArgs(type, seen, illuminated)) {}
 void CellSign::update(CellType type, bool seen, bool illuminated) {
   auto new_args = getCellArgs(type, seen, illuminated);
   if (std::get<std::string>(args["color"]) !=

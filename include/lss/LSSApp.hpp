@@ -31,9 +31,9 @@
 
 #include "lss/generator/generator.hpp"
 
-#include "rang.hpp"
 #include "EventBus.hpp"
 #include "EventHandler.hpp"
+#include "rang.hpp"
 
 using namespace ci;
 using namespace ci::app;
@@ -54,8 +54,8 @@ public:
     auto t1 = std::chrono::system_clock::now();
     using milliseconds = std::chrono::duration<double, std::milli>;
     milliseconds ms = t1 - t0;
-      std::cout << "invalidate: " << rang::fg::green
-                << ms.count() << rang::style::reset << '\n';
+    std::cout << "invalidate: " << rang::fg::green << ms.count()
+              << rang::style::reset << '\n';
   }
   bool processCommand(std::string);
   void setListeners();

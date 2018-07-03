@@ -142,7 +142,7 @@ void Location::leave(std::shared_ptr<Player> hero) {
   }
 }
 
-//TODO: add shadows from objects [after cell specs]
+// TODO: add shadows from objects [after cell specs]
 void Location::updateLight(std::shared_ptr<Player> hero) {
   auto vd = 4.5f;
   auto heroVD = hero->VISIBILITY_DISTANCE(hero.get());
@@ -215,8 +215,7 @@ void Location::AdjacentCost(void *state,
       if (obstacle != objects.end())
         continue;
       micropather::StateCost nodeCost = {
-          (void *)&(*n),
-          LeastCostEstimate(state, (void *)&(*n)),
+          (void *)&(*n), LeastCostEstimate(state, (void *)&(*n)),
       };
       neighbors->push_back(nodeCost);
     }

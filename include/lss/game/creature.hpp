@@ -17,7 +17,9 @@ public:
   bool move(Direction, bool autoAction = false);
   bool attack(Direction);
   bool canSee(std::shared_ptr<Cell> c) {
-    return std::find(viewField.begin(), viewField.end(), c) != viewField.end() || hasTrait(Traits::MIND_SIGHT);
+    return std::find(viewField.begin(), viewField.end(), c) !=
+               viewField.end() ||
+           hasTrait(Traits::MIND_SIGHT);
   };
   void calcViewField();
   bool interact(std::shared_ptr<Object>);
@@ -42,25 +44,21 @@ public:
   float visibilityDistance = 5.5f;
   int defense = 0;
 
-  std::optional<std::tuple<std::shared_ptr<Slot>, int, int, int>> getPrimaryDmg();
-  std::optional<std::tuple<std::shared_ptr<Slot>, int, int, int>> getSecondaryDmg(std::shared_ptr<Slot>);
+  std::optional<std::tuple<std::shared_ptr<Slot>, int, int, int>>
+  getPrimaryDmg();
+  std::optional<std::tuple<std::shared_ptr<Slot>, int, int, int>>
+      getSecondaryDmg(std::shared_ptr<Slot>);
   bool hasTrait(Trait t) {
     return std::find(traits.begin(), traits.end(), t) != traits.end();
   }
   bool hasLight();
 
-  Attribute HP =
-      Attribute(AttributeType::HP);
-  Attribute HP_MAX =
-      Attribute(AttributeType::HP_MAX);
-  Attribute SPEED =
-      Attribute(AttributeType::SPEED);
-  Attribute VISIBILITY_DISTANCE =
-      Attribute(AttributeType::VISIBILITY_DISTANCE);
-  Attribute DMG =
-      Attribute(AttributeType::DAMAGE);
-  Attribute DEF =
-      Attribute(AttributeType::DEFENSE);
+  Attribute HP = Attribute(AttributeType::HP);
+  Attribute HP_MAX = Attribute(AttributeType::HP_MAX);
+  Attribute SPEED = Attribute(AttributeType::SPEED);
+  Attribute VISIBILITY_DISTANCE = Attribute(AttributeType::VISIBILITY_DISTANCE);
+  Attribute DMG = Attribute(AttributeType::DAMAGE);
+  Attribute DEF = Attribute(AttributeType::DEFENSE);
 
   std::shared_ptr<Cell> getCell(Direction);
 };

@@ -173,7 +173,7 @@ int Creature::getDamage(std::shared_ptr<Object>) {
   int damage = 0;
   auto primaryDmg = getPrimaryDmg();
   if (primaryDmg != std::nullopt) {
-    auto [primarySlot, m, d, e] = *primaryDmg;
+    auto[primarySlot, m, d, e] = *primaryDmg;
     damage += hitRoll(m, d, e);
   }
   auto haveLeft =
@@ -190,7 +190,7 @@ int Creature::getDamage(std::shared_ptr<Object>) {
           }) > 0;
   auto secondaryDmg = getSecondaryDmg(nullptr);
   if (secondaryDmg != std::nullopt && haveLeft) {
-    auto [secondarySlot, m, d, e] = *secondaryDmg;
+    auto[secondarySlot, m, d, e] = *secondaryDmg;
     if (hasTrait(Traits::DUAL_WIELD)) {
       damage += hitRoll(m, d, e);
     } else {

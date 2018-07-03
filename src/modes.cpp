@@ -158,7 +158,8 @@ bool NormalMode::processKey(KeyEvent event) {
   case KeyEvent::KEY_r:
     app->hero->currentLocation->leave(app->hero);
     app->hero->currentLocation = app->generator->getLocation();
-    app->hero->currentLocation->enter(app->hero, app->hero->currentLocation->enterCell);
+    app->hero->currentLocation->enter(app->hero,
+                                      app->hero->currentLocation->enterCell);
     app->state->fragments.assign(
         app->hero->currentLocation->cells.size() *
             (app->hero->currentLocation->cells.front().size() + 1),

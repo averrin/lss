@@ -112,7 +112,8 @@ void LSSApp::setup() {
   commands.push_back(std::make_shared<DownCommand>());
 }
 
-std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Location> location,std::shared_ptr<Cell> c,
+std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Location> location,
+                                 std::shared_ptr<Cell> c,
                                  std::shared_ptr<Player> hero, EnemySpec type) {
   auto enemy = std::make_shared<Enemy>(type);
   enemy->currentCell = c;
@@ -171,17 +172,20 @@ std::shared_ptr<Location> LSSApp::loadMap(std::string filename) {
         case 'o': {
           c->type = CellType::FLOOR;
           c->passThrough = true;
-          location->objects.push_back(makeEnemy(location, c, hero, EnemyType::ORK));
+          location->objects.push_back(
+              makeEnemy(location, c, hero, EnemyType::ORK));
         } break;
         case 'g': {
           c->type = CellType::FLOOR;
           c->passThrough = true;
-          location->objects.push_back(makeEnemy(location, c, hero, EnemyType::GOBLIN));
+          location->objects.push_back(
+              makeEnemy(location, c, hero, EnemyType::GOBLIN));
         } break;
         case 'p': {
           c->type = CellType::FLOOR;
           c->passThrough = true;
-          location->objects.push_back(makeEnemy(location, c, hero, EnemyType::PIXI));
+          location->objects.push_back(
+              makeEnemy(location, c, hero, EnemyType::PIXI));
         } break;
         case '*': {
           c->type = CellType::FLOOR;
@@ -226,7 +230,7 @@ void LSSApp::invalidate() {
     auto column = 0;
     for (auto c : r) {
       auto f = state->fragments[index];
-        // fmt::print("{}", c->type);
+      // fmt::print("{}", c->type);
       switch (c->visibilityState) {
       case VisibilityState::UNKNOWN:
         if (hero->monsterSense &&
@@ -236,10 +240,12 @@ void LSSApp::invalidate() {
         }
         break;
       case VisibilityState::SEEN:
-        state->fragments[index] = std::make_shared<CellSign>(c->type, true, false);
+        state->fragments[index] =
+            std::make_shared<CellSign>(c->type, true, false);
         break;
       case VisibilityState::VISIBLE:
-        state->fragments[index] = std::make_shared<CellSign>(c->type, false, c->illuminated);
+        state->fragments[index] =
+            std::make_shared<CellSign>(c->type, false, c->illuminated);
         break;
       }
       column++;
@@ -270,7 +276,8 @@ void LSSApp::invalidate() {
       //   auto i =
       //       dot->y * (hero->currentLocation->cells.front().size() + 1) +
       //       dot->x;
-      //   state->fragments[i] = std::make_shared<CellSign>(CellType::FLOOR_BLOOD, false);
+      //   state->fragments[i] =
+      //   std::make_shared<CellSign>(CellType::FLOOR_BLOOD, false);
       // }
 
       if (!hero->canSee(ec) && !hero->monsterSense)

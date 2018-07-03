@@ -12,7 +12,7 @@ public:
   ItemSpec type;
   Effects effects;
   int count = 0;
-    int durability;
+  int durability;
 
   bool equipped = false;
   std::string name;
@@ -21,9 +21,7 @@ public:
   std::string getTitle();
   std::string getFullTitle();
 
-    std::shared_ptr<Item> clone() {
-      return std::make_shared<Item>(*this);
-    }
+  std::shared_ptr<Item> clone() { return std::make_shared<Item>(*this); }
 };
 
 class TorchStand : public Object {
@@ -34,10 +32,11 @@ public:
 
 typedef std::vector<std::shared_ptr<Item>> Items;
 
-
 namespace Prototype {
-  const std::shared_ptr<Item> TORCH = std::make_shared<Item>(ItemType::TORCH, Effects{std::make_shared<VisibilityModifier>(2.5f)} );
-  const std::shared_ptr<Item> PLATE = std::make_shared<Item>(ItemType::PLATE, Effects{std::make_shared<ArmorValue>(5)} );
+const std::shared_ptr<Item> TORCH = std::make_shared<Item>(
+    ItemType::TORCH, Effects{std::make_shared<VisibilityModifier>(2.5f)});
+const std::shared_ptr<Item> PLATE = std::make_shared<Item>(
+    ItemType::PLATE, Effects{std::make_shared<ArmorValue>(5)});
 }
 
 #endif // __ITEM_H_

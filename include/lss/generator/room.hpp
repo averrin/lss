@@ -3,24 +3,24 @@
 #include "lss/game/cell.hpp"
 
 enum RoomType {
-  HALL, PASSAGE,  
+  HALL,
+  PASSAGE,
 };
 
 class Room {
 public:
-    Room(RoomType t, Cells c): type(t), cells(c) {
-        height = cells.size();
-        width = cells.front().size();
-    }
-    Cells cells;
-    RoomType type;
+  Room(RoomType t, Cells c) : type(t), cells(c) {
+    height = cells.size();
+    width = cells.front().size();
+  }
+  Cells cells;
+  RoomType type;
 
-    int height;
-    int width;
+  int height;
+  int width;
 
-    int x;
-    int y;
+  int x;
+  int y;
 };
-
 
 #endif // __ROOM_H_
