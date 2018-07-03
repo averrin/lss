@@ -23,6 +23,7 @@ public:
   Cells cells;
   Objects objects;
   std::shared_ptr<Player> player;
+  int depth = 0;
 
   std::shared_ptr<Cell> enterCell;
   std::shared_ptr<Cell> exitCell;

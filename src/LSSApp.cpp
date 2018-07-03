@@ -101,12 +101,14 @@ void LSSApp::setup() {
   statusLine->setContent(State::normal_mode);
 
   hero = std::make_shared<Player>();
-  locations = {
-      {"start", generator->getLocation()},
-      {"second", loadMap("./dungeon.ascii")},
-  };
-  hero->currentLocation = locations["start"];
-  hero->currentLocation->enter(hero, locations["start"]->enterCell);
+
+  for (auto n = 0; n < 26; n++) {
+    auto l = generator->getLocation();
+    l->depth = n;
+    locations.push_back(l);
+  }
+  hero->currentLocation = locations.front();
+  hero->currentLocation->enter(hero, locations.front()->enterCell);
 
   state->fragments.assign(
       hero->currentLocation->cells.size() *

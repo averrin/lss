@@ -16,8 +16,10 @@ QuitCommand::getEvent(std::string s) {
 
 void EventReactor::onEvent(StairEvent &e) {
   if (app->hero->currentCell->type == CellType::UPSTAIRS && e.dir == StairType::UP) {
+    if (app->currentLevel == 0) return;
+    app->currentLevel--;
     app->hero->currentLocation->leave(app->hero);
-    app->hero->currentLocation = app->locations["start"];
+    app->hero->currentLocation = app->locations[app->currentLevel];
     app->hero->currentLocation->enter(app->hero, app->hero->currentLocation->exitCell);
 
     app->state->fragments.assign(
@@ -27,8 +29,10 @@ void EventReactor::onEvent(StairEvent &e) {
     app->hero->commit(0);
     app->invalidate("enter");
   } else if (app->hero->currentCell->type == CellType::DOWNSTAIRS && e.dir == StairType::DOWN) {
+    if (app->currentLevel == app->locations.size() - 1) return;
+    app->currentLevel++;
     app->hero->currentLocation->leave(app->hero);
-    app->hero->currentLocation = app->locations["second"];
+    app->hero->currentLocation = app->locations[app->currentLevel];
     app->hero->currentLocation->enter(app->hero, app->hero->currentLocation->enterCell);
 
     app->state->fragments.assign(
