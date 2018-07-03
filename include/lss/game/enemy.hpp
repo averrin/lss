@@ -45,7 +45,7 @@ EnemySpec const ORK = {
     "ork",
     1, 35, 2, 1, 6, 1,
     Items{std::make_shared<Item>(ItemType::CORPSE)},
-    {}, Items{Prototype::TORCH}
+    {}, Items{/*Prototype::TORCH*/}
 };
 EnemySpec const PIXI = {
     "pixi",

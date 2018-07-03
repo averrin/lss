@@ -9,7 +9,7 @@
 #include "EventBus.hpp"
 #include "fmt/format.h"
 
-Creature::Creature() { passThrough = false; }
+Creature::Creature() { passThrough = false; seeThrough = false; }
 
 float Attribute::operator()(Creature *c) {
   float base = 0;
