@@ -31,36 +31,11 @@ void LSSApp::setup() {
   gameFrame->setMinSize(800, 600);
   gameFrame->setMaxSize(getWindowWidth(),
                         getWindowHeight() - StatusLine::HEIGHT);
-  gameFrame->setSpacing(gameFrame->getSpacing() - 5.0);
   gameFrame->disableWrap();
 
   statusFrame = kp::pango::CinderPango::create();
   statusFrame->setMinSize(getWindowWidth(), StatusLine::HEIGHT);
   statusFrame->setMaxSize(getWindowWidth(), StatusLine::HEIGHT);
-
-  objectSelectFrame = kp::pango::CinderPango::create();
-  objectSelectFrame->setMinSize(getWindowWidth(),
-                                getWindowHeight() - StatusLine::HEIGHT);
-  objectSelectFrame->setMaxSize(getWindowWidth(),
-                                getWindowHeight() - StatusLine::HEIGHT);
-
-  helpFrame = kp::pango::CinderPango::create();
-  helpFrame->setMinSize(getWindowWidth(),
-                        getWindowHeight() - StatusLine::HEIGHT);
-  helpFrame->setMaxSize(getWindowWidth(),
-                        getWindowHeight() - StatusLine::HEIGHT);
-
-  inventoryFrame = kp::pango::CinderPango::create();
-  inventoryFrame->setMinSize(getWindowWidth(),
-                             getWindowHeight() - StatusLine::HEIGHT);
-  inventoryFrame->setMaxSize(getWindowWidth(),
-                             getWindowHeight() - StatusLine::HEIGHT);
-
-  gameOverFrame = kp::pango::CinderPango::create();
-  gameOverFrame->setMinSize(getWindowWidth(),
-                            getWindowHeight() - StatusLine::HEIGHT);
-  gameOverFrame->setMaxSize(getWindowWidth(),
-                             getWindowHeight() - StatusLine::HEIGHT);
 
   heroFrame = kp::pango::CinderPango::create();
   heroFrame->setMinSize(getWindowWidth(), HeroLine::HEIGHT);
@@ -426,16 +401,16 @@ void LSSApp::update() {
     state->render(gameFrame);
     break;
   case Modes::OBJECTSELECT:
-    objectSelectState->render(objectSelectFrame);
+    objectSelectState->render(gameFrame);
     break;
   case Modes::HELP:
-    helpState->render(helpFrame);
+    helpState->render(gameFrame);
     break;
   case Modes::INVENTORY:
-    inventoryState->render(inventoryFrame);
+    inventoryState->render(gameFrame);
     break;
   case Modes::GAMEOVER:
-    gameOverState->render(gameOverFrame);
+    gameOverState->render(gameFrame);
     break;
   }
 
@@ -453,8 +428,7 @@ void LSSApp::draw() {
   gl::drawSolidRect(
       Rectf(0, 0, getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT));
   gl::color(ColorA(1, 1, 1, 1));
-  objectSelectFrame->setDefaultTextColor(state->currentPalette.fgColor);
-  objectSelectFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
+  gameFrame->setSpacing(0);
 
   switch (modeManager.modeFlags->currentMode) {
   case Modes::NORMAL:
@@ -462,25 +436,17 @@ void LSSApp::draw() {
   case Modes::DIRECTION:
   case Modes::HINTS:
   case Modes::LEADER:
+    gameFrame->setSpacing(-5.0);
+  case Modes::HELP:
+  case Modes::OBJECTSELECT:
+  case Modes::INVENTORY:
     gameFrame->setDefaultTextColor(state->currentPalette.fgColor);
     gl::draw(gameFrame->getTexture(), vec2(HOffset, VOffset));
     break;
-  case Modes::OBJECTSELECT:
-    objectSelectFrame->setDefaultTextColor(state->currentPalette.fgColor);
-    gl::draw(objectSelectFrame->getTexture(), vec2(HOffset, VOffset));
-    break;
-  case Modes::HELP:
-    helpFrame->setDefaultTextColor(state->currentPalette.fgColor);
-    gl::draw(helpFrame->getTexture(), vec2(HOffset, VOffset));
-    break;
-  case Modes::INVENTORY:
-    inventoryFrame->setDefaultTextColor(state->currentPalette.fgColor);
-    gl::draw(inventoryFrame->getTexture(), vec2(HOffset, VOffset));
-    break;
   case Modes::GAMEOVER:
-    gameOverFrame->setDefaultTextColor(state->currentPalette.fgColor);
-    gameOverFrame->setTextAlignment(kp::pango::TextAlignment::CENTER);
-    gl::draw(gameOverFrame->getTexture(), vec2(HOffset, VOffset));
+    gameFrame->setTextAlignment(kp::pango::TextAlignment::CENTER);
+    gameFrame->setDefaultTextColor(state->currentPalette.fgColor);
+    gl::draw(gameFrame->getTexture(), vec2(HOffset, VOffset));
     break;
   }
 

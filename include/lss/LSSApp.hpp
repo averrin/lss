@@ -66,11 +66,7 @@ public:
 
   kp::pango::CinderPangoRef gameFrame;
   kp::pango::CinderPangoRef statusFrame;
-  kp::pango::CinderPangoRef objectSelectFrame;
-  kp::pango::CinderPangoRef helpFrame;
-  kp::pango::CinderPangoRef inventoryFrame;
   kp::pango::CinderPangoRef heroFrame;
-  kp::pango::CinderPangoRef gameOverFrame;
 
   ModeManager modeManager = ModeManager();
   std::shared_ptr<EventReactor> reactor;
