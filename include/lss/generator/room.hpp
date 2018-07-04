@@ -15,6 +15,7 @@ public:
   }
   Cells cells;
   RoomType type;
+  int threat = 0;
 
   int height;
   int width;

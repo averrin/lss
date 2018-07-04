@@ -3,6 +3,7 @@
 
 #include "fmt/format.h"
 #include "lss/game/door.hpp"
+#include "lss/game/enemy.hpp"
 #include "lss/game/item.hpp"
 #include "lss/generator/generator.hpp"
 #include "lss/generator/room.hpp"
@@ -10,7 +11,7 @@
 
 Generator::Generator() {}
 
-int P_DOOR = 80;
+int P_DOOR = 60;
 
 Cells fill(int h, int w, CellSpec type) {
   Cells cells;
@@ -227,6 +228,7 @@ void fixOverlapped(std::shared_ptr<Location> location) {
 }
 
 void placeDoors(std::shared_ptr<Location> location) {
+  auto d = 0;
   for (auto r : location->cells) {
     for (auto c : r) {
       // fmt::print("{}", c->type);
@@ -239,19 +241,57 @@ void placeDoors(std::shared_ptr<Location> location) {
           if (std::count_if(n.begin(), n.end(), [](std::shared_ptr<Cell> nc) {
                 return nc->type == CellType::WALL;
               }) < 6) {
-            if (rand() % 100 > P_DOOR)
+            auto o = location->getObjects(c);
+            if (rand() % 100 > P_DOOR || c->hasFeature(CellFeature::CAVE) ||
+                o.size() > 0)
+              continue;
+            auto nd = false;
+            for (auto nc : n) {
+              auto no = location->getObjects(nc);
+              if (std::find_if(no.begin(), no.end(),
+                               [](std::shared_ptr<Object> ob) {
+                                 return std::dynamic_pointer_cast<Door>(ob);
+                               }) != no.end()) {
+                nd = true;
+                break;
+              }
+            }
+            if (nd)
               continue;
             auto door = std::make_shared<Door>();
             door->currentCell = c;
-            c->type = CellType::FLOOR;
-            c->passThrough = true;
-            c->seeThrough = false;
             location->objects.push_back(door);
+            d++;
           }
         }
       }
     }
   }
+  fmt::print("Doors: {}\n", d);
+}
+
+std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Location> location,
+                                 std::shared_ptr<Cell> c, EnemySpec type) {
+  auto enemy = std::make_shared<Enemy>(type);
+  enemy->currentCell = c;
+  enemy->currentLocation = location;
+  return enemy;
+}
+
+void placeEnemies(std::shared_ptr<Location> location) {
+  auto e = 0;
+  for (auto r : location->cells) {
+    for (auto c : r) {
+      if (c->type == CellType::FLOOR) {
+        if (rand() % 1000 > 8 || location->getObjects(c).size() > 0)
+          continue;
+        auto enemy = makeEnemy(location, c, EnemyType::GOBLIN);
+        location->objects.push_back(enemy);
+        e++;
+      }
+    }
+  }
+  fmt::print("Enemies: {}\n", e);
 }
 
 std::shared_ptr<Location> Generator::getLocation() {
@@ -271,6 +311,7 @@ std::shared_ptr<Location> Generator::getLocation() {
     paste(room->cells, location, rx, ry);
     room->x = rx;
     room->y = ry;
+    room->threat = rand() % 4;
     location->rooms.push_back(room);
   }
 
@@ -319,18 +360,19 @@ std::shared_ptr<Location> Generator::getLocation() {
   location->exitCell = room->cells[rand() % room->height][rand() % room->width];
   location->exitCell->type = CellType::DOWNSTAIRS;
 
-  randomDig(location, location->enterCell, N, 30);
-  randomDig(location, location->enterCell, S, 30);
-  randomDig(location, location->enterCell, W, 30);
-  randomDig(location, location->enterCell, E, 30);
+  randomDig(location, location->enterCell, N, rand() % 40);
+  randomDig(location, location->enterCell, S, rand() % 40);
+  randomDig(location, location->enterCell, W, rand() % 40);
+  randomDig(location, location->enterCell, E, rand() % 40);
 
   location->enterCell->type = CellType::UPSTAIRS;
   location->enterCell->seeThrough = false;
 
   auto tc = rand() % 7 + 3;
+  fmt::print("Torches: {}\n", tc);
   for (auto n = 0; n < tc;) {
     auto cell = location->cells[rand() % HEIGHT][rand() % WIDTH];
-    if (cell->type != CellType::FLOOR)
+    if (cell->type != CellType::FLOOR || location->getObjects(cell).size() > 0)
       continue;
     n++;
     auto torch = std::make_shared<TorchStand>();
@@ -339,7 +381,9 @@ std::shared_ptr<Location> Generator::getLocation() {
   }
 
   placeWalls(location);
-  // placeDoors(location);
+  placeDoors(location);
+  placeEnemies(location);
+
   auto t1 = std::chrono::system_clock::now();
   using milliseconds = std::chrono::duration<double, std::milli>;
   milliseconds ms = t1 - t0;

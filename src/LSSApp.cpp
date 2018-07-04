@@ -77,11 +77,10 @@ void LSSApp::setup() {
 
   hero = std::make_shared<Player>();
 
-  for (auto n = 0; n < 26; n++) {
-    auto l = generator->getLocation();
-    l->depth = n;
-    locations.push_back(l);
-  }
+  auto l = generator->getLocation();
+  l->depth = 0;
+  locations.push_back(l);
+
   hero->currentLocation = locations.front();
   hero->currentLocation->enter(hero, locations.front()->enterCell);
 
@@ -110,112 +109,6 @@ void LSSApp::setup() {
   commands.push_back(std::make_shared<ZapCommand>());
   commands.push_back(std::make_shared<UpCommand>());
   commands.push_back(std::make_shared<DownCommand>());
-}
-
-std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Location> location,
-                                 std::shared_ptr<Cell> c,
-                                 std::shared_ptr<Player> hero, EnemySpec type) {
-  auto enemy = std::make_shared<Enemy>(type);
-  enemy->currentCell = c;
-  enemy->currentLocation = location;
-  return enemy;
-}
-
-std::shared_ptr<Location> LSSApp::loadMap(std::string filename) {
-  auto location = std::make_shared<Location>();
-
-  std::string line;
-  std::ifstream dungeon_file(filename);
-  int n = 0, i = 0;
-  if (dungeon_file.is_open()) {
-    n = 0;
-    while (getline(dungeon_file, line)) {
-      location->cells.push_back({});
-      i = 0;
-      for (auto ch : line) {
-        auto c = std::make_shared<Cell>(i, n, CellType::WALL);
-        c->visibilityState = VisibilityState::UNKNOWN;
-        c->type = CellType::UNKNOWN_CELL;
-        c->passThrough = false;
-        c->seeThrough = false;
-
-        switch (ch) {
-        case '.':
-          c->type = CellType::FLOOR;
-          c->passThrough = true;
-          c->seeThrough = true;
-          break;
-        case '<':
-          c->type = CellType::UPSTAIRS;
-          c->passThrough = true;
-          c->seeThrough = false;
-          location->enterCell = c;
-          break;
-        case '>':
-          c->type = CellType::DOWNSTAIRS;
-          c->passThrough = true;
-          c->seeThrough = true;
-          location->exitCell = c;
-          break;
-        case '#':
-          c->type = CellType::WALL;
-          c->passThrough = false;
-          c->seeThrough = false;
-          break;
-        case '+': {
-          auto door = std::make_shared<Door>();
-          door->currentCell = c;
-          c->type = CellType::FLOOR;
-          c->passThrough = true;
-          location->objects.push_back(door);
-        } break;
-        case 'o': {
-          c->type = CellType::FLOOR;
-          c->passThrough = true;
-          location->objects.push_back(
-              makeEnemy(location, c, hero, EnemyType::ORK));
-        } break;
-        case 'g': {
-          c->type = CellType::FLOOR;
-          c->passThrough = true;
-          location->objects.push_back(
-              makeEnemy(location, c, hero, EnemyType::GOBLIN));
-        } break;
-        case 'p': {
-          c->type = CellType::FLOOR;
-          c->passThrough = true;
-          location->objects.push_back(
-              makeEnemy(location, c, hero, EnemyType::PIXI));
-        } break;
-        case '*': {
-          c->type = CellType::FLOOR;
-          c->passThrough = true;
-          c->seeThrough = true;
-          auto torch = std::make_shared<TorchStand>();
-          torch->currentCell = c;
-          location->objects.push_back(torch);
-        } break;
-        }
-        location->cells[n].push_back(c);
-        i++;
-      }
-      n++;
-    }
-    dungeon_file.close();
-  }
-
-  // auto axe = std::make_shared<Item>(ItemType::PICK_AXE);
-  // axe->currentCell = location->cells[16][31];
-  // location->objects.push_back(axe);
-
-  // auto sword = std::make_shared<Item>(
-  //     ItemType::SWORD, Effects{std::make_shared<SpecialPrefix>("rusty"),
-  //                              std::make_shared<MeleeDamage>(1, 6, 1),
-  //                              std::make_shared<HPModifier>(5)});
-  // sword->currentCell = location->cells[15][32];
-  // location->objects.push_back(sword);
-
-  return location;
 }
 
 void LSSApp::setListeners() { reactor = std::make_shared<EventReactor>(this); }
@@ -256,11 +149,13 @@ void LSSApp::invalidate() {
   }
 
   auto objects = hero->currentLocation->objects;
+  fmt::print("{}\n", objects.size());
   std::sort(objects.begin(), objects.end(),
-            [](std::shared_ptr<Object> a, std::shared_ptr<Object> b) {
-              return std::dynamic_pointer_cast<Creature>(b);
-            });
+          [](std::shared_ptr<Object> a, std::shared_ptr<Object> b) {
+            return std::dynamic_pointer_cast<Creature>(a) && !std::dynamic_pointer_cast<Creature>(b);
+          });
 
+  fmt::print("after sort\n", objects.size());
   for (auto o : objects) {
     auto ec = o->currentCell;
     auto index =

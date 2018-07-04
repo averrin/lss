@@ -35,6 +35,7 @@ public:
   void reveal();
   void enter(std::shared_ptr<Player>, std::shared_ptr<Cell>);
   void leave(std::shared_ptr<Player>);
+  Objects getObjects(std::shared_ptr<Cell>);
   std::vector<eb::HandlerRegistrationPtr> handlers;
 
   std::vector<std::shared_ptr<Cell>> getNeighbors(std::shared_ptr<Cell> cell) {

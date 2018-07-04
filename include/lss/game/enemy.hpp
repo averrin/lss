@@ -18,6 +18,7 @@ enum AIType {
 struct EnemySpec {
 public:
   std::string name;
+  int level;
   float baseSpeed;
   int baseHP;
   int defense;
@@ -37,23 +38,23 @@ public:
 // clang-format off
 namespace EnemyType {
 EnemySpec const GOBLIN = {
-    "goblin",
+    "goblin", 1,
     0.5, 5, 1, 1, 3, 0,
     Items{std::make_shared<Item>(ItemType::GOLD_COINS, 200)},
     {Traits::NIGHT_VISION}};
 EnemySpec const ORK = {
-    "ork",
+    "ork", 2,
     1, 35, 2, 1, 6, 1,
     Items{std::make_shared<Item>(ItemType::CORPSE)},
     {}, Items{/*Prototype::TORCH*/}
 };
 EnemySpec const PIXI = {
-    "pixi",
-    2, 1, 0, 1, 2, 0,
+    "pixi", 3,
+    2, 20, 0, 1, 2, 0,
     Items{std::make_shared<Item>(
         ItemType::GOLD_RING,
         Effects{std::make_shared<SpecialPostfix>("of lightning"),
-                std::make_shared<SpeedModifier>(1)})}};
+                std::make_shared<SpeedModifier>(0.3)})}};
 } // namespace EnemyType
 // clang-format on
 

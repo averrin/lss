@@ -34,7 +34,13 @@ void EventReactor::onEvent(StairEvent &e) {
     app->invalidate("enter");
   } else if (app->hero->currentCell->type == CellType::DOWNSTAIRS &&
              e.dir == StairType::DOWN) {
-    if (app->currentLevel == app->locations.size() - 1)
+    if (app->locations.size() < 26) {
+      auto l = app->generator->getLocation();
+      l->depth = app->currentLevel+1;
+      app->locations.push_back(l);
+    }
+
+    if (app->currentLevel == 25)
       return;
     app->currentLevel++;
     app->hero->currentLocation->leave(app->hero);

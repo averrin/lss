@@ -70,10 +70,10 @@ Player::Player() : Creature() {
   inventory.push_back(Prototype::TORCH->clone());
   inventory.push_back(Prototype::PLATE->clone());
 
-  auto axe = std::make_shared<Item>(
-      ItemType::GREAT_AXE, Effects{std::make_shared<MeleeDamage>(-1, 6, 7),
-                                   std::make_shared<SpeedModifier>(-0.3f)});
-  inventory.push_back(axe);
+  // auto axe = std::make_shared<Item>(
+  //     ItemType::GREAT_AXE, Effects{std::make_shared<MeleeDamage>(-1, 6, 7),
+  //                                  std::make_shared<SpeedModifier>(-0.3f)});
+  // inventory.push_back(axe);
 }
 
 std::string Player::getDmgDesc() {

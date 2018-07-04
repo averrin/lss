@@ -25,9 +25,6 @@ public:
   bool interact(std::shared_ptr<Object>);
   int getDamage(std::shared_ptr<Object>);
 
-  // TODO: add setters-getters for attributes. Keep effects in mind
-  // TODO: move equip-inventory logic here. get loot from inventory and apply
-  // effects from items
   std::string name = "Unnamed";
 
   Items inventory;
@@ -43,6 +40,7 @@ public:
   float speed = 1.f;
   float visibilityDistance = 5.5f;
   int defense = 0;
+  int level = 0;
 
   std::optional<std::tuple<std::shared_ptr<Slot>, int, int, int>>
   getPrimaryDmg();
