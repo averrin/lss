@@ -27,6 +27,7 @@ const CellSpec FLOOR = CellSpec{"floor", true, true};
 const CellSpec WALL = CellSpec{"wall", false, false};
 const CellSpec DOWNSTAIRS = CellSpec{"downstairs", true, true};
 const CellSpec UPSTAIRS = CellSpec{"upstairs", true, false};
+const CellSpec WATER = CellSpec{"water", false, true};
 };
 
 enum VisibilityState { UNKNOWN, SEEN, VISIBLE };

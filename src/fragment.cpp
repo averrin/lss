@@ -79,7 +79,7 @@ std::map<EnemySpec, std::string> enemyColors = {
 std::map<CellSpec, std::string> cellSigns = {
     {CellType::FLOOR, "⋅"s},        {CellType::WALL, "#"s},
     {CellType::UNKNOWN_CELL, " "s}, {CellType::DOWNSTAIRS, "&gt;"s},
-    {CellType::UPSTAIRS, "&lt;"s},
+    {CellType::UPSTAIRS, "&lt;"s}, {CellType::WATER, "="s},
 };
 
 std::map<CellSpec, std::map<bool, std::string>> cellColors = {
@@ -87,12 +87,14 @@ std::map<CellSpec, std::map<bool, std::string>> cellColors = {
     {CellType::WALL, {{false, "#aaa"}, {true, "#555"}}},
     {CellType::DOWNSTAIRS, {{false, "#aaa"}, {true, "#666"}}},
     {CellType::UPSTAIRS, {{false, "#aaa"}, {true, "#666"}}},
+    {CellType::WATER, {{false, "blue"}, {true, "blue"}}}
 };
 
 std::map<CellSpec, std::string> cellColorsIlluminated = {
     {CellType::FLOOR, "#765"},        {CellType::WALL, "#cba"},
     {CellType::DOWNSTAIRS, "#cba"},
     {CellType::UPSTAIRS, "#cba"},
+    {CellType::WATER, "#88f"},
 };
 
 std::map<CellSpec, std::map<bool, std::string>> cellWeights = {
@@ -100,6 +102,7 @@ std::map<CellSpec, std::map<bool, std::string>> cellWeights = {
     {CellType::WALL, {{false, "bold"}, {true, "bold"}}},
     {CellType::DOWNSTAIRS, {{false, "normal"}, {true, "normal"}}},
     {CellType::UPSTAIRS, {{false, "normal"}, {true, "normal"}}},
+    {CellType::WATER, {{false, "normal"}, {true, "normal"}}},
 };
 
 std::map<std::string, tpl_arg> getCellArgs(std::shared_ptr<Cell> cell) {
@@ -113,7 +116,7 @@ std::map<std::string, tpl_arg> getCellArgs(std::shared_ptr<Cell> cell) {
       color = cellColors[cell->type][false];
     }
 
-    if (cell->hasFeature(CellFeature::CAVE)) {
+    if (cell->hasFeature(CellFeature::CAVE) && cell->type != CellType::WATER) {
       color = "#897546";
     }
     if (cell->hasFeature(CellFeature::BLOOD)) {

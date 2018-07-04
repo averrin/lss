@@ -54,6 +54,7 @@ void placeWalls(std::shared_ptr<Location> location) {
                                    [](std::shared_ptr<Cell> c) {
                                      return c->type == CellType::FLOOR ||
                                             c->type == CellType::DOWNSTAIRS ||
+                                            c->type == CellType::WATER ||
                                             c->type == CellType::UPSTAIRS;
                                    });
             nc != n.end()) {
@@ -127,13 +128,25 @@ void makeFloor(std::shared_ptr<Cell> cell, std::vector<CellFeature> features) {
   makeFloor(cell);
 }
 
+void updateCell(std::shared_ptr<Cell> cell, CellSpec type, std::vector<CellFeature> features) {
+  cell->type = type;
+  cell->seeThrough = type.seeThrough;
+  cell->passThrough = type.passThrough;
+  cell->features = features;
+}
+
 void dig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start,
-         Direction dir, int length, int minWidth, int jWidth, bool randomWind) {
+         Direction dir, int length, int minWidth, int jWidth, int wind=0, CellSpec type=CellType::FLOOR) {
   auto cell = start;
+  fmt::print("\n");
   std::vector<CellFeature> f = {CellFeature::CAVE};
   for (auto step = 0; step < length; step++) {
     auto width = (jWidth > 1 ? rand() % jWidth : 0) + minWidth;
-    auto wind = randomWind ? rand() % (width >= 3 ? width * 3 / 4 : 2) : 0;
+    auto w = wind == -1 ? rand() % (width >= 3 ? width * 3 / 4 : 2) : wind;
+    if (w == 1) {
+      w = rand() % 2 ? 0 : 1;
+    }
+    fmt::print("{}", w);
     auto offset = rand() % 2 ? -1 : 1;
     auto ox = cell->x;
     auto oy = cell->y;
@@ -148,10 +161,10 @@ void dig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start,
             ox > location->cells.front().size() - 1)
           continue;
         auto c = location->cells[oy][ox];
-        makeFloor(c, f);
+        updateCell(c, type, f);
       }
       ny -= 1;
-      nx += offset * wind;
+      nx += offset * w;
       break;
     case Direction::S:
       ox -= width / 2;
@@ -161,10 +174,10 @@ void dig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start,
             ox > location->cells.front().size() - 1)
           continue;
         auto c = location->cells[oy][ox];
-        makeFloor(c, f);
+        updateCell(c, type, f);
       }
       ny += 1;
-      nx += offset * wind;
+      nx += offset * w;
       break;
     case Direction::W:
       oy -= width / 2;
@@ -174,10 +187,10 @@ void dig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start,
             ox > location->cells.front().size() - 1)
           continue;
         auto c = location->cells[oy][ox];
-        makeFloor(c, f);
+        updateCell(c, type, f);
       }
       nx -= 1;
-      ny += offset * wind;
+      ny += offset * w;
       break;
     case Direction::E:
       oy -= width / 2;
@@ -187,10 +200,10 @@ void dig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start,
             ox > location->cells.front().size() - 1)
           continue;
         auto c = location->cells[oy][ox];
-        makeFloor(c, f);
+        updateCell(c, type, f);
       }
       nx += 1;
-      ny += offset * wind;
+      ny += offset * w;
       break;
     }
     if (ny < 0 || nx < 0 || ny > location->cells.size() - 1 ||
@@ -205,8 +218,8 @@ void randomDig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start,
                Direction dir, int length) {
   int minWidth = 1;
   int jWidth = 6;
-  bool randomWind = true;
-  dig(location, start, dir, length, minWidth, jWidth, randomWind);
+  bool wind = -1;
+  dig(location, start, dir, length, minWidth, jWidth, wind);
 }
 
 void fixOverlapped(std::shared_ptr<Location> location) {
@@ -285,13 +298,21 @@ void placeEnemies(std::shared_ptr<Location> location) {
       if (c->type == CellType::FLOOR) {
         if (rand() % 1000 > 8 || location->getObjects(c).size() > 0)
           continue;
-        auto enemy = makeEnemy(location, c, EnemyType::GOBLIN);
+        std::vector<EnemySpec> ets{EnemyType::GOBLIN, EnemyType::ORK, EnemyType::PIXI};
+        auto et = ets[rand()%3];
+        auto enemy = makeEnemy(location, c, et);
         location->objects.push_back(enemy);
         e++;
       }
     }
   }
   fmt::print("Enemies: {}\n", e);
+}
+
+void makeRiver(std::shared_ptr<Location> location) {
+  dig(location,
+      location->cells[0][location->cells.front().size()/3 + rand() % location->cells.front().size()/3],
+      S, location->cells.size() - 2, 2, 2, 1, CellType::WATER);
 }
 
 std::shared_ptr<Location> Generator::getLocation() {
@@ -380,6 +401,7 @@ std::shared_ptr<Location> Generator::getLocation() {
     location->objects.push_back(torch);
   }
 
+  makeRiver(location);
   placeWalls(location);
   placeDoors(location);
   placeEnemies(location);
