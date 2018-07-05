@@ -11,6 +11,7 @@
 
 class StatusLine : public eb::EventHandler<DoorOpenedEvent>,
                    public eb::EventHandler<EnemyTakeDamageEvent>,
+                   public eb::EventHandler<HeroTakeDamageEvent>,
                    public eb::EventHandler<EnemyDiedEvent>,
                    public eb::EventHandler<ItemTakenEvent>,
                    public eb::EventHandler<ItemsFoundEvent>,
@@ -24,6 +25,7 @@ public:
 
   virtual void onEvent(DoorOpenedEvent &e) override;
   virtual void onEvent(EnemyTakeDamageEvent &e) override;
+  virtual void onEvent(HeroTakeDamageEvent &e) override;
   virtual void onEvent(EnemyDiedEvent &e) override;
   virtual void onEvent(ItemTakenEvent &e) override;
   virtual void onEvent(ItemsFoundEvent &e) override;

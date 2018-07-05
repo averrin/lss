@@ -10,6 +10,7 @@ StatusLine::StatusLine(std::shared_ptr<State> s) : state(s) {
   eb::EventBus::AddHandler<DoorOpenedEvent>(*this);
   eb::EventBus::AddHandler<EnemyDiedEvent>(*this);
   eb::EventBus::AddHandler<EnemyTakeDamageEvent>(*this);
+  eb::EventBus::AddHandler<HeroTakeDamageEvent>(*this);
 };
 MessageEvent::MessageEvent(eb::ObjectPtr s, std::string m)
     : eb::Event(s), message(m) {}
@@ -25,6 +26,10 @@ void StatusLine::onEvent(EnemyTakeDamageEvent &e) {
   auto enemy = std::dynamic_pointer_cast<Enemy>(e.getSender());
   setContent(
       {F(fmt::format("You hit {}: {} dmg", enemy->type.name, e.damage))});
+}
+void StatusLine::onEvent(HeroTakeDamageEvent &e) {
+  setContent(
+      {F(fmt::format("You take <span color='red'>{}</span> dmg", e.damage))});
 }
 void StatusLine::onEvent(EnemyDiedEvent &e) { setContent({F("Enemy died")}); }
 

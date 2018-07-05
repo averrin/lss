@@ -41,12 +41,12 @@ EnemySpec const GOBLIN = {
     "goblin", 1,
     0.5, 5, 1, 1, 3, 0,
     Items{std::make_shared<Item>(ItemType::GOLD_COINS, 200)},
-    {Traits::NIGHT_VISION}};
+    {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER}};
 EnemySpec const ORK = {
     "ork", 2,
     1, 35, 2, 1, 6, 1,
     Items{std::make_shared<Item>(ItemType::CORPSE)},
-    {}, Items{/*Prototype::TORCH*/}
+    {}, Items{Prototype::TORCH}
 };
 EnemySpec const PIXI = {
     "pixi", 3,
@@ -54,7 +54,15 @@ EnemySpec const PIXI = {
     Items{std::make_shared<Item>(
         ItemType::GOLD_RING,
         Effects{std::make_shared<SpecialPostfix>("of lightning"),
-                std::make_shared<SpeedModifier>(0.3)})}};
+                std::make_shared<SpeedModifier>(0.3)})},
+    {Traits::FLY}};
+EnemySpec const OGRE = {
+    "ogre", 4,
+    1, 60, 2, 1, 6, 1,
+    Items{std::make_shared<Item>(ItemType::CORPSE)},
+    {Traits::NIGHT_VISION},
+    Items{Prototype::GREAT_AXE->clone()},
+};
 } // namespace EnemyType
 // clang-format on
 

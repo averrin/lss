@@ -128,7 +128,8 @@ void makeFloor(std::shared_ptr<Cell> cell, std::vector<CellFeature> features) {
   makeFloor(cell);
 }
 
-void updateCell(std::shared_ptr<Cell> cell, CellSpec type, std::vector<CellFeature> features) {
+void updateCell(std::shared_ptr<Cell> cell, CellSpec type,
+                std::vector<CellFeature> features) {
   cell->type = type;
   cell->seeThrough = type.seeThrough;
   cell->passThrough = type.passThrough;
@@ -136,7 +137,8 @@ void updateCell(std::shared_ptr<Cell> cell, CellSpec type, std::vector<CellFeatu
 }
 
 void dig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start,
-         Direction dir, int length, int minWidth, int jWidth, int wind=0, CellSpec type=CellType::FLOOR) {
+         Direction dir, int length, int minWidth, int jWidth, int wind = 0,
+         CellSpec type = CellType::FLOOR) {
   auto cell = start;
   fmt::print("\n");
   std::vector<CellFeature> f = {CellFeature::CAVE};
@@ -291,6 +293,7 @@ std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Location> location,
   return enemy;
 }
 
+// TODO: use room threat and hero level. Add respawn
 void placeEnemies(std::shared_ptr<Location> location) {
   auto e = 0;
   for (auto r : location->cells) {
@@ -298,8 +301,9 @@ void placeEnemies(std::shared_ptr<Location> location) {
       if (c->type == CellType::FLOOR) {
         if (rand() % 1000 > 8 || location->getObjects(c).size() > 0)
           continue;
-        std::vector<EnemySpec> ets{EnemyType::GOBLIN, EnemyType::ORK, EnemyType::PIXI};
-        auto et = ets[rand()%3];
+        std::vector<EnemySpec> ets{EnemyType::GOBLIN, EnemyType::ORK,
+                                   EnemyType::PIXI, EnemyType::OGRE};
+        auto et = ets[rand() % ets.size()];
         auto enemy = makeEnemy(location, c, et);
         location->objects.push_back(enemy);
         e++;
@@ -310,8 +314,8 @@ void placeEnemies(std::shared_ptr<Location> location) {
 }
 
 void makeRiver(std::shared_ptr<Location> location) {
-  dig(location,
-      location->cells[0][location->cells.front().size()/3 + rand() % location->cells.front().size()/3],
+  dig(location, location->cells[0][location->cells.front().size() / 3 +
+                                   rand() % location->cells.front().size() / 3],
       S, location->cells.size() - 2, 2, 2, 1, CellType::WATER);
 }
 

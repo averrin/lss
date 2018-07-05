@@ -22,6 +22,8 @@ const auto TOGGLE_MIND_SIGHT =
     std::make_shared<Spell>("Toggle Mind Sight trait");
 const auto TOGGLE_MAGIC_TORCH =
     std::make_shared<Spell>("Toggle Magic Torch trait");
+const auto TOGGLE_FLY = std::make_shared<Spell>("Toggle Fly trait");
+const auto TOGGLE_CAN_SWIM = std::make_shared<Spell>("Toggle Swimming trait");
 } // namespace Spells
 
 #endif // __SPELL_H_

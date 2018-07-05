@@ -77,7 +77,8 @@ public:
 
 class CommitEvent : public eb::Event {
 public:
-  CommitEvent(eb::ObjectPtr s, int ap, bool q = false): eb::Event(s), actionPoints(ap), silent(q) {}
+  CommitEvent(eb::ObjectPtr s, int ap, bool q = false)
+      : eb::Event(s), actionPoints(ap), silent(q) {}
   int actionPoints;
   bool silent;
 };

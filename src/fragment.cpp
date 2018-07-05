@@ -67,19 +67,23 @@ std::map<ItemSpec, std::string> itemColors = {
 };
 
 std::map<EnemySpec, std::string> enemySigns = {
-    {EnemyType::GOBLIN, "g"}, {EnemyType::ORK, "o"}, {EnemyType::PIXI, "p"},
+    {EnemyType::GOBLIN, "g"},
+    {EnemyType::ORK, "o"},
+    {EnemyType::PIXI, "p"},
+    {EnemyType::OGRE, "O"},
 };
 
 std::map<EnemySpec, std::string> enemyColors = {
     {EnemyType::GOBLIN, "green"},
     {EnemyType::ORK, "#22cc22"},
+    {EnemyType::OGRE, "darkgreen"},
     {EnemyType::PIXI, "pink"},
 };
 
 std::map<CellSpec, std::string> cellSigns = {
     {CellType::FLOOR, "⋅"s},        {CellType::WALL, "#"s},
     {CellType::UNKNOWN_CELL, " "s}, {CellType::DOWNSTAIRS, "&gt;"s},
-    {CellType::UPSTAIRS, "&lt;"s}, {CellType::WATER, "="s},
+    {CellType::UPSTAIRS, "&lt;"s},  {CellType::WATER, "="s},
 };
 
 std::map<CellSpec, std::map<bool, std::string>> cellColors = {
@@ -87,13 +91,11 @@ std::map<CellSpec, std::map<bool, std::string>> cellColors = {
     {CellType::WALL, {{false, "#aaa"}, {true, "#555"}}},
     {CellType::DOWNSTAIRS, {{false, "#aaa"}, {true, "#666"}}},
     {CellType::UPSTAIRS, {{false, "#aaa"}, {true, "#666"}}},
-    {CellType::WATER, {{false, "blue"}, {true, "blue"}}}
-};
+    {CellType::WATER, {{false, "blue"}, {true, "blue"}}}};
 
 std::map<CellSpec, std::string> cellColorsIlluminated = {
-    {CellType::FLOOR, "#765"},        {CellType::WALL, "#cba"},
-    {CellType::DOWNSTAIRS, "#cba"},
-    {CellType::UPSTAIRS, "#cba"},
+    {CellType::FLOOR, "#765"},      {CellType::WALL, "#cba"},
+    {CellType::DOWNSTAIRS, "#cba"}, {CellType::UPSTAIRS, "#cba"},
     {CellType::WATER, "#88f"},
 };
 

@@ -50,6 +50,9 @@ public:
     return std::find(traits.begin(), traits.end(), t) != traits.end();
   }
   bool hasLight();
+  int hitRoll(int m, int d, int e);
+  std::shared_ptr<Slot> getSlot(WearableType type);
+  std::optional<std::shared_ptr<Slot>> getSlot(WearableType type, bool);
 
   Attribute HP = Attribute(AttributeType::HP);
   Attribute HP_MAX = Attribute(AttributeType::HP_MAX);
@@ -59,6 +62,9 @@ public:
   Attribute DEF = Attribute(AttributeType::DEFENSE);
 
   std::shared_ptr<Cell> getCell(Direction);
+
+private:
+  std::shared_ptr<Cell> cachedCell;
 };
 
 #endif // __CREATURE_H_

@@ -136,6 +136,10 @@ void Enemy::onEvent(CommitEvent &e) {
     auto nptr = path[i];
     auto nc = static_cast<Cell *>(nptr);
     auto cd = getDirFromCell(currentCell, nc);
+    auto inShadow = !nc->illuminated;
+    if (inShadow && hasTrait(Traits::SHADOW_RUNNER)) {
+      stepCost /= 2;
+    }
 
     auto n = 0;
     while (actionPoints >= stepCost && n < 2) {

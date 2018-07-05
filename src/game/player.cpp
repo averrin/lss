@@ -1,11 +1,14 @@
-#include "lss/game/player.hpp"
+#include <chrono>
+#include <memory>
+
 #include "EventBus.hpp"
 #include "lss/commands.hpp"
 #include "lss/game/costs.hpp"
 #include "lss/game/enemy.hpp"
+#include "lss/game/player.hpp"
 #include "lss/game/slot.hpp"
 #include "lss/game/spell.hpp"
-#include <memory>
+#include "rang.hpp"
 
 DigEvent::DigEvent(eb::ObjectPtr s, std::shared_ptr<Cell> c)
     : eb::Event(s), cell(c) {}
@@ -68,11 +71,16 @@ Player::Player() : Creature() {
       ItemType::SWORD, Effects{std::make_shared<MeleeDamage>(2, 4, 3)});
   inventory.push_back(sword);
   inventory.push_back(Prototype::TORCH->clone());
-  inventory.push_back(Prototype::PLATE->clone());
+  auto plate = Prototype::PLATE->clone();
+  inventory.push_back(plate);
 
-  // auto axe = std::make_shared<Item>(
-  //     ItemType::GREAT_AXE, Effects{std::make_shared<MeleeDamage>(-1, 6, 7),
-  //                                  std::make_shared<SpeedModifier>(-0.3f)});
+  getSlot(sword->type.wearableType)->equip(sword);
+  auto slot = getSlot(dagger->type.wearableType, false);
+  if (slot) {
+    (*slot)->equip(dagger);
+  }
+  getSlot(plate->type.wearableType)->equip(plate);
+
   // inventory.push_back(axe);
 }
 
@@ -136,9 +144,15 @@ void Player::commit(int ap, bool s) {
     }
   }
 
+  auto t0 = std::chrono::system_clock::now();
   auto ptr = shared_from_this();
   CommitEvent e(ptr, ap, s);
   eb::EventBus::FireEvent(e);
+  auto t1 = std::chrono::system_clock::now();
+  using milliseconds = std::chrono::duration<double, std::milli>;
+  milliseconds ms = t1 - t0;
+  std::cout << "commit time taken: " << rang::fg::green << ms.count()
+            << rang::style::reset << '\n';
 }
 
 bool Player::unequip(std::shared_ptr<Slot> slot) {
@@ -146,6 +160,8 @@ bool Player::unequip(std::shared_ptr<Slot> slot) {
   commit(ap_cost::UNEQUIP / SPEED(this));
   return true;
 }
+
+bool Player::equip(std::shared_ptr<Item> item) { return false; }
 
 bool Player::equip(std::shared_ptr<Slot> slot, std::shared_ptr<Item> item) {
   // auto ptr = shared_from_this();

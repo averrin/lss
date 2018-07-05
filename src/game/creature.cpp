@@ -9,7 +9,10 @@
 #include "EventBus.hpp"
 #include "fmt/format.h"
 
-Creature::Creature() { passThrough = false; seeThrough = false; }
+Creature::Creature() {
+  passThrough = false;
+  seeThrough = false;
+}
 
 float Attribute::operator()(Creature *c) {
   float base = 0;
@@ -156,7 +159,20 @@ Creature::getSecondaryDmg(std::shared_ptr<Slot> primarySlot) {
   return std::nullopt;
 }
 
-int hitRoll(int m, int d, int e) {
+int criticalHit(int m, int d, int e) {
+  auto damage = m + d * e;
+  if (damage < 0) {
+    damage = 0;
+  }
+  fmt::print("critical hit: {}\n", damage);
+  return damage;
+}
+
+int Creature::hitRoll(int m, int d, int e) {
+  auto inShadow = !currentCell->illuminated;
+  if (inShadow && hasTrait(Traits::DEADLY_SHADOWS)) {
+    return criticalHit(m, d, e);
+  }
   auto damage = 0;
   for (auto n = 0; n < d; n++) {
     damage += rand() % e + 1;
@@ -249,6 +265,30 @@ bool Creature::attack(Direction d) {
   return true;
 }
 
+std::shared_ptr<Slot> Creature::getSlot(WearableType type) {
+  return *std::find_if(equipment->slots.begin(), equipment->slots.end(),
+                       [type](std::shared_ptr<Slot> s) {
+                         return std::find(s->acceptTypes.begin(),
+                                          s->acceptTypes.end(),
+                                          type) != s->acceptTypes.end();
+                       });
+}
+
+std::optional<std::shared_ptr<Slot>> Creature::getSlot(WearableType type,
+                                                       bool busy) {
+  auto slot = std::find_if(
+      equipment->slots.begin(), equipment->slots.end(),
+      [type, busy](std::shared_ptr<Slot> s) {
+        return (busy ? s->item != nullptr : s->item == nullptr) &&
+               std::find(s->acceptTypes.begin(), s->acceptTypes.end(), type) !=
+                   s->acceptTypes.end();
+      });
+  if (slot != equipment->slots.end()) {
+    return *slot;
+  }
+  return std::nullopt;
+}
+
 bool Creature::move(Direction d, bool autoAction) {
   auto cc = currentCell;
   auto nc = getCell(d);
@@ -261,7 +301,7 @@ bool Creature::move(Direction d, bool autoAction) {
   auto hasPlayer = currentLocation->player->currentCell == nc;
   // fmt::print("{} - {} - {}.{} -> {}.{}\n", d, hasObstacles, cc->x, cc->y,
   // nc->x, nc->y);
-  if (!nc->passThrough || hasObstacles || hasPlayer) {
+  if (!nc->canPass(traits) || hasObstacles || hasPlayer) {
     if (autoAction && hasObstacles && !(*obstacle)->passThrough) {
       return !(*obstacle)->interact(shared_from_this());
     }
@@ -279,6 +319,9 @@ bool Creature::move(Direction d, bool autoAction) {
 }
 
 void Creature::calcViewField() {
+  if (cachedCell == currentCell)
+    return;
+  fmt::print("calc view field\n");
   auto vd = VISIBILITY_DISTANCE(this);
   if (hasTrait(Traits::NIGHT_VISION)) {
     vd = 1000;
@@ -286,6 +329,7 @@ void Creature::calcViewField() {
   viewField.clear();
   std::vector<std::shared_ptr<Cell>> temp;
   viewField = currentLocation->getVisible(currentCell, vd);
+  cachedCell = currentCell;
 }
 
 bool Creature::hasLight() {

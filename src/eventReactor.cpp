@@ -36,7 +36,7 @@ void EventReactor::onEvent(StairEvent &e) {
              e.dir == StairType::DOWN) {
     if (app->locations.size() < 26) {
       auto l = app->generator->getLocation();
-      l->depth = app->currentLevel+1;
+      l->depth = app->currentLevel + 1;
       app->locations.push_back(l);
     }
 
@@ -66,7 +66,9 @@ void EventReactor::onEvent(StairEvent &e) {
 void EventReactor::onEvent(eb::Event &e) { app->invalidate("eb::event"); }
 
 void EventReactor::onEvent(CommitEvent &e) {
-  if (e.silent) return;
+  if (e.silent) {
+    return;
+  }
   app->invalidate("commit");
 }
 
@@ -248,7 +250,7 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
           Spells::REVEAL, Spells::MONSTER_SENSE, Spells::MONSTER_FREEZE,
           Spells::TOGGLE_DUAL_WIELD, Spells::TOGGLE_NIGHT_VISION,
           Spells::TOGGLE_MIND_SIGHT, Spells::TOGGLE_MAGIC_TORCH,
-          Spells::SUMMON_ORK}));
+          Spells::TOGGLE_FLY, Spells::TOGGLE_CAN_SWIM, Spells::SUMMON_ORK}));
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
     auto spell = std::dynamic_pointer_cast<Spell>(o);
@@ -282,6 +284,7 @@ std::shared_ptr<Enemy> mkEnemy(std::shared_ptr<Location> location,
   return enemy;
 }
 
+// TODO: make configurable ToggleTrait spell
 void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
   if (spell == Spells::REVEAL) {
     app->hero->currentLocation->reveal();
@@ -339,6 +342,25 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
                                           Traits::MAGIC_TORCH));
     } else {
       app->hero->traits.push_back(Traits::MAGIC_TORCH);
+    }
+    app->hero->commit(0);
+  } else if (spell == Spells::TOGGLE_FLY) {
+    app->hero->commit(0);
+    if (app->hero->hasTrait(Traits::FLY)) {
+      app->hero->traits.erase(std::remove(
+          app->hero->traits.begin(), app->hero->traits.end(), Traits::FLY));
+    } else {
+      app->hero->traits.push_back(Traits::FLY);
+    }
+    app->hero->commit(0);
+  } else if (spell == Spells::TOGGLE_CAN_SWIM) {
+    app->hero->commit(0);
+    if (app->hero->hasTrait(Traits::CAN_SWIM)) {
+      app->hero->traits.erase(std::remove(app->hero->traits.begin(),
+                                          app->hero->traits.end(),
+                                          Traits::CAN_SWIM));
+    } else {
+      app->hero->traits.push_back(Traits::CAN_SWIM);
     }
     app->hero->commit(0);
   }

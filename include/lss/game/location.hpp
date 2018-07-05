@@ -6,6 +6,7 @@
 #include "lss/game/object.hpp"
 #include "micropather/micropather.h"
 #include <cmath>
+#include <map>
 
 #include "EventHandler.hpp"
 #include "EventRegisttration.hpp"
@@ -74,23 +75,29 @@ public:
                     MP_VECTOR<micropather::StateCost> *adjacent) override;
   void PrintStateInfo(void *state) override;
 
+  std::map<std::pair<std::shared_ptr<Cell>, float>,
+           std::vector<std::shared_ptr<Cell>>>
+      visibilityCache;
+
   std::vector<std::shared_ptr<Cell>> getVisible(std::shared_ptr<Cell> start,
                                                 float distance) {
-    std::vector<std::shared_ptr<Cell>> temp;
+    auto it = visibilityCache.find({start, distance});
+    // TODO: invalidate cache!
+    if (it != visibilityCache.end()) {
+      return visibilityCache[{start, distance}];
+    }
     std::vector<std::shared_ptr<Cell>> result;
     fov::Vec heroPoint{start->x, start->y};
     fov::Vec bounds{(int)cells.front().size(), (int)cells.size()};
     auto field = fov::refresh(heroPoint, bounds, cells);
     for (auto v : field) {
       auto c = cells[v.y][v.x];
-      temp.push_back(c);
-    }
-    for (auto c : temp) {
       auto d = sqrt(pow(start->x - c->x, 2) + pow(start->y - c->y, 2));
       if (c->illuminated || d <= distance) {
         result.push_back(c);
       }
     }
+    visibilityCache[{start, distance}] = result;
     return result;
   }
 };

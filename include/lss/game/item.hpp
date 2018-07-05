@@ -33,10 +33,13 @@ public:
 typedef std::vector<std::shared_ptr<Item>> Items;
 
 namespace Prototype {
-const std::shared_ptr<Item> TORCH = std::make_shared<Item>(
+const auto TORCH = std::make_shared<Item>(
     ItemType::TORCH, Effects{std::make_shared<VisibilityModifier>(2.5f)});
-const std::shared_ptr<Item> PLATE = std::make_shared<Item>(
-    ItemType::PLATE, Effects{std::make_shared<ArmorValue>(5)});
+const auto PLATE = std::make_shared<Item>(
+    ItemType::PLATE, Effects{std::make_shared<ArmorValue>(1)});
+const auto GREAT_AXE = std::make_shared<Item>(
+    ItemType::GREAT_AXE, Effects{std::make_shared<MeleeDamage>(-1, 6, 7),
+                                 std::make_shared<SpeedModifier>(-0.3f)});
 }
 
 #endif // __ITEM_H_
