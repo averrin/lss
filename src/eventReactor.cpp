@@ -250,7 +250,7 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
           Spells::REVEAL, Spells::MONSTER_SENSE, Spells::MONSTER_FREEZE,
           Spells::TOGGLE_DUAL_WIELD, Spells::TOGGLE_NIGHT_VISION,
           Spells::TOGGLE_MIND_SIGHT, Spells::TOGGLE_MAGIC_TORCH,
-          Spells::TOGGLE_FLY, Spells::TOGGLE_CAN_SWIM, Spells::SUMMON_ORK}));
+          Spells::TOGGLE_FLY, Spells::TOGGLE_CAN_SWIM, Spells::SUMMON_ORK, Spells::TOGGLE_INVULNERABLE}));
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
     auto spell = std::dynamic_pointer_cast<Spell>(o);
@@ -307,60 +307,14 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     app->hero->currentLocation->objects.push_back(
         mkEnemy(app->hero->currentLocation, c, app->hero, EnemyType::ORK));
     app->hero->commit(0);
-  } else if (spell == Spells::TOGGLE_DUAL_WIELD) {
-    if (app->hero->hasTrait(Traits::DUAL_WIELD)) {
+  } else if (auto tspell = std::dynamic_pointer_cast<ToggleTraitSpell>(spell)) {
+    app->hero->commit(0);
+    if (app->hero->hasTrait(tspell->trait)) {
       app->hero->traits.erase(std::remove(app->hero->traits.begin(),
                                           app->hero->traits.end(),
-                                          Traits::DUAL_WIELD));
+                                          tspell->trait));
     } else {
-      app->hero->traits.push_back(Traits::DUAL_WIELD);
-    }
-    app->hero->commit(0);
-  } else if (spell == Spells::TOGGLE_NIGHT_VISION) {
-    if (app->hero->hasTrait(Traits::NIGHT_VISION)) {
-      app->hero->traits.erase(std::remove(app->hero->traits.begin(),
-                                          app->hero->traits.end(),
-                                          Traits::NIGHT_VISION));
-    } else {
-      app->hero->traits.push_back(Traits::NIGHT_VISION);
-    }
-    app->hero->commit(0);
-  } else if (spell == Spells::TOGGLE_MIND_SIGHT) {
-    if (app->hero->hasTrait(Traits::MIND_SIGHT)) {
-      app->hero->traits.erase(std::remove(app->hero->traits.begin(),
-                                          app->hero->traits.end(),
-                                          Traits::MIND_SIGHT));
-    } else {
-      app->hero->traits.push_back(Traits::MIND_SIGHT);
-    }
-    app->hero->commit(0);
-  } else if (spell == Spells::TOGGLE_MAGIC_TORCH) {
-    app->hero->commit(0);
-    if (app->hero->hasTrait(Traits::MAGIC_TORCH)) {
-      app->hero->traits.erase(std::remove(app->hero->traits.begin(),
-                                          app->hero->traits.end(),
-                                          Traits::MAGIC_TORCH));
-    } else {
-      app->hero->traits.push_back(Traits::MAGIC_TORCH);
-    }
-    app->hero->commit(0);
-  } else if (spell == Spells::TOGGLE_FLY) {
-    app->hero->commit(0);
-    if (app->hero->hasTrait(Traits::FLY)) {
-      app->hero->traits.erase(std::remove(
-          app->hero->traits.begin(), app->hero->traits.end(), Traits::FLY));
-    } else {
-      app->hero->traits.push_back(Traits::FLY);
-    }
-    app->hero->commit(0);
-  } else if (spell == Spells::TOGGLE_CAN_SWIM) {
-    app->hero->commit(0);
-    if (app->hero->hasTrait(Traits::CAN_SWIM)) {
-      app->hero->traits.erase(std::remove(app->hero->traits.begin(),
-                                          app->hero->traits.end(),
-                                          Traits::CAN_SWIM));
-    } else {
-      app->hero->traits.push_back(Traits::CAN_SWIM);
+      app->hero->traits.push_back(tspell->trait);
     }
     app->hero->commit(0);
   }

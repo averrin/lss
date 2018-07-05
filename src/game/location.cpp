@@ -19,6 +19,7 @@ float getDistance(std::shared_ptr<Cell> c, std::shared_ptr<Cell> cc) {
 Location::Location() {}
 
 void Location::onEvent(DoorOpenedEvent &e) {
+  fmt::print("on door open\n");
   player->calcViewField(true);
   updateView(player);
 }

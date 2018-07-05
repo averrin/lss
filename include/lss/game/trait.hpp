@@ -22,6 +22,7 @@ const Trait FLY = {"Fly"};
 const Trait CAN_SWIM = {"Swimming"};
 const Trait DEADLY_SHADOWS = {"Deadly shadows"};
 const Trait SHADOW_RUNNER = {"Shadow runner"};
+const Trait INVULNERABLE = {"Invulnerable"};
 }
 
 #endif // __TRAIT_H_

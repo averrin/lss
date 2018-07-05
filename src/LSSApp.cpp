@@ -149,14 +149,12 @@ void LSSApp::invalidate() {
   }
 
   auto objects = hero->currentLocation->objects;
-  fmt::print("{}\n", objects.size());
   std::sort(objects.begin(), objects.end(),
             [](std::shared_ptr<Object> a, std::shared_ptr<Object> b) {
               return std::dynamic_pointer_cast<Creature>(b) &&
                      !std::dynamic_pointer_cast<Creature>(a);
             });
 
-  fmt::print("after sort\n", objects.size());
   for (auto o : objects) {
     auto ec = o->currentCell;
     auto index =

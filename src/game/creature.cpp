@@ -320,10 +320,8 @@ bool Creature::move(Direction d, bool autoAction) {
 
 void Creature::calcViewField(bool force) {
   if (cachedCell == currentCell && !force) {
-    fmt::print("{} && {}", cachedCell == currentCell, !force);
     return;
   }
-  fmt::print("calc view field\n");
   auto vd = VISIBILITY_DISTANCE(this);
   if (hasTrait(Traits::NIGHT_VISION)) {
     vd = 1000;

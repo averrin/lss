@@ -33,8 +33,8 @@ void State::render(kp::pango::CinderPangoRef surface) {
     auto t1 = std::chrono::system_clock::now();
     using milliseconds = std::chrono::duration<double, std::milli>;
     milliseconds ms = t1 - t0;
-    std::cout << "settext + render time taken: " << rang::fg::green
-              << ms.count() << rang::style::reset << '\n';
+    // std::cout << "settext + render time taken: " << rang::fg::green
+              // << ms.count() << rang::style::reset << '\n';
     return;
   }
 

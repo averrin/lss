@@ -265,6 +265,7 @@ void Player::onEvent(ZapCommandEvent &e) {
 }
 
 bool Player::interact(std::shared_ptr<Object> actor) {
+  if (hasTrait(Traits::INVULNERABLE)) return true;
   auto enemy = std::dynamic_pointer_cast<Enemy>(actor);
   auto ptr = shared_from_this();
   if (hp > 0) {
