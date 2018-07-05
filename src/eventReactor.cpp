@@ -250,7 +250,8 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
           Spells::REVEAL, Spells::MONSTER_SENSE, Spells::MONSTER_FREEZE,
           Spells::TOGGLE_DUAL_WIELD, Spells::TOGGLE_NIGHT_VISION,
           Spells::TOGGLE_MIND_SIGHT, Spells::TOGGLE_MAGIC_TORCH,
-          Spells::TOGGLE_FLY, Spells::TOGGLE_CAN_SWIM, Spells::SUMMON_ORK, Spells::TOGGLE_INVULNERABLE}));
+          Spells::TOGGLE_FLY, Spells::TOGGLE_CAN_SWIM, Spells::SUMMON_ORK,
+          Spells::TOGGLE_INVULNERABLE}));
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
     auto spell = std::dynamic_pointer_cast<Spell>(o);
@@ -302,17 +303,17 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     }
     app->statusLine->setContent({F("Enemy freezed!")});
   } else if (spell == Spells::SUMMON_ORK) {
-    auto c = app->hero->currentLocation->cells[app->hero->currentCell->y + 1]
-                                              [app->hero->currentCell->x];
+    auto c =
+        app->hero->currentLocation
+            ->cells[app->hero->currentCell->y + 1][app->hero->currentCell->x];
     app->hero->currentLocation->objects.push_back(
         mkEnemy(app->hero->currentLocation, c, app->hero, EnemyType::ORK));
     app->hero->commit(0);
   } else if (auto tspell = std::dynamic_pointer_cast<ToggleTraitSpell>(spell)) {
     app->hero->commit(0);
     if (app->hero->hasTrait(tspell->trait)) {
-      app->hero->traits.erase(std::remove(app->hero->traits.begin(),
-                                          app->hero->traits.end(),
-                                          tspell->trait));
+      app->hero->traits.erase(std::remove(
+          app->hero->traits.begin(), app->hero->traits.end(), tspell->trait));
     } else {
       app->hero->traits.push_back(tspell->trait);
     }

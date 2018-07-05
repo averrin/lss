@@ -328,6 +328,7 @@ void LSSApp::update() {
   lastMode = modeManager.modeFlags->currentMode;
 }
 
+//FIXME: black text on start
 void LSSApp::draw() {
 
   gl::color(state->currentPalette.bgColor);

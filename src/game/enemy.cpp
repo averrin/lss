@@ -128,6 +128,7 @@ void Enemy::onEvent(CommitEvent &e) {
                                &path, &totalCost);
     delete pather;
     if (result != micropather::MicroPather::SOLVED) {
+      //TODO: who print this? fix it.
       fmt::print("cannot find path\n");
       actionPoints = 0;
       return;
