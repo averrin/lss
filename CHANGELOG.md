@@ -2,6 +2,8 @@
 
 ### 0.0.7
 - init dungeon generator
+- river generator
+- place random enemies
 
 ### 0.0.6
 - durability for torches

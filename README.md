@@ -20,9 +20,9 @@ Yet another unfinished roguelike game.
 - [X] Creature traits (for skills and enemy tricks)
 - [X] Armor
 - [X] Enemy with torches
-- [ ] Map generator
-- [ ] Cell & location features
-- [ ] Light/shadow-related traits
+- [X] Map generator
+- [X] Cell & location features
+- [X] Light/shadow-related traits
 - [ ] Better event log
 - [ ] Weights
 - [ ] Passive, patrol and "hero search" AI, stealth
