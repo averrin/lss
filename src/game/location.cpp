@@ -18,6 +18,11 @@ float getDistance(std::shared_ptr<Cell> c, std::shared_ptr<Cell> cc) {
 
 Location::Location() {}
 
+void Location::onEvent(DoorOpenedEvent &e) {
+  player->calcViewField(true);
+  updateView(player);
+}
+
 void Location::onEvent(CommitEvent &e) {
   auto t0 = std::chrono::system_clock::now();
   player->calcViewField();
@@ -149,6 +154,7 @@ void Location::enter(std::shared_ptr<Player> hero, std::shared_ptr<Cell> cell) {
   handlers.push_back(eb::EventBus::AddHandler<DigEvent>(*this, hero));
   handlers.push_back(eb::EventBus::AddHandler<DropEvent>(*this));
   handlers.push_back(eb::EventBus::AddHandler<CommitEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<DoorOpenedEvent>(*this));
 }
 
 void Location::leave(std::shared_ptr<Player> hero) {
@@ -199,7 +205,6 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
     }
   }
   for (auto t : torches) {
-    // TODO: invalidate cache!
     for (auto c : getVisible(t, TORCH_DISTANCE)) {
       c->lightSources.push_back(c);
       c->illuminated = true;

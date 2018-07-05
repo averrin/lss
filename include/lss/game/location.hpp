@@ -19,6 +19,7 @@ class Location : public micropather::Graph,
                  public eb::EventHandler<DigEvent>,
                  public eb::EventHandler<DropEvent>,
                  public eb::EventHandler<CommitEvent>,
+                 public eb::EventHandler<DoorOpenedEvent>,
                  public eb::EventHandler<EnterCellEvent> {
 public:
   Location();
@@ -69,6 +70,7 @@ public:
   virtual void onEvent(DigEvent &e) override;
   virtual void onEvent(DropEvent &e) override;
   virtual void onEvent(CommitEvent &e) override;
+  virtual void onEvent(DoorOpenedEvent &e) override;
 
   float LeastCostEstimate(void *stateStart, void *stateEnd) override;
   void AdjacentCost(void *state,

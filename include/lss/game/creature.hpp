@@ -21,7 +21,7 @@ public:
                viewField.end() ||
            hasTrait(Traits::MIND_SIGHT);
   };
-  void calcViewField();
+  void calcViewField(bool force = false);
   bool interact(std::shared_ptr<Object>);
   int getDamage(std::shared_ptr<Object>);
 
