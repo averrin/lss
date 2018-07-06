@@ -11,6 +11,18 @@
 #include "EventHandler.hpp"
 #include "EventRegisttration.hpp"
 
+enum LocationFeature {
+  CAVE_PASSAGE,
+  RIVER,
+  TORCHES,
+};
+
+struct LocationSpec {
+  std::string name;
+  std::vector<LocationFeature> features;
+  std::vector<CellFeature> cellFeatures;
+};
+
 class Player;
 class Room;
 class Location : public micropather::Graph,
@@ -22,7 +34,8 @@ class Location : public micropather::Graph,
                  public eb::EventHandler<DoorOpenedEvent>,
                  public eb::EventHandler<EnterCellEvent> {
 public:
-  Location();
+  Location(LocationSpec t) : type(t), features(t.features) {}
+  LocationSpec type;
   Cells cells;
   Objects objects;
   std::shared_ptr<Player> player;
@@ -31,6 +44,11 @@ public:
   std::shared_ptr<Cell> enterCell;
   std::shared_ptr<Cell> exitCell;
   std::vector<std::shared_ptr<Room>> rooms;
+
+  std::vector<LocationFeature> features;
+  bool hasFeature(LocationFeature f) {
+    return std::find(features.begin(), features.end(), f) != features.end();
+  }
 
   void updateView(std::shared_ptr<Player>);
   void updateLight(std::shared_ptr<Player>);

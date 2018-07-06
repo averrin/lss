@@ -77,7 +77,7 @@ void LSSApp::setup() {
 
   hero = std::make_shared<Player>();
 
-  auto l = generator->getLocation();
+  auto l = generator->getLocation(LocationSpec{"Just dungeon"});
   l->depth = 0;
   locations.push_back(l);
 
@@ -328,7 +328,7 @@ void LSSApp::update() {
   lastMode = modeManager.modeFlags->currentMode;
 }
 
-//FIXME: black text on start
+// FIXME: black text on start
 void LSSApp::draw() {
 
   gl::color(state->currentPalette.bgColor);

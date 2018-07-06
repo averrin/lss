@@ -16,8 +16,6 @@ float getDistance(std::shared_ptr<Cell> c, std::shared_ptr<Cell> cc) {
   return sqrt(pow(cc->x - c->x, 2) + pow(cc->y - c->y, 2));
 }
 
-Location::Location() {}
-
 void Location::onEvent(DoorOpenedEvent &e) {
   fmt::print("on door open\n");
   player->calcViewField(true);

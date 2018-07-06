@@ -318,7 +318,7 @@ bool Creature::move(Direction d, bool autoAction) {
   return true;
 }
 
-//FIXME: fix doors!
+// FIXME: fix doors!
 void Creature::calcViewField(bool force) {
   if (cachedCell == currentCell && !force) {
     return;

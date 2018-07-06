@@ -5,6 +5,7 @@
 #include "lss/game/door.hpp"
 #include "lss/game/enemy.hpp"
 #include "lss/game/item.hpp"
+#include "lss/game/player.hpp"
 #include "lss/generator/generator.hpp"
 #include "lss/generator/room.hpp"
 #include "rang.hpp"
@@ -319,10 +320,30 @@ void makeRiver(std::shared_ptr<Location> location) {
       S, location->cells.size() - 2, 2, 2, 1, CellType::WATER);
 }
 
-std::shared_ptr<Location> Generator::getLocation() {
+std::shared_ptr<Location> Generator::getRandomLocation(std::shared_ptr<Player> hero) {
+  auto spec = LocationSpec{"Dungeon"};
+  if (rand() % 100 < 40) {
+    spec.features.push_back(LocationFeature::CAVE_PASSAGE);
+  }
+  if (rand() % 100 < 40) {
+    spec.features.push_back(LocationFeature::RIVER);
+  }
+  if (rand() % 100 < 60) {
+    spec.features.push_back(LocationFeature::TORCHES);
+  }
+  if (rand() % 100 < 10) {
+    spec.cellFeatures.push_back(CellFeature::BLOOD);
+    spec.name = "Temple of blood";
+  }
+  auto l = getLocation(spec);
+  l->depth = hero->currentLocation->depth + 1;
+  return l;
+}
+
+std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   auto t0 = std::chrono::system_clock::now();
 
-  auto location = std::make_shared<Location>();
+  auto location = std::make_shared<Location>(spec);
   auto WIDTH = 120;
   auto HEIGHT = 60;
 
@@ -374,7 +395,6 @@ std::shared_ptr<Location> Generator::getLocation() {
       location->rooms.push_back(passage);
     }
   }
-
   fixOverlapped(location);
 
   auto room = location->rooms[rand() % location->rooms.size()];
@@ -382,33 +402,49 @@ std::shared_ptr<Location> Generator::getLocation() {
       room->cells[rand() % room->height][rand() % room->width];
 
   room = location->rooms[rand() % location->rooms.size()];
-  location->exitCell = room->cells[rand() % room->height][rand() % room->width];
+  location->exitCell =
+      room->cells[rand() % room->height][rand() % room->width];
   location->exitCell->type = CellType::DOWNSTAIRS;
 
-  randomDig(location, location->enterCell, N, rand() % 40);
-  randomDig(location, location->enterCell, S, rand() % 40);
-  randomDig(location, location->enterCell, W, rand() % 40);
-  randomDig(location, location->enterCell, E, rand() % 40);
+  if (location->hasFeature(LocationFeature::CAVE_PASSAGE)) {
 
+    randomDig(location, location->enterCell, N, rand() % 40);
+    randomDig(location, location->enterCell, S, rand() % 40);
+    randomDig(location, location->enterCell, W, rand() % 40);
+    randomDig(location, location->enterCell, E, rand() % 40);
+  }
   location->enterCell->type = CellType::UPSTAIRS;
   location->enterCell->seeThrough = false;
 
-  auto tc = rand() % 7 + 3;
-  fmt::print("Torches: {}\n", tc);
-  for (auto n = 0; n < tc;) {
-    auto cell = location->cells[rand() % HEIGHT][rand() % WIDTH];
-    if (cell->type != CellType::FLOOR || location->getObjects(cell).size() > 0)
-      continue;
-    n++;
-    auto torch = std::make_shared<TorchStand>();
-    torch->currentCell = cell;
-    location->objects.push_back(torch);
+  if (location->hasFeature(LocationFeature::TORCHES)) {
+    auto tc = rand() % 7 + 3;
+    fmt::print("Torches: {}\n", tc);
+    for (auto n = 0; n < tc;) {
+      auto cell = location->cells[rand() % HEIGHT][rand() % WIDTH];
+      if (cell->type != CellType::FLOOR ||
+          location->getObjects(cell).size() > 0)
+        continue;
+      n++;
+      auto torch = std::make_shared<TorchStand>();
+      torch->currentCell = cell;
+      location->objects.push_back(torch);
+    }
   }
 
-  makeRiver(location);
+  if (location->hasFeature(LocationFeature::RIVER)) {
+    makeRiver(location);
+  }
   placeWalls(location);
   placeDoors(location);
   placeEnemies(location);
+
+  for (auto r : location->cells) {
+    for (auto c : r) {
+      for (auto cf : location->type.cellFeatures) {
+        c->features.push_back(cf);
+      }
+    }
+  }
 
   auto t1 = std::chrono::system_clock::now();
   using milliseconds = std::chrono::duration<double, std::milli>;

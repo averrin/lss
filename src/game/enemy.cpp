@@ -56,7 +56,8 @@ std::optional<Items> Enemy::drop() {
 }
 
 bool Enemy::interact(std::shared_ptr<Object> actor) {
-  if (hasTrait(Traits::INVULNERABLE)) return true;
+  if (hasTrait(Traits::INVULNERABLE))
+    return true;
   auto hero = std::dynamic_pointer_cast<Player>(actor);
   auto ptr = shared_from_this();
   if (hp > 0) {
@@ -128,7 +129,7 @@ void Enemy::onEvent(CommitEvent &e) {
                                &path, &totalCost);
     delete pather;
     if (result != micropather::MicroPather::SOLVED) {
-      //TODO: who print this? fix it.
+      // TODO: who print this? fix it.
       fmt::print("cannot find path\n");
       actionPoints = 0;
       return;

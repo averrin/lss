@@ -1,9 +1,12 @@
 #include "lss/ui/heroLine.hpp"
 #include "fmt/format.h"
 #include "lss/game/events.hpp"
+#include "lss/game/location.hpp"
 #include "lss/game/player.hpp"
 #include "lss/utils.hpp"
 #include <algorithm>
+
+using namespace std::string_literals;
 
 HeroLine::HeroLine(std::shared_ptr<State> s) : state(s) {
   eb::EventBus::AddHandler<CommitEvent>(*this);
@@ -26,6 +29,19 @@ void HeroLine::onEvent(CommitEvent &e) {
         });
     lightDurability = lightSlot->item->durability;
   }
+  std::string locationFeatures = "____";
+  if (hero->currentLocation->hasFeature(LocationFeature::TORCHES)) {
+    locationFeatures[0] = 'T';
+  }
+  if (hero->currentLocation->hasFeature(LocationFeature::CAVE_PASSAGE)) {
+    locationFeatures[1] = 'C';
+  }
+  if (hero->currentLocation->hasFeature(LocationFeature::RIVER)) {
+    locationFeatures[2] = 'R';
+  }
+  if (hero->currentLocation->type.cellFeatures.size() > 0 && hero->currentLocation->type.cellFeatures.front() == CellFeature::BLOOD) {
+    locationFeatures[3] = 'B';
+  }
   setContent({
       F(fmt::format("<b>{}</b>", hero->name)),
       F(fmt::format(
@@ -35,7 +51,7 @@ void HeroLine::onEvent(CommitEvent &e) {
       F(fmt::format("{}", hero->hasLight()
                               ? fmt::format("   L&lt;{}&gt;", lightDurability)
                               : "")),
-      F(fmt::format("   <b>P</b>:{}.{} D:{}", hero->currentCell->x,
-                    hero->currentCell->y, hero->currentLocation->depth)),
+      F(fmt::format("   <b>P</b>:{}.{} D:{} [{} {}]", hero->currentCell->x,
+                    hero->currentCell->y, hero->currentLocation->depth, hero->currentLocation->type.name, locationFeatures)),
   });
 }
