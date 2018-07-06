@@ -1,4 +1,5 @@
 #include <chrono>
+#include <set>
 #include <iostream>
 
 #include "fmt/format.h"
@@ -12,7 +13,7 @@
 
 Generator::Generator() {}
 
-int P_DOOR = 60;
+int P_DOOR = 40;
 
 Cells fill(int h, int w, CellSpec type) {
   Cells cells;
@@ -99,7 +100,7 @@ std::shared_ptr<Room> Generator::getRoom() {
   return room;
 }
 
-std::shared_ptr<Room> Generator::makePassage(std::shared_ptr<Cell> start,
+std::shared_ptr<Room> makePassage(std::shared_ptr<Cell> start,
                                              Direction dir, int length) {
   auto rh = 1;
   auto rw = 1;
@@ -117,6 +118,37 @@ std::shared_ptr<Room> Generator::makePassage(std::shared_ptr<Cell> start,
   auto room = std::make_shared<Room>(RoomType::PASSAGE, cells);
   return room;
 }
+
+void makePassageBetweenRooms(std::shared_ptr<Location> location, std::shared_ptr<Room> room1, std::shared_ptr<Room> room2) {
+    auto sc = room1->cells[rand() % room1->height][rand() % room1->width];
+    auto ec = room2->cells[rand() % room2->height][rand() % room2->width];
+    while (sc == ec) {
+      ec = room2->cells[rand() % room2->height][rand() % room2->width];
+    }
+
+    auto l = 0;
+    if (sc->y > ec->y) {
+      std::swap(sc, ec);
+    }
+
+    auto passage = makePassage(sc, S, ec->y - sc->y + 1);
+    paste(passage->cells, location, sc->x, sc->y);
+    passage->x = sc->x;
+    passage->y = sc->y;
+    location->rooms.push_back(passage);
+    sc = passage->cells.back().back();
+    if (sc != ec) {
+      if (sc->x > ec->x) {
+        std::swap(sc, ec);
+      }
+      passage = makePassage(sc, E, ec->x - sc->x + 1);
+      paste(passage->cells, location, sc->x, sc->y);
+      passage->x = sc->x;
+      passage->y = sc->y;
+      location->rooms.push_back(passage);
+    }
+}
+
 
 void makeFloor(std::shared_ptr<Cell> cell) {
   cell->type = CellType::FLOOR;
@@ -321,19 +353,19 @@ void makeRiver(std::shared_ptr<Location> location) {
 
 std::shared_ptr<Location> Generator::getRandomLocation(std::shared_ptr<Player> hero) {
   auto spec = LocationSpec{"Dungeon"};
-  if (rand() % 100 < 400) {
+  if (rand() % 100 < 40) {
     spec.features.push_back(LocationFeature::CAVE_PASSAGE);
   }
-  if (rand() % 100 < 40) {
+  if (rand() % 100 < 20) {
     spec.features.push_back(LocationFeature::RIVER);
   }
   if (rand() % 100 < 60) {
     spec.features.push_back(LocationFeature::TORCHES);
   }
-  if (rand() % 100 < 10) {
-    spec.cellFeatures.push_back(CellFeature::BLOOD);
-    spec.name = "Temple of blood";
-  }
+  // if (rand() % 100 < 10) {
+  //   spec.cellFeatures.push_back(CellFeature::BLOOD);
+  //   spec.name = "Temple of blood";
+  // }
   auto l = getLocation(spec);
   l->depth = hero->currentLocation->depth + 1;
   return l;
@@ -346,7 +378,7 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   auto WIDTH = 120;
   auto HEIGHT = 60;
 
-  auto rc = rand() % 7 + 3;
+  auto rc = rand() % 7 + 5;
 
   location->cells = fill(HEIGHT, WIDTH, CellType::UNKNOWN_CELL);
   for (auto n = 0; n < rc; n++) {
@@ -360,38 +392,32 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
     location->rooms.push_back(room);
   }
 
-  auto pc = 10;
+  auto pc = rand() % 10;
+  auto n = 0;
+  std::set<std::shared_ptr<Room>> rooms;
+  std::vector<std::shared_ptr<Room>> halls = location->rooms;
 
-  for (auto n = 0; n < pc; n++) {
+
+  while (n < pc) {
+    fmt::print("{} , {} / {}\n", n, rooms.size(), halls.size());
     auto room1 = location->rooms[rand() % location->rooms.size()];
     auto room2 = location->rooms[rand() % location->rooms.size()];
     if (room1 == room2)
       continue;
-
-    auto sc = room1->cells[rand() % room1->height][rand() % room1->width];
-    auto ec = room2->cells[rand() % room2->height][rand() % room2->width];
-    if (sc == ec)
-      continue;
-
-    auto l = 0;
-    if (sc->y > ec->y) {
-      std::swap(sc, ec);
-    }
-    auto passage = makePassage(sc, S, ec->y - sc->y + 1);
-    paste(passage->cells, location, sc->x, sc->y);
-    passage->x = sc->x;
-    passage->y = sc->y;
-    location->rooms.push_back(passage);
-    sc = passage->cells.back().back();
-    if (sc != ec) {
-      if (sc->x > ec->x) {
-        std::swap(sc, ec);
+    if (std::find(halls.begin(), halls.end(), room1) != halls.end())
+      rooms.insert(room1);
+    if (std::find(halls.begin(), halls.end(), room2) != halls.end())
+      rooms.insert(room2);
+    n++;
+    makePassageBetweenRooms(location, room1, room2);
+  }
+  for (auto r : halls) {
+    if (std::find(rooms.begin(), rooms.end(), r) == rooms.end()) {
+      auto room2 = location->rooms[rand() % location->rooms.size()];
+      while (room2 == r) {
+        room2 = location->rooms[rand() % location->rooms.size()];
       }
-      passage = makePassage(sc, E, ec->x - sc->x + 1);
-      paste(passage->cells, location, sc->x, sc->y);
-      passage->x = sc->x;
-      passage->y = sc->y;
-      location->rooms.push_back(passage);
+      makePassageBetweenRooms(location, r, room2);
     }
   }
   fixOverlapped(location);
@@ -424,10 +450,15 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
       if (cell->type != CellType::FLOOR ||
           location->getObjects(cell).size() > 0)
         continue;
-      n++;
+      //TODO: make caves rooms and place torches in rooms near walls
+      // auto ngs = location->getNeighbors(cell);
+      // if (std::find_if(ngs.begin(), ngs.end(), [](std::shared_ptr<Cell> nc) {
+      //   return nc->type == CellType::WALL;
+      // }) == ngs.end()) continue;
       auto torch = std::make_shared<TorchStand>();
       torch->currentCell = cell;
       location->objects.push_back(torch);
+      n++;
     }
   }
 
