@@ -468,7 +468,6 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
       if (cell->type != CellType::FLOOR ||
           location->getObjects(cell).size() > 0)
         continue;
-      //TODO: make caves rooms and place torches in rooms near walls
       auto ngs = location->getNeighbors(cell);
       if (std::find_if(ngs.begin(), ngs.end(), [](std::shared_ptr<Cell> nc) {
         return nc->type == CellType::WALL;

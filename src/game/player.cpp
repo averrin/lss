@@ -221,8 +221,10 @@ void Player::onEvent(WalkCommandEvent &e) {
                                return std::dynamic_pointer_cast<Item>(o) &&
                                       o->currentCell == currentCell;
                              });
-    if (item != currentLocation->objects.end())
+    //TODO: stop walk if enemy is near
+    if (item != currentLocation->objects.end()) {
       break;
+    }
   }
   commit(0);
 }

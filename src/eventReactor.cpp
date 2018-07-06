@@ -287,7 +287,6 @@ std::shared_ptr<Enemy> mkEnemy(std::shared_ptr<Location> location,
   return enemy;
 }
 
-// TODO: make configurable ToggleTrait spell
 void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
   if (spell == Spells::REVEAL) {
     app->hero->currentLocation->reveal();
