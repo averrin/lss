@@ -137,11 +137,10 @@ void updateCell(std::shared_ptr<Cell> cell, CellSpec type,
   cell->features = features;
 }
 
-void dig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start,
+std::shared_ptr<Cell>  dig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start,
          Direction dir, int length, int minWidth, int jWidth, int wind = 0,
          CellSpec type = CellType::FLOOR) {
   auto cell = start;
-  fmt::print("\n");
   std::vector<CellFeature> f = {CellFeature::CAVE};
   for (auto step = 0; step < length; step++) {
     auto width = (jWidth > 1 ? rand() % jWidth : 0) + minWidth;
@@ -149,7 +148,6 @@ void dig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start,
     if (w == 1) {
       w = rand() % 2 ? 0 : 1;
     }
-    fmt::print("{}", w);
     auto offset = rand() % 2 ? -1 : 1;
     auto ox = cell->x;
     auto oy = cell->y;
@@ -215,14 +213,15 @@ void dig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start,
     };
     cell = location->cells[ny][nx];
   }
+  return cell;
 }
 
-void randomDig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start,
+std::shared_ptr<Cell> randomDig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start,
                Direction dir, int length) {
   int minWidth = 1;
   int jWidth = 6;
   bool wind = -1;
-  dig(location, start, dir, length, minWidth, jWidth, wind);
+  return dig(location, start, dir, length, minWidth, jWidth, wind);
 }
 
 void fixOverlapped(std::shared_ptr<Location> location) {
@@ -322,7 +321,7 @@ void makeRiver(std::shared_ptr<Location> location) {
 
 std::shared_ptr<Location> Generator::getRandomLocation(std::shared_ptr<Player> hero) {
   auto spec = LocationSpec{"Dungeon"};
-  if (rand() % 100 < 40) {
+  if (rand() % 100 < 400) {
     spec.features.push_back(LocationFeature::CAVE_PASSAGE);
   }
   if (rand() % 100 < 40) {
@@ -407,11 +406,12 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   location->exitCell->type = CellType::DOWNSTAIRS;
 
   if (location->hasFeature(LocationFeature::CAVE_PASSAGE)) {
-
-    randomDig(location, location->enterCell, N, rand() % 40);
-    randomDig(location, location->enterCell, S, rand() % 40);
-    randomDig(location, location->enterCell, W, rand() % 40);
-    randomDig(location, location->enterCell, E, rand() % 40);
+    std::vector<Direction> ds{N,E,S,W};
+    auto room = location->rooms[rand() % location->rooms.size()];
+    auto cell = room->cells[rand() % room->height][rand() % room->width];
+    for (auto n = 0; n < rand()%6+2; n++) {
+      cell = randomDig(location, cell, ds[rand()%ds.size()], rand() % 30);
+    }
   }
   location->enterCell->type = CellType::UPSTAIRS;
   location->enterCell->seeThrough = false;
