@@ -39,6 +39,11 @@ public:
   HeroDiedEvent(eb::ObjectPtr);
 };
 
+class LocationChangeEvent : public eb::Event {
+public:
+  LocationChangeEvent(eb::ObjectPtr ptr): eb::Event(ptr) {}
+};
+
 class ItemTakenEvent : public eb::Event {
 public:
   ItemTakenEvent(eb::ObjectPtr, std::shared_ptr<Item>);

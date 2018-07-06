@@ -70,6 +70,10 @@ void EventReactor::onEvent(CommitEvent &e) {
   app->invalidate("commit");
 }
 
+void EventReactor::onEvent(LocationChangeEvent &e) {
+  app->invalidate("location change");
+}
+
 void EventReactor::onEvent(QuitCommandEvent &e) { exit(0); }
 
 void EventReactor::onEvent(HelpCommandEvent &e) {

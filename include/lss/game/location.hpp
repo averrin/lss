@@ -8,6 +8,7 @@
 #include <cmath>
 #include <map>
 
+#include "fmt/format.h"
 #include "EventHandler.hpp"
 #include "EventRegisttration.hpp"
 
@@ -32,6 +33,7 @@ class Location : public micropather::Graph,
                  public eb::EventHandler<DropEvent>,
                  public eb::EventHandler<CommitEvent>,
                  public eb::EventHandler<DoorOpenedEvent>,
+                 public eb::EventHandler<LeaveCellEvent>,
                  public eb::EventHandler<EnterCellEvent> {
 public:
   Location(LocationSpec t) : type(t), features(t.features) {}
@@ -85,6 +87,7 @@ public:
   virtual void onEvent(EnemyDiedEvent &e) override;
   virtual void onEvent(ItemTakenEvent &e) override;
   virtual void onEvent(EnterCellEvent &e) override;
+  virtual void onEvent(LeaveCellEvent &e) override;
   virtual void onEvent(DigEvent &e) override;
   virtual void onEvent(DropEvent &e) override;
   virtual void onEvent(CommitEvent &e) override;
@@ -102,10 +105,10 @@ public:
   std::vector<std::shared_ptr<Cell>> getVisible(std::shared_ptr<Cell> start,
                                                 float distance) {
     auto it = visibilityCache.find({start, distance});
-    // TODO: invalidate cache!
     if (it != visibilityCache.end()) {
       return visibilityCache[{start, distance}];
     }
+    fmt::print("cache miss for {}.{} : {}\n", start->x, start->y, distance);
     std::vector<std::shared_ptr<Cell>> result;
     fov::Vec heroPoint{start->x, start->y};
     fov::Vec bounds{(int)cells.front().size(), (int)cells.size()};

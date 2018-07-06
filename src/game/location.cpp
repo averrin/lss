@@ -31,6 +31,9 @@ void Location::onEvent(CommitEvent &e) {
   milliseconds ms = t1 - t0;
   std::cout << "location in commit time taken: " << rang::fg::green
             << ms.count() << rang::style::reset << '\n';
+
+  LocationChangeEvent ec(nullptr);
+  eb::EventBus::FireEvent(ec);
 }
 
 void Location::onEvent(DropEvent &e) {
@@ -110,6 +113,7 @@ void Location::onEvent(DigEvent &e) {
 ItemsFoundEvent::ItemsFoundEvent(eb::ObjectPtr s, Objects i)
     : eb::Event(s), items(i) {}
 void Location::onEvent(EnterCellEvent &e) {
+  if (auto hero = std::dynamic_pointer_cast<Player>(e.getSender())) {
   Objects items(objects.size());
   auto it = std::copy_if(objects.begin(), objects.end(), items.begin(),
                          [e](std::shared_ptr<Object> o) {
@@ -120,17 +124,33 @@ void Location::onEvent(EnterCellEvent &e) {
   if (items.size() > 0) {
     ItemsFoundEvent ie(nullptr, items);
     eb::EventBus::FireEvent(ie);
-  }
-  auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
-  if (e.cell->illuminated) {
+  }}
+  // if (e.cell->illuminated) {
     auto vd = TORCH_DISTANCE;
     for (auto ls : e.cell->lightSources) {
-      auto lsi = visibilityCache.find({ls, vd});
-      if (lsi != visibilityCache.end()) {
-        visibilityCache.erase(lsi);
+      for (auto ld = vd; ld > 2; ld--) {
+        auto lsi = visibilityCache.find({ls, ld});
+        if (lsi != visibilityCache.end()) {
+          fmt::print("invalidate cache for {}.{} : {}\n", ls->x, ls->y, vd);
+          visibilityCache.erase(lsi);
+        }
       }
     }
-  }
+  // }
+}
+void Location::onEvent(LeaveCellEvent &e) {
+  // if (e.cell->illuminated) {
+    auto vd = TORCH_DISTANCE;
+    for (auto ls : e.cell->lightSources) {
+      for (auto ld = vd; ld > 2; ld--) {
+        auto lsi = visibilityCache.find({ls, ld});
+        if (lsi != visibilityCache.end()) {
+          fmt::print("invalidate cache for {}.{} : {}\n", ls->x, ls->y, vd);
+          visibilityCache.erase(lsi);
+        }
+      }
+    }
+  // }
 }
 
 void Location::enter(std::shared_ptr<Player> hero, std::shared_ptr<Cell> cell) {
@@ -147,12 +167,13 @@ void Location::enter(std::shared_ptr<Player> hero, std::shared_ptr<Cell> cell) {
   updateView(hero);
   hero->commit(0);
 
+  handlers.push_back(eb::EventBus::AddHandler<CommitEvent>(*this));
   handlers.push_back(eb::EventBus::AddHandler<EnemyDiedEvent>(*this));
   handlers.push_back(eb::EventBus::AddHandler<ItemTakenEvent>(*this));
-  handlers.push_back(eb::EventBus::AddHandler<EnterCellEvent>(*this, hero));
+  handlers.push_back(eb::EventBus::AddHandler<EnterCellEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<LeaveCellEvent>(*this));
   handlers.push_back(eb::EventBus::AddHandler<DigEvent>(*this, hero));
   handlers.push_back(eb::EventBus::AddHandler<DropEvent>(*this));
-  handlers.push_back(eb::EventBus::AddHandler<CommitEvent>(*this));
   handlers.push_back(eb::EventBus::AddHandler<DoorOpenedEvent>(*this));
 }
 
@@ -191,7 +212,7 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
       if (std::find_if(objects.begin(), objects.end(),
                        [c](std::shared_ptr<Object> o) {
                          return o->currentCell == c && !o->seeThrough;
-                       }) != objects.end()) {
+                       }) != objects.end() || c == player->currentCell) {
         c->seeThrough = false;
       }
       c->illuminated = false;
@@ -205,7 +226,7 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
   }
   for (auto t : torches) {
     for (auto c : getVisible(t, TORCH_DISTANCE)) {
-      c->lightSources.push_back(c);
+      c->lightSources.push_back(t);
       c->illuminated = true;
     }
   }

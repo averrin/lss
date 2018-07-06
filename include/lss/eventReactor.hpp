@@ -15,6 +15,7 @@ class EventReactor : public eb::EventHandler<eb::Event>,
                      public eb::EventHandler<ZapCommandEvent>,
                      public eb::EventHandler<StairEvent>,
                      public eb::EventHandler<HeroDiedEvent>,
+                     public eb::EventHandler<LocationChangeEvent>,
                      public eb::EventHandler<QuitCommandEvent> {
 public:
   EventReactor(LSSApp *a) : app(a) {
@@ -28,6 +29,7 @@ public:
     eb::EventBus::AddHandler<CommitEvent>(*this);
     eb::EventBus::AddHandler<StairEvent>(*this);
     eb::EventBus::AddHandler<HeroDiedEvent>(*this);
+    eb::EventBus::AddHandler<LocationChangeEvent>(*this);
   }
   LSSApp *app;
 
@@ -41,6 +43,7 @@ public:
   virtual void onEvent(CommitEvent &e) override;
   virtual void onEvent(StairEvent &e) override;
   virtual void onEvent(HeroDiedEvent &e) override;
+  virtual void onEvent(LocationChangeEvent &e) override;
 
   bool slotCallback(std::shared_ptr<Object>);
   bool itemCallback(std::shared_ptr<Slot>, std::shared_ptr<Object>);

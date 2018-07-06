@@ -5,6 +5,7 @@
 enum RoomType {
   HALL,
   PASSAGE,
+  CAVE_ROOM,
 };
 
 class Room {

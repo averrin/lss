@@ -309,20 +309,20 @@ bool Creature::move(Direction d, bool autoAction) {
   }
 
   currentCell = nc;
-  calcViewField();
 
   LeaveCellEvent le(shared_from_this(), cc);
   eb::EventBus::FireEvent(le);
   EnterCellEvent ee(shared_from_this(), currentCell);
   eb::EventBus::FireEvent(ee);
+  calcViewField();
   return true;
 }
 
 // FIXME: fix doors!
 void Creature::calcViewField(bool force) {
-  if (cachedCell == currentCell && !force) {
-    return;
-  }
+  // if (cachedCell == currentCell && !force) {
+  //   return;
+  // }
   auto vd = VISIBILITY_DISTANCE(this);
   if (hasTrait(Traits::NIGHT_VISION)) {
     vd = 1000;
@@ -331,6 +331,9 @@ void Creature::calcViewField(bool force) {
   std::vector<std::shared_ptr<Cell>> temp;
   viewField = currentLocation->getVisible(currentCell, vd);
   cachedCell = currentCell;
+  for (auto c : viewField) {
+      c->lightSources.push_back(currentCell);
+  }
 }
 
 bool Creature::hasLight() {
