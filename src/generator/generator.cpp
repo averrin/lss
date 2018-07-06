@@ -177,7 +177,7 @@ void updateCell(std::shared_ptr<Cell> cell, CellSpec type,
   cell->features = features;
 }
 
-std::pair<std::shared_ptr<Cell>, Cells> dig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start,
+std::pair<std::shared_ptr<Cell>, Cells> dig(std::shared_ptr<Cell> start,
          Direction dir, int length, int minWidth, int jWidth, int wind = 0,
          CellSpec type = CellType::FLOOR) {
   auto cell = start;
@@ -185,6 +185,7 @@ std::pair<std::shared_ptr<Cell>, Cells> dig(std::shared_ptr<Location> location, 
   Cells dCells = fill(HEIGHT, WIDTH, CellType::UNKNOWN_CELL);
   for (auto step = 0; step < length; step++) {
     auto width = (jWidth > 1 ? rand() % jWidth : 0) + minWidth;
+    //TODO: make wind configurable without crazy magic
     auto w = wind == -1 ? rand() % (width >= 3 ? width * 3 / 4 : 2) : wind;
     if (w == 1) {
       w = rand() % 2 ? 0 : 1;
@@ -199,12 +200,10 @@ std::pair<std::shared_ptr<Cell>, Cells> dig(std::shared_ptr<Location> location, 
       ox -= width / 2;
       for (auto n = 0; n < width; n++) {
         ox++;
-        if (oy < 0 || ox < 0 || oy > location->cells.size() - 1 ||
-            ox > location->cells.front().size() - 1)
+        if (oy < 0 || ox < 0 || oy > HEIGHT - 1 ||
+            ox > WIDTH - 1)
           continue;
-        auto c = location->cells[oy][ox];
-        updateCell(c, type, f);
-        dCells[oy][ox] = c;
+        dCells[oy][ox] = std::make_shared<Cell>(ox, oy, type, f);
       }
       ny -= 1;
       nx += offset * w;
@@ -213,8 +212,8 @@ std::pair<std::shared_ptr<Cell>, Cells> dig(std::shared_ptr<Location> location, 
       ox -= width / 2;
       for (auto n = 0; n < width; n++) {
         ox++;
-        if (oy < 0 || ox < 0 || oy > location->cells.size() - 1 ||
-            ox > location->cells.front().size() - 1)
+        if (oy < 0 || ox < 0 || oy > HEIGHT - 1 ||
+            ox > WIDTH - 1)
           continue;
         dCells[oy][ox] = std::make_shared<Cell>(ox, oy, type, f);
       }
@@ -225,8 +224,8 @@ std::pair<std::shared_ptr<Cell>, Cells> dig(std::shared_ptr<Location> location, 
       oy -= width / 2;
       for (auto n = 0; n < width; n++) {
         oy++;
-        if (oy < 0 || ox < 0 || oy > location->cells.size() - 1 ||
-            ox > location->cells.front().size() - 1)
+        if (oy < 0 || ox < 0 || oy > HEIGHT - 1 ||
+            ox > WIDTH - 1)
           continue;
         dCells[oy][ox] = std::make_shared<Cell>(ox, oy, type, f);
       }
@@ -237,8 +236,8 @@ std::pair<std::shared_ptr<Cell>, Cells> dig(std::shared_ptr<Location> location, 
       oy -= width / 2;
       for (auto n = 0; n < width; n++) {
         oy++;
-        if (oy < 0 || ox < 0 || oy > location->cells.size() - 1 ||
-            ox > location->cells.front().size() - 1)
+        if (oy < 0 || ox < 0 || oy > HEIGHT - 1 ||
+            ox > WIDTH - 1)
           continue;
         dCells[oy][ox] = std::make_shared<Cell>(ox, oy, type, f);
       }
@@ -246,8 +245,8 @@ std::pair<std::shared_ptr<Cell>, Cells> dig(std::shared_ptr<Location> location, 
       ny += offset * w;
       break;
     }
-    if (ny < 0 || nx < 0 || ny > location->cells.size() - 1 ||
-        nx > location->cells.front().size() - 1) {
+    if (ny < 0 || nx < 0 || ny > HEIGHT - 1 ||
+        nx > WIDTH - 1) {
       break;
     };
     cell = dCells[ny][nx];
@@ -255,12 +254,12 @@ std::pair<std::shared_ptr<Cell>, Cells> dig(std::shared_ptr<Location> location, 
   return {cell, dCells};
 }
 
-std::pair<std::shared_ptr<Cell>, Cells> randomDig(std::shared_ptr<Location> location, std::shared_ptr<Cell> start,
+std::pair<std::shared_ptr<Cell>, Cells> randomDig(std::shared_ptr<Cell> start,
                Direction dir, int length) {
   int minWidth = 1;
   int jWidth = 6;
   bool wind = -1;
-  return dig(location, start, dir, length, minWidth, jWidth, wind);
+  return dig(start, dir, length, minWidth, jWidth, wind);
 }
 
 void fixOverlapped(std::shared_ptr<Location> location) {
@@ -353,7 +352,7 @@ void placeEnemies(std::shared_ptr<Location> location) {
 }
 
 void makeRiver(std::shared_ptr<Location> location) {
-  dig(location, location->cells[0][location->cells.front().size() / 3 +
+  dig(location->cells[0][location->cells.front().size() / 3 +
                                    rand() % location->cells.front().size() / 3],
       S, location->cells.size() - 2, 2, 2, 1, CellType::WATER);
 }
@@ -440,7 +439,7 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
     auto room = location->rooms[rand() % location->rooms.size()];
     auto cell = room->cells[rand() % room->height][rand() % room->width];
     for (auto n = 0; n < rand()%6+2; n++) {
-      auto res = randomDig(location, cell, ds[rand()%ds.size()], rand() % 30);
+      auto res = randomDig(cell, ds[rand()%ds.size()], rand() % 30);
       cell = res.first;
       auto newRoom = std::make_shared<Room>(RoomType::CAVE_ROOM, res.second);
       paste(newRoom->cells, location, 0, 0);
