@@ -19,8 +19,6 @@ std::string VERSION = "0.0.7 by Averrin";
 
 int HOffset = 24;
 int VOffset = 24;
-// std::string DEFAULT_FONT = "Iosevka 14";
-std::string DEFAULT_FONT = "FiraCode 12";
 
 void LSSApp::setup() {
   srand(time(NULL));
@@ -72,12 +70,13 @@ void LSSApp::setup() {
   helpState->currentPalette = palettes::DARK;
   inventoryState->currentPalette = palettes::DARK;
   gameOverState->currentPalette = palettes::DARK;
+  heroState->currentPalette = palettes::DARK;
 
   statusLine->setContent(State::normal_mode);
 
   hero = std::make_shared<Player>();
 
-  auto l = generator->getLocation(LocationSpec{"Just dungeon"});
+  auto l = generator->getRandomLocation(hero);
   l->depth = 0;
   locations.push_back(l);
 
@@ -328,7 +327,6 @@ void LSSApp::update() {
   lastMode = modeManager.modeFlags->currentMode;
 }
 
-// FIXME: black text on start
 void LSSApp::draw() {
 
   gl::color(state->currentPalette.bgColor);
@@ -345,12 +343,10 @@ void LSSApp::draw() {
   case Modes::HELP:
   case Modes::OBJECTSELECT:
   case Modes::INVENTORY:
-    gameFrame->setDefaultTextColor(state->currentPalette.fgColor);
     gl::draw(gameFrame->getTexture(), vec2(HOffset, VOffset));
     break;
   case Modes::GAMEOVER:
     gameFrame->setTextAlignment(kp::pango::TextAlignment::CENTER);
-    gameFrame->setDefaultTextColor(state->currentPalette.fgColor);
     gl::draw(gameFrame->getTexture(), vec2(HOffset, VOffset));
     break;
   }
@@ -360,7 +356,6 @@ void LSSApp::draw() {
     gl::drawSolidRect(Rectf(0, getWindowHeight() - StatusLine::HEIGHT,
                             getWindowWidth(), getWindowHeight()));
     gl::color(ColorA(1, 1, 1, 1));
-    statusFrame->setDefaultTextColor(Color(state->currentPalette.fgColor));
     statusFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
     gl::draw(statusFrame->getTexture(),
              vec2(6, getWindowHeight() - StatusLine::HEIGHT + 6));
@@ -372,7 +367,6 @@ void LSSApp::draw() {
         Rectf(0, getWindowHeight() - StatusLine::HEIGHT - HeroLine::HEIGHT,
               getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT));
     gl::color(ColorA(1, 1, 1, 1));
-    heroFrame->setDefaultTextColor(Color(state->currentPalette.fgColor));
     heroFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
     gl::draw(
         heroFrame->getTexture(),

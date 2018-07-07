@@ -26,6 +26,7 @@ void State::render(kp::pango::CinderPangoRef surface) {
   if (!damaged) {
     std::string DEFAULT_FONT = "FiraCode 12";
     surface->setDefaultTextFont(DEFAULT_FONT);
+    surface->setDefaultTextColor(currentPalette.fgColor);
 
     surface->setText(cache);
     auto t0 = std::chrono::system_clock::now();

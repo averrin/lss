@@ -332,16 +332,17 @@ std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Location> location,
 }
 
 // TODO: use room threat and hero level. Add respawn
-void placeEnemies(std::shared_ptr<Location> location) {
+void placeEnemies(std::shared_ptr<Location> location, int threat) {
+  fmt::print("Threat level: {}\n", threat);
+  std::vector<EnemySpec> ets{EnemyType::GOBLIN, EnemyType::ORK,
+                              EnemyType::PIXI, EnemyType::OGRE};
   auto e = 0;
   for (auto r : location->cells) {
     for (auto c : r) {
       if (c->type == CellType::FLOOR) {
         if (rand() % 1000 > 8 || location->getObjects(c).size() > 0)
           continue;
-        std::vector<EnemySpec> ets{EnemyType::GOBLIN, EnemyType::ORK,
-                                   EnemyType::PIXI, EnemyType::OGRE};
-        auto et = ets[rand() % ets.size()];
+        auto et = ets[rand() % (ets.size() > threat ? threat + 1 : ets.size())];
         auto enemy = makeEnemy(location, c, et);
         location->objects.push_back(enemy);
         e++;
@@ -372,8 +373,13 @@ std::shared_ptr<Location> Generator::getRandomLocation(std::shared_ptr<Player> h
   //   spec.cellFeatures.push_back(CellFeature::BLOOD);
   //   spec.name = "Temple of blood";
   // }
+  int depth = 0;
+  if (hero->currentLocation != nullptr) {
+    depth = hero->currentLocation->depth + 1;
+  }
+  spec.threat = depth;
   auto l = getLocation(spec);
-  l->depth = hero->currentLocation->depth + 1;
+  l->depth = depth;
   return l;
 }
 
@@ -457,7 +463,7 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   }
   placeWalls(location);
   placeDoors(location);
-  placeEnemies(location);
+  placeEnemies(location, spec.threat);
 
   if (location->hasFeature(LocationFeature::TORCHES)) {
     auto tc = rand() % 7 + 3;

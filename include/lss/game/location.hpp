@@ -20,6 +20,7 @@ enum LocationFeature {
 
 struct LocationSpec {
   std::string name;
+  int threat = 0;
   std::vector<LocationFeature> features;
   std::vector<CellFeature> cellFeatures;
 };
