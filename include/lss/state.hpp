@@ -6,9 +6,14 @@
 #include <string>
 #include <vector>
 
-struct Cursor {
+struct Position {
   int x;
   int y;
+};
+
+struct Selection {
+  Position pos;
+  std::string color;
 };
 
 class State {
@@ -24,7 +29,8 @@ public:
   void setSelect(bool);
 
   Fragments fragments;
-  Cursor cursor;
+  Position cursor;
+  std::vector<Selection> selection;
   int width;
   int height;
   bool select = false;

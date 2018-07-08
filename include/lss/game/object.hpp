@@ -8,10 +8,12 @@
 
 class Object : public eb::Object, public std::enable_shared_from_this<Object> {
 public:
-  Object();
+  Object() {}
+  Object(std::string n) : name(n) {}
   // virtual ~Object() = default;
   bool passThrough = true;
   bool seeThrough = true;
+  std::string name;
 
   std::shared_ptr<Cell> currentCell;
 

@@ -217,6 +217,14 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
           c == player->currentCell) {
         c->seeThrough = false;
       }
+      c->passThrough = c->type.passThrough;
+      if (std::find_if(objects.begin(), objects.end(),
+                       [c](std::shared_ptr<Object> o) {
+                         return o->currentCell == c && !o->passThrough;
+                       }) != objects.end() ||
+          c == player->currentCell) {
+        c->passThrough = false;
+      }
       c->illuminated = false;
       // FIXME: not in distance, but only visible
       if (hasLight && getDistance(c, hero->currentCell) <= heroVD) {

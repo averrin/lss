@@ -11,7 +11,7 @@
 
 Creature::Creature() {
   passThrough = false;
-  seeThrough = true;
+  seeThrough = false;
 }
 
 float Attribute::operator()(Creature *c) {

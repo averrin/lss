@@ -96,16 +96,6 @@ bool GameOverMode::processKey(KeyEvent event) {
 
 bool InspectMode::processKey(KeyEvent event) {
   switch (event.getCode()) {
-  case KeyEvent::KEY_i:
-    if (event.isShiftDown()) {
-      app->modeManager.toInspect();
-      app->statusLine->setContent({State::normal_mode});
-      app->state->select = false;
-      app->state->invalidate();
-      app->hero->commit(0);
-      return true;
-    }
-    break;
   case KeyEvent::KEY_j:
   case KeyEvent::KEY_h:
   case KeyEvent::KEY_l:
@@ -122,14 +112,104 @@ bool InspectMode::processKey(KeyEvent event) {
             ->cells[app->state->cursor.y][app->state->cursor.x],
         *utils::getDirectionByName(*d));
     app->state->cursor = {nc->x, nc->y};
-    fmt::print("{}.{}\n", app->state->cursor.x, app->state->cursor.y);
     app->state->invalidate();
+    render();
     return true;
   } break;
-  case KeyEvent::KEY_q:
-    break;
   }
   return false;
+}
+
+void InspectMode::render() {
+  auto location = app->hero->currentLocation;
+  auto cell = location->cells[app->state->cursor.y][app->state->cursor.x];
+  auto objects = location->getObjects(cell);
+
+  app->inspectState->setContent(
+      {F(fmt::format("Selected cell: <b>{}.{}</b>", cell->x, cell->y))});
+  app->inspectState->appendContent(State::END_LINE);
+  app->inspectState->appendContent(
+      {F(fmt::format("Type: <b>{}</b>", cell->type.name))});
+  app->inspectState->appendContent(State::END_LINE);
+  if (cell->type == CellType::UNKNOWN_CELL) return;
+  app->inspectState->appendContent(
+      {F(fmt::format("Type <b>PASS</b>THROUGH: [<b>{}</b>]",
+                     cell->type.passThrough ? "<span color='green'>✔</span>" : " "))});
+  app->inspectState->appendContent(State::END_LINE);
+  app->inspectState->appendContent(
+      {F(fmt::format("Type <b>SEE</b>THROUGH: [<b>{}</b>]",
+                     cell->type.passThrough ? "<span color='green'>✔</span>" : " "))});
+  app->inspectState->appendContent(State::END_LINE);
+  app->inspectState->appendContent({F(fmt::format(
+      "<b>PASS</b>THROUGH: [<b>{}</b>]", cell->passThrough ? "<span color='green'>✔</span>" : " "))});
+  app->inspectState->appendContent(State::END_LINE);
+  app->inspectState->appendContent({F(fmt::format(
+      "<b>SEE</b>THROUGH: [<b>{}</b>]", cell->passThrough ? "<span color='green'>✔</span>" : " "))});
+  app->inspectState->appendContent(State::END_LINE);
+  app->inspectState->appendContent({F(
+      fmt::format("Illuminated: [<b>{}</b>]", cell->illuminated ? "<span color='green'>✔</span>" : " "))});
+  app->inspectState->appendContent(State::END_LINE);
+  app->inspectState->appendContent(
+      {F(fmt::format("Cell features count: <b>{}</b>", cell->features.size()))});
+  app->inspectState->appendContent(State::END_LINE);
+  if (cell->features.size() > 0) {
+    //TODO: convert features to structs with names
+    // app->inspectState->appendContent(State::END_LINE);
+  }
+  app->inspectState->appendContent(
+      {F(fmt::format("Light sources: <b>{}</b>", cell->lightSources.size()))});
+  app->inspectState->appendContent(State::END_LINE);
+  app->inspectState->appendContent(State::END_LINE);
+  app->inspectState->appendContent({F(fmt::format(
+      "Hero: [<b>{}</b>]", cell == app->hero->currentCell ? "<span color='green'>✔</span>" : " "))});
+  app->inspectState->appendContent(State::END_LINE);
+  app->inspectState->appendContent(
+      {F(fmt::format("Hero can <b>pass</b>: [<b>{}</b>]",
+                     cell->canPass(app->hero->traits) ? "<span color='green'>✔</span>" : " "))});
+  app->inspectState->appendContent(State::END_LINE);
+  app->inspectState->appendContent(
+      {F(fmt::format("Hero can <b>see</b>: [<b>{}</b>]",
+                     app->hero->canSee(cell) ? "<span color='green'>✔</span>" : " "))});
+  app->inspectState->appendContent(State::END_LINE);
+
+  if (cell->type == CellType::WALL) return;
+
+  app->state->selection.clear();
+  auto allEnemies = utils::castObjects<Enemy>(location->objects);
+  for (auto e : allEnemies) {
+    if (e->canSee(cell)) {
+      app->inspectState->appendContent({F(fmt::format(
+          "{} at {}.{} can <b>see</b>: [<b>{}</b>]", e->type.name,
+          e->currentCell->x, e->currentCell->y, e->canSee(cell) ? "<span color='green'>✔</span>" : " "))});
+      app->state->selection.push_back({{e->currentCell->x, e->currentCell->y}, "green"});
+      app->inspectState->appendContent(State::END_LINE);
+    }
+  }
+
+  app->inspectState->appendContent(
+      {F(fmt::format("Objects count: <b>{}</b>", objects.size()))});
+  app->inspectState->appendContent(State::END_LINE);
+
+  if (objects.size() > 0) {
+    auto isDoor = utils::castObjects<Door>(objects).size() > 0;
+    app->inspectState->appendContent(
+        {F(fmt::format("Door: [<b>{}</b>]", isDoor ? "X" : " "))});
+    app->inspectState->appendContent(State::END_LINE);
+    auto isTorch = utils::castObjects<TorchStand>(objects).size() > 0;
+    app->inspectState->appendContent(
+        {F(fmt::format("Torch: [<b>{}</b>]", isDoor ? "X" : " "))});
+    app->inspectState->appendContent(State::END_LINE);
+    auto enemies = utils::castObjects<Enemy>(objects);
+    if (enemies.size() > 0) {
+      std::vector<std::string> enemyNames;
+      for (auto e : enemies) {
+        enemyNames.push_back(e->type.name);
+      }
+      app->inspectState->appendContent({F(
+          fmt::format("Enemies: <b>{}</b>", utils::join(enemyNames, ", ")))});
+      app->inspectState->appendContent(State::END_LINE);
+    }
+  }
 }
 
 bool NormalMode::processKey(KeyEvent event) {
@@ -204,6 +284,7 @@ bool NormalMode::processKey(KeyEvent event) {
                             app->hero->currentCell->y};
       app->state->setSelect(true);
       app->state->invalidate();
+      app->inspectMode->render();
       app->hero->commit(0);
     } else {
       app->processCommand("inventory");

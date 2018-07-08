@@ -26,7 +26,9 @@ public:
 
 class TorchStand : public Object {
 public:
-  TorchStand() : Object(), type(ItemType::TORCH_STAND) {}
+  TorchStand() : Object(), type(ItemType::TORCH_STAND) {
+    seeThrough = true;
+  }
   ItemSpec type;
 };
 

@@ -311,6 +311,7 @@ void placeDoors(std::shared_ptr<Location> location) {
               continue;
             auto door = std::make_shared<Door>();
             door->currentCell = c;
+            c->seeThrough = false;
             location->objects.push_back(door);
             d++;
           }

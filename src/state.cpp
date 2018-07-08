@@ -59,6 +59,14 @@ void State::render(kp::pango::CinderPangoRef surface) {
     if (select && n == cursor.y * (width + 1) + cursor.x) {
       fContent = "<span background='yellow'>" + fContent + "</span>";
     }
+    if (select) {
+      auto it = std::find_if(selection.begin(), selection.end(), [&](Selection s){
+        return s.pos.y * (width+ 1) + s.pos.x == n;
+      });
+      if (it != selection.end()) {
+        fContent = fmt::format("<span background='{}'>{}</span>", (*it).color, fContent);
+      }
+    }
     content.append(fContent);
     n++;
   }

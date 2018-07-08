@@ -40,8 +40,8 @@ void LSSApp::setup() {
   heroFrame->setMaxSize(getWindowWidth(), HeroLine::HEIGHT);
 
   inspectFrame = kp::pango::CinderPango::create();
-  inspectFrame->setMinSize(getWindowWidth(), getWindowHeight() / 4.f);
-  inspectFrame->setMaxSize(getWindowWidth(), getWindowHeight() / 4.f);
+  inspectFrame->setMinSize(getWindowWidth() / 4.f, getWindowHeight());
+  inspectFrame->setMaxSize(getWindowWidth() / 4.f, getWindowHeight());
 
   /* Modes && States */
   normalMode = std::make_shared<NormalMode>(this);
@@ -127,7 +127,9 @@ void LSSApp::invalidate() {
   for (auto r : hero->currentLocation->cells) {
     auto column = 0;
     for (auto c : r) {
-      c->features.clear();
+      if (debug) {
+        c->features.clear();
+      }
       auto f = state->fragments[index];
       // fmt::print("{}", c->type);
       switch (c->visibilityState) {
@@ -180,15 +182,15 @@ void LSSApp::invalidate() {
           dot->features = {CellFeature::BLOOD};
           state->fragments[i] = std::make_shared<CellSign>(dot);
         }
-        // unsigned size = e->path.size();
-        // for (int k = 0; k < size; ++k) {
-        //   auto ptr = e->path[k];
-        //   auto dot = static_cast<Cell *>(ptr);
-        //   auto i =
-        //       dot->y * (hero->currentLocation->cells.front().size() + 1) +
-        //       dot->x;
-        //   state->fragments[i] = std::make_shared<ItemSign>(ItemType::ROCK);
-        // }
+        unsigned size = e->path.size();
+        for (int k = 0; k < size; ++k) {
+          auto ptr = e->path[k];
+          auto dot = static_cast<Cell *>(ptr);
+          auto i =
+              dot->y * (hero->currentLocation->cells.front().size() + 1) +
+              dot->x;
+          state->fragments[i] = std::make_shared<ItemSign>(ItemType::ROCK);
+        }
       }
 
       if (!hero->canSee(ec) && !hero->monsterSense)
@@ -394,7 +396,7 @@ void LSSApp::draw() {
     gl::color(ColorA(1, 1, 1, 1));
     statusFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
     gl::draw(inspectFrame->getTexture(),
-             vec2(getWindowWidth() * 3 / 4, VOffset));
+             vec2(getWindowWidth() * 3 / 4 + HOffset, VOffset));
   }
 
   if (heroFrame != nullptr) {

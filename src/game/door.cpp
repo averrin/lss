@@ -3,7 +3,7 @@
 #include "EventBus.hpp"
 #include "lss/game/door.hpp"
 
-Door::Door() {
+Door::Door() : Object("door") {
   passThrough = false;
   seeThrough = false;
 };
