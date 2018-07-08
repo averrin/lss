@@ -37,7 +37,7 @@ std::string Fragment::render(State *state) {
   tpl.setValue("wall_color_seen", state->currentPalette.wall_color_seen);
   tpl.setValue("hero_color", state->currentPalette.hero_color);
 
-  for (auto[key, value] : args) {
+  for (auto [key, value] : args) {
     std::visit([&](auto const &val) { tpl.setValue(key, val); }, value);
   }
 
@@ -123,6 +123,12 @@ std::map<std::string, tpl_arg> getCellArgs(std::shared_ptr<Cell> cell) {
     }
     if (cell->hasFeature(CellFeature::BLOOD)) {
       color = "darkred";
+    }
+    if (cell->hasFeature(CellFeature::MARK1)) {
+      color = "blue";
+    }
+    if (cell->hasFeature(CellFeature::MARK2)) {
+      color = "green";
     }
   }
   return {

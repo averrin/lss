@@ -11,7 +11,7 @@
 
 Creature::Creature() {
   passThrough = false;
-  seeThrough = false;
+  seeThrough = true;
 }
 
 float Attribute::operator()(Creature *c) {
@@ -63,9 +63,8 @@ DropEvent::DropEvent(eb::ObjectPtr s, std::shared_ptr<Item> i)
 ItemTakenEvent::ItemTakenEvent(eb::ObjectPtr s, std::shared_ptr<Item> i)
     : eb::Event(s), item(i) {}
 
-std::shared_ptr<Cell> Creature::getCell(Direction d) {
+std::shared_ptr<Cell> Creature::getCell(std::shared_ptr<Cell> cc, Direction d) {
   auto cells = currentLocation->cells;
-  auto cc = currentCell;
   std::shared_ptr<Cell> cell;
   switch (d) {
   case N:
@@ -189,7 +188,7 @@ int Creature::getDamage(std::shared_ptr<Object>) {
   int damage = 0;
   auto primaryDmg = getPrimaryDmg();
   if (primaryDmg != std::nullopt) {
-    auto[primarySlot, m, d, e] = *primaryDmg;
+    auto [primarySlot, m, d, e] = *primaryDmg;
     damage += hitRoll(m, d, e);
   }
   auto haveLeft =
@@ -206,7 +205,7 @@ int Creature::getDamage(std::shared_ptr<Object>) {
           }) > 0;
   auto secondaryDmg = getSecondaryDmg(nullptr);
   if (secondaryDmg != std::nullopt && haveLeft) {
-    auto[secondarySlot, m, d, e] = *secondaryDmg;
+    auto [secondarySlot, m, d, e] = *secondaryDmg;
     if (hasTrait(Traits::DUAL_WIELD)) {
       damage += hitRoll(m, d, e);
     } else {
@@ -247,7 +246,7 @@ bool Creature::pick(std::shared_ptr<Item> item) {
 }
 
 bool Creature::attack(Direction d) {
-  auto nc = getCell(d);
+  auto nc = getCell(currentCell, d);
   auto opit = std::find_if(
       currentLocation->objects.begin(), currentLocation->objects.end(),
       [&](std::shared_ptr<Object> o) {
@@ -291,7 +290,7 @@ std::optional<std::shared_ptr<Slot>> Creature::getSlot(WearableType type,
 
 bool Creature::move(Direction d, bool autoAction) {
   auto cc = currentCell;
-  auto nc = getCell(d);
+  auto nc = getCell(currentCell, d);
   auto obstacle = std::find_if(currentLocation->objects.begin(),
                                currentLocation->objects.end(),
                                [&](std::shared_ptr<Object> o) {
@@ -327,12 +326,12 @@ void Creature::calcViewField(bool force) {
   if (hasTrait(Traits::NIGHT_VISION)) {
     vd = 1000;
   }
-  viewField.clear();
-  std::vector<std::shared_ptr<Cell>> temp;
+  // viewField.clear();
   viewField = currentLocation->getVisible(currentCell, vd);
-  cachedCell = currentCell;
+
+  // cachedCell = currentCell;
   for (auto c : viewField) {
-      c->lightSources.push_back(currentCell);
+    c->lightSources.push_back(currentCell);
   }
 }
 

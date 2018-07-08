@@ -304,8 +304,9 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     }
     app->statusLine->setContent({F("Enemy freezed!")});
   } else if (spell == Spells::SUMMON_ORK) {
-    auto c = app->hero->currentLocation->cells[app->hero->currentCell->y + 1]
-                                              [app->hero->currentCell->x];
+    auto c =
+        app->hero->currentLocation
+            ->cells[app->hero->currentCell->y + 1][app->hero->currentCell->x];
     app->hero->currentLocation->objects.push_back(
         mkEnemy(app->hero->currentLocation, c, app->hero, EnemyType::ORK));
     app->hero->commit(0);

@@ -51,6 +51,9 @@ struct modes {
     auto is_go_event = [](EnableModeEvent e) {
       return e.mode == Modes::GAMEOVER;
     };
+    auto is_inspect_event = [](EnableModeEvent e) {
+      return e.mode == Modes::INSPECT;
+    };
 
     auto set_hints = [](std::shared_ptr<Modes> m) {
       std::cout << "Set HINTS mode" << std::endl;
@@ -88,6 +91,10 @@ struct modes {
       std::cout << "Set GAMEOVER mode" << std::endl;
       m->currentMode = Modes::GAMEOVER;
     };
+    auto set_inspect = [](std::shared_ptr<Modes> m) {
+      std::cout << "Set INSPECT mode" << std::endl;
+      m->currentMode = Modes::INSPECT;
+    };
 
     // clang-format off
         return make_transition_table(
@@ -99,6 +106,7 @@ struct modes {
             , "normal"_s + event<EnableModeEvent> [is_inventory_event] / set_inventory  = "inventory"_s
             , "normal"_s + event<EnableModeEvent> [is_help_event] / set_help  = "inventory"_s
             , "normal"_s + event<EnableModeEvent> [is_go_event] / set_go  = "game_over"_s
+            , "normal"_s + event<EnableModeEvent> [is_inspect_event] / set_inspect  = "inspect"_s
 
             , "hints"_s + event<KeyPressedEvent> [is_esc] / set_normal = "normal"_s
             , "leader"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
@@ -107,6 +115,7 @@ struct modes {
             , "object_select"_s + event<KeyPressedEvent> [is_esc_or_z] / set_normal  = "normal"_s
             , "inventory"_s + event<KeyPressedEvent> [is_esc_or_z] / set_normal  = "normal"_s
             , "help"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
+            , "inspect"_s + event<KeyPressedEvent> [is_esc_or_z] / set_normal  = "normal"_s
 
             , "insert"_s + event<KeyPressedEvent> [is_insert] / set_normal  = "normal"_s
 
@@ -117,6 +126,7 @@ struct modes {
             , "object_select"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
             , "inventory"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
             , "help"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
+            , "inspect"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
         );
     // clang-format on
   }
@@ -133,6 +143,7 @@ public:
   void toDirection();
   void toGameOver();
   void toObjectSelect();
+  void toInspect();
   std::shared_ptr<Modes> modeFlags = std::make_shared<Modes>();
 
 private:
@@ -176,6 +187,12 @@ public:
 class InsertMode : public Mode {
 public:
   InsertMode(LSSApp *app) : Mode(app){};
+  bool processKey(KeyEvent e);
+};
+
+class InspectMode : public Mode {
+public:
+  InspectMode(LSSApp *app) : Mode(app){};
   bool processKey(KeyEvent e);
 };
 

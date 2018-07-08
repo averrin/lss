@@ -39,7 +39,8 @@ void HeroLine::onEvent(CommitEvent &e) {
   if (hero->currentLocation->hasFeature(LocationFeature::RIVER)) {
     locationFeatures[2] = 'R';
   }
-  if (hero->currentLocation->type.cellFeatures.size() > 0 && hero->currentLocation->type.cellFeatures.front() == CellFeature::BLOOD) {
+  if (hero->currentLocation->type.cellFeatures.size() > 0 &&
+      hero->currentLocation->type.cellFeatures.front() == CellFeature::BLOOD) {
     locationFeatures[3] = 'B';
   }
   setContent({
@@ -52,6 +53,7 @@ void HeroLine::onEvent(CommitEvent &e) {
                               ? fmt::format("   L&lt;{}&gt;", lightDurability)
                               : "")),
       F(fmt::format("   <b>P</b>:{}.{} D:{} [{} {}]", hero->currentCell->x,
-                    hero->currentCell->y, hero->currentLocation->depth, hero->currentLocation->type.name, locationFeatures)),
+                    hero->currentCell->y, hero->currentLocation->depth,
+                    hero->currentLocation->type.name, locationFeatures)),
   });
 }

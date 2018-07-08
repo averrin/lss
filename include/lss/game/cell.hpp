@@ -33,10 +33,10 @@ const CellSpec DOWNSTAIRS = CellSpec{"downstairs", true, true};
 const CellSpec UPSTAIRS = CellSpec{"upstairs", true, false};
 const CellSpec WATER =
     CellSpec{"water", false, true, {Traits::FLY, Traits::CAN_SWIM}};
-};
+}; // namespace CellType
 
 enum VisibilityState { UNKNOWN, SEEN, VISIBLE };
-enum CellFeature { BLOOD, CAVE };
+enum CellFeature { BLOOD, CAVE, MARK1, MARK2 };
 
 class Cell {
 public:

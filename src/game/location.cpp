@@ -30,7 +30,7 @@ void Location::onEvent(CommitEvent &e) {
   using milliseconds = std::chrono::duration<double, std::milli>;
   milliseconds ms = t1 - t0;
   // std::cout << "location in commit time taken: " << rang::fg::green
-            // << ms.count() << rang::style::reset << '\n';
+  // << ms.count() << rang::style::reset << '\n';
 
   LocationChangeEvent ec(nullptr);
   eb::EventBus::FireEvent(ec);
@@ -114,42 +114,43 @@ ItemsFoundEvent::ItemsFoundEvent(eb::ObjectPtr s, Objects i)
     : eb::Event(s), items(i) {}
 void Location::onEvent(EnterCellEvent &e) {
   if (auto hero = std::dynamic_pointer_cast<Player>(e.getSender())) {
-  Objects items(objects.size());
-  auto it = std::copy_if(objects.begin(), objects.end(), items.begin(),
-                         [e](std::shared_ptr<Object> o) {
-                           return std::dynamic_pointer_cast<Item>(o) &&
-                                  o->currentCell == e.cell;
-                         });
-  items.resize(std::distance(items.begin(), it));
-  if (items.size() > 0) {
-    ItemsFoundEvent ie(nullptr, items);
-    eb::EventBus::FireEvent(ie);
-  }}
+    Objects items(objects.size());
+    auto it = std::copy_if(objects.begin(), objects.end(), items.begin(),
+                           [e](std::shared_ptr<Object> o) {
+                             return std::dynamic_pointer_cast<Item>(o) &&
+                                    o->currentCell == e.cell;
+                           });
+    items.resize(std::distance(items.begin(), it));
+    if (items.size() > 0) {
+      ItemsFoundEvent ie(nullptr, items);
+      eb::EventBus::FireEvent(ie);
+    }
+  }
   // if (e.cell->illuminated) {
-    auto vd = TORCH_DISTANCE;
-    for (auto ls : e.cell->lightSources) {
-      for (auto ld = vd; ld > 2; ld--) {
-        auto lsi = visibilityCache.find({ls, ld});
-        if (lsi != visibilityCache.end()) {
-          // fmt::print("invalidate cache for {}.{} : {}\n", ls->x, ls->y, vd);
-          visibilityCache.erase(lsi);
-        }
+  auto vd = TORCH_DISTANCE;
+  for (auto ls : e.cell->lightSources) {
+    for (auto ld = vd; ld > 2; ld--) {
+      auto lsi = visibilityCache.find({ls, ld});
+      if (lsi != visibilityCache.end()) {
+        // fmt::print("invalidate cache for {}.{} : {}\n", ls->x, ls->y, vd);
+        visibilityCache.erase(lsi);
       }
     }
+  }
   // }
 }
 void Location::onEvent(LeaveCellEvent &e) {
   // if (e.cell->illuminated) {
-    auto vd = TORCH_DISTANCE;
-    for (auto ls : e.cell->lightSources) {
-      for (auto ld = vd; ld > 2; ld--) {
-        auto lsi = visibilityCache.find({ls, ld});
-        if (lsi != visibilityCache.end()) {
-          // fmt::print("invalidate cache for {}.{} : {}\n", ls->x, ls->y, vd);
-          visibilityCache.erase(lsi);
-        }
+  auto vd = TORCH_DISTANCE;
+  for (auto ls : e.cell->lightSources) {
+    for (auto ld = vd; ld > 2; ld--) {
+      auto lsi = visibilityCache.find({ls, ld});
+      if (lsi != visibilityCache.end()) {
+        // fmt::print("invalidate cache for {}.{} : {}\n", ls->x, ls->y, vd);
+        visibilityCache.erase(lsi);
       }
     }
+  }
   // }
 }
 
@@ -212,7 +213,8 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
       if (std::find_if(objects.begin(), objects.end(),
                        [c](std::shared_ptr<Object> o) {
                          return o->currentCell == c && !o->seeThrough;
-                       }) != objects.end() || c == player->currentCell) {
+                       }) != objects.end() ||
+          c == player->currentCell) {
         c->seeThrough = false;
       }
       c->illuminated = false;
@@ -239,7 +241,7 @@ void Location::updateView(std::shared_ptr<Player> hero) {
   using milliseconds = std::chrono::duration<double, std::milli>;
   milliseconds ms = t1 - t0;
   // std::cout << "update light time taken: " << rang::fg::green << ms.count()
-            // << rang::style::reset << '\n';
+  // << rang::style::reset << '\n';
   for (auto r : cells) {
     for (auto c : r) {
       if (c->type == CellType::UNKNOWN_CELL)
@@ -281,7 +283,8 @@ void Location::AdjacentCost(void *state,
       if (obstacle != objects.end())
         continue;
       micropather::StateCost nodeCost = {
-          (void *)&(*n), LeastCostEstimate(state, (void *)&(*n)),
+          (void *)&(*n),
+          LeastCostEstimate(state, (void *)&(*n)),
       };
       neighbors->push_back(nodeCost);
     }

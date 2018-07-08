@@ -8,9 +8,9 @@
 #include <cmath>
 #include <map>
 
-#include "fmt/format.h"
 #include "EventHandler.hpp"
 #include "EventRegisttration.hpp"
+#include "fmt/format.h"
 
 enum LocationFeature {
   CAVE_PASSAGE,
@@ -111,9 +111,10 @@ public:
     }
     // fmt::print("cache miss for {}.{} : {}\n", start->x, start->y, distance);
     std::vector<std::shared_ptr<Cell>> result;
-    fov::Vec heroPoint{start->x, start->y};
+    fov::Vec creaturePoint{start->x, start->y};
     fov::Vec bounds{(int)cells.front().size(), (int)cells.size()};
-    auto field = fov::refresh(heroPoint, bounds, cells);
+    start->seeThrough = true;
+    auto field = fov::refresh(creaturePoint, bounds, cells);
     for (auto v : field) {
       auto c = cells[v.y][v.x];
       auto d = sqrt(pow(start->x - c->x, 2) + pow(start->y - c->y, 2));
@@ -121,6 +122,7 @@ public:
         result.push_back(c);
       }
     }
+    start->seeThrough = false;
     visibilityCache[{start, distance}] = result;
     return result;
   }

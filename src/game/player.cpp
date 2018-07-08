@@ -43,7 +43,8 @@ Player::Player() : Creature() {
                              std::vector<WearableType>{RIGHT_PAULDRON}),
       std::make_shared<Slot>("Left pauldron",
                              std::vector<WearableType>{LEFT_PAULDRON}),
-      right_hand_slot, left_hand_slot,
+      right_hand_slot,
+      left_hand_slot,
       std::make_shared<Slot>("Right gauntlet",
                              std::vector<WearableType>{RIGHT_GAUNTLET}),
       std::make_shared<Slot>("Left gauntlet",
@@ -101,10 +102,10 @@ std::string Player::getDmgDesc() {
           }) > 0;
 
   if (primaryDmg != std::nullopt && haveLeft) {
-    auto[primarySlot, m, d, e] = *primaryDmg;
+    auto [primarySlot, m, d, e] = *primaryDmg;
     auto secondaryDmg = getSecondaryDmg(primarySlot);
     if (secondaryDmg != std::nullopt) {
-      auto[secondarySlot, m2, d2, e2] = *secondaryDmg;
+      auto [secondarySlot, m2, d2, e2] = *secondaryDmg;
       return fmt::format("{:+d} {}d{}{}", m, d, e,
                          hasTrait(Traits::DUAL_WIELD)
                              ? fmt::format(" ({:+d} {}d{})", m2, d2, e2)
@@ -113,13 +114,13 @@ std::string Player::getDmgDesc() {
   } else if (haveLeft) {
     auto secondaryDmg = getSecondaryDmg(nullptr);
     if (secondaryDmg != std::nullopt) {
-      auto[secondarySlot, m2, d2, e2] = *secondaryDmg;
+      auto [secondarySlot, m2, d2, e2] = *secondaryDmg;
       return hasTrait(Traits::DUAL_WIELD)
                  ? fmt::format("~ {:+d} {}d{}", m2, d2, e2)
                  : fmt::format("~ {:+d}", m2);
     }
   } else if (primaryDmg != std::nullopt) {
-    auto[primarySlot, m, d, e] = *primaryDmg;
+    auto [primarySlot, m, d, e] = *primaryDmg;
     return fmt::format("{:+d} {}d{}", m, d, e);
   }
   return fmt::format("{:+d} {}d{}", damage_modifier, damage_dices,
@@ -206,7 +207,7 @@ void Player::onEvent(DigCommandEvent &e) {
     return;
   }
 
-  auto cell = getCell(e.direction);
+  auto cell = getCell(currentCell, e.direction);
 
   DigEvent de(shared_from_this(), cell);
   eb::EventBus::FireEvent(de);
@@ -221,7 +222,7 @@ void Player::onEvent(WalkCommandEvent &e) {
                                return std::dynamic_pointer_cast<Item>(o) &&
                                       o->currentCell == currentCell;
                              });
-    //TODO: stop walk if enemy is near
+    // TODO: stop walk if enemy is near
     if (item != currentLocation->objects.end()) {
       break;
     }

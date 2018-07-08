@@ -39,6 +39,10 @@ void LSSApp::setup() {
   heroFrame->setMinSize(getWindowWidth(), HeroLine::HEIGHT);
   heroFrame->setMaxSize(getWindowWidth(), HeroLine::HEIGHT);
 
+  inspectFrame = kp::pango::CinderPango::create();
+  inspectFrame->setMinSize(getWindowWidth(), getWindowHeight() / 4.f);
+  inspectFrame->setMaxSize(getWindowWidth(), getWindowHeight() / 4.f);
+
   /* Modes && States */
   normalMode = std::make_shared<NormalMode>(this);
   state = std::make_shared<State>();
@@ -64,6 +68,9 @@ void LSSApp::setup() {
   heroState = std::make_shared<State>();
   heroLine = std::make_shared<HeroLine>(heroState);
 
+  inspectState = std::make_shared<State>();
+  inspectMode = std::make_shared<InspectMode>(this);
+
   state->currentPalette = palettes::DARK;
   statusState->currentPalette = palettes::DARK;
   objectSelectState->currentPalette = palettes::DARK;
@@ -71,6 +78,7 @@ void LSSApp::setup() {
   inventoryState->currentPalette = palettes::DARK;
   gameOverState->currentPalette = palettes::DARK;
   heroState->currentPalette = palettes::DARK;
+  inspectState->currentPalette = palettes::DARK;
 
   statusLine->setContent(State::normal_mode);
 
@@ -119,6 +127,7 @@ void LSSApp::invalidate() {
   for (auto r : hero->currentLocation->cells) {
     auto column = 0;
     for (auto c : r) {
+      c->features.clear();
       auto f = state->fragments[index];
       // fmt::print("{}", c->type);
       switch (c->visibilityState) {
@@ -132,6 +141,7 @@ void LSSApp::invalidate() {
         state->fragments[index] = std::make_shared<CellSign>(c);
         break;
       case VisibilityState::VISIBLE:
+        // if (!c->seeThrough) c->features = {CellFeature::MARK1};
         state->fragments[index] = std::make_shared<CellSign>(c);
         break;
       }
@@ -160,26 +170,29 @@ void LSSApp::invalidate() {
         ec->y * (hero->currentLocation->cells.front().size() + 1) + ec->x;
 
     if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
-      // for (auto dot : e->viewField) {
-      //   auto i =
-      //       dot->y * (hero->currentLocation->cells.front().size() + 1) +
-      //       dot->x;
-      //   state->fragments[i] =
-      //   std::make_shared<CellSign>(CellType::FLOOR_BLOOD, false);
-      // }
+      if (debug) {
+        for (auto dot : e->viewField) {
+          if (dot == e->currentCell)
+            continue;
+          auto i = dot->y * (hero->currentLocation->cells.front().size() + 1) +
+                   dot->x;
+          dot->visibilityState = VisibilityState::VISIBLE;
+          dot->features = {CellFeature::BLOOD};
+          state->fragments[i] = std::make_shared<CellSign>(dot);
+        }
+        // unsigned size = e->path.size();
+        // for (int k = 0; k < size; ++k) {
+        //   auto ptr = e->path[k];
+        //   auto dot = static_cast<Cell *>(ptr);
+        //   auto i =
+        //       dot->y * (hero->currentLocation->cells.front().size() + 1) +
+        //       dot->x;
+        //   state->fragments[i] = std::make_shared<ItemSign>(ItemType::ROCK);
+        // }
+      }
 
       if (!hero->canSee(ec) && !hero->monsterSense)
         continue;
-
-      unsigned size = e->path.size();
-      for (int k = 0; k < size; ++k) {
-        auto ptr = e->path[k];
-        auto dot = static_cast<Cell *>(ptr);
-        auto i =
-            dot->y * (hero->currentLocation->cells.front().size() + 1) +
-            dot->x;
-        state->fragments[i] = std::make_shared<ItemSign>(ItemType::ROCK);
-      }
 
       state->fragments[index] = std::make_shared<EnemySign>(e->type);
 
@@ -201,6 +214,8 @@ void LSSApp::invalidate() {
     state->fragments[index] = std::make_shared<HeroSign>();
   }
 
+  state->width = hero->currentLocation->cells.front().size();
+  state->height = hero->currentLocation->cells.size();
   state->invalidate();
 }
 
@@ -231,6 +246,9 @@ void LSSApp::keyDown(KeyEvent event) {
     break;
   case Modes::GAMEOVER:
     gameOverMode->processKey(event);
+    break;
+  case Modes::INSPECT:
+    inspectMode->processKey(event);
     break;
   }
 }
@@ -293,6 +311,8 @@ void LSSApp::update() {
 
   switch (modeManager.modeFlags->currentMode) {
   case Modes::NORMAL:
+    state->setSelect(false);
+  case Modes::INSPECT:
   case Modes::INSERT:
   case Modes::DIRECTION:
   case Modes::HINTS:
@@ -324,6 +344,10 @@ void LSSApp::update() {
   if (heroFrame != nullptr) {
     heroState->render(heroFrame);
   }
+  if (inspectFrame != nullptr) {
+    inspectState->render(inspectFrame);
+  }
+
   lastMode = modeManager.modeFlags->currentMode;
 }
 
@@ -335,6 +359,7 @@ void LSSApp::draw() {
   gl::color(ColorA(1, 1, 1, 1));
 
   switch (modeManager.modeFlags->currentMode) {
+  case Modes::INSPECT:
   case Modes::NORMAL:
   case Modes::INSERT:
   case Modes::DIRECTION:
@@ -359,6 +384,17 @@ void LSSApp::draw() {
     statusFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
     gl::draw(statusFrame->getTexture(),
              vec2(6, getWindowHeight() - StatusLine::HEIGHT + 6));
+  }
+
+  if (inspectFrame != nullptr &&
+      modeManager.modeFlags->currentMode == Modes::INSPECT) {
+    gl::color(state->currentPalette.bgColorAlt);
+    gl::drawSolidRect(Rectf(getWindowWidth() * 3.f / 4.f, 0, getWindowWidth(),
+                            getWindowHeight()));
+    gl::color(ColorA(1, 1, 1, 1));
+    statusFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
+    gl::draw(inspectFrame->getTexture(),
+             vec2(getWindowWidth() * 3 / 4, VOffset));
   }
 
   if (heroFrame != nullptr) {

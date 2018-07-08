@@ -41,7 +41,7 @@ public:
 
 class LocationChangeEvent : public eb::Event {
 public:
-  LocationChangeEvent(eb::ObjectPtr ptr): eb::Event(ptr) {}
+  LocationChangeEvent(eb::ObjectPtr ptr) : eb::Event(ptr) {}
 };
 
 class ItemTakenEvent : public eb::Event {

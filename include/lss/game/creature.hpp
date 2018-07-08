@@ -61,7 +61,7 @@ public:
   Attribute DMG = Attribute(AttributeType::DAMAGE);
   Attribute DEF = Attribute(AttributeType::DEFENSE);
 
-  std::shared_ptr<Cell> getCell(Direction);
+  std::shared_ptr<Cell> getCell(std::shared_ptr<Cell>, Direction);
 
 private:
   std::shared_ptr<Cell> cachedCell;

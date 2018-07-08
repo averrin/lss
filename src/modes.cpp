@@ -4,6 +4,7 @@
 #include "lss/actions.hpp"
 #include "lss/commands.hpp"
 #include "lss/modes.hpp"
+#include "lss/utils.hpp"
 
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 
@@ -62,6 +63,10 @@ void ModeManager::toGameOver() {
   state_machine.process_event(EnableModeEvent{Modes::GAMEOVER});
 }
 
+void ModeManager::toInspect() {
+  state_machine.process_event(EnableModeEvent{Modes::INSPECT});
+}
+
 void HintsMode::processEvent(std::shared_ptr<LssEvent> event) {}
 
 Mode::Mode(LSSApp *a) : app(a){};
@@ -89,9 +94,51 @@ bool GameOverMode::processKey(KeyEvent event) {
   return false;
 }
 
+bool InspectMode::processKey(KeyEvent event) {
+  switch (event.getCode()) {
+  case KeyEvent::KEY_i:
+    if (event.isShiftDown()) {
+      app->modeManager.toInspect();
+      app->statusLine->setContent({State::normal_mode});
+      app->state->select = false;
+      app->state->invalidate();
+      app->hero->commit(0);
+      return true;
+    }
+    break;
+  case KeyEvent::KEY_j:
+  case KeyEvent::KEY_h:
+  case KeyEvent::KEY_l:
+  case KeyEvent::KEY_k:
+  case KeyEvent::KEY_y:
+  case KeyEvent::KEY_u:
+  case KeyEvent::KEY_b:
+  case KeyEvent::KEY_n: {
+    auto d = getDir(event.getCode());
+    if (d == std::nullopt)
+      break;
+    auto nc = app->hero->getCell(
+        app->hero->currentLocation
+            ->cells[app->state->cursor.y][app->state->cursor.x],
+        *utils::getDirectionByName(*d));
+    app->state->cursor = {nc->x, nc->y};
+    fmt::print("{}.{}\n", app->state->cursor.x, app->state->cursor.y);
+    app->state->invalidate();
+    return true;
+  } break;
+  case KeyEvent::KEY_q:
+    break;
+  }
+  return false;
+}
+
 bool NormalMode::processKey(KeyEvent event) {
 
   switch (event.getCode()) {
+  case KeyEvent::KEY_F1:
+    app->debug = !app->debug;
+    app->hero->commit(0);
+    break;
   case KeyEvent::KEY_j:
   case KeyEvent::KEY_h:
   case KeyEvent::KEY_l:
@@ -150,7 +197,17 @@ bool NormalMode::processKey(KeyEvent event) {
     break;
     break;
   case KeyEvent::KEY_i:
-    app->processCommand("inventory");
+    if (event.isShiftDown()) {
+      app->modeManager.toInspect();
+      app->statusLine->setContent(State::inspect_mode);
+      app->state->cursor = {app->hero->currentCell->x,
+                            app->hero->currentCell->y};
+      app->state->setSelect(true);
+      app->state->invalidate();
+      app->hero->commit(0);
+    } else {
+      app->processCommand("inventory");
+    }
     break;
   case KeyEvent::KEY_z:
     app->processCommand("zap");

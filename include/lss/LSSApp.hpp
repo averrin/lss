@@ -63,10 +63,12 @@ public:
   std::shared_ptr<Location> loadMap(std::string);
   std::vector<std::shared_ptr<Location>> locations;
   int currentLevel = 0;
+  bool debug = false;
 
   kp::pango::CinderPangoRef gameFrame;
   kp::pango::CinderPangoRef statusFrame;
   kp::pango::CinderPangoRef heroFrame;
+  kp::pango::CinderPangoRef inspectFrame;
 
   ModeManager modeManager = ModeManager();
   std::shared_ptr<EventReactor> reactor;
@@ -80,6 +82,7 @@ public:
   std::shared_ptr<HelpMode> helpMode;
   std::shared_ptr<InventoryMode> inventoryMode;
   std::shared_ptr<GameOverMode> gameOverMode;
+  std::shared_ptr<InspectMode> inspectMode;
 
   std::shared_ptr<StatusLine> statusLine;
   std::shared_ptr<HeroLine> heroLine;
@@ -93,6 +96,7 @@ public:
   std::shared_ptr<State> inventoryState;
   std::shared_ptr<State> heroState;
   std::shared_ptr<State> gameOverState;
+  std::shared_ptr<State> inspectState;
 
   std::shared_ptr<Player> hero;
 

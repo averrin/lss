@@ -1,6 +1,6 @@
 #include <chrono>
-#include <set>
 #include <iostream>
+#include <set>
 
 #include "fmt/format.h"
 #include "lss/game/door.hpp"
@@ -15,7 +15,6 @@ Generator::Generator() {}
 
 int WIDTH = 120;
 int HEIGHT = 60;
-
 
 int P_DOOR = 40;
 int P_CAVE_PASSAGE = 40;
@@ -48,7 +47,8 @@ void paste(Cells room, std::shared_ptr<Location> location, int x, int y) {
   for (auto r = y; r < room.size() + y && r < bh; r++) {
     for (auto c = x; c < room.front().size() + x && c < bw; c++) {
       auto cell = room[r - y][c - x];
-      if (cell->type == CellType::UNKNOWN_CELL) continue;
+      if (cell->type == CellType::UNKNOWN_CELL)
+        continue;
       location->cells[r][c] = cell;
       location->cells[r][c]->x = c;
       location->cells[r][c]->y = r;
@@ -109,8 +109,8 @@ std::shared_ptr<Room> Generator::getRoom() {
   return room;
 }
 
-std::shared_ptr<Room> makePassage(std::shared_ptr<Cell> start,
-                                             Direction dir, int length) {
+std::shared_ptr<Room> makePassage(std::shared_ptr<Cell> start, Direction dir,
+                                  int length) {
   auto rh = 1;
   auto rw = 1;
   switch (dir) {
@@ -128,34 +128,36 @@ std::shared_ptr<Room> makePassage(std::shared_ptr<Cell> start,
   return room;
 }
 
-void makePassageBetweenRooms(std::shared_ptr<Location> location, std::shared_ptr<Room> room1, std::shared_ptr<Room> room2) {
-    auto sc = room1->cells[rand() % room1->height][rand() % room1->width];
-    auto ec = room2->cells[rand() % room2->height][rand() % room2->width];
-    while (sc == ec) {
-      ec = room2->cells[rand() % room2->height][rand() % room2->width];
-    }
+void makePassageBetweenRooms(std::shared_ptr<Location> location,
+                             std::shared_ptr<Room> room1,
+                             std::shared_ptr<Room> room2) {
+  auto sc = room1->cells[rand() % room1->height][rand() % room1->width];
+  auto ec = room2->cells[rand() % room2->height][rand() % room2->width];
+  while (sc == ec) {
+    ec = room2->cells[rand() % room2->height][rand() % room2->width];
+  }
 
-    auto l = 0;
-    if (sc->y > ec->y) {
+  auto l = 0;
+  if (sc->y > ec->y) {
+    std::swap(sc, ec);
+  }
+
+  auto passage = makePassage(sc, S, ec->y - sc->y + 1);
+  paste(passage->cells, location, sc->x, sc->y);
+  passage->x = sc->x;
+  passage->y = sc->y;
+  location->rooms.push_back(passage);
+  sc = passage->cells.back().back();
+  if (sc != ec) {
+    if (sc->x > ec->x) {
       std::swap(sc, ec);
     }
-
-    auto passage = makePassage(sc, S, ec->y - sc->y + 1);
+    passage = makePassage(sc, E, ec->x - sc->x + 1);
     paste(passage->cells, location, sc->x, sc->y);
     passage->x = sc->x;
     passage->y = sc->y;
     location->rooms.push_back(passage);
-    sc = passage->cells.back().back();
-    if (sc != ec) {
-      if (sc->x > ec->x) {
-        std::swap(sc, ec);
-      }
-      passage = makePassage(sc, E, ec->x - sc->x + 1);
-      paste(passage->cells, location, sc->x, sc->y);
-      passage->x = sc->x;
-      passage->y = sc->y;
-      location->rooms.push_back(passage);
-    }
+  }
 }
 
 void makeFloor(std::shared_ptr<Cell> cell) {
@@ -177,15 +179,15 @@ void updateCell(std::shared_ptr<Cell> cell, CellSpec type,
   cell->features = features;
 }
 
-std::pair<std::shared_ptr<Cell>, Cells> dig(std::shared_ptr<Cell> start,
-         Direction dir, int length, int minWidth, int jWidth, int wind = 0,
-         CellSpec type = CellType::FLOOR) {
+std::pair<std::shared_ptr<Cell>, Cells>
+dig(std::shared_ptr<Cell> start, Direction dir, int length, int minWidth,
+    int jWidth, int wind = 0, CellSpec type = CellType::FLOOR) {
   auto cell = start;
   std::vector<CellFeature> f = {CellFeature::CAVE};
   Cells dCells = fill(HEIGHT, WIDTH, CellType::UNKNOWN_CELL);
   for (auto step = 0; step < length; step++) {
     auto width = (jWidth > 1 ? rand() % jWidth : 0) + minWidth;
-    //TODO: make wind configurable without crazy magic
+    // TODO: make wind configurable without crazy magic
     auto w = wind == -1 ? rand() % (width >= 3 ? width * 3 / 4 : 2) : wind;
     if (w == 1) {
       w = rand() % 2 ? 0 : 1;
@@ -200,8 +202,7 @@ std::pair<std::shared_ptr<Cell>, Cells> dig(std::shared_ptr<Cell> start,
       ox -= width / 2;
       for (auto n = 0; n < width; n++) {
         ox++;
-        if (oy < 0 || ox < 0 || oy > HEIGHT - 1 ||
-            ox > WIDTH - 1)
+        if (oy < 0 || ox < 0 || oy > HEIGHT - 1 || ox > WIDTH - 1)
           continue;
         dCells[oy][ox] = std::make_shared<Cell>(ox, oy, type, f);
       }
@@ -212,8 +213,7 @@ std::pair<std::shared_ptr<Cell>, Cells> dig(std::shared_ptr<Cell> start,
       ox -= width / 2;
       for (auto n = 0; n < width; n++) {
         ox++;
-        if (oy < 0 || ox < 0 || oy > HEIGHT - 1 ||
-            ox > WIDTH - 1)
+        if (oy < 0 || ox < 0 || oy > HEIGHT - 1 || ox > WIDTH - 1)
           continue;
         dCells[oy][ox] = std::make_shared<Cell>(ox, oy, type, f);
       }
@@ -224,8 +224,7 @@ std::pair<std::shared_ptr<Cell>, Cells> dig(std::shared_ptr<Cell> start,
       oy -= width / 2;
       for (auto n = 0; n < width; n++) {
         oy++;
-        if (oy < 0 || ox < 0 || oy > HEIGHT - 1 ||
-            ox > WIDTH - 1)
+        if (oy < 0 || ox < 0 || oy > HEIGHT - 1 || ox > WIDTH - 1)
           continue;
         dCells[oy][ox] = std::make_shared<Cell>(ox, oy, type, f);
       }
@@ -236,8 +235,7 @@ std::pair<std::shared_ptr<Cell>, Cells> dig(std::shared_ptr<Cell> start,
       oy -= width / 2;
       for (auto n = 0; n < width; n++) {
         oy++;
-        if (oy < 0 || ox < 0 || oy > HEIGHT - 1 ||
-            ox > WIDTH - 1)
+        if (oy < 0 || ox < 0 || oy > HEIGHT - 1 || ox > WIDTH - 1)
           continue;
         dCells[oy][ox] = std::make_shared<Cell>(ox, oy, type, f);
       }
@@ -245,8 +243,7 @@ std::pair<std::shared_ptr<Cell>, Cells> dig(std::shared_ptr<Cell> start,
       ny += offset * w;
       break;
     }
-    if (ny < 0 || nx < 0 || ny > HEIGHT - 1 ||
-        nx > WIDTH - 1) {
+    if (ny < 0 || nx < 0 || ny > HEIGHT - 1 || nx > WIDTH - 1) {
       break;
     };
     cell = dCells[ny][nx];
@@ -255,7 +252,7 @@ std::pair<std::shared_ptr<Cell>, Cells> dig(std::shared_ptr<Cell> start,
 }
 
 std::pair<std::shared_ptr<Cell>, Cells> randomDig(std::shared_ptr<Cell> start,
-               Direction dir, int length) {
+                                                  Direction dir, int length) {
   int minWidth = 1;
   int jWidth = 6;
   bool wind = -1;
@@ -335,8 +332,8 @@ std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Location> location,
 // TODO: use room threat and hero level. Add respawn
 void placeEnemies(std::shared_ptr<Location> location, int threat) {
   fmt::print("Threat level: {}\n", threat);
-  std::vector<EnemySpec> ets{EnemyType::GOBLIN, EnemyType::ORK,
-                              EnemyType::PIXI, EnemyType::OGRE};
+  std::vector<EnemySpec> ets{EnemyType::GOBLIN, EnemyType::ORK, EnemyType::PIXI,
+                             EnemyType::OGRE};
   auto e = 0;
   for (auto r : location->cells) {
     for (auto c : r) {
@@ -355,11 +352,12 @@ void placeEnemies(std::shared_ptr<Location> location, int threat) {
 
 void makeRiver(std::shared_ptr<Location> location) {
   dig(location->cells[0][location->cells.front().size() / 3 +
-                                   rand() % location->cells.front().size() / 3],
+                         rand() % location->cells.front().size() / 3],
       S, location->cells.size() - 2, 2, 2, 1, CellType::WATER);
 }
 
-std::shared_ptr<Location> Generator::getRandomLocation(std::shared_ptr<Player> hero) {
+std::shared_ptr<Location>
+Generator::getRandomLocation(std::shared_ptr<Player> hero) {
   auto spec = LocationSpec{"Dungeon"};
   if (rand() % 100 < P_CAVE_PASSAGE) {
     spec.features.push_back(LocationFeature::CAVE_PASSAGE);
@@ -407,7 +405,6 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   std::set<std::shared_ptr<Room>> rooms;
   std::vector<std::shared_ptr<Room>> halls = location->rooms;
 
-
   while (n < pc) {
     fmt::print("{} , {} / {}\n", n, rooms.size(), halls.size());
     auto room1 = location->rooms[rand() % location->rooms.size()];
@@ -437,16 +434,15 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
       room->cells[rand() % room->height][rand() % room->width];
 
   room = location->rooms[rand() % location->rooms.size()];
-  location->exitCell =
-      room->cells[rand() % room->height][rand() % room->width];
+  location->exitCell = room->cells[rand() % room->height][rand() % room->width];
   location->exitCell->type = CellType::DOWNSTAIRS;
 
   if (location->hasFeature(LocationFeature::CAVE_PASSAGE)) {
-    std::vector<Direction> ds{N,E,S,W};
+    std::vector<Direction> ds{N, E, S, W};
     auto room = location->rooms[rand() % location->rooms.size()];
     auto cell = room->cells[rand() % room->height][rand() % room->width];
-    for (auto n = 0; n < rand()%6+2; n++) {
-      auto res = randomDig(cell, ds[rand()%ds.size()], rand() % 30);
+    for (auto n = 0; n < rand() % 6 + 2; n++) {
+      auto res = randomDig(cell, ds[rand() % ds.size()], rand() % 30);
       cell = res.first;
       auto newRoom = std::make_shared<Room>(RoomType::CAVE_ROOM, res.second);
       paste(newRoom->cells, location, 0, 0);
@@ -476,8 +472,9 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
         continue;
       auto ngs = location->getNeighbors(cell);
       if (std::find_if(ngs.begin(), ngs.end(), [](std::shared_ptr<Cell> nc) {
-        return nc->type == CellType::WALL;
-      }) == ngs.end()) continue;
+            return nc->type == CellType::WALL;
+          }) == ngs.end())
+        continue;
       auto torch = std::make_shared<TorchStand>();
       torch->currentCell = cell;
       location->objects.push_back(torch);
@@ -485,7 +482,6 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
     }
     fmt::print("Torches: {}\n", n);
   }
-
 
   for (auto r : location->cells) {
     for (auto c : r) {

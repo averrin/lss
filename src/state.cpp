@@ -7,6 +7,13 @@
 using namespace Jinja2CppLight;
 using namespace std::string_literals;
 
+void State::setSelect(bool val) {
+  auto needInvalidate = val == select;
+  select = val;
+  if (needInvalidate)
+    invalidate();
+}
+
 void State::setContent(Fragments content) {
   fragments = content;
   damaged = true;
@@ -43,12 +50,17 @@ void State::render(kp::pango::CinderPangoRef surface) {
   auto n = 0;
   auto t0 = std::chrono::system_clock::now();
   for (auto f : fragments) {
+    std::string fContent;
     if (!f->damaged) {
-      content.append(f->cache);
+      fContent = f->cache;
     } else {
-      content.append(f->render(this));
-      n++;
+      fContent = f->render(this);
     }
+    if (select && n == cursor.y * (width + 1) + cursor.x) {
+      fContent = "<span background='yellow'>" + fContent + "</span>";
+    }
+    content.append(fContent);
+    n++;
   }
   // auto t1 = std::chrono::system_clock::now();
   // using milliseconds = std::chrono::duration<double, std::milli>;
@@ -86,6 +98,9 @@ const Fragments State::unknown_command = {
 const Fragments State::object_select_mode = {
     F("<span color='{{blue}}'>Select item</span> [a-y] or [Zz, Esc] for exit")};
 const Fragments State::text_mode = {F("[Zz, Esc] for exit")};
+const Fragments State::inspect_mode = {
+    F("<span color='{{blue}}'>Select cell</span> [<b>yuhjklbn</b>] or [Zz, "
+      "Esc] for exit")};
 
 const Fragments State::HELP_HEADER = {F("<span weight='bold'>Help</span>")};
 const Fragments State::INVENTORY_HEADER = {

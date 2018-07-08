@@ -6,6 +6,11 @@
 #include <string>
 #include <vector>
 
+struct Cursor {
+  int x;
+  int y;
+};
+
 class State {
 public:
   Palette currentPalette;
@@ -16,8 +21,13 @@ public:
   void appendContent(Fragments);
   void appendContent(std::shared_ptr<Fragment>);
   void invalidate();
+  void setSelect(bool);
 
   Fragments fragments;
+  Cursor cursor;
+  int width;
+  int height;
+  bool select = false;
 
   static const Fragments normal_mode;
   static const Fragments hints_mode;
@@ -26,6 +36,7 @@ public:
   static const Fragments direction_mode;
   static const Fragments object_select_mode;
   static const Fragments text_mode;
+  static const Fragments inspect_mode;
 
   static const Fragments unknown_command;
 
