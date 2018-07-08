@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 
+class Room;
 struct CellSpec {
   std::string name;
 
@@ -52,6 +53,7 @@ public:
   std::vector<CellFeature> features;
 
   std::vector<std::shared_ptr<Cell>> lightSources;
+  std::shared_ptr<Room> room;
 
   int x;
   int y;

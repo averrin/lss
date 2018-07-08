@@ -29,8 +29,8 @@ void Location::onEvent(CommitEvent &e) {
   auto t1 = std::chrono::system_clock::now();
   using milliseconds = std::chrono::duration<double, std::milli>;
   milliseconds ms = t1 - t0;
-  std::cout << "location in commit time taken: " << rang::fg::green
-            << ms.count() << rang::style::reset << '\n';
+  // std::cout << "location in commit time taken: " << rang::fg::green
+            // << ms.count() << rang::style::reset << '\n';
 
   LocationChangeEvent ec(nullptr);
   eb::EventBus::FireEvent(ec);
@@ -131,7 +131,7 @@ void Location::onEvent(EnterCellEvent &e) {
       for (auto ld = vd; ld > 2; ld--) {
         auto lsi = visibilityCache.find({ls, ld});
         if (lsi != visibilityCache.end()) {
-          fmt::print("invalidate cache for {}.{} : {}\n", ls->x, ls->y, vd);
+          // fmt::print("invalidate cache for {}.{} : {}\n", ls->x, ls->y, vd);
           visibilityCache.erase(lsi);
         }
       }
@@ -145,7 +145,7 @@ void Location::onEvent(LeaveCellEvent &e) {
       for (auto ld = vd; ld > 2; ld--) {
         auto lsi = visibilityCache.find({ls, ld});
         if (lsi != visibilityCache.end()) {
-          fmt::print("invalidate cache for {}.{} : {}\n", ls->x, ls->y, vd);
+          // fmt::print("invalidate cache for {}.{} : {}\n", ls->x, ls->y, vd);
           visibilityCache.erase(lsi);
         }
       }
@@ -238,8 +238,8 @@ void Location::updateView(std::shared_ptr<Player> hero) {
   auto t1 = std::chrono::system_clock::now();
   using milliseconds = std::chrono::duration<double, std::milli>;
   milliseconds ms = t1 - t0;
-  std::cout << "update light time taken: " << rang::fg::green << ms.count()
-            << rang::style::reset << '\n';
+  // std::cout << "update light time taken: " << rang::fg::green << ms.count()
+            // << rang::style::reset << '\n';
   for (auto r : cells) {
     for (auto c : r) {
       if (c->type == CellType::UNKNOWN_CELL)

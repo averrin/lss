@@ -39,7 +39,7 @@ public:
 namespace EnemyType {
 EnemySpec const GOBLIN = {
     "goblin", 1,
-    0.5, 5, 1, 1, 3, 0,
+    1, 5, 1, 1, 3, 0,
     Items{std::make_shared<Item>(ItemType::GOLD_COINS, 200)},
     {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER}};
 EnemySpec const ORK = {
@@ -78,6 +78,8 @@ public:
   int actionPoints = 0;
   EnemySpec type;
   micropather::MPVector<void *> path;
+  int step;
+  bool randomPath();
 
   virtual void onEvent(CommitEvent &e) override;
 };

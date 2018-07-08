@@ -2,6 +2,7 @@
 #include "EventBus.hpp"
 #include "lss/game/costs.hpp"
 #include "lss/game/player.hpp"
+#include "lss/generator/room.hpp"
 #include "lss/utils.hpp"
 
 Enemy::Enemy(EnemySpec t) : Creature(), type(t) {
@@ -89,20 +90,20 @@ Direction getDirFromCell(std::shared_ptr<Cell> c, Cell *nc) {
     } else {
       return NE;
     }
-  } else if (nc->y == c->y) {
+  }
+  if (nc->y == c->y) {
     if (nc->x < c->x) {
       return W;
     } else {
       return E;
     }
+  }
+  if (nc->x < c->x) {
+    return SW;
+  } else if (nc->x == c->x) {
+    return S;
   } else {
-    if (nc->x < c->x) {
-      return SW;
-    } else if (nc->x == c->x) {
-      return S;
-    } else {
-      return SE;
-    }
+    return SE;
   }
 };
 
@@ -130,7 +131,7 @@ void Enemy::onEvent(CommitEvent &e) {
     delete pather;
     if (result != micropather::MicroPather::SOLVED) {
       // TODO: who print this? fix it.
-      fmt::print("cannot find path\n");
+      fmt::print("cannot find path to hero\n");
       actionPoints = 0;
       return;
     }
@@ -164,11 +165,64 @@ void Enemy::onEvent(CommitEvent &e) {
       }
     }
   } else {
+    if (step >= path.size() - 1 || path.size() == 0 || currentCell.get() == static_cast<Cell *>(path[path.size()-1])) {
+      if (!randomPath()) {
+        return;
+      }
+    }
+
+    fmt::print("path created: {}/{} [{}]\n", step, path.size(), currentCell.get() != static_cast<Cell *>(path[path.size()-1]));
+    if (path.size() >= 1 && currentCell.get() != static_cast<Cell *>(path[path.size()-1])) {
+      auto nptr = path[step];
+      auto nc = static_cast<Cell *>(nptr);
+      fmt::print("NC: {}.{}\n", nc->x, nc->y);
+      cd = getDirFromCell(currentCell, nc);
+
+      while (actionPoints >= stepCost) {
+        if (move(cd)) {
+          if (step < path.size() - 1) {
+            step++;
+            nptr = path[step];
+            nc = static_cast<Cell *>(nptr);
+            cd = getDirFromCell(currentCell, nc);
+          } else {
+            fmt::print("clear path 1\n");
+            randomPath();
+            break;
+          }
+          actionPoints -= stepCost;
+        } else {
+          fmt::print("clear path\n");
+          randomPath();
+          break;
+        }
+      }
+    }
 
     while (actionPoints >= waitCost) {
       actionPoints -= waitCost;
     }
   }
+}
+
+bool Enemy::randomPath() {
+      fmt::print("R: {}.{}\n", currentCell->room->x, currentCell->room->y);
+      auto target = currentCell->room->cells[rand() % currentCell->room->height][rand() % currentCell->room->width];
+      fmt::print("T: {}.{}\n", target->x, target->y);
+      auto pather = new micropather::MicroPather(currentLocation.get());
+      float totalCost = 0;
+      pather->Reset();
+      int result = pather->Solve(currentCell.get(), target.get(),
+                                &path, &totalCost);
+      delete pather;
+      step = 1;
+      if (result != micropather::MicroPather::SOLVED) {
+        fmt::print("cannot find path\n");
+        actionPoints = 0;
+        return false;
+      }
+      return true;
+  
 }
 
 EnemyTakeDamageEvent::EnemyTakeDamageEvent(eb::ObjectPtr s, int d)

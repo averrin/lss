@@ -274,6 +274,7 @@ void fixOverlapped(std::shared_ptr<Location> location) {
         } else {
           room->cells[c->y - room->y][c->x - room->x] =
               location->cells[c->y][c->x];
+          room->cells[c->y - room->y][c->x - room->x]->room = room;
         }
       }
     }

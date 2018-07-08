@@ -171,15 +171,15 @@ void LSSApp::invalidate() {
       if (!hero->canSee(ec) && !hero->monsterSense)
         continue;
 
-      // unsigned size = e->path.size();
-      // for (int k = 0; k < size; ++k) {
-      //   auto ptr = e->path[k];
-      //   auto dot = static_cast<Cell *>(ptr);
-      //   auto i =
-      //       dot->y * (hero->currentLocation->cells.front().size() + 1) +
-      //       dot->x;
-      //   state->fragments[i] = std::make_shared<ItemSign>(ItemType::ROCK);
-      // }
+      unsigned size = e->path.size();
+      for (int k = 0; k < size; ++k) {
+        auto ptr = e->path[k];
+        auto dot = static_cast<Cell *>(ptr);
+        auto i =
+            dot->y * (hero->currentLocation->cells.front().size() + 1) +
+            dot->x;
+        state->fragments[i] = std::make_shared<ItemSign>(ItemType::ROCK);
+      }
 
       state->fragments[index] = std::make_shared<EnemySign>(e->type);
 

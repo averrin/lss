@@ -109,7 +109,7 @@ public:
     if (it != visibilityCache.end()) {
       return visibilityCache[{start, distance}];
     }
-    fmt::print("cache miss for {}.{} : {}\n", start->x, start->y, distance);
+    // fmt::print("cache miss for {}.{} : {}\n", start->x, start->y, distance);
     std::vector<std::shared_ptr<Cell>> result;
     fov::Vec heroPoint{start->x, start->y};
     fov::Vec bounds{(int)cells.front().size(), (int)cells.size()};
