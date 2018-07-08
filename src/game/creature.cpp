@@ -322,11 +322,11 @@ void Creature::calcViewField(bool force) {
   // if (cachedCell == currentCell && !force) {
   //   return;
   // }
+  currentLocation->updateLight(currentLocation->player);
   auto vd = VISIBILITY_DISTANCE(this);
   if (hasTrait(Traits::NIGHT_VISION)) {
     vd = 1000;
   }
-  // viewField.clear();
   viewField = currentLocation->getVisible(currentCell, vd);
 
   // cachedCell = currentCell;

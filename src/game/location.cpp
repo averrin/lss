@@ -248,8 +248,8 @@ void Location::updateView(std::shared_ptr<Player> hero) {
   auto t1 = std::chrono::system_clock::now();
   using milliseconds = std::chrono::duration<double, std::milli>;
   milliseconds ms = t1 - t0;
-  // std::cout << "update light time taken: " << rang::fg::green << ms.count()
-  // << rang::style::reset << '\n';
+  std::cout << "update light time taken: " << rang::fg::green << ms.count()
+  << rang::style::reset << '\n';
   for (auto r : cells) {
     for (auto c : r) {
       if (c->type == CellType::UNKNOWN_CELL)
@@ -309,3 +309,28 @@ Objects Location::getObjects(std::shared_ptr<Cell> cell) {
   cellObjects.resize(std::distance(cellObjects.begin(), it));
   return cellObjects;
 }
+
+  std::vector<std::shared_ptr<Cell>> Location::getVisible(std::shared_ptr<Cell> start,
+                                                float distance) {
+    auto it = visibilityCache.find({start, distance});
+    if (it != visibilityCache.end()) {
+      return visibilityCache[{start, distance}];
+    }
+    // fmt::print("cache miss for {}.{} : {}\n", start->x, start->y, distance);
+    std::vector<std::shared_ptr<Cell>> result;
+    fov::Vec creaturePoint{start->x, start->y};
+    fov::Vec bounds{(int)cells.front().size(), (int)cells.size()};
+    start->seeThrough = true;
+    auto field = fov::refresh(creaturePoint, bounds, cells);
+    // fmt::print("{}.{} : {}\n", start->x, start->y, field.size());
+    for (auto v : field) {
+      auto c = cells[v.y][v.x];
+      auto d = sqrt(pow(start->x - c->x, 2) + pow(start->y - c->y, 2));
+      if (c->illuminated || d <= distance) {
+        result.push_back(c);
+      }
+    }
+    start->seeThrough = false;
+    visibilityCache[{start, distance}] = result;
+    return result;
+  }

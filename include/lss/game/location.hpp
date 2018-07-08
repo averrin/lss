@@ -104,28 +104,7 @@ public:
       visibilityCache;
 
   std::vector<std::shared_ptr<Cell>> getVisible(std::shared_ptr<Cell> start,
-                                                float distance) {
-    auto it = visibilityCache.find({start, distance});
-    if (it != visibilityCache.end()) {
-      return visibilityCache[{start, distance}];
-    }
-    // fmt::print("cache miss for {}.{} : {}\n", start->x, start->y, distance);
-    std::vector<std::shared_ptr<Cell>> result;
-    fov::Vec creaturePoint{start->x, start->y};
-    fov::Vec bounds{(int)cells.front().size(), (int)cells.size()};
-    start->seeThrough = true;
-    auto field = fov::refresh(creaturePoint, bounds, cells);
-    for (auto v : field) {
-      auto c = cells[v.y][v.x];
-      auto d = sqrt(pow(start->x - c->x, 2) + pow(start->y - c->y, 2));
-      if (c->illuminated || d <= distance) {
-        result.push_back(c);
-      }
-    }
-    start->seeThrough = false;
-    visibilityCache[{start, distance}] = result;
-    return result;
-  }
+                                                float distance);
 };
 
 #endif // __LOCATION_H_

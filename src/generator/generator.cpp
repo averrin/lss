@@ -101,8 +101,8 @@ void placeWalls(std::shared_ptr<Location> location) {
 }
 
 std::shared_ptr<Room> Generator::getRoom() {
-  auto rh = rand() % 10 + 3;
-  auto rw = rand() % 20 + 3;
+  auto rh = rand() % 8 + 3;
+  auto rw = rand() % 12 + 3;
 
   auto cells = fill(rh, rw, CellType::FLOOR);
   auto room = std::make_shared<Room>(RoomType::HALL, cells);
@@ -259,6 +259,7 @@ std::pair<std::shared_ptr<Cell>, Cells> randomDig(std::shared_ptr<Cell> start,
   return dig(start, dir, length, minWidth, jWidth, wind);
 }
 
+//TODO: sort rooms for minimize passage cells
 void fixOverlapped(std::shared_ptr<Location> location) {
   auto bh = location->cells.size();
   auto bw = location->cells.front().size();
@@ -387,7 +388,7 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   auto t0 = std::chrono::system_clock::now();
 
   auto location = std::make_shared<Location>(spec);
-  auto rc = rand() % 7 + 5;
+  auto rc = rand() % 12 + 7;
 
   location->cells = fill(HEIGHT, WIDTH, CellType::UNKNOWN_CELL);
   for (auto n = 0; n < rc; n++) {

@@ -211,7 +211,7 @@ void Enemy::onEvent(CommitEvent &e) {
 
 bool Enemy::randomPath() {
   if (currentCell->room == nullptr) {
-    fmt::print("no room here");
+    fmt::print("no room here\n");
     return false;
   }
   fmt::print("R: {}.{}\n", currentCell->room->x, currentCell->room->y);

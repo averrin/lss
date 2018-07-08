@@ -48,14 +48,14 @@ public:
   void draw() override;
   void invalidate();
   void invalidate(std::string reason) {
-    fmt::print("Invalidate reason: {}\n", reason);
+    // fmt::print("Invalidate reason: {}\n", reason);
     auto t0 = std::chrono::system_clock::now();
     invalidate();
     auto t1 = std::chrono::system_clock::now();
     using milliseconds = std::chrono::duration<double, std::milli>;
     milliseconds ms = t1 - t0;
-    std::cout << "invalidate: " << rang::fg::green << ms.count()
-              << rang::style::reset << '\n';
+    // std::cout << "invalidate: " << rang::fg::green << ms.count()
+              // << rang::style::reset << '\n';
   }
   bool processCommand(std::string);
   void setListeners();

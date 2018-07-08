@@ -154,6 +154,7 @@ void Player::commit(int ap, bool s) {
   milliseconds ms = t1 - t0;
   std::cout << "commit time taken: " << rang::fg::green << ms.count()
             << rang::style::reset << '\n';
+
 }
 
 bool Player::unequip(std::shared_ptr<Slot> slot) {
