@@ -8,6 +8,8 @@
 #include "lss/game/player.hpp"
 #include "lss/game/slot.hpp"
 #include "lss/game/spell.hpp"
+#include "lss/game/door.hpp"
+#include "lss/utils.hpp"
 #include "rang.hpp"
 
 DigEvent::DigEvent(eb::ObjectPtr s, std::shared_ptr<Cell> c)
@@ -56,8 +58,8 @@ Player::Player() : Creature() {
       std::make_shared<Slot>("Boots", std::vector<WearableType>{BOOTS}),
       std::make_shared<Slot>("Light", std::vector<WearableType>{LIGHT})};
 
-  hp = 20;
-  hp_max = 20;
+  hp_max = 100;
+  hp = hp_max;
   damage_dices = 1;
   damage_edges = 1;
   damage_modifier = 0;
@@ -65,8 +67,7 @@ Player::Player() : Creature() {
 
   name = "Unnamed hero";
 
-  auto dagger = std::make_shared<Item>(
-      ItemType::DAGGER, Effects{std::make_shared<MeleeDamage>(1, 2, 2)});
+  auto dagger = Prototype::DAGGER->clone();
   inventory.push_back(dagger);
   auto sword = std::make_shared<Item>(
       ItemType::SWORD, Effects{std::make_shared<MeleeDamage>(2, 4, 3)});
@@ -187,6 +188,7 @@ void Player::onEvent(MoveCommandEvent &e) {
 
 void Player::onEvent(AttackCommandEvent &e) {
   if (attack(e.direction)) {
+    fmt::print("attack [{}]\n", ap_cost::ATTACK / SPEED(this));
     commit(ap_cost::ATTACK / SPEED(this));
   }
 }
@@ -215,6 +217,7 @@ void Player::onEvent(DigCommandEvent &e) {
 }
 
 void Player::onEvent(WalkCommandEvent &e) {
+  auto enemies = utils::castObjects<Enemy>(currentLocation->objects);
   while (move(e.direction)) {
     commit(ap_cost::STEP / SPEED(this), true);
     auto item = std::find_if(currentLocation->objects.begin(),
@@ -223,8 +226,16 @@ void Player::onEvent(WalkCommandEvent &e) {
                                return std::dynamic_pointer_cast<Item>(o) &&
                                       o->currentCell == currentCell;
                              });
-    // TODO: stop walk if enemy is near
-    if (item != currentLocation->objects.end()) {
+    auto seeEnemy = std::find_if(enemies.begin(), enemies.end(), [&](std::shared_ptr<Enemy> e) {
+      return canSee(e->currentCell);
+    }) != enemies.end();
+    if (item != currentLocation->objects.end() || seeEnemy || currentCell->type != CellType::FLOOR) {
+      break;
+    }
+    auto nbrs = currentLocation->getNeighbors(currentCell);
+    if (std::find_if(nbrs.begin(), nbrs.end(), [&](std::shared_ptr<Cell> c){
+      return utils::castObjects<Door>(currentLocation->getObjects(c)).size() > 0;
+    }) != nbrs.end()){
       break;
     }
   }

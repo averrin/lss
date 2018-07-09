@@ -39,18 +39,20 @@ public:
 namespace EnemyType {
 EnemySpec const GOBLIN = {
     "goblin", 1,
-    1, 5, 1, 1, 3, 0,
+    1, 15, 1, 1, 3, 0,
     Items{std::make_shared<Item>(ItemType::GOLD_COINS, 200)},
-    {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER}};
+    {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER},
+    Items{Prototype::DAGGER->clone(), Prototype::DAGGER->clone()}
+};
 EnemySpec const ORK = {
     "ork", 2,
-    1, 35, 2, 1, 6, 1,
+    1, 55, 2, 1, 6, 1,
     Items{std::make_shared<Item>(ItemType::CORPSE)},
     {}, Items{Prototype::TORCH}
 };
 EnemySpec const PIXI = {
     "pixi", 3,
-    2, 20, 0, 1, 2, 0,
+    2, 25, 0, 1, 2, 0,
     Items{std::make_shared<Item>(
         ItemType::GOLD_RING,
         Effects{std::make_shared<SpecialPostfix>("of lightning"),
@@ -58,7 +60,7 @@ EnemySpec const PIXI = {
     {Traits::FLY}};
 EnemySpec const OGRE = {
     "ogre", 4,
-    1, 60, 2, 1, 6, 1,
+    1, 100, 2, 1, 6, 1,
     Items{std::make_shared<Item>(ItemType::CORPSE)},
     {Traits::NIGHT_VISION},
     Items{Prototype::GREAT_AXE->clone()},
@@ -78,6 +80,7 @@ public:
   int actionPoints = 0;
   EnemySpec type;
   micropather::MPVector<void *> path;
+  micropather::MPVector<void *> pathToHero;
   int step;
   bool randomPath();
 

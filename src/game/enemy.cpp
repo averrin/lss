@@ -108,21 +108,32 @@ Direction getDirFromCell(std::shared_ptr<Cell> c, Cell *nc) {
 };
 
 void Enemy::onEvent(CommitEvent &e) {
-  if (e.actionPoints == 0)
-    return;
-  actionPoints += e.actionPoints;
+  auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
   calcViewField();
+  if (e.actionPoints == 0 || (!canSee(hero->currentCell) && !hero->canSee(currentCell))) {
+    return;
+  }
+
+  actionPoints += e.actionPoints;
 
   // TODO: add lastheropoint and attack hero if its near
   auto stepCost = ap_cost::STEP / speed;
   auto attackCost = ap_cost::ATTACK / speed;
   auto waitCost = ap_cost::WAIT;
-  auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
+  fmt::print("Reaction [{}/{}]: step: {}, attack: {}, wait: {}\n", e.actionPoints, actionPoints, stepCost, attackCost, waitCost);
 
   // TODO: implement passive ai
   // fmt::print("{}\n", canSee(hero->currentCell));
   if (type.aiType == AIType::AGGRESSIVE &&
       hero->currentLocation == currentLocation && canSee(hero->currentCell)) {
+    auto nbrs = currentLocation->getNeighbors(currentCell);
+    if (std::find(nbrs.begin(), nbrs.end(), hero->currentCell) != nbrs.end()) {
+      while (actionPoints >= attackCost) {
+        auto cd = getDirFromCell(currentCell, hero->currentCell.get());
+        attack(cd);
+        actionPoints -= attackCost;
+      }
+    } else {
     auto pather = new micropather::MicroPather(currentLocation.get());
     float totalCost = 0;
     pather->Reset();
@@ -131,7 +142,7 @@ void Enemy::onEvent(CommitEvent &e) {
     delete pather;
     if (result != micropather::MicroPather::SOLVED) {
       // TODO: who print this? fix it.
-      fmt::print("cannot find path to hero\n");
+      fmt::print("cannot find path to hero [{}.{} -> {}.{}]\n", currentCell->x, currentCell->y, hero->currentCell->x, hero->currentCell->y);
       actionPoints = 0;
       return;
     }
@@ -163,7 +174,7 @@ void Enemy::onEvent(CommitEvent &e) {
         attack(cd);
         actionPoints -= attackCost;
       }
-    }
+    }}
   } else {
     // FIXME: crashes
     if (step >= path.size() - 1 || path.size() == 0 ||

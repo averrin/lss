@@ -302,6 +302,9 @@ bool Creature::move(Direction d, bool autoAction) {
   // nc->x, nc->y);
   if (!nc->canPass(traits) || hasObstacles || hasPlayer) {
     if (autoAction && hasObstacles && !(*obstacle)->passThrough) {
+      if (std::dynamic_pointer_cast<Enemy>(*obstacle)) {
+        return attack(d);
+      }
       return !(*obstacle)->interact(shared_from_this());
     }
     return false;

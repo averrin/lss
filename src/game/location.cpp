@@ -10,6 +10,7 @@
 #include "lss/game/player.hpp"
 #include "lss/utils.hpp"
 
+
 const float TORCH_DISTANCE = 4.5f;
 
 float getDistance(std::shared_ptr<Cell> c, std::shared_ptr<Cell> cc) {
@@ -273,29 +274,14 @@ void Location::AdjacentCost(void *state,
                             MP_VECTOR<micropather::StateCost> *neighbors) {
   auto cell = static_cast<Cell *>(state);
 
-  if (cell->y > 0 && cell->x > 0 && cell->x < cells.front().size() - 1 &&
-      cell->y < cells.size() - 1) {
-    std::vector<std::shared_ptr<Cell>> nbrs = {
-        cells[cell->y - 1][cell->x],     cells[cell->y - 1][cell->x - 1],
-        cells[cell->y + 1][cell->x - 1], cells[cell->y][cell->x - 1],
-        cells[cell->y][cell->x + 1],     cells[cell->y + 1][cell->x + 1],
-        cells[cell->y - 1][cell->x + 1], cells[cell->y + 1][cell->x]};
-
-    for (auto n : nbrs) {
-      if (!n->passThrough)
-        continue;
-      auto obstacle = std::find_if(
-          objects.begin(), objects.end(), [n](std::shared_ptr<Object> o) {
-            return !o->passThrough && o->currentCell == n;
-          });
-      if (obstacle != objects.end())
-        continue;
-      micropather::StateCost nodeCost = {
-          (void *)&(*n),
-          LeastCostEstimate(state, (void *)&(*n)),
-      };
-      neighbors->push_back(nodeCost);
-    }
+  for (auto n : getNeighbors(cell)) {
+    if (!n->passThrough && n!=player->currentCell)
+      continue;
+    micropather::StateCost nodeCost = {
+        (void *)&(*n),
+        LeastCostEstimate(state, (void *)&(*n)),
+    };
+    neighbors->push_back(nodeCost);
   }
 }
 void Location::PrintStateInfo(void *state){};

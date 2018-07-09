@@ -42,6 +42,8 @@ const auto PLATE = std::make_shared<Item>(
 const auto GREAT_AXE = std::make_shared<Item>(
     ItemType::GREAT_AXE, Effects{std::make_shared<MeleeDamage>(-1, 6, 7),
                                  std::make_shared<SpeedModifier>(-0.3f)});
+  const auto DAGGER = std::make_shared<Item>(
+      ItemType::DAGGER, Effects{std::make_shared<MeleeDamage>(1, 2, 2)});
 } // namespace Prototype
 
 #endif // __ITEM_H_

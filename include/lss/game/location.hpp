@@ -1,5 +1,6 @@
 #ifndef __LOCATION_H_
 #define __LOCATION_H_
+
 #include "lss/game/cell.hpp"
 #include "lss/game/events.hpp"
 #include "lss/game/fov.hpp"
@@ -62,6 +63,9 @@ public:
   std::vector<eb::HandlerRegistrationPtr> handlers;
 
   std::vector<std::shared_ptr<Cell>> getNeighbors(std::shared_ptr<Cell> cell) {
+    return getNeighbors(cell.get());
+  }
+  std::vector<std::shared_ptr<Cell>> getNeighbors(Cell* cell) {
     std::vector<std::shared_ptr<Cell>> nbrs;
     if (cell->x > 0) {
       if (cell->y > 0) {
