@@ -362,9 +362,10 @@ void placeEnemies(std::shared_ptr<Location> location, int threat) {
 }
 
 void makeRiver(std::shared_ptr<Location> location) {
-  dig(location->cells[0][location->cells.front().size() / 3 +
+  auto river = dig(location->cells[0][location->cells.front().size() / 3 +
                          rand() % location->cells.front().size() / 3],
       S, location->cells.size() - 2, 2, 2, 1, CellType::WATER);
+  paste(river.second, location, 0, 0);
 }
 
 std::shared_ptr<Location>
