@@ -4,11 +4,11 @@
 #include "EventBus.hpp"
 #include "lss/commands.hpp"
 #include "lss/game/costs.hpp"
+#include "lss/game/door.hpp"
 #include "lss/game/enemy.hpp"
 #include "lss/game/player.hpp"
 #include "lss/game/slot.hpp"
 #include "lss/game/spell.hpp"
-#include "lss/game/door.hpp"
 #include "lss/utils.hpp"
 #include "rang.hpp"
 
@@ -155,7 +155,6 @@ void Player::commit(int ap, bool s) {
   milliseconds ms = t1 - t0;
   std::cout << "commit time taken: " << rang::fg::green << ms.count()
             << rang::style::reset << '\n';
-
 }
 
 bool Player::unequip(std::shared_ptr<Slot> slot) {
@@ -226,16 +225,19 @@ void Player::onEvent(WalkCommandEvent &e) {
                                return std::dynamic_pointer_cast<Item>(o) &&
                                       o->currentCell == currentCell;
                              });
-    auto seeEnemy = std::find_if(enemies.begin(), enemies.end(), [&](std::shared_ptr<Enemy> e) {
-      return canSee(e->currentCell);
-    }) != enemies.end();
-    if (item != currentLocation->objects.end() || seeEnemy || currentCell->type != CellType::FLOOR) {
+    auto seeEnemy = std::find_if(enemies.begin(), enemies.end(),
+                                 [&](std::shared_ptr<Enemy> e) {
+                                   return canSee(e->currentCell);
+                                 }) != enemies.end();
+    if (item != currentLocation->objects.end() || seeEnemy ||
+        currentCell->type != CellType::FLOOR) {
       break;
     }
     auto nbrs = currentLocation->getNeighbors(currentCell);
-    if (std::find_if(nbrs.begin(), nbrs.end(), [&](std::shared_ptr<Cell> c){
-      return utils::castObjects<Door>(currentLocation->getObjects(c)).size() > 0;
-    }) != nbrs.end()){
+    if (std::find_if(nbrs.begin(), nbrs.end(), [&](std::shared_ptr<Cell> c) {
+          return utils::castObjects<Door>(currentLocation->getObjects(c))
+                     .size() > 0;
+        }) != nbrs.end()) {
       break;
     }
   }

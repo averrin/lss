@@ -26,13 +26,14 @@ public:
 
 class TorchStand : public Object {
 public:
-  TorchStand() : Object(), type(ItemType::TORCH_STAND) {
-    seeThrough = true;
-  }
+  TorchStand() : Object(), type(ItemType::TORCH_STAND) { seeThrough = true; }
   ItemSpec type;
 };
 
 typedef std::vector<std::shared_ptr<Item>> Items;
+
+// TODO: consumables
+// TODO: randomized items
 
 namespace Prototype {
 const auto TORCH = std::make_shared<Item>(
@@ -42,8 +43,8 @@ const auto PLATE = std::make_shared<Item>(
 const auto GREAT_AXE = std::make_shared<Item>(
     ItemType::GREAT_AXE, Effects{std::make_shared<MeleeDamage>(-1, 6, 7),
                                  std::make_shared<SpeedModifier>(-0.3f)});
-  const auto DAGGER = std::make_shared<Item>(
-      ItemType::DAGGER, Effects{std::make_shared<MeleeDamage>(1, 2, 2)});
+const auto DAGGER = std::make_shared<Item>(
+    ItemType::DAGGER, Effects{std::make_shared<MeleeDamage>(1, 2, 2)});
 } // namespace Prototype
 
 #endif // __ITEM_H_

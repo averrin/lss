@@ -50,6 +50,7 @@ Enemy::~Enemy() {
   }
 }
 
+// TODO: add probability for drops
 std::optional<Items> Enemy::drop() {
   if (type.loot.size() == 0)
     return std::nullopt;
@@ -110,7 +111,8 @@ Direction getDirFromCell(std::shared_ptr<Cell> c, Cell *nc) {
 void Enemy::onEvent(CommitEvent &e) {
   auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
   calcViewField();
-  if (e.actionPoints == 0 || (!canSee(hero->currentCell) && !hero->canSee(currentCell))) {
+  if (e.actionPoints == 0 ||
+      (!canSee(hero->currentCell) && !hero->canSee(currentCell))) {
     return;
   }
 
@@ -120,7 +122,8 @@ void Enemy::onEvent(CommitEvent &e) {
   auto stepCost = ap_cost::STEP / speed;
   auto attackCost = ap_cost::ATTACK / speed;
   auto waitCost = ap_cost::WAIT;
-  fmt::print("Reaction [{}/{}]: step: {}, attack: {}, wait: {}\n", e.actionPoints, actionPoints, stepCost, attackCost, waitCost);
+  fmt::print("Reaction [{}/{}]: step: {}, attack: {}, wait: {}\n",
+             e.actionPoints, actionPoints, stepCost, attackCost, waitCost);
 
   // TODO: implement passive ai
   // fmt::print("{}\n", canSee(hero->currentCell));
@@ -134,47 +137,50 @@ void Enemy::onEvent(CommitEvent &e) {
         actionPoints -= attackCost;
       }
     } else {
-    auto pather = new micropather::MicroPather(currentLocation.get());
-    float totalCost = 0;
-    pather->Reset();
-    int result = pather->Solve(currentCell.get(), hero->currentCell.get(),
-                               &path, &totalCost);
-    delete pather;
-    if (result != micropather::MicroPather::SOLVED) {
-      // TODO: who print this? fix it.
-      fmt::print("cannot find path to hero [{}.{} -> {}.{}]\n", currentCell->x, currentCell->y, hero->currentCell->x, hero->currentCell->y);
-      actionPoints = 0;
-      return;
-    }
-
-    auto i = 1;
-    auto nptr = path[i];
-    auto nc = static_cast<Cell *>(nptr);
-    auto cd = getDirFromCell(currentCell, nc);
-    auto inShadow = !nc->illuminated;
-    if (inShadow && hasTrait(Traits::SHADOW_RUNNER)) {
-      stepCost /= 2;
-    }
-
-    auto n = 0;
-    while (actionPoints >= stepCost && n < 2) {
-      if (nc->x != hero->currentCell->x || nc->y != hero->currentCell->y) {
-        if (move(cd)) {
-          if (i < path.size() - 1) {
-            i++;
-            nptr = path[i];
-            nc = static_cast<Cell *>(nptr);
-            cd = getDirFromCell(currentCell, nc);
-          }
-          actionPoints -= stepCost;
-        } else {
-          n++;
-        }
-      } else {
-        attack(cd);
-        actionPoints -= attackCost;
+      auto pather = new micropather::MicroPather(currentLocation.get());
+      float totalCost = 0;
+      pather->Reset();
+      int result = pather->Solve(currentCell.get(), hero->currentCell.get(),
+                                 &path, &totalCost);
+      delete pather;
+      if (result != micropather::MicroPather::SOLVED) {
+        // TODO: who print this? fix it.
+        fmt::print("cannot find path to hero [{}.{} -> {}.{}]\n",
+                   currentCell->x, currentCell->y, hero->currentCell->x,
+                   hero->currentCell->y);
+        actionPoints = 0;
+        return;
       }
-    }}
+
+      auto i = 1;
+      auto nptr = path[i];
+      auto nc = static_cast<Cell *>(nptr);
+      auto cd = getDirFromCell(currentCell, nc);
+      auto inShadow = !nc->illuminated;
+      if (inShadow && hasTrait(Traits::SHADOW_RUNNER)) {
+        stepCost /= 2;
+      }
+
+      auto n = 0;
+      while (actionPoints >= stepCost && n < 2) {
+        if (nc->x != hero->currentCell->x || nc->y != hero->currentCell->y) {
+          if (move(cd)) {
+            if (i < path.size() - 1) {
+              i++;
+              nptr = path[i];
+              nc = static_cast<Cell *>(nptr);
+              cd = getDirFromCell(currentCell, nc);
+            }
+            actionPoints -= stepCost;
+          } else {
+            n++;
+          }
+        } else {
+          attack(cd);
+          actionPoints -= attackCost;
+        }
+      }
+    }
   } else {
     // FIXME: crashes
     if (step >= path.size() - 1 || path.size() == 0 ||

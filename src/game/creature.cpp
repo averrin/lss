@@ -5,6 +5,7 @@
 #include "lss/game/events.hpp"
 #include "lss/game/fov.hpp"
 #include "lss/game/player.hpp"
+#include "lss/utils.hpp"
 
 #include "EventBus.hpp"
 #include "fmt/format.h"
@@ -214,6 +215,16 @@ int Creature::getDamage(std::shared_ptr<Object>) {
   }
   if (damage == 0) {
     damage = hitRoll(damage_modifier, damage_dices, damage_edges);
+  }
+  if (hasTrait(Traits::MOB)) {
+    auto nbrs = currentLocation->getNeighbors(currentCell);
+    if (std::find_if(nbrs.begin(), nbrs.end(), [&](std::shared_ptr<Cell> c) {
+          auto enemies =
+              utils::castObjects<Enemy>(currentLocation->getObjects(c));
+          return enemies.size() > 0 && enemies.front()->hasTrait(Traits::MOB);
+        }) != nbrs.end()) {
+      damage *= 1.5;
+    }
   }
   return damage;
 }

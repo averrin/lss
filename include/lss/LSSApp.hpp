@@ -55,7 +55,7 @@ public:
     using milliseconds = std::chrono::duration<double, std::milli>;
     milliseconds ms = t1 - t0;
     // std::cout << "invalidate: " << rang::fg::green << ms.count()
-              // << rang::style::reset << '\n';
+    // << rang::style::reset << '\n';
   }
   bool processCommand(std::string);
   void setListeners();

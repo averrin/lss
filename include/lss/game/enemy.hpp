@@ -37,17 +37,31 @@ public:
 
 // clang-format off
 namespace EnemyType {
+EnemySpec const RAT = {
+    "rat", 0,
+    3, 10, 1, 1, 3, 0,
+    Items{},
+    {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB},
+    Items{}
+};
+EnemySpec const BAT = {
+    "bat", 0,
+    2, 10, 1, 1, 3, 0,
+    Items{},
+    {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB, Traits::CAN_SWIM},
+    Items{}
+};
 EnemySpec const GOBLIN = {
     "goblin", 1,
     1, 15, 1, 1, 3, 0,
     Items{std::make_shared<Item>(ItemType::GOLD_COINS, 200)},
-    {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER},
+    {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER, Traits::MOB},
     Items{Prototype::DAGGER->clone(), Prototype::DAGGER->clone()}
 };
 EnemySpec const ORK = {
     "ork", 2,
     1, 55, 2, 1, 6, 1,
-    Items{std::make_shared<Item>(ItemType::CORPSE)},
+    Items{std::make_shared<Item>(ItemType::CORPSE), Prototype::TORCH->clone()},
     {}, Items{Prototype::TORCH}
 };
 EnemySpec const PIXI = {
@@ -57,7 +71,7 @@ EnemySpec const PIXI = {
         ItemType::GOLD_RING,
         Effects{std::make_shared<SpecialPostfix>("of lightning"),
                 std::make_shared<SpeedModifier>(0.3)})},
-    {Traits::FLY}};
+    {Traits::FLY, Traits::MOB}};
 EnemySpec const OGRE = {
     "ogre", 4,
     1, 100, 2, 1, 6, 1,

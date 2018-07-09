@@ -65,7 +65,7 @@ public:
   std::vector<std::shared_ptr<Cell>> getNeighbors(std::shared_ptr<Cell> cell) {
     return getNeighbors(cell.get());
   }
-  std::vector<std::shared_ptr<Cell>> getNeighbors(Cell* cell) {
+  std::vector<std::shared_ptr<Cell>> getNeighbors(Cell *cell) {
     std::vector<std::shared_ptr<Cell>> nbrs;
     if (cell->x > 0) {
       if (cell->y > 0) {

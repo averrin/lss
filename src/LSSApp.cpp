@@ -186,9 +186,8 @@ void LSSApp::invalidate() {
         for (int k = 0; k < size; ++k) {
           auto ptr = e->path[k];
           auto dot = static_cast<Cell *>(ptr);
-          auto i =
-              dot->y * (hero->currentLocation->cells.front().size() + 1) +
-              dot->x;
+          auto i = dot->y * (hero->currentLocation->cells.front().size() + 1) +
+                   dot->x;
           state->fragments[i] = std::make_shared<ItemSign>(ItemType::ROCK);
         }
       }
