@@ -4,6 +4,9 @@
 - init dungeon generator
 - river generator
 - place random enemies
+- cavern location type
+- init inspect mode
+- init passive ai
 
 ### 0.0.6
 - durability for torches
