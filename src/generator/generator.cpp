@@ -16,12 +16,14 @@ Generator::Generator() {}
 int WIDTH = 120;
 int HEIGHT = 60;
 
-int P_DOOR = 40;
-int P_CAVE_PASSAGE = 40;
-int P_RIVER = 10;
-int P_TORCHES = 60;
-int P_ENEMY = 1;
-int P_CAVE_ROCK = 15;
+namespace P {
+int DOOR = 40;
+int CAVE_PASSAGE = 40;
+int RIVER = 10;
+int TORCHES = 60;
+int ENEMY = 1;
+int CAVE_ROCK = 15;
+}
 
 Cells fill(int h, int w, CellSpec type) {
   Cells cells;
@@ -296,7 +298,7 @@ void placeDoors(std::shared_ptr<Location> location) {
                 return nc->type == CellType::WALL;
               }) < 6) {
             auto o = location->getObjects(c);
-            if (rand() % 100 > P_DOOR || c->hasFeature(CellFeature::CAVE) ||
+            if (rand() % 100 > P::DOOR || c->hasFeature(CellFeature::CAVE) ||
                 o.size() > 0)
               continue;
             auto nd = false;
@@ -350,7 +352,7 @@ void placeEnemies(std::shared_ptr<Location> location, int threat) {
   for (auto r : location->cells) {
     for (auto c : r) {
       if (c->type == CellType::FLOOR) {
-        if (rand() % 100 > P_ENEMY || location->getObjects(c).size() > 0)
+        if (rand() % 100 > P::ENEMY || location->getObjects(c).size() > 0)
           continue;
         auto et = ets[rand() % ess.size()];
         auto enemy = makeEnemy(location, c, et);
@@ -372,13 +374,13 @@ void makeRiver(std::shared_ptr<Location> location) {
 std::shared_ptr<Location>
 Generator::getRandomLocation(std::shared_ptr<Player> hero) {
   auto spec = LocationSpec{"Dungeon"};
-  if (rand() % 100 < P_CAVE_PASSAGE) {
+  if (rand() % 100 < P::CAVE_PASSAGE) {
     spec.features.push_back(LocationFeature::CAVE_PASSAGE);
   }
-  if (rand() % 100 < P_RIVER) {
+  if (rand() % 100 < P::RIVER) {
     spec.features.push_back(LocationFeature::RIVER);
   }
-  if (rand() % 100 < P_TORCHES) {
+  if (rand() % 100 < P::TORCHES) {
     spec.features.push_back(LocationFeature::TORCHES);
   }
   // if (rand() % 100 < 10) {
@@ -465,7 +467,7 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
       location->rooms.push_back(newRoom);
       for (auto r : newRoom->cells) {
         for (auto c : r) {
-          if (c->type == CellType::FLOOR && rand() % 100 < P_CAVE_ROCK) {
+          if (c->type == CellType::FLOOR && rand() % 100 < P::CAVE_ROCK) {
             auto rock = std::make_shared<Item>(ItemType::ROCK);
             rock->currentCell = c;
             location->objects.push_back(rock);
