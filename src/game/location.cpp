@@ -16,7 +16,7 @@ float getDistance(std::shared_ptr<Cell> c, std::shared_ptr<Cell> cc) {
 
 void Location::invalidateVisibilityCache(std::shared_ptr<Cell> cell) {
   auto vd = TORCH_DISTANCE;
-  fmt::print("--- {} ", visibilityCache.size());
+  // fmt::print("--- {} ", visibilityCache.size());
   std::vector<std::pair<std::shared_ptr<Cell>, float>> hits;
   for (auto ls : cell->lightSources) {
     for (auto [lsk, _] : visibilityCache) {
@@ -30,11 +30,11 @@ void Location::invalidateVisibilityCache(std::shared_ptr<Cell> cell) {
   for (auto lsk : hits) {
     auto lsi = visibilityCache.find(lsk);
     if (lsi != visibilityCache.end()) {
-      fmt::print(".");
+      // fmt::print(".");
       visibilityCache.erase(lsi);
     }
   }
-  fmt::print(" {} ---\n", visibilityCache.size());
+  // fmt::print(" {} ---\n", visibilityCache.size());
 }
 
 void Location::onEvent(DoorOpenedEvent &e) {
@@ -51,9 +51,9 @@ void Location::onEvent(CommitEvent &e) {
   auto t1 = std::chrono::system_clock::now();
   using milliseconds = std::chrono::duration<double, std::milli>;
   milliseconds ms = t1 - t0;
-  std::cout << "onCommit: " << rang::fg::yellow << "location"
-            << rang::style::reset << ": " << rang::fg::green << ms.count()
-            << rang::style::reset << '\n';
+  // std::cout << "onCommit: " << rang::fg::yellow << "location"
+  //           << rang::style::reset << ": " << rang::fg::green << ms.count()
+  //           << rang::style::reset << '\n';
 
   LocationChangeEvent ec(nullptr);
   eb::EventBus::FireEvent(ec);
@@ -75,7 +75,7 @@ void Location::onEvent(EnemyDiedEvent &e) {
     auto loot = enemy->drop();
     if (loot != std::nullopt) {
       for (auto item : *loot) {
-        auto new_item = std::make_shared<Item>(*item);
+        auto new_item = item->roll();
         new_item->currentCell = enemy->currentCell;
         objects.push_back(new_item);
       }
@@ -254,8 +254,8 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
   auto t1 = std::chrono::system_clock::now();
   using milliseconds = std::chrono::duration<double, std::milli>;
   milliseconds ms = t1 - t0;
-  std::cout << rang::fg::yellow << "update light" << rang::style::reset << ": "
-            << rang::fg::green << ms.count() << rang::style::reset << '\n';
+  // std::cout << rang::fg::yellow << "update light" << rang::style::reset << ": "
+            // << rang::fg::green << ms.count() << rang::style::reset << '\n';
   needUpdateLight = false;
 }
 

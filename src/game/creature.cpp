@@ -1,4 +1,5 @@
 #include <cmath>
+#include "rang.hpp"
 
 #include "lss/game/creature.hpp"
 #include "lss/game/enemy.hpp"
@@ -166,7 +167,7 @@ int criticalHit(int m, int d, int e) {
   if (damage < 0) {
     damage = 0;
   }
-  fmt::print("critical hit: {}\n", damage);
+  std::cout << "critical hit: " << rang::fg::red << "!" << damage << rang::style::reset << std::endl;
   return damage;
 }
 
@@ -183,7 +184,6 @@ int Creature::hitRoll(int m, int d, int e) {
   if (damage < 0) {
     damage = 0;
   }
-  fmt::print("hit roll: {}\n", damage);
   return damage;
 }
 
@@ -226,6 +226,7 @@ int Creature::getDamage(std::shared_ptr<Object>) {
           return enemies.size() > 0 && enemies.front()->hasTrait(Traits::MOB);
         }) != nbrs.end()) {
       damage *= 1.5;
+      std::cout << "mob damage: " << rang::fg::red <<  damage << rang::style::reset << std::endl;
     }
   }
   return damage;

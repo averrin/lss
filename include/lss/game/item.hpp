@@ -22,6 +22,16 @@ public:
   std::string getFullTitle();
 
   std::shared_ptr<Item> clone() { return std::make_shared<Item>(*this); }
+  std::shared_ptr<Item> roll() {
+    auto item = std::make_shared<Item>(*this);
+    item->count = count <= 1 ? count : rand() % count;
+    return item;
+  }
+  std::shared_ptr<Item> clone(int count) {
+    auto item = std::make_shared<Item>(*this);
+    item->count = count <= 1 ? count : rand() % count;
+    return item;
+  }
 };
 
 class TorchStand : public Object {
@@ -45,6 +55,7 @@ const auto GREAT_AXE = std::make_shared<Item>(
                                  std::make_shared<SpeedModifier>(-0.3f)});
 const auto DAGGER = std::make_shared<Item>(
     ItemType::DAGGER, Effects{std::make_shared<MeleeDamage>(1, 2, 2)});
+  const auto GOLD = std::make_shared<Item>(ItemType::GOLD_COINS, 1);
 } // namespace Prototype
 
 #endif // __ITEM_H_

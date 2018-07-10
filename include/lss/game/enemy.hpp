@@ -39,29 +39,29 @@ public:
 namespace EnemyType {
 EnemySpec const RAT = {
     "rat", 0,
-    3, 10, 1, 1, 3, 0,
+    2, 10, 1, 1, 3, 0,
     Items{},
     {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB},
     Items{}
 };
 EnemySpec const BAT = {
     "bat", 0,
-    2, 10, 1, 1, 3, 0,
+    1.5, 10, 1, 1, 3, 0,
     Items{},
-    {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB, Traits::CAN_SWIM},
+    {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB, Traits::FLY},
     Items{}
 };
 EnemySpec const GOBLIN = {
     "goblin", 1,
     1, 15, 1, 1, 3, 0,
-    Items{std::make_shared<Item>(ItemType::GOLD_COINS, 200)},
+    Items{Prototype::GOLD->clone(50)},
     {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER, Traits::MOB},
-    Items{Prototype::DAGGER->clone(), Prototype::DAGGER->clone()}
+    Items{Prototype::DAGGER, Prototype::DAGGER}
 };
 EnemySpec const ORK = {
     "ork", 2,
     1, 55, 2, 1, 6, 1,
-    Items{std::make_shared<Item>(ItemType::CORPSE), Prototype::TORCH->clone()},
+    Items{std::make_shared<Item>(ItemType::CORPSE), Prototype::TORCH},
     {}, Items{Prototype::TORCH}
 };
 EnemySpec const PIXI = {
@@ -77,7 +77,7 @@ EnemySpec const OGRE = {
     1, 100, 2, 1, 6, 1,
     Items{std::make_shared<Item>(ItemType::CORPSE)},
     {Traits::NIGHT_VISION},
-    Items{Prototype::GREAT_AXE->clone()},
+    Items{Prototype::GREAT_AXE},
 };
 } // namespace EnemyType
 // clang-format on

@@ -299,14 +299,14 @@ bool Player::interact(std::shared_ptr<Object> actor) {
       damage -= def;
     }
     hp -= damage;
-    HeroTakeDamageEvent e(ptr, damage);
+    HeroTakeDamageEvent e(enemy, damage);
     eb::EventBus::FireEvent(e);
   }
   if (hp <= 0) {
     passThrough = true;
     HeroDiedEvent e2(ptr);
-    // MessageEvent e2(ptr, "YOU DIED!!");
     eb::EventBus::FireEvent(e2);
+    commit("death", 0);
   }
   // commit("player interact", 0);
   return hp > 0;

@@ -40,7 +40,7 @@ Enemy::Enemy(EnemySpec t) : Creature(), type(t) {
       if (std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
                     i->type.wearableType) != s->acceptTypes.end()) {
         // fmt::print("{} : {}\n", s->name, i->getTitle());
-        equipment->equip(s, i);
+        equipment->equip(s, i->roll());
         break;
       }
     }
@@ -113,6 +113,7 @@ Direction getDirFromCell(std::shared_ptr<Cell> c, Cell *nc) {
 
 // TODO: refactor. Divide by actions;
 void Enemy::onEvent(CommitEvent &e) {
+  if (HP(this) <= 0) return;
   auto t0 = std::chrono::system_clock::now();
   auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
   calcViewField();
