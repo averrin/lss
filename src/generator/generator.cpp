@@ -21,6 +21,7 @@ int P_CAVE_PASSAGE = 40;
 int P_RIVER = 10;
 int P_TORCHES = 60;
 int P_ENEMY = 1;
+int P_CAVE_ROCK = 15;
 
 Cells fill(int h, int w, CellSpec type) {
   Cells cells;
@@ -462,6 +463,15 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
       newRoom->y = 0;
       newRoom->threat = rand() % 4;
       location->rooms.push_back(newRoom);
+      for (auto r : newRoom->cells) {
+        for (auto c : r) {
+          if (c->type == CellType::FLOOR && rand() % 100 < P_CAVE_ROCK) {
+            auto rock = std::make_shared<Item>(ItemType::ROCK);
+            rock->currentCell = c;
+            location->objects.push_back(rock);
+          }
+        }
+      }
     }
   }
   location->enterCell->type = CellType::UPSTAIRS;
