@@ -126,6 +126,7 @@ void InspectMode::render() {
   auto cell = location->cells[app->state->cursor.y][app->state->cursor.x];
   auto objects = location->getObjects(cell);
   auto cc = app->hero->currentCell;
+  auto check = "<span color='green'>✔</span>";
 
   // TODO: add room info & display
   app->inspectState->setContent(
@@ -138,23 +139,23 @@ void InspectMode::render() {
     return;
   app->inspectState->appendContent({F(fmt::format(
       "Type <b>PASS</b>THROUGH: [<b>{}</b>]",
-      cell->type.passThrough ? "<span color='green'>✔</span>" : " "))});
+      cell->type.passThrough ? check : " "))});
   app->inspectState->appendContent(State::END_LINE);
   app->inspectState->appendContent({F(fmt::format(
       "Type <b>SEE</b>THROUGH: [<b>{}</b>]",
-      cell->type.passThrough ? "<span color='green'>✔</span>" : " "))});
+      cell->type.passThrough ? check : " "))});
   app->inspectState->appendContent(State::END_LINE);
   app->inspectState->appendContent({F(
       fmt::format("<b>PASS</b>THROUGH: [<b>{}</b>]",
-                  cell->passThrough ? "<span color='green'>✔</span>" : " "))});
+                  cell->passThrough ? check : " "))});
   app->inspectState->appendContent(State::END_LINE);
   app->inspectState->appendContent({F(
       fmt::format("<b>SEE</b>THROUGH: [<b>{}</b>]",
-                  cell->passThrough ? "<span color='green'>✔</span>" : " "))});
+                  cell->passThrough ? check : " "))});
   app->inspectState->appendContent(State::END_LINE);
   app->inspectState->appendContent({F(
       fmt::format("Illuminated: [<b>{}</b>]",
-                  cell->illuminated ? "<span color='green'>✔</span>" : " "))});
+                  cell->illuminated ? check : " "))});
   app->inspectState->appendContent(State::END_LINE);
   app->inspectState->appendContent({F(
       fmt::format("Cell features count: <b>{}</b>", cell->features.size()))});
@@ -180,17 +181,17 @@ void InspectMode::render() {
   app->inspectState->appendContent(State::END_LINE);
   app->inspectState->appendContent({F(fmt::format(
       "Hero: [<b>{}</b>]",
-      cell == app->hero->currentCell ? "<span color='green'>✔</span>" : " "))});
+      cell == app->hero->currentCell ? check : " "))});
   app->inspectState->appendContent(State::END_LINE);
   app->inspectState->appendContent({F(fmt::format(
       "Hero can <b>pass</b>: [<b>{}</b>]", cell->canPass(app->hero->traits)
-                                               ? "<span color='green'>✔</span>"
+                                               ? check
                                                : " "))});
   app->inspectState->appendContent(State::END_LINE);
 
   app->inspectState->appendContent({F(fmt::format(
       "Hero can <b>see</b>: [<b>{}</b>]",
-      app->hero->canSee(cell) ? "<span color='green'>✔</span>" : " "))});
+      app->hero->canSee(cell) ? check : " "))});
   app->inspectState->appendContent(State::END_LINE);
   app->inspectState->appendContent({F(
       fmt::format("Distance to hero: <b>{}</b>",
@@ -205,11 +206,11 @@ void InspectMode::render() {
   for (auto e : allEnemies) {
     if (e->canSee(cell)) {
       app->inspectState->appendContent({F(fmt::format(
-          "<b>{} at {}.{}</b> can see: [<b>{}</b>]", e->type.name,
+          "<b>{} @ {}.{}</b> can see: [<b>{}</b>]", e->type.name,
           e->currentCell->x, e->currentCell->y,
-          e->canSee(cell) ? "<span color='green'>✔</span>" : " "))});
+          e->canSee(cell) ? check : " "))});
       app->state->selection.push_back(
-          {{e->currentCell->x, e->currentCell->y}, "green"});
+          {{e->currentCell->x, e->currentCell->y}, "#fff"});
       app->inspectState->appendContent(State::END_LINE);
     }
   }
@@ -221,11 +222,11 @@ void InspectMode::render() {
   if (objects.size() > 0) {
     auto isDoor = utils::castObjects<Door>(objects).size() > 0;
     app->inspectState->appendContent(
-        {F(fmt::format("Door: [<b>{}</b>]", isDoor ? "X" : " "))});
+        {F(fmt::format("Door: [<b>{}</b>]", isDoor ? check : " "))});
     app->inspectState->appendContent(State::END_LINE);
     auto isTorch = utils::castObjects<TorchStand>(objects).size() > 0;
     app->inspectState->appendContent(
-        {F(fmt::format("Torch: [<b>{}</b>]", isDoor ? "X" : " "))});
+        {F(fmt::format("Torch: [<b>{}</b>]", isTorch ? check : " "))});
     app->inspectState->appendContent(State::END_LINE);
     auto enemies = utils::castObjects<Enemy>(objects);
     if (enemies.size() > 0) {
@@ -233,14 +234,25 @@ void InspectMode::render() {
       for (auto e : enemies) {
         enemyNames.push_back(e->type.name);
         app->inspectState->appendContent({F(fmt::format(
-            "<b>{} at {}.{}</b> can see HERO: [<b>{}</b>]", e->type.name,
+            "<b>{} @ {}.{}</b> can see HERO: [<b>{}</b>]", e->type.name,
             e->currentCell->x, e->currentCell->y,
-            e->canSee(cc) ? "<span color='green'>✔</span>" : " "))});
+            e->canSee(cc) ? check : " "))});
         app->inspectState->appendContent(State::END_LINE);
       }
       app->inspectState->appendContent({F(
           fmt::format("Enemies: <b>{}</b>", utils::join(enemyNames, ", ")))});
       app->inspectState->appendContent(State::END_LINE);
+    }
+    auto items = utils::castObjects<Item>(objects);
+    if (items.size() > 0) {
+      std::vector<std::string> itemNames;
+      for (auto i : items) {
+        itemNames.push_back(i->getFullTitle());
+      }
+      app->inspectState->appendContent({F(
+          fmt::format("Items: <b>{}</b>", utils::join(itemNames, ", ")))});
+      app->inspectState->appendContent(State::END_LINE);
+      
     }
   }
 }

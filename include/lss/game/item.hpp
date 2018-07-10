@@ -40,6 +40,12 @@ public:
   ItemSpec type;
 };
 
+class Grass : public Object {
+public:
+  Grass() : Object(), type(ItemType::GRASS) { seeThrough = true; }
+  ItemSpec type;
+};
+
 typedef std::vector<std::shared_ptr<Item>> Items;
 
 // TODO: consumables

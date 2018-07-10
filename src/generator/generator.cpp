@@ -23,6 +23,7 @@ int RIVER = 10;
 int TORCHES = 60;
 int ENEMY = 1;
 int CAVE_ROCK = 10;
+int CAVE_GRASS = 5;
 int CAVERN_WALL = 35;
 } // namespace P
 
@@ -558,6 +559,11 @@ void placeCaves(std::shared_ptr<Location> location) {
             location->objects.push_back(rock);
             continue;
           }
+        } else if (c->type == CellType::FLOOR && rand() % 100 < P::CAVE_GRASS) {
+            auto grass = std::make_shared<Item>(ItemType::GRASS, 1);
+            grass->currentCell = c;
+            location->objects.push_back(grass);
+            continue;
         }
       }
     }
@@ -583,6 +589,11 @@ void makeCavePassage(std::shared_ptr<Location> location) {
           auto rock = std::make_shared<Item>(ItemType::ROCK);
           rock->currentCell = c;
           location->objects.push_back(rock);
+        } else if (c->type == CellType::FLOOR && rand() % 100 < P::CAVE_GRASS) {
+            auto grass = std::make_shared<Item>(ItemType::GRASS, 1);
+            grass->currentCell = c;
+            location->objects.push_back(grass);
+            continue;
         }
       }
     }

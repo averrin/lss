@@ -19,6 +19,9 @@ public:
 };
 
 namespace ItemType {
+ItemSpec const TORCH_STAND = {"torch stand", false};
+ItemSpec const GRASS = {"grass", false};
+
 ItemSpec const CORPSE = {"corpse", false};
 ItemSpec const ROCK = {"rock", false};
 ItemSpec const PICK_AXE = {"pick axe", true, WearableType::WEAPON_TWOHANDED};
@@ -28,7 +31,6 @@ ItemSpec const DAGGER = {"dagger", true, WearableType::WEAPON_LIGHT};
 ItemSpec const GOLD_RING = {"ring", true, WearableType::RING};
 ItemSpec const TORCH = {"torch", true, WearableType::LIGHT, 50000};
 ItemSpec const GOLD_COINS = {"gold coins", false};
-ItemSpec const TORCH_STAND = {"torch stand", false};
 ItemSpec const PLATE = {"plate", true, WearableType::BODY};
 
 ItemSpec const HELMET = {"helmet", true, WearableType::HEAD};

@@ -57,7 +57,7 @@ void State::render(kp::pango::CinderPangoRef surface) {
       fContent = f->render(this);
     }
     if (select && n == cursor.y * (width + 1) + cursor.x) {
-      fContent = "<span background='yellow'>" + fContent + "</span>";
+      fContent = "<span background='#9B870C'>" + fContent + "</span>";
     }
     if (select) {
       auto it =

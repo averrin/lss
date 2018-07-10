@@ -56,6 +56,7 @@ std::map<ItemSpec, std::string> itemSigns = {
     {ItemType::GOLD_RING, "="},   {ItemType::GOLD_COINS, "$"},
     {ItemType::DAGGER, "("},      {ItemType::TORCH, "]"},
     {ItemType::TORCH_STAND, "*"},
+    {ItemType::GRASS, "\""},
 };
 
 std::map<ItemSpec, std::string> itemColors = {
@@ -64,6 +65,7 @@ std::map<ItemSpec, std::string> itemColors = {
     {ItemType::GOLD_RING, "gold"},     {ItemType::GOLD_COINS, "gold"},
     {ItemType::DAGGER, "gray"},        {ItemType::TORCH, "orange"},
     {ItemType::TORCH_STAND, "orange"},
+    {ItemType::GRASS, "darkgreen"},
 };
 
 std::map<EnemySpec, std::string> enemySigns = {
@@ -99,8 +101,8 @@ std::map<CellSpec, std::string> cellColorsIlluminated = {
 std::map<CellSpec, std::map<bool, std::string>> cellWeights = {
     {CellType::FLOOR, {{false, "normal"}, {true, "normal"}}},
     {CellType::WALL, {{false, "bold"}, {true, "bold"}}},
-    {CellType::DOWNSTAIRS, {{false, "normal"}, {true, "normal"}}},
-    {CellType::UPSTAIRS, {{false, "normal"}, {true, "normal"}}},
+    {CellType::DOWNSTAIRS, {{false, "bold"}, {true, "bold"}}},
+    {CellType::UPSTAIRS, {{false, "bold"}, {true, "bold"}}},
     {CellType::WATER, {{false, "normal"}, {true, "normal"}}},
 };
 
