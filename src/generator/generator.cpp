@@ -399,6 +399,8 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   auto t0 = std::chrono::system_clock::now();
 
   auto location = std::make_shared<Location>(spec);
+
+  if (spec->type == LocationType::DUNGEON) {
   auto rc = rand() % 12 + 7;
 
   location->cells = fill(HEIGHT, WIDTH, CellType::UNKNOWN_CELL);
@@ -474,6 +476,7 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
       }
     }
   }
+}
   location->enterCell->type = CellType::UPSTAIRS;
   location->enterCell->seeThrough = false;
 

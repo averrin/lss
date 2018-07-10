@@ -19,9 +19,14 @@ enum LocationFeature {
   TORCHES,
 };
 
+enum LocationType {
+  DUNGEON, CAVERN
+};
+
 struct LocationSpec {
   std::string name;
   int threat = 0;
+  LocationType type = LocationType::DUNGEON;
   std::vector<LocationFeature> features;
   std::vector<CellFeature> cellFeatures;
 };
