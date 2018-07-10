@@ -45,7 +45,7 @@ public:
 
 class HeroSign : public Fragment {
 public:
-  HeroSign();
+  HeroSign(std::string);
 };
 
 class EnemySign : public Fragment {

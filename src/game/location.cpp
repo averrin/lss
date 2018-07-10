@@ -10,14 +10,36 @@
 #include "lss/game/player.hpp"
 #include "lss/utils.hpp"
 
-const float TORCH_DISTANCE = 4.5f;
-
 float getDistance(std::shared_ptr<Cell> c, std::shared_ptr<Cell> cc) {
   return sqrt(pow(cc->x - c->x, 2) + pow(cc->y - c->y, 2));
 }
 
+void Location::invalidateVisibilityCache(std::shared_ptr<Cell> cell) {
+  auto vd = TORCH_DISTANCE;
+  fmt::print("--- {} ", visibilityCache.size());
+  std::vector<std::pair<std::shared_ptr<Cell>, float>> hits;
+  for (auto ls : cell->lightSources) {
+    for (auto [lsk, _] : visibilityCache) {
+      if (lsk.first != ls && lsk.first != player->currentCell)
+        continue;
+      // fmt::print("cache hit: {}.{} - {}\n", lsk.first->x, lsk.first->y,
+      // lsk.second);
+      hits.push_back(lsk);
+    }
+  }
+  for (auto lsk : hits) {
+    auto lsi = visibilityCache.find(lsk);
+    if (lsi != visibilityCache.end()) {
+      fmt::print(".");
+      visibilityCache.erase(lsi);
+    }
+  }
+  fmt::print(" {} ---\n", visibilityCache.size());
+}
+
 void Location::onEvent(DoorOpenedEvent &e) {
   fmt::print("on door open\n");
+  needUpdateLight = true;
   player->calcViewField(true);
   updateView(player);
 }
@@ -29,8 +51,9 @@ void Location::onEvent(CommitEvent &e) {
   auto t1 = std::chrono::system_clock::now();
   using milliseconds = std::chrono::duration<double, std::milli>;
   milliseconds ms = t1 - t0;
-  // std::cout << "location in commit time taken: " << rang::fg::green
-  // << ms.count() << rang::style::reset << '\n';
+  std::cout << "onCommit: " << rang::fg::yellow << "location"
+            << rang::style::reset << ": " << rang::fg::green << ms.count()
+            << rang::style::reset << '\n';
 
   LocationChangeEvent ec(nullptr);
   eb::EventBus::FireEvent(ec);
@@ -57,9 +80,12 @@ void Location::onEvent(EnemyDiedEvent &e) {
         objects.push_back(new_item);
       }
     }
+    invalidateVisibilityCache(enemy->currentCell);
+    objects.erase(std::remove(objects.begin(), objects.end(), sender),
+                  objects.end());
   }
-  objects.erase(std::remove(objects.begin(), objects.end(), sender),
-                objects.end());
+
+  needUpdateLight = true;
 }
 
 void Location::onEvent(ItemTakenEvent &e) {
@@ -73,6 +99,7 @@ void Location::reveal() {
       c->visibilityState = VisibilityState::VISIBLE;
     }
   }
+  needUpdateLight = true;
 };
 
 void Location::onEvent(DigEvent &e) {
@@ -108,6 +135,7 @@ void Location::onEvent(DigEvent &e) {
   if (auto cell = cells[e.cell->y + 1][e.cell->x + 1];
       cell->type == CellType::UNKNOWN_CELL)
     cell->type = CellType::WALL;
+  needUpdateLight = true;
 }
 
 ItemsFoundEvent::ItemsFoundEvent(eb::ObjectPtr s, Objects i)
@@ -127,34 +155,14 @@ void Location::onEvent(EnterCellEvent &e) {
     }
   }
   // if (e.cell->illuminated) {
-  auto vd = TORCH_DISTANCE;
-  for (auto ls : e.cell->lightSources) {
-    for (auto ld = vd; ld > 2; ld--) {
-      auto lsi = visibilityCache.find({ls, ld});
-      if (lsi != visibilityCache.end()) {
-        // fmt::print("invalidate cache for {}.{} : {}\n", ls->x, ls->y, vd);
-        visibilityCache.erase(lsi);
-      }
-    }
-  }
+  invalidateVisibilityCache(e.cell);
+  needUpdateLight = true;
   // }
 }
-void Location::onEvent(LeaveCellEvent &e) {
-  // if (e.cell->illuminated) {
-  auto vd = TORCH_DISTANCE;
-  for (auto ls : e.cell->lightSources) {
-    for (auto ld = vd; ld > 2; ld--) {
-      auto lsi = visibilityCache.find({ls, ld});
-      if (lsi != visibilityCache.end()) {
-        // fmt::print("invalidate cache for {}.{} : {}\n", ls->x, ls->y, vd);
-        visibilityCache.erase(lsi);
-      }
-    }
-  }
-  // }
-}
+void Location::onEvent(LeaveCellEvent &e) { invalidateVisibilityCache(e.cell); }
 
 void Location::enter(std::shared_ptr<Player> hero, std::shared_ptr<Cell> cell) {
+  needUpdateLight = true;
   player = hero;
   hero->currentCell = cell;
 
@@ -166,7 +174,7 @@ void Location::enter(std::shared_ptr<Player> hero, std::shared_ptr<Cell> cell) {
   }
   hero->calcViewField();
   updateView(hero);
-  hero->commit(0);
+  hero->commit("location enter", 0);
 
   handlers.push_back(eb::EventBus::AddHandler<CommitEvent>(*this));
   handlers.push_back(eb::EventBus::AddHandler<EnemyDiedEvent>(*this));
@@ -191,6 +199,9 @@ void Location::leave(std::shared_ptr<Player> hero) {
 }
 
 void Location::updateLight(std::shared_ptr<Player> hero) {
+  if (!needUpdateLight)
+    return;
+  auto t0 = std::chrono::system_clock::now();
   auto heroVD = hero->VISIBILITY_DISTANCE(hero.get());
   auto hasLight = hero->hasLight();
   auto enemies = utils::castObjects<Enemy>(objects);
@@ -240,16 +251,16 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
       c->illuminated = true;
     }
   }
-}
-
-void Location::updateView(std::shared_ptr<Player> hero) {
-  auto t0 = std::chrono::system_clock::now();
-  updateLight(hero);
   auto t1 = std::chrono::system_clock::now();
   using milliseconds = std::chrono::duration<double, std::milli>;
   milliseconds ms = t1 - t0;
-  std::cout << "update light time taken: " << rang::fg::green << ms.count()
-            << rang::style::reset << '\n';
+  std::cout << rang::fg::yellow << "update light" << rang::style::reset << ": "
+            << rang::fg::green << ms.count() << rang::style::reset << '\n';
+  needUpdateLight = false;
+}
+
+void Location::updateView(std::shared_ptr<Player> hero) {
+  updateLight(hero);
   for (auto r : cells) {
     for (auto c : r) {
       if (c->type == CellType::UNKNOWN_CELL)

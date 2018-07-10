@@ -13,15 +13,15 @@
 #include "EventRegisttration.hpp"
 #include "fmt/format.h"
 
+const float TORCH_DISTANCE = 4.5f;
+
 enum LocationFeature {
   CAVE_PASSAGE,
   RIVER,
   TORCHES,
 };
 
-enum LocationType {
-  DUNGEON, CAVERN
-};
+enum LocationType { DUNGEON, CAVERN };
 
 struct LocationSpec {
   std::string name;
@@ -94,6 +94,18 @@ public:
     return nbrs;
   }
 
+  std::vector<std::shared_ptr<Cell>> getVisible(std::shared_ptr<Cell> start,
+                                                float distance);
+
+  void invalidateVisibilityCache(std::shared_ptr<Cell> cell);
+
+  std::map<std::pair<std::shared_ptr<Cell>, float>,
+           std::vector<std::shared_ptr<Cell>>>
+      visibilityCache;
+
+private:
+  bool needUpdateLight = true;
+
   virtual void onEvent(EnemyDiedEvent &e) override;
   virtual void onEvent(ItemTakenEvent &e) override;
   virtual void onEvent(EnterCellEvent &e) override;
@@ -107,13 +119,6 @@ public:
   void AdjacentCost(void *state,
                     MP_VECTOR<micropather::StateCost> *adjacent) override;
   void PrintStateInfo(void *state) override;
-
-  std::map<std::pair<std::shared_ptr<Cell>, float>,
-           std::vector<std::shared_ptr<Cell>>>
-      visibilityCache;
-
-  std::vector<std::shared_ptr<Cell>> getVisible(std::shared_ptr<Cell> start,
-                                                float distance);
 };
 
 #endif // __LOCATION_H_

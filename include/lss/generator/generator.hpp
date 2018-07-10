@@ -6,11 +6,8 @@
 class Generator {
 public:
   Generator();
-  std::shared_ptr<Room> getRoom();
-  Cells getFloor();
   std::shared_ptr<Location> getLocation(LocationSpec);
   std::shared_ptr<Location> getRandomLocation(std::shared_ptr<Player>);
-  void placeRoom();
 };
 
 #endif // __GENERATOR_H_

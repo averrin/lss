@@ -67,21 +67,14 @@ std::map<ItemSpec, std::string> itemColors = {
 };
 
 std::map<EnemySpec, std::string> enemySigns = {
-    {EnemyType::RAT, "r"},
-    {EnemyType::BAT, "b"},
-    {EnemyType::GOBLIN, "g"},
-    {EnemyType::ORK, "o"},
-    {EnemyType::PIXI, "p"},
-    {EnemyType::OGRE, "O"},
+    {EnemyType::RAT, "r"}, {EnemyType::BAT, "b"},  {EnemyType::GOBLIN, "g"},
+    {EnemyType::ORK, "o"}, {EnemyType::PIXI, "p"}, {EnemyType::OGRE, "O"},
 };
 
 std::map<EnemySpec, std::string> enemyColors = {
-    {EnemyType::RAT, "gray"},
-    {EnemyType::BAT, "gray"},
-    {EnemyType::GOBLIN, "green"},
-    {EnemyType::ORK, "#22cc22"},
-    {EnemyType::OGRE, "darkgreen"},
-    {EnemyType::PIXI, "pink"},
+    {EnemyType::RAT, "gray"},       {EnemyType::BAT, "gray"},
+    {EnemyType::GOBLIN, "green"},   {EnemyType::ORK, "#22cc22"},
+    {EnemyType::OGRE, "darkgreen"}, {EnemyType::PIXI, "pink"},
 };
 
 std::map<CellSpec, std::string> cellSigns = {
@@ -152,8 +145,9 @@ CellSign::CellSign(std::shared_ptr<Cell> cell)
           getCellArgs(cell),
           !(cell->type == CellType::UNKNOWN_CELL ||
             cell->visibilityState == VisibilityState::UNKNOWN)) {}
-HeroSign::HeroSign()
-    : Fragment("<span color='{{hero_color}}' weight='bold'>@</span>") {}
+HeroSign::HeroSign(std::string color)
+    : Fragment("<span color='{{color}}' weight='bold'>@</span>",
+               {{"color", color}}) {}
 EnemySign::EnemySign(EnemySpec type)
     : Fragment("<span color='{{color}}' weight='bold'>{{sign}}</span>",
                {{"sign", enemySigns[type]}, {"color", enemyColors[type]}}) {}

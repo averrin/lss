@@ -250,7 +250,7 @@ bool NormalMode::processKey(KeyEvent event) {
   switch (event.getCode()) {
   case KeyEvent::KEY_F1:
     app->debug = !app->debug;
-    app->hero->commit(0);
+    app->hero->commit("toggle debug", 0);
     break;
   case KeyEvent::KEY_j:
   case KeyEvent::KEY_h:
@@ -318,7 +318,7 @@ bool NormalMode::processKey(KeyEvent event) {
       app->state->setSelect(true);
       app->state->invalidate();
       app->inspectMode->render();
-      app->hero->commit(0);
+      app->hero->commit("inspect", 0);
     } else {
       app->processCommand("inventory");
     }
@@ -336,9 +336,8 @@ bool NormalMode::processKey(KeyEvent event) {
             (app->hero->currentLocation->cells.front().size() + 1),
         std::make_shared<CellSign>(
             std::make_shared<Cell>(CellType::UNKNOWN_CELL)));
+    app->hero->commit("regen location", 0);
 
-    app->hero->currentLocation->updateView(app->hero);
-    app->hero->commit(0);
     break;
   case KeyEvent::KEY_SLASH:
     if (event.isShiftDown()) {

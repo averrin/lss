@@ -37,10 +37,14 @@ ItemSpec const GREAVES = {"greaves", true, WearableType::GREAVES};
 ItemSpec const BOOTS = {"boots", true, WearableType::BOOTS};
 ItemSpec const CLOAK = {"cloak", true, WearableType::CLOAK};
 
-ItemSpec const RIGHT_PAULDRON = {"right pauldron", true, WearableType::RIGHT_PAULDRON};
-ItemSpec const LEFT_PAULDRON  = {"left pauldron", true, WearableType::LEFT_PAULDRON};
-ItemSpec const RIGHT_GAUNTLET = {"right gauntlet", true, WearableType::RIGHT_GAUNTLET};
-ItemSpec const LEFT_GAUNTLET  = {"left gauntlet", true, WearableType::LEFT_GAUNTLET};
+ItemSpec const RIGHT_PAULDRON = {"right pauldron", true,
+                                 WearableType::RIGHT_PAULDRON};
+ItemSpec const LEFT_PAULDRON = {"left pauldron", true,
+                                WearableType::LEFT_PAULDRON};
+ItemSpec const RIGHT_GAUNTLET = {"right gauntlet", true,
+                                 WearableType::RIGHT_GAUNTLET};
+ItemSpec const LEFT_GAUNTLET = {"left gauntlet", true,
+                                WearableType::LEFT_GAUNTLET};
 
 }; // namespace ItemType
 

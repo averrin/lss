@@ -26,7 +26,7 @@ public:
   bool equip(std::shared_ptr<Item>);
   bool unequip(std::shared_ptr<Slot>);
   bool interact(std::shared_ptr<Object>) override;
-  void commit(int ap, bool s = false);
+  void commit(std::string reason, int ap, bool s = false);
 
   std::string getDmgDesc();
 

@@ -96,7 +96,7 @@ void LSSApp::setup() {
                           std::make_shared<CellSign>(
                               std::make_shared<Cell>(CellType::UNKNOWN_CELL)));
 
-  hero->commit(0);
+  // hero->commit("init", 0);
 
   invalidate("init");
   setListeners();
@@ -127,9 +127,9 @@ void LSSApp::invalidate() {
   for (auto r : hero->currentLocation->cells) {
     auto column = 0;
     for (auto c : r) {
-      if (debug) {
-        c->features.clear();
-      }
+      // if (debug) {
+      //   c->features.clear();
+      // }
       auto f = state->fragments[index];
       // fmt::print("{}", c->type);
       switch (c->visibilityState) {
@@ -173,15 +173,16 @@ void LSSApp::invalidate() {
 
     if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
       if (debug) {
-        for (auto dot : e->viewField) {
-          if (dot == e->currentCell)
-            continue;
-          auto i = dot->y * (hero->currentLocation->cells.front().size() + 1) +
-                   dot->x;
-          dot->visibilityState = VisibilityState::VISIBLE;
-          dot->features = {CellFeature::BLOOD};
-          state->fragments[i] = std::make_shared<CellSign>(dot);
-        }
+        // for (auto dot : e->viewField) {
+        //   if (dot == e->currentCell)
+        //     continue;
+        //   auto i = dot->y * (hero->currentLocation->cells.front().size() + 1)
+        //   +
+        //            dot->x;
+        //   dot->visibilityState = VisibilityState::VISIBLE;
+        //   dot->features = {CellFeature::BLOOD};
+        //   state->fragments[i] = std::make_shared<CellSign>(dot);
+        // }
         unsigned size = e->path.size();
         for (int k = 0; k < size; ++k) {
           auto ptr = e->path[k];
@@ -212,7 +213,8 @@ void LSSApp::invalidate() {
   auto hc = hero->currentCell;
   index = hc->y * (hero->currentLocation->cells.front().size() + 1) + hc->x;
   if (!std::dynamic_pointer_cast<HeroSign>(state->fragments[index])) {
-    state->fragments[index] = std::make_shared<HeroSign>();
+    state->fragments[index] =
+        std::make_shared<HeroSign>(!debug ? palettes::DARK.hero_color : "red");
   }
 
   state->width = hero->currentLocation->cells.front().size();

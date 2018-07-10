@@ -1,6 +1,9 @@
-#include "lss/game/enemy.hpp"
+#include "rang.hpp"
+#include <chrono>
+
 #include "EventBus.hpp"
 #include "lss/game/costs.hpp"
+#include "lss/game/enemy.hpp"
 #include "lss/game/player.hpp"
 #include "lss/generator/room.hpp"
 #include "lss/utils.hpp"
@@ -36,7 +39,7 @@ Enemy::Enemy(EnemySpec t) : Creature(), type(t) {
     for (auto s : equipment->slots) {
       if (std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
                     i->type.wearableType) != s->acceptTypes.end()) {
-        fmt::print("{} : {}\n", s->name, i->getTitle());
+        // fmt::print("{} : {}\n", s->name, i->getTitle());
         equipment->equip(s, i);
         break;
       }
@@ -108,11 +111,19 @@ Direction getDirFromCell(std::shared_ptr<Cell> c, Cell *nc) {
   }
 };
 
+// TODO: refactor. Divide by actions;
 void Enemy::onEvent(CommitEvent &e) {
+  auto t0 = std::chrono::system_clock::now();
   auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
   calcViewField();
   if (e.actionPoints == 0 ||
       (!canSee(hero->currentCell) && !hero->canSee(currentCell))) {
+    // auto t1 = std::chrono::system_clock::now();
+    // using milliseconds = std::chrono::duration<double, std::milli>;
+    // milliseconds ms = t1 - t0;
+    // std::cout << "onCommit ZERO: " << rang::fg::red << "enemy"
+    //           << rang::style::reset << ": " << rang::fg::green << ms.count()
+    //           << rang::style::reset << '\n';
     return;
   }
 
@@ -224,6 +235,12 @@ void Enemy::onEvent(CommitEvent &e) {
       actionPoints -= waitCost;
     }
   }
+  auto t1 = std::chrono::system_clock::now();
+  using milliseconds = std::chrono::duration<double, std::milli>;
+  milliseconds ms = t1 - t0;
+  std::cout << "onCommit: " << rang::fg::red << "enemy" << rang::style::reset
+            << ": " << rang::fg::green << ms.count() << rang::style::reset
+            << '\n';
 }
 
 bool Enemy::randomPath() {

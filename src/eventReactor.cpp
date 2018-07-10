@@ -30,7 +30,7 @@ void EventReactor::onEvent(StairEvent &e) {
             (app->hero->currentLocation->cells.front().size() + 1),
         std::make_shared<CellSign>(
             std::make_shared<Cell>(CellType::UNKNOWN_CELL)));
-    app->hero->commit(0);
+    app->hero->commit("up in er", 0);
     app->invalidate("enter");
   } else if (app->hero->currentCell->type == CellType::DOWNSTAIRS &&
              e.dir == StairType::DOWN) {
@@ -53,7 +53,7 @@ void EventReactor::onEvent(StairEvent &e) {
             std::make_shared<Cell>(CellType::UNKNOWN_CELL)));
 
     app->hero->currentLocation->updateView(app->hero);
-    app->hero->commit(0);
+    app->hero->commit("down in er", 0);
   } else {
     MessageEvent me(nullptr, "There is no suitable stair.");
     eb::EventBus::FireEvent(me);
@@ -247,13 +247,15 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
 
   app->objectSelectMode->setHeader(F("Spells for zap: "));
 
-  app->objectSelectMode->setObjects(
-      utils::castObjects<Object>(std::vector<std::shared_ptr<Spell>>{
-          Spells::REVEAL, Spells::MONSTER_SENSE, Spells::MONSTER_FREEZE,
-          Spells::TOGGLE_DUAL_WIELD, Spells::TOGGLE_NIGHT_VISION,
-          Spells::TOGGLE_MIND_SIGHT, Spells::TOGGLE_MAGIC_TORCH,
-          Spells::TOGGLE_FLY, Spells::TOGGLE_CAN_SWIM, Spells::SUMMON_ORK,
-          Spells::TOGGLE_INVULNERABLE}));
+  if (app->debug) {
+    app->objectSelectMode->setObjects(
+        utils::castObjects<Object>(std::vector<std::shared_ptr<Spell>>{
+            Spells::REVEAL, Spells::MONSTER_SENSE, Spells::MONSTER_FREEZE,
+            Spells::TOGGLE_DUAL_WIELD, Spells::TOGGLE_NIGHT_VISION,
+            Spells::TOGGLE_MIND_SIGHT, Spells::TOGGLE_MAGIC_TORCH,
+            Spells::TOGGLE_FLY, Spells::TOGGLE_CAN_SWIM, Spells::SUMMON_ORK,
+            Spells::TOGGLE_INVULNERABLE}));
+  }
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
     auto spell = std::dynamic_pointer_cast<Spell>(o);
@@ -291,7 +293,7 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
   if (spell == Spells::REVEAL) {
     app->hero->currentLocation->reveal();
     app->hero->monsterSense = true;
-    app->hero->commit(0);
+    app->hero->commit("reveal", 0);
     app->invalidate("reveal");
     app->hero->monsterSense = false;
   } else if (spell == Spells::MONSTER_SENSE) {
@@ -309,16 +311,15 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
             ->cells[app->hero->currentCell->y + 1][app->hero->currentCell->x];
     app->hero->currentLocation->objects.push_back(
         mkEnemy(app->hero->currentLocation, c, app->hero, EnemyType::ORK));
-    app->hero->commit(0);
+    app->hero->commit("summon ork", 0);
   } else if (auto tspell = std::dynamic_pointer_cast<ToggleTraitSpell>(spell)) {
-    app->hero->commit(0);
     if (app->hero->hasTrait(tspell->trait)) {
       app->hero->traits.erase(std::remove(
           app->hero->traits.begin(), app->hero->traits.end(), tspell->trait));
     } else {
       app->hero->traits.push_back(tspell->trait);
     }
-    app->hero->commit(0);
+    app->hero->commit("toggle trait", 0);
   }
 }
 

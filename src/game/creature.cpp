@@ -10,6 +10,8 @@
 #include "EventBus.hpp"
 #include "fmt/format.h"
 
+float NIGHT_VISION_DISTANCE = 10;
+
 Creature::Creature() {
   passThrough = false;
   seeThrough = false;
@@ -339,7 +341,7 @@ void Creature::calcViewField(bool force) {
   currentLocation->updateLight(currentLocation->player);
   auto vd = VISIBILITY_DISTANCE(this);
   if (hasTrait(Traits::NIGHT_VISION)) {
-    vd = 1000;
+    vd = NIGHT_VISION_DISTANCE;
   }
   viewField = currentLocation->getVisible(currentCell, vd);
 

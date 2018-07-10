@@ -128,7 +128,7 @@ std::string Player::getDmgDesc() {
                      damage_edges);
 }
 
-void Player::commit(int ap, bool s) {
+void Player::commit(std::string reason, int ap, bool s) {
   if (hasLight() && !hasTrait(Traits::MAGIC_TORCH)) {
     auto lightSlot = *std::find_if(
         equipment->slots.begin(), equipment->slots.end(),
@@ -153,13 +153,14 @@ void Player::commit(int ap, bool s) {
   auto t1 = std::chrono::system_clock::now();
   using milliseconds = std::chrono::duration<double, std::milli>;
   milliseconds ms = t1 - t0;
-  std::cout << "commit time taken: " << rang::fg::green << ms.count()
+  std::cout << "commit " << rang::fg::blue << reason << rang::style::reset
+            << " [" << ap << "]: " << rang::fg::green << ms.count()
             << rang::style::reset << '\n';
 }
 
 bool Player::unequip(std::shared_ptr<Slot> slot) {
   equipment->unequip(slot);
-  commit(ap_cost::UNEQUIP / SPEED(this));
+  commit("unequip", ap_cost::UNEQUIP / SPEED(this));
   return true;
 }
 
@@ -168,7 +169,7 @@ bool Player::equip(std::shared_ptr<Item> item) { return false; }
 bool Player::equip(std::shared_ptr<Slot> slot, std::shared_ptr<Item> item) {
   // auto ptr = shared_from_this();
   if (equipment->equip(slot, item)) {
-    commit(ap_cost::EQUIP / SPEED(this));
+    commit("equip", ap_cost::EQUIP / SPEED(this));
     return true;
   }
   return false;
@@ -179,16 +180,16 @@ bool Player::equip(std::shared_ptr<Slot> slot, std::shared_ptr<Item> item) {
 
 void Player::onEvent(MoveCommandEvent &e) {
   if (move(e.direction, true)) {
-    commit(ap_cost::STEP / SPEED(this));
+    commit("move", ap_cost::STEP / SPEED(this));
   } else {
-    commit(0);
+    commit("move", 0);
   }
 }
 
 void Player::onEvent(AttackCommandEvent &e) {
   if (attack(e.direction)) {
     fmt::print("attack [{}]\n", ap_cost::ATTACK / SPEED(this));
-    commit(ap_cost::ATTACK / SPEED(this));
+    commit("attack", ap_cost::ATTACK / SPEED(this));
   }
 }
 
@@ -196,7 +197,7 @@ void Player::onEvent(DropCommandEvent &e) {
   if (e.item == nullptr)
     return;
   drop(e.item);
-  commit(ap_cost::DROP / SPEED(this));
+  commit("drop", ap_cost::DROP / SPEED(this));
 }
 
 void Player::onEvent(DigCommandEvent &e) {
@@ -218,7 +219,7 @@ void Player::onEvent(DigCommandEvent &e) {
 void Player::onEvent(WalkCommandEvent &e) {
   auto enemies = utils::castObjects<Enemy>(currentLocation->objects);
   while (move(e.direction)) {
-    commit(ap_cost::STEP / SPEED(this), true);
+    commit("walk move", ap_cost::STEP / SPEED(this), true);
     auto item = std::find_if(currentLocation->objects.begin(),
                              currentLocation->objects.end(),
                              [&](std::shared_ptr<Object> o) {
@@ -241,7 +242,7 @@ void Player::onEvent(WalkCommandEvent &e) {
       break;
     }
   }
-  commit(0);
+  commit("walk end", 0);
 }
 
 void Player::onEvent(PickCommandEvent &e) {
@@ -262,7 +263,7 @@ void Player::onEvent(PickCommandEvent &e) {
     } else {
       pick(std::dynamic_pointer_cast<Item>(*item));
     }
-    commit(ap_cost::PICK / SPEED(this));
+    commit("pick", ap_cost::PICK / SPEED(this));
   }
 }
 
@@ -274,11 +275,14 @@ void Player::onEvent(EquipCommandEvent &e) {
 }
 
 void Player::onEvent(UnEquipCommandEvent &e) { unequip(e.slot); }
-void Player::onEvent(WaitCommandEvent &e) { commit(ap_cost::STEP); }
+void Player::onEvent(WaitCommandEvent &e) {
+  commit("wait", ap_cost::STEP);
+  commit("after wait", 0);
+}
 void Player::onEvent(ZapCommandEvent &e) {
   if (e.spell == nullptr)
     return;
-  commit(e.spell->cost);
+  // commit("zap", e.spell->cost);
 }
 
 bool Player::interact(std::shared_ptr<Object> actor) {
@@ -304,6 +308,6 @@ bool Player::interact(std::shared_ptr<Object> actor) {
     // MessageEvent e2(ptr, "YOU DIED!!");
     eb::EventBus::FireEvent(e2);
   }
-  commit(0);
+  // commit("player interact", 0);
   return hp > 0;
 }
