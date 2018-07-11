@@ -51,36 +51,28 @@ std::string Fragment::render(State *state) {
 }
 
 std::map<ItemSpec, std::string> itemSigns = {
-    {ItemType::CORPSE, "%"},      {ItemType::ROCK, "*"},
-    {ItemType::PICK_AXE, "("},    {ItemType::SWORD, "("},
-    {ItemType::GOLD_RING, "="},   {ItemType::GOLD_COINS, "$"},
-    {ItemType::DAGGER, "("},      {ItemType::TORCH, "]"},
-    {ItemType::TORCH_STAND, "*"},
-    {ItemType::GRASS, "\""},
+    {ItemType::CORPSE, "%"},        {ItemType::ROCK, "*"},
+    {ItemType::PICK_AXE, "("},      {ItemType::SWORD, "("},
+    {ItemType::GOLD_RING, "="},     {ItemType::GOLD_COINS, "$"},
+    {ItemType::DAGGER, "("},        {ItemType::TORCH, "]"},
+    {ItemType::TORCH_STAND, "*"},   {ItemType::GRASS, "\""},
 
-    {ItemType::GREAT_AXE, "("},
-    {ItemType::HELMET, "["},
-    {ItemType::SHIELD, "["},
-    {ItemType::GREAVES, "["},
-    {ItemType::BOOTS, "["},
-    {ItemType::PLATE, "["},
+    {ItemType::GREAT_AXE, "("},     {ItemType::HELMET, "["},
+    {ItemType::SHIELD, "["},        {ItemType::GREAVES, "["},
+    {ItemType::BOOTS, "["},         {ItemType::PLATE, "["},
     {ItemType::LEATHER_ARMOR, "["},
 };
 
 std::map<ItemSpec, std::string> itemColors = {
-    {ItemType::CORPSE, "red"},         {ItemType::ROCK, "gray"},
-    {ItemType::PICK_AXE, "white"},     {ItemType::SWORD, "#F7CA88"},
-    {ItemType::GOLD_RING, "gold"},     {ItemType::GOLD_COINS, "gold"},
-    {ItemType::DAGGER, "gray"},        {ItemType::TORCH, "orange"},
-    {ItemType::TORCH_STAND, "orange"},
-    {ItemType::GRASS, "darkgreen"},
+    {ItemType::CORPSE, "red"},          {ItemType::ROCK, "gray"},
+    {ItemType::PICK_AXE, "white"},      {ItemType::SWORD, "#F7CA88"},
+    {ItemType::GOLD_RING, "gold"},      {ItemType::GOLD_COINS, "gold"},
+    {ItemType::DAGGER, "gray"},         {ItemType::TORCH, "orange"},
+    {ItemType::TORCH_STAND, "orange"},  {ItemType::GRASS, "darkgreen"},
 
-    {ItemType::GREAT_AXE, "white"},
-    {ItemType::HELMET, "white"},
-    {ItemType::SHIELD, "white"},
-    {ItemType::GREAVES, "white"},
-    {ItemType::BOOTS, "white"},
-    {ItemType::PLATE, "white"},
+    {ItemType::GREAT_AXE, "white"},     {ItemType::HELMET, "white"},
+    {ItemType::SHIELD, "white"},        {ItemType::GREAVES, "white"},
+    {ItemType::BOOTS, "white"},         {ItemType::PLATE, "white"},
     {ItemType::LEATHER_ARMOR, "white"},
 };
 

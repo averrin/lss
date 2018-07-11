@@ -48,7 +48,7 @@ EnemySpec const RAT = {
 EnemySpec const BAT = {
     "bat", 0,
     1.5, 10, 1, 1, 3, 0,
-    LootBox{},
+    LootBox{100, {}},
     {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB, Traits::FLY},
     Items{}
 };
@@ -57,12 +57,12 @@ EnemySpec const GOBLIN = {
     1, 15, 1, 1, 3, 0,
     LootBox{100, {}, {
         {60, {}, {
+          {25, {Prototype::DAGGER}},
           {25, {Prototype::HELMET}},
-          {25, {Prototype::SHIELD}},
           {25, {Prototype::GREAVES}},
           {25, {Prototype::BOOTS}},
           }, true},
-        {90, {Prototype::GOLD->clone(50)}}}},
+        {90, {Prototype::GOLD->setCount(50)}}}},
     {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER, Traits::MOB},
     Items{Prototype::DAGGER, Prototype::DAGGER}
 };
@@ -72,18 +72,19 @@ EnemySpec const ORK = {
     LootBox{100, {Prototype::TORCH}, {
         {70, {}, {
           {15, {Prototype::PLATE}},
+          {35, {Prototype::SWORD}},
           {35, {Prototype::HELMET}},
           {35, {Prototype::SHIELD}},
           {35, {Prototype::GREAVES}},
           {35, {Prototype::BOOTS}},
           }, true},
-        {90, {Prototype::GOLD->clone(100)}}}},
-    {}, Items{Prototype::TORCH}
+        {90, {Prototype::GOLD->setCount(100)}}}},
+    {}, Items{Prototype::TORCH, Prototype::SWORD}
 };
 EnemySpec const PIXI = {
     "pixi", 3,
-    3, 25, 0, 1, 2, 0,
-    {90, {Prototype::GOLD->clone(200)}, {{10, {Prototype::SPEED_RING}}}},
+    3, 25, 0, 3, 4, 0,
+    {90, {Prototype::GOLD->setCount(200)}, {{10, {Prototype::SPEED_RING}}}},
     {Traits::FLY, Traits::MOB}};
 EnemySpec const OGRE = {
     "ogre", 4,

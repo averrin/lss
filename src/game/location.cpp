@@ -254,8 +254,9 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
   auto t1 = std::chrono::system_clock::now();
   using milliseconds = std::chrono::duration<double, std::milli>;
   milliseconds ms = t1 - t0;
-  // std::cout << rang::fg::yellow << "update light" << rang::style::reset << ": "
-            // << rang::fg::green << ms.count() << rang::style::reset << '\n';
+  // std::cout << rang::fg::yellow << "update light" << rang::style::reset << ":
+  // "
+  // << rang::fg::green << ms.count() << rang::style::reset << '\n';
   needUpdateLight = false;
 }
 

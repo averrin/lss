@@ -20,6 +20,7 @@ const auto REVEAL = std::make_shared<Spell>("Reveal");
 const auto MONSTER_SENSE = std::make_shared<Spell>("Monster Sense");
 const auto MONSTER_FREEZE = std::make_shared<Spell>("Monster Freeze");
 const auto SUMMON_ORK = std::make_shared<Spell>("Summon Ork");
+const auto SUMMON_PLATE = std::make_shared<Spell>("Summon Plate");
 const auto TOGGLE_DUAL_WIELD = std::make_shared<ToggleTraitSpell>(
     "Toggle Dual Wield trait", Traits::DUAL_WIELD);
 const auto TOGGLE_NIGHT_VISION = std::make_shared<ToggleTraitSpell>(

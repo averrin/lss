@@ -70,8 +70,7 @@ Player::Player() : Creature() {
 
   auto dagger = Prototype::DAGGER->clone();
   inventory.push_back(dagger);
-  auto sword = std::make_shared<Item>(
-      ItemType::SWORD, Effects{std::make_shared<MeleeDamage>(2, 4, 3)});
+  auto sword = Prototype::SWORD->clone();
   inventory.push_back(sword);
   inventory.push_back(Prototype::TORCH->clone());
   auto armor = Prototype::LEATHER_ARMOR->clone();
@@ -87,6 +86,7 @@ Player::Player() : Creature() {
   // inventory.push_back(axe);
 }
 
+// TODO: fix shields
 std::string Player::getDmgDesc() {
   auto primaryDmg = getPrimaryDmg();
 

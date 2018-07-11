@@ -29,8 +29,8 @@ void StatusLine::onEvent(EnemyTakeDamageEvent &e) {
 }
 void StatusLine::onEvent(HeroTakeDamageEvent &e) {
   auto enemy = std::dynamic_pointer_cast<Enemy>(e.getSender());
-  setContent(
-      {F(fmt::format("You take <span color='red'>{}</span> dmg from {}", e.damage, enemy->type.name))});
+  setContent({F(fmt::format("You take <span color='red'>{}</span> dmg from {}",
+                            e.damage, enemy->type.name))});
 }
 void StatusLine::onEvent(EnemyDiedEvent &e) { setContent({F("Enemy died")}); }
 

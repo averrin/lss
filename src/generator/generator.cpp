@@ -106,10 +106,10 @@ void placeWalls(std::shared_ptr<Location> location) {
   }
 }
 
-std::shared_ptr<Room> getRoom(int hMax = 8, int hMin = 3, int wMax = 12,
+std::shared_ptr<Room> getRoom(int hMax = 11, int hMin = 3, int wMax = 15,
                               int wMin = 3, CellSpec type = CellType::FLOOR) {
-  auto rh = rand() % hMax + hMin;
-  auto rw = rand() % wMax + wMin;
+  auto rh = rand() % (hMax - hMin) + hMin;
+  auto rw = rand() % (wMax - wMin) + wMin;
 
   auto cells = fill(rh, rw, type);
   auto room = std::make_shared<Room>(RoomType::HALL, cells);
@@ -438,14 +438,11 @@ auto getRandomCell(std::shared_ptr<Location> location, CellSpec type) {
   auto room = location->rooms.size() > 1
                   ? location->rooms[rand() % location->rooms.size()]
                   : location->rooms.front();
-  auto cell =
-      room->cells[rand() % room->height][rand() % room->width];
+  auto cell = room->cells[rand() % room->height][rand() % room->width];
   while (cell->type != type) {
-    cell =
-        room->cells[rand() % room->height][rand() % room->width];
+    cell = room->cells[rand() % room->height][rand() % room->width];
   }
   return cell;
-  
 }
 
 void placeStairs(std::shared_ptr<Location> location) {
@@ -456,8 +453,8 @@ void placeStairs(std::shared_ptr<Location> location) {
   micropather::MPVector<void *> path;
   float totalCost = 0;
   pather->Reset();
-  int result = pather->Solve(location->enterCell.get(), location->exitCell.get(),
-                              &path, &totalCost);
+  int result = pather->Solve(location->enterCell.get(),
+                             location->exitCell.get(), &path, &totalCost);
 
   // for (auto r : location->cells) {
   //   for (auto c : r) {
@@ -469,26 +466,27 @@ void placeStairs(std::shared_ptr<Location> location) {
   //   }
   //   fmt::print("\n");
   // }
-  
+
   while (result != micropather::MicroPather::SOLVED || totalCost < 20) {
     // return;
     location->enterCell = getRandomCell(location, CellType::FLOOR);
     location->exitCell = getRandomCell(location, CellType::FLOOR);
     pather->Reset();
     result = pather->Solve(location->enterCell.get(), location->exitCell.get(),
-                              &path, &totalCost);
-
+                           &path, &totalCost);
   }
-  fmt::print("{}.{} -> {}.{} = {}\n", location->enterCell->x, location->enterCell->y,location->exitCell->x,location->exitCell->y, totalCost);
+  fmt::print("{}.{} -> {}.{} = {}\n", location->enterCell->x,
+             location->enterCell->y, location->exitCell->x,
+             location->exitCell->y, totalCost);
   fmt::print("\n");
   delete pather;
 
   location->exitCell->type = CellType::DOWNSTAIRS;
   auto n = location->getNeighbors(location->exitCell);
-  std::for_each(n.begin(), n.end(), [](auto c) {c->type = CellType::FLOOR;});
+  std::for_each(n.begin(), n.end(), [](auto c) { c->type = CellType::FLOOR; });
   location->enterCell->type = CellType::UPSTAIRS;
   n = location->getNeighbors(location->enterCell);
-  std::for_each(n.begin(), n.end(), [](auto c) {c->type = CellType::FLOOR;});
+  std::for_each(n.begin(), n.end(), [](auto c) { c->type = CellType::FLOOR; });
 }
 
 void makePassages(std::shared_ptr<Location> location) {
@@ -541,7 +539,7 @@ void placeCaves(std::shared_ptr<Location> location) {
 
   location->cells = fill(HEIGHT, WIDTH, CellType::UNKNOWN_CELL);
   for (auto n = 0; n < rc; n++) {
-    auto room = getRoom(32, 12, 32, 12, CellType::WALL);
+    auto room = getRoom(44, 12, 44, 12, CellType::WALL);
 
     for (auto r : room->cells) {
       for (auto c : r) {
@@ -607,10 +605,10 @@ void placeCaves(std::shared_ptr<Location> location) {
             continue;
           }
         } else if (c->type == CellType::FLOOR && rand() % 100 < P::CAVE_GRASS) {
-            auto grass = std::make_shared<Item>(ItemType::GRASS, 1);
-            grass->currentCell = c;
-            location->objects.push_back(grass);
-            continue;
+          auto grass = std::make_shared<Item>(ItemType::GRASS, 1);
+          grass->currentCell = c;
+          location->objects.push_back(grass);
+          continue;
         }
       }
     }
@@ -637,10 +635,10 @@ void makeCavePassage(std::shared_ptr<Location> location) {
           rock->currentCell = c;
           location->objects.push_back(rock);
         } else if (c->type == CellType::FLOOR && rand() % 100 < P::CAVE_GRASS) {
-            auto grass = std::make_shared<Item>(ItemType::GRASS, 1);
-            grass->currentCell = c;
-            location->objects.push_back(grass);
-            continue;
+          auto grass = std::make_shared<Item>(ItemType::GRASS, 1);
+          grass->currentCell = c;
+          location->objects.push_back(grass);
+          continue;
         }
       }
     }

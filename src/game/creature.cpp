@@ -1,5 +1,5 @@
-#include <cmath>
 #include "rang.hpp"
+#include <cmath>
 
 #include "lss/game/creature.hpp"
 #include "lss/game/enemy.hpp"
@@ -50,7 +50,7 @@ float Attribute::operator()(Creature *c) {
     for (auto e : s->item->effects) {
       if (e->type != type)
         continue;
-      base += e->modifier;
+      base += R::get(e->modifier);
     }
   }
   return base;
@@ -118,8 +118,8 @@ Creature::getPrimaryDmg() {
         });
     if (meleeDmg != primaryWeapon->effects.end()) {
       auto dmg = std::dynamic_pointer_cast<MeleeDamage>(*meleeDmg);
-      return std::make_tuple(*primarySlot, dmg->modifier, dmg->dices,
-                             dmg->edges);
+      return std::make_tuple(*primarySlot, R::get(dmg->modifier),
+                             R::get(dmg->dices), R::get(dmg->edges));
     }
   }
 
@@ -155,8 +155,8 @@ Creature::getSecondaryDmg(std::shared_ptr<Slot> primarySlot) {
       });
   if (secondaryMeleeDmg != secondaryWeapon->effects.end()) {
     auto dmg = std::dynamic_pointer_cast<MeleeDamage>(*secondaryMeleeDmg);
-    return std::make_tuple(*secondarySlot, dmg->modifier, dmg->dices,
-                           dmg->edges);
+    return std::make_tuple(*secondarySlot, R::get(dmg->modifier),
+                           R::get(dmg->dices), R::get(dmg->edges));
   }
 
   return std::nullopt;
@@ -167,7 +167,8 @@ int criticalHit(int m, int d, int e) {
   if (damage < 0) {
     damage = 0;
   }
-  std::cout << "critical hit: " << rang::fg::red << "!" << damage << rang::style::reset << std::endl;
+  std::cout << "critical hit: " << rang::fg::red << "!" << damage
+            << rang::style::reset << std::endl;
   return damage;
 }
 
@@ -226,7 +227,8 @@ int Creature::getDamage(std::shared_ptr<Object>) {
           return enemies.size() > 0 && enemies.front()->hasTrait(Traits::MOB);
         }) != nbrs.end()) {
       damage *= 1.5;
-      std::cout << "mob damage: " << rang::fg::red <<  damage << rang::style::reset << std::endl;
+      std::cout << "mob damage: " << rang::fg::red << damage
+                << rang::style::reset << std::endl;
     }
   }
   return damage;

@@ -114,7 +114,8 @@ Direction getDirFromCell(std::shared_ptr<Cell> c, Cell *nc) {
 
 // TODO: refactor. Divide by actions;
 void Enemy::onEvent(CommitEvent &e) {
-  if (HP(this) <= 0) return;
+  if (HP(this) <= 0)
+    return;
   auto t0 = std::chrono::system_clock::now();
   auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
   calcViewField();

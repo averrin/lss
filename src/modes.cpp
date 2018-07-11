@@ -137,25 +137,22 @@ void InspectMode::render() {
   app->inspectState->appendContent(State::END_LINE);
   if (cell->type == CellType::UNKNOWN_CELL)
     return;
-  app->inspectState->appendContent({F(fmt::format(
-      "Type <b>PASS</b>THROUGH: [<b>{}</b>]",
-      cell->type.passThrough ? check : " "))});
+  app->inspectState->appendContent(
+      {F(fmt::format("Type <b>PASS</b>THROUGH: [<b>{}</b>]",
+                     cell->type.passThrough ? check : " "))});
+  app->inspectState->appendContent(State::END_LINE);
+  app->inspectState->appendContent(
+      {F(fmt::format("Type <b>SEE</b>THROUGH: [<b>{}</b>]",
+                     cell->type.passThrough ? check : " "))});
   app->inspectState->appendContent(State::END_LINE);
   app->inspectState->appendContent({F(fmt::format(
-      "Type <b>SEE</b>THROUGH: [<b>{}</b>]",
-      cell->type.passThrough ? check : " "))});
+      "<b>PASS</b>THROUGH: [<b>{}</b>]", cell->passThrough ? check : " "))});
   app->inspectState->appendContent(State::END_LINE);
-  app->inspectState->appendContent({F(
-      fmt::format("<b>PASS</b>THROUGH: [<b>{}</b>]",
-                  cell->passThrough ? check : " "))});
+  app->inspectState->appendContent({F(fmt::format(
+      "<b>SEE</b>THROUGH: [<b>{}</b>]", cell->passThrough ? check : " "))});
   app->inspectState->appendContent(State::END_LINE);
-  app->inspectState->appendContent({F(
-      fmt::format("<b>SEE</b>THROUGH: [<b>{}</b>]",
-                  cell->passThrough ? check : " "))});
-  app->inspectState->appendContent(State::END_LINE);
-  app->inspectState->appendContent({F(
-      fmt::format("Illuminated: [<b>{}</b>]",
-                  cell->illuminated ? check : " "))});
+  app->inspectState->appendContent({F(fmt::format(
+      "Illuminated: [<b>{}</b>]", cell->illuminated ? check : " "))});
   app->inspectState->appendContent(State::END_LINE);
   app->inspectState->appendContent({F(
       fmt::format("Cell features count: <b>{}</b>", cell->features.size()))});
@@ -180,18 +177,16 @@ void InspectMode::render() {
   app->inspectState->appendContent(State::END_LINE);
   app->inspectState->appendContent(State::END_LINE);
   app->inspectState->appendContent({F(fmt::format(
-      "Hero: [<b>{}</b>]",
-      cell == app->hero->currentCell ? check : " "))});
+      "Hero: [<b>{}</b>]", cell == app->hero->currentCell ? check : " "))});
   app->inspectState->appendContent(State::END_LINE);
-  app->inspectState->appendContent({F(fmt::format(
-      "Hero can <b>pass</b>: [<b>{}</b>]", cell->canPass(app->hero->traits)
-                                               ? check
-                                               : " "))});
+  app->inspectState->appendContent(
+      {F(fmt::format("Hero can <b>pass</b>: [<b>{}</b>]",
+                     cell->canPass(app->hero->traits) ? check : " "))});
   app->inspectState->appendContent(State::END_LINE);
 
-  app->inspectState->appendContent({F(fmt::format(
-      "Hero can <b>see</b>: [<b>{}</b>]",
-      app->hero->canSee(cell) ? check : " "))});
+  app->inspectState->appendContent(
+      {F(fmt::format("Hero can <b>see</b>: [<b>{}</b>]",
+                     app->hero->canSee(cell) ? check : " "))});
   app->inspectState->appendContent(State::END_LINE);
   app->inspectState->appendContent({F(
       fmt::format("Distance to hero: <b>{}</b>",
@@ -205,10 +200,10 @@ void InspectMode::render() {
   auto allEnemies = utils::castObjects<Enemy>(location->objects);
   for (auto e : allEnemies) {
     if (e->canSee(cell)) {
-      app->inspectState->appendContent({F(fmt::format(
-          "<b>{} @ {}.{}</b> can see: [<b>{}</b>]", e->type.name,
-          e->currentCell->x, e->currentCell->y,
-          e->canSee(cell) ? check : " "))});
+      app->inspectState->appendContent(
+          {F(fmt::format("<b>{} @ {}.{}</b> can see: [<b>{}</b>]", e->type.name,
+                         e->currentCell->x, e->currentCell->y,
+                         e->canSee(cell) ? check : " "))});
       app->state->selection.push_back(
           {{e->currentCell->x, e->currentCell->y}, "#fff"});
       app->inspectState->appendContent(State::END_LINE);
@@ -233,10 +228,10 @@ void InspectMode::render() {
       std::vector<std::string> enemyNames;
       for (auto e : enemies) {
         enemyNames.push_back(e->type.name);
-        app->inspectState->appendContent({F(fmt::format(
-            "<b>{} @ {}.{}</b> can see HERO: [<b>{}</b>]", e->type.name,
-            e->currentCell->x, e->currentCell->y,
-            e->canSee(cc) ? check : " "))});
+        app->inspectState->appendContent(
+            {F(fmt::format("<b>{} @ {}.{}</b> can see HERO: [<b>{}</b>]",
+                           e->type.name, e->currentCell->x, e->currentCell->y,
+                           e->canSee(cc) ? check : " "))});
         app->inspectState->appendContent(State::END_LINE);
       }
       app->inspectState->appendContent({F(
@@ -249,10 +244,9 @@ void InspectMode::render() {
       for (auto i : items) {
         itemNames.push_back(i->getFullTitle());
       }
-      app->inspectState->appendContent({F(
-          fmt::format("Items: <b>{}</b>", utils::join(itemNames, ", ")))});
+      app->inspectState->appendContent(
+          {F(fmt::format("Items: <b>{}</b>", utils::join(itemNames, ", ")))});
       app->inspectState->appendContent(State::END_LINE);
-      
     }
   }
 }
@@ -427,9 +421,10 @@ void GameOverMode::render(std::shared_ptr<State> state) {
       gold = i->count;
     }
   }
-  
-  //TODO: addstandalon end game report
-  state->appendContent(F(fmt::format("<b>{}</b> [{}]", hero->name, hero->level)));
+
+  // TODO: addstandalon end game report
+  state->appendContent(
+      F(fmt::format("<b>{}</b> [{}]", hero->name, hero->level)));
   state->appendContent(State::END_LINE);
   state->appendContent(F(fmt::format("EXP:<b>{}</b>", hero->exp)));
   state->appendContent(State::END_LINE);
