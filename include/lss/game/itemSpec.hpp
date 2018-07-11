@@ -32,6 +32,7 @@ ItemSpec const GOLD_RING = {"ring", true, WearableType::RING};
 ItemSpec const TORCH = {"torch", true, WearableType::LIGHT, 50000};
 ItemSpec const GOLD_COINS = {"gold coins", false};
 ItemSpec const PLATE = {"plate", true, WearableType::BODY};
+ItemSpec const LEATHER_ARMOR = {"leather armor", true, WearableType::BODY};
 
 ItemSpec const HELMET = {"helmet", true, WearableType::HEAD};
 ItemSpec const SHIELD = {"shield", true, WearableType::SHIELD};

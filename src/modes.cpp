@@ -428,6 +428,7 @@ void GameOverMode::render(std::shared_ptr<State> state) {
     }
   }
   
+  //TODO: addstandalon end game report
   state->appendContent(F(fmt::format("<b>{}</b> [{}]", hero->name, hero->level)));
   state->appendContent(State::END_LINE);
   state->appendContent(F(fmt::format("EXP:<b>{}</b>", hero->exp)));

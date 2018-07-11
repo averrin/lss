@@ -24,12 +24,12 @@ public:
   std::shared_ptr<Item> clone() { return std::make_shared<Item>(*this); }
   std::shared_ptr<Item> roll() {
     auto item = std::make_shared<Item>(*this);
-    item->count = count <= 1 ? count : rand() % count;
+    item->count = count <= 1 ? count : rand() % count + 1;
     return item;
   }
   std::shared_ptr<Item> clone(int count) {
     auto item = std::make_shared<Item>(*this);
-    item->count = count <= 1 ? count : rand() % count;
+    item->count = count <= 1 ? count : rand() % count + 1;
     return item;
   }
 };
@@ -55,7 +55,24 @@ namespace Prototype {
 const auto TORCH = std::make_shared<Item>(
     ItemType::TORCH, Effects{std::make_shared<VisibilityModifier>(2.5f)});
 const auto PLATE = std::make_shared<Item>(
-    ItemType::PLATE, Effects{std::make_shared<ArmorValue>(1)});
+    ItemType::PLATE, Effects{std::make_shared<ArmorValue>(3)});
+const auto LEATHER_ARMOR = std::make_shared<Item>(
+    ItemType::LEATHER_ARMOR, Effects{std::make_shared<ArmorValue>(1)});
+const auto HELMET = std::make_shared<Item>(
+    ItemType::HELMET, Effects{std::make_shared<ArmorValue>(1)});
+const auto SHIELD = std::make_shared<Item>(
+    ItemType::SHIELD, Effects{std::make_shared<ArmorValue>(2)});
+const auto GREAVES = std::make_shared<Item>(
+    ItemType::GREAVES, Effects{std::make_shared<ArmorValue>(1)});
+const auto BOOTS = std::make_shared<Item>(
+    ItemType::BOOTS, Effects{std::make_shared<ArmorValue>(1)});
+
+const auto SPEED_RING = std::make_shared<Item>(
+        ItemType::GOLD_RING,
+        Effects{std::make_shared<SpecialPostfix>("of lightning"),
+                std::make_shared<SpeedModifier>(0.3)});
+
+
 const auto GREAT_AXE = std::make_shared<Item>(
     ItemType::GREAT_AXE, Effects{std::make_shared<MeleeDamage>(-1, 6, 7),
                                  std::make_shared<SpeedModifier>(-0.3f)});

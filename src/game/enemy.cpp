@@ -55,9 +55,10 @@ Enemy::~Enemy() {
 
 // TODO: add probability for drops
 std::optional<Items> Enemy::drop() {
-  if (type.loot.size() == 0)
+  auto loot = type.loot.open();
+  if (loot.size() == 0)
     return std::nullopt;
-  return type.loot;
+  return loot;
 }
 
 bool Enemy::interact(std::shared_ptr<Object> actor) {

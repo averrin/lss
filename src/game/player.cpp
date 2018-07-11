@@ -74,15 +74,15 @@ Player::Player() : Creature() {
       ItemType::SWORD, Effects{std::make_shared<MeleeDamage>(2, 4, 3)});
   inventory.push_back(sword);
   inventory.push_back(Prototype::TORCH->clone());
-  auto plate = Prototype::PLATE->clone();
-  inventory.push_back(plate);
+  auto armor = Prototype::LEATHER_ARMOR->clone();
+  inventory.push_back(armor);
 
   getSlot(sword->type.wearableType)->equip(sword);
   auto slot = getSlot(dagger->type.wearableType, false);
   if (slot) {
     (*slot)->equip(dagger);
   }
-  getSlot(plate->type.wearableType)->equip(plate);
+  getSlot(armor->type.wearableType)->equip(armor);
 
   // inventory.push_back(axe);
 }

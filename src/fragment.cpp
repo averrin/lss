@@ -57,6 +57,14 @@ std::map<ItemSpec, std::string> itemSigns = {
     {ItemType::DAGGER, "("},      {ItemType::TORCH, "]"},
     {ItemType::TORCH_STAND, "*"},
     {ItemType::GRASS, "\""},
+
+    {ItemType::GREAT_AXE, "("},
+    {ItemType::HELMET, "["},
+    {ItemType::SHIELD, "["},
+    {ItemType::GREAVES, "["},
+    {ItemType::BOOTS, "["},
+    {ItemType::PLATE, "["},
+    {ItemType::LEATHER_ARMOR, "["},
 };
 
 std::map<ItemSpec, std::string> itemColors = {
@@ -66,6 +74,14 @@ std::map<ItemSpec, std::string> itemColors = {
     {ItemType::DAGGER, "gray"},        {ItemType::TORCH, "orange"},
     {ItemType::TORCH_STAND, "orange"},
     {ItemType::GRASS, "darkgreen"},
+
+    {ItemType::GREAT_AXE, "white"},
+    {ItemType::HELMET, "white"},
+    {ItemType::SHIELD, "white"},
+    {ItemType::GREAVES, "white"},
+    {ItemType::BOOTS, "white"},
+    {ItemType::PLATE, "white"},
+    {ItemType::LEATHER_ARMOR, "white"},
 };
 
 std::map<EnemySpec, std::string> enemySigns = {

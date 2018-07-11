@@ -7,6 +7,7 @@
 #include "lss/game/creature.hpp"
 #include "lss/game/effect.hpp"
 #include "lss/game/item.hpp"
+#include "lss/game/lootBox.hpp"
 #include "micropather/micropather.h"
 
 enum AIType {
@@ -25,7 +26,7 @@ public:
   int baseDamage_dices;
   int baseDamage_edges;
   int baseDamage_modifier;
-  Items loot;
+  LootBox loot;
   std::vector<Trait> traits;
   Items equipped;
   AIType aiType = AGGRESSIVE;
@@ -40,42 +41,54 @@ namespace EnemyType {
 EnemySpec const RAT = {
     "rat", 0,
     2, 10, 1, 1, 3, 0,
-    Items{},
+    LootBox{},
     {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB},
     Items{}
 };
 EnemySpec const BAT = {
     "bat", 0,
     1.5, 10, 1, 1, 3, 0,
-    Items{},
+    LootBox{},
     {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB, Traits::FLY},
     Items{}
 };
 EnemySpec const GOBLIN = {
     "goblin", 1,
     1, 15, 1, 1, 3, 0,
-    Items{Prototype::GOLD->clone(50)},
+    LootBox{100, {}, {
+        {60, {}, {
+          {25, {Prototype::HELMET}},
+          {25, {Prototype::SHIELD}},
+          {25, {Prototype::GREAVES}},
+          {25, {Prototype::BOOTS}},
+          }, true},
+        {90, {Prototype::GOLD->clone(50)}}}},
     {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER, Traits::MOB},
     Items{Prototype::DAGGER, Prototype::DAGGER}
 };
 EnemySpec const ORK = {
     "ork", 2,
     1, 55, 2, 1, 6, 1,
-    Items{std::make_shared<Item>(ItemType::CORPSE), Prototype::TORCH},
+    LootBox{100, {Prototype::TORCH}, {
+        {70, {}, {
+          {15, {Prototype::PLATE}},
+          {35, {Prototype::HELMET}},
+          {35, {Prototype::SHIELD}},
+          {35, {Prototype::GREAVES}},
+          {35, {Prototype::BOOTS}},
+          }, true},
+        {90, {Prototype::GOLD->clone(100)}}}},
     {}, Items{Prototype::TORCH}
 };
 EnemySpec const PIXI = {
     "pixi", 3,
-    2, 25, 0, 1, 2, 0,
-    Items{std::make_shared<Item>(
-        ItemType::GOLD_RING,
-        Effects{std::make_shared<SpecialPostfix>("of lightning"),
-                std::make_shared<SpeedModifier>(0.3)})},
+    3, 25, 0, 1, 2, 0,
+    {90, {Prototype::GOLD->clone(200)}, {{10, {Prototype::SPEED_RING}}}},
     {Traits::FLY, Traits::MOB}};
 EnemySpec const OGRE = {
     "ogre", 4,
     1, 100, 2, 1, 6, 1,
-    Items{std::make_shared<Item>(ItemType::CORPSE)},
+    LootBox{80, {Prototype::GREAT_AXE}},
     {Traits::NIGHT_VISION},
     Items{Prototype::GREAT_AXE},
 };
