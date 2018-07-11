@@ -421,30 +421,74 @@ void placeTorches(std::shared_ptr<Location> location) {
     location->objects.push_back(torch);
     n++;
   }
+  auto nbrs = location->getNeighbors(location->exitCell);
+  auto torch = std::make_shared<TorchStand>();
+  torch->currentCell = nbrs[rand() % nbrs.size()];
+  location->objects.push_back(torch);
+
+  nbrs = location->getNeighbors(location->enterCell);
+  torch = std::make_shared<TorchStand>();
+  torch->currentCell = nbrs[rand() % nbrs.size()];
+  location->objects.push_back(torch);
+
   fmt::print("Torches: {}\n", n);
 }
 
-void placeStairs(std::shared_ptr<Location> location) {
+auto getRandomCell(std::shared_ptr<Location> location, CellSpec type) {
   auto room = location->rooms.size() > 1
                   ? location->rooms[rand() % location->rooms.size()]
                   : location->rooms.front();
-  location->enterCell =
+  auto cell =
       room->cells[rand() % room->height][rand() % room->width];
-  while (location->enterCell->type != CellType::FLOOR) {
-    location->enterCell =
+  while (cell->type != type) {
+    cell =
         room->cells[rand() % room->height][rand() % room->width];
   }
+  return cell;
+  
+}
 
-  room = location->rooms.size() > 1
-             ? location->rooms[rand() % location->rooms.size()]
-             : location->rooms.front();
-  location->exitCell = room->cells[rand() % room->height][rand() % room->width];
-  while (location->exitCell->type != CellType::FLOOR) {
-    location->exitCell =
-        room->cells[rand() % room->height][rand() % room->width];
+void placeStairs(std::shared_ptr<Location> location) {
+  location->enterCell = getRandomCell(location, CellType::FLOOR);
+  location->exitCell = getRandomCell(location, CellType::FLOOR);
+
+  auto pather = new micropather::MicroPather(location.get());
+  micropather::MPVector<void *> path;
+  float totalCost = 0;
+  pather->Reset();
+  int result = pather->Solve(location->enterCell.get(), location->exitCell.get(),
+                              &path, &totalCost);
+
+  // for (auto r : location->cells) {
+  //   for (auto c : r) {
+  //     if (c == location->enterCell || c == location->exitCell) {
+  //       fmt::print(" ");
+  //       continue;
+  //     }
+  //     fmt::print("{}", c->type.name.front());
+  //   }
+  //   fmt::print("\n");
+  // }
+  
+  while (result != micropather::MicroPather::SOLVED || totalCost < 20) {
+    // return;
+    location->enterCell = getRandomCell(location, CellType::FLOOR);
+    location->exitCell = getRandomCell(location, CellType::FLOOR);
+    pather->Reset();
+    result = pather->Solve(location->enterCell.get(), location->exitCell.get(),
+                              &path, &totalCost);
+
   }
+  fmt::print("{}.{} -> {}.{} = {}\n", location->enterCell->x, location->enterCell->y,location->exitCell->x,location->exitCell->y, totalCost);
+  fmt::print("\n");
+  delete pather;
+
   location->exitCell->type = CellType::DOWNSTAIRS;
+  auto n = location->getNeighbors(location->exitCell);
+  std::for_each(n.begin(), n.end(), [](auto c) {c->type = CellType::FLOOR;});
   location->enterCell->type = CellType::UPSTAIRS;
+  n = location->getNeighbors(location->enterCell);
+  std::for_each(n.begin(), n.end(), [](auto c) {c->type = CellType::FLOOR;});
 }
 
 void makePassages(std::shared_ptr<Location> location) {
@@ -503,6 +547,7 @@ void placeCaves(std::shared_ptr<Location> location) {
       for (auto c : r) {
         if (rand() % 100 > P::CAVERN_WALL) {
           c->type = CellType::FLOOR;
+          c->passThrough = true;
         }
       }
     }
@@ -529,10 +574,12 @@ void placeCaves(std::shared_ptr<Location> location) {
           if (c->type == CellType::FLOOR) {
             if (fn < 4) {
               c->type = CellType::WALL;
+              c->passThrough = false;
             }
           } else if (c->type == CellType::WALL) {
             if (fn >= 6) {
               c->type = CellType::FLOOR;
+              c->passThrough = true;
             }
           }
         }
@@ -618,12 +665,13 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
     placeCaves(location);
   }
 
-  placeStairs(location);
-
   if (location->hasFeature(LocationFeature::RIVER)) {
     makeRiver(location);
   }
+
+  placeStairs(location);
   placeWalls(location);
+
   if (spec.type == LocationType::DUNGEON) {
     placeDoors(location);
   }

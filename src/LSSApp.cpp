@@ -307,10 +307,10 @@ bool LSSApp::processCommand(std::string cmd) {
 void LSSApp::update() {
 
   // gl::clear(state->currentPalette.bgColor);
+  auto s = state;
+
   gl::enableAlphaBlendingPremult();
   gameFrame->setSpacing(0);
-
-  auto s = state;
 
   switch (modeManager.modeFlags->currentMode) {
   case Modes::NORMAL:
@@ -352,9 +352,12 @@ void LSSApp::update() {
   }
 
   lastMode = modeManager.modeFlags->currentMode;
+  needRedraw = true;
 }
 
 void LSSApp::draw() {
+  // if (!needRedraw) return;
+  // fmt::print(".");
 
   gl::color(state->currentPalette.bgColor);
   gl::drawSolidRect(
@@ -414,6 +417,7 @@ void LSSApp::draw() {
 
   gl::drawString(VERSION, vec2(getWindowWidth() - 120,
                                getWindowHeight() - StatusLine::HEIGHT + 12));
+  needRedraw = false;
 }
 
 CINDER_APP(LSSApp, RendererGl)

@@ -413,10 +413,26 @@ void HelpMode::render(std::shared_ptr<State> state) {
 }
 
 void GameOverMode::render(std::shared_ptr<State> state) {
+  auto hero = app->hero;
   state->setContent({});
   state->appendContent(State::END_LINE);
   state->appendContent(State::END_LINE);
   state->appendContent(State::GAMEOVER);
+  state->appendContent(State::END_LINE);
+  state->appendContent(State::END_LINE);
+  int gold = 0;
+
+  for (auto i : hero->inventory) {
+    if (i->type == ItemType::GOLD_COINS) {
+      gold = i->count;
+    }
+  }
+  
+  state->appendContent(F(fmt::format("<b>{}</b> [{}]", hero->name, hero->level)));
+  state->appendContent(State::END_LINE);
+  state->appendContent(F(fmt::format("EXP:<b>{}</b>", hero->exp)));
+  state->appendContent(State::END_LINE);
+  state->appendContent(F(fmt::format("GOLD:<b>{}</b>", gold)));
 }
 
 void InventoryMode::render(std::shared_ptr<State> state) {

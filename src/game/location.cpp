@@ -285,7 +285,7 @@ void Location::AdjacentCost(void *state,
   auto cell = static_cast<Cell *>(state);
 
   for (auto n : getNeighbors(cell)) {
-    if (!n->passThrough && n != player->currentCell)
+    if (!n->passThrough && (player == nullptr || n != player->currentCell))
       continue;
     micropather::StateCost nodeCost = {
         (void *)&(*n),

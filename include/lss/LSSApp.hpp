@@ -104,6 +104,7 @@ public:
 
   std::string typedCommand;
   std::string pendingCommand;
+  bool needRedraw = true;
 };
 
 #endif // __LSSAPP_H_

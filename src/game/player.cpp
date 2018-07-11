@@ -30,6 +30,7 @@ Player::Player() : Creature() {
   eb::EventBus::AddHandler<DropCommandEvent>(*this);
   eb::EventBus::AddHandler<WaitCommandEvent>(*this);
   eb::EventBus::AddHandler<ZapCommandEvent>(*this);
+  eb::EventBus::AddHandler<EnemyDiedEvent>(*this);
 
   equipment = std::make_shared<Equipment>();
   auto right_hand_slot = std::make_shared<Slot>(
@@ -310,4 +311,20 @@ bool Player::interact(std::shared_ptr<Object> actor) {
   }
   // commit("player interact", 0);
   return hp > 0;
+}
+
+void Player::onEvent(EnemyDiedEvent &e) {
+  auto sender = e.getSender();
+  if (auto enemy = std::dynamic_pointer_cast<Enemy>(sender)) {
+    exp += (enemy->type.level + 1) * 5;
+  }
+  if (level == 0 && exp >= 100) {
+    level++;
+    hp_max += 50;
+    hp = HP_MAX(this);
+  } else if (level == 1 && exp >= 200) {
+    level++;
+    hp_max += 70;
+    hp = HP_MAX(this);
+  }
 }

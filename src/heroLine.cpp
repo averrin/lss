@@ -29,7 +29,7 @@ void HeroLine::onEvent(CommitEvent &e) {
         });
     lightDurability = lightSlot->item->durability;
   }
-  std::string locationFeatures = "____";
+  std::string locationFeatures = "___";
   if (hero->currentLocation->hasFeature(LocationFeature::TORCHES)) {
     locationFeatures[0] = 'T';
   }
@@ -39,16 +39,12 @@ void HeroLine::onEvent(CommitEvent &e) {
   if (hero->currentLocation->hasFeature(LocationFeature::RIVER)) {
     locationFeatures[2] = 'R';
   }
-  if (hero->currentLocation->type.cellFeatures.size() > 0 &&
-      hero->currentLocation->type.cellFeatures.front() == CellFeature::BLOOD) {
-    locationFeatures[3] = 'B';
-  }
   setContent({
-      F(fmt::format("<b>{}</b>", hero->name)),
+      F(fmt::format("<b>{}</b> [{}]", hero->name, hero->level)),
       F(fmt::format(
-          "   <b>HP</b>:{}/{}   <b>SPD</b>:{}   <b>DMG</b>:{}   <b>DEF</b>:{}",
+          "   <b>HP</b>:{}/{}   <b>SPD</b>:{}   <b>DMG</b>:{}   <b>DEF</b>:{}   <b>EXP</b>:{}",
           hero->HP(hero.get()), hero->HP_MAX(hero.get()),
-          hero->SPEED(hero.get()), hero->getDmgDesc(), hero->DEF(hero.get()))),
+          hero->SPEED(hero.get()), hero->getDmgDesc(), hero->DEF(hero.get()), hero->exp)),
       F(fmt::format("{}", hero->hasLight()
                               ? fmt::format("   L&lt;{}&gt;", lightDurability)
                               : "")),

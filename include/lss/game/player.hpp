@@ -8,6 +8,7 @@
 typedef std::vector<std::shared_ptr<Item>> Items;
 
 class Player : public Creature,
+               public eb::EventHandler<EnemyDiedEvent>,
                public eb::EventHandler<MoveCommandEvent>,
                public eb::EventHandler<DigCommandEvent>,
                public eb::EventHandler<AttackCommandEvent>,
@@ -21,6 +22,8 @@ class Player : public Creature,
 public:
   Player();
   bool monsterSense = false;
+  int level = 0;
+  int exp = 0;
 
   bool equip(std::shared_ptr<Slot>, std::shared_ptr<Item>);
   bool equip(std::shared_ptr<Item>);
@@ -40,6 +43,7 @@ public:
   virtual void onEvent(DropCommandEvent &e) override;
   virtual void onEvent(WaitCommandEvent &e) override;
   virtual void onEvent(ZapCommandEvent &e) override;
+  virtual void onEvent(EnemyDiedEvent &e) override;
 };
 
 #endif // __PLAYER_H_
