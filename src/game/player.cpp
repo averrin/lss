@@ -64,7 +64,7 @@ Player::Player() : Creature() {
   damage_dices = 1;
   damage_edges = 1;
   damage_modifier = 0;
-  visibilityDistance = 3.2f;
+  visibility_distance = 3.2f;
 
   name = "Unnamed hero";
 
@@ -325,6 +325,10 @@ void Player::onEvent(EnemyDiedEvent &e) {
   } else if (level == 1 && exp >= 200) {
     level++;
     hp_max += 70;
+    hp = HP_MAX(this);
+  } else if (level == 2 && exp >= 450) {
+    level++;
+    hp_max += 100;
     hp = HP_MAX(this);
   }
 }

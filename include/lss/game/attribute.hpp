@@ -10,6 +10,7 @@ enum AttributeType {
   VISIBILITY_DISTANCE,
   DAMAGE,
   DEFENSE,
+  CRIT_CHANCE,
 };
 
 class Creature;

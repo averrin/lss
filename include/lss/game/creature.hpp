@@ -38,7 +38,8 @@ public:
   int damage_edges;
   int damage_modifier;
   float speed = 1.f;
-  float visibilityDistance = 5.5f;
+  float visibility_distance = 5.5f;
+  float crit_chance = 0.1;
   int defense = 0;
   int level = 0;
 
@@ -60,6 +61,7 @@ public:
   Attribute VISIBILITY_DISTANCE = Attribute(AttributeType::VISIBILITY_DISTANCE);
   Attribute DMG = Attribute(AttributeType::DAMAGE);
   Attribute DEF = Attribute(AttributeType::DEFENSE);
+  Attribute CRIT = Attribute(AttributeType::CRIT_CHANCE);
 
   std::shared_ptr<Cell> getCell(std::shared_ptr<Cell>, Direction);
 

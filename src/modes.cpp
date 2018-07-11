@@ -448,7 +448,7 @@ void InventoryMode::render(std::shared_ptr<State> state) {
         effects.push_back(e->getTitle());
       }
     }
-    state->appendContent(F(fmt::format("     - {}", item->getFullTitle())));
+    state->appendContent(F(fmt::format("     {} {}", item->equipped ? "<b>*</b>" : "-", item->getFullTitle())));
     state->appendContent(State::END_LINE);
   }
 }

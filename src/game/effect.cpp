@@ -18,6 +18,10 @@ std::string VisibilityModifier::getTitle() {
   return fmt::format("increase visibility");
 }
 
+std::string CritModifier::getTitle() {
+  return fmt::format("crit chance {:+g}", R::get(modifier));
+}
+
 std::string ArmorValue::getTitle() {
   return fmt::format("[{:+g}]", R::get(modifier));
 }

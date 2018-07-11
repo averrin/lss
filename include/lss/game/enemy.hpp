@@ -63,8 +63,8 @@ EnemySpec const GOBLIN = {
           {25, {Prototype::BOOTS}},
           }, true},
         {90, {Prototype::GOLD->setCount(50)}}}},
-    {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER, Traits::MOB},
-    Items{Prototype::DAGGER, Prototype::DAGGER}
+    {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER, Traits::MOB, Traits::DUAL_WIELD},
+    Items{Prototype::GOBLIN_DAGGER, Prototype::GOBLIN_DAGGER}
 };
 EnemySpec const ORK = {
     "ork", 2,
@@ -79,7 +79,7 @@ EnemySpec const ORK = {
           {35, {Prototype::BOOTS}},
           }, true},
         {90, {Prototype::GOLD->setCount(100)}}}},
-    {}, Items{Prototype::TORCH, Prototype::SWORD}
+    {}, Items{Prototype::TORCH, Prototype::ORK_SWORD, Prototype::SHIELD}
 };
 EnemySpec const PIXI = {
     "pixi", 3,

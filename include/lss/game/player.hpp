@@ -22,7 +22,6 @@ class Player : public Creature,
 public:
   Player();
   bool monsterSense = false;
-  int level = 0;
   int exp = 0;
 
   bool equip(std::shared_ptr<Slot>, std::shared_ptr<Item>);

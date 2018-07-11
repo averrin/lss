@@ -57,6 +57,16 @@ public:
   };
 };
 
+class CritModifier : public Effect {
+public:
+  CritModifier(R::rndFloat m)
+      : Effect(AttributeType::CRIT_CHANCE, m){};
+  std::string getTitle();
+  std::shared_ptr<Effect> clone() {
+    return std::make_shared<CritModifier>(modifier);
+  };
+};
+
 class ArmorValue : public Effect {
 public:
   ArmorValue(R::rndFloat m) : Effect(AttributeType::DEFENSE, true, m){};

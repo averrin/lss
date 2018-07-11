@@ -20,7 +20,7 @@ namespace P {
 int DOOR = 40;
 int CAVE_PASSAGE = 40;
 int RIVER = 10;
-int TORCHES = 60;
+int TORCHES = 40;
 int ENEMY = 1;
 int CAVE_ROCK = 10;
 int CAVE_GRASS = 5;
@@ -599,7 +599,7 @@ void placeCaves(std::shared_ptr<Location> location) {
           c->type = CellType::UNKNOWN_CELL;
         } else if (fn != 8) {
           if (c->type == CellType::FLOOR && rand() % 100 < P::CAVE_ROCK) {
-            auto rock = std::make_shared<Item>(ItemType::ROCK);
+            auto rock = std::make_shared<Item>(ItemType::ROCK, 1);
             rock->currentCell = c;
             location->objects.push_back(rock);
             continue;
@@ -631,7 +631,7 @@ void makeCavePassage(std::shared_ptr<Location> location) {
     for (auto r : newRoom->cells) {
       for (auto c : r) {
         if (c->type == CellType::FLOOR && rand() % 100 < P::CAVE_ROCK) {
-          auto rock = std::make_shared<Item>(ItemType::ROCK);
+          auto rock = std::make_shared<Item>(ItemType::ROCK, 1);
           rock->currentCell = c;
           location->objects.push_back(rock);
         } else if (c->type == CellType::FLOOR && rand() % 100 < P::CAVE_GRASS) {

@@ -22,7 +22,7 @@ float Attribute::operator()(Creature *c) {
   float base = 0;
   switch (type) {
   case AttributeType::VISIBILITY_DISTANCE:
-    base = c->visibilityDistance;
+    base = c->visibility_distance;
     break;
   case AttributeType::SPEED:
     base = c->speed;
@@ -35,6 +35,9 @@ float Attribute::operator()(Creature *c) {
     break;
   case AttributeType::DEFENSE:
     base = c->defense;
+    break;
+  case AttributeType::CRIT_CHANCE:
+    base = c->crit_chance;
     break;
   }
 
@@ -174,7 +177,12 @@ int criticalHit(int m, int d, int e) {
 
 int Creature::hitRoll(int m, int d, int e) {
   auto inShadow = !currentCell->illuminated;
+  float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
   if (inShadow && hasTrait(Traits::DEADLY_SHADOWS)) {
+    fmt::print("deadly shadows\n");
+    return criticalHit(m, d, e);
+  } else if (r < CRIT(this)) {
+    fmt::print("{} < {} crit_chance\n", r, CRIT(this));
     return criticalHit(m, d, e);
   }
   auto damage = 0;

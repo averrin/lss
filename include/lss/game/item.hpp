@@ -84,12 +84,18 @@ const auto SPEED_RING = std::make_shared<Item>(
 const auto SWORD = std::make_shared<Item>(
     ItemType::SWORD, Effects{std::make_shared<MeleeDamage>(
                          R::F(-2, 2), R::I(2, 4), R::I(2, 4))});
+const auto ORK_SWORD = std::make_shared<Item>(
+    ItemType::SWORD, Effects{std::make_shared<MeleeDamage>(
+                         5, 4, 6), std::make_shared<CritModifier>(0.4)});
 const auto GREAT_AXE = std::make_shared<Item>(
     ItemType::GREAT_AXE, Effects{std::make_shared<MeleeDamage>(-1, 6, 7),
                                  std::make_shared<SpeedModifier>(-0.3f)});
 const auto DAGGER = std::make_shared<Item>(
     ItemType::DAGGER,
     Effects{std::make_shared<MeleeDamage>(R::F(-2, 2), 1, R::I(1, 3))});
+const auto GOBLIN_DAGGER = std::make_shared<Item>(
+    ItemType::DAGGER,
+    Effects{std::make_shared<MeleeDamage>(2, 3, 3), std::make_shared<CritModifier>(0.2)});
 const auto GOLD = std::make_shared<Item>(ItemType::GOLD_COINS, 1);
 } // namespace Prototype
 
