@@ -7,6 +7,8 @@
 - cavern location type
 - init inspect mode
 - init passive ai
+- randomized effects
+- unidentified items
 
 ### 0.0.6
 - durability for torches

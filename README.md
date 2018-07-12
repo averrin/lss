@@ -56,3 +56,7 @@ Yet another unfinished roguelike game.
 * &lt; — go up [`/up`]
 * &gt; — go down [`/down`]
 
+### Debug controls
+* F1 — debug mode (show enemy pathes, allow uber spells)
+* shift+i — inspect mode
+
