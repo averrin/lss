@@ -8,19 +8,30 @@
 
 class Item : public Object {
 public:
-  Item(ItemSpec);
-  Item(ItemSpec, int);
-  Item(ItemSpec, Effects);
+  Item(std::string n, ItemSpec t): Object(), type(t), name(n), durability(type.durability){}
+  Item(ItemSpec t)
+    : Object(), type(t), name(t.name), durability(type.durability){}
+  Item(ItemSpec t, int c)
+    : Object(), type(t), count(c), name(t.name), durability(type.durability){}
+  Item(std::string n, ItemSpec t, int c)
+    : Object(), type(t), count(c), name(n), durability(type.durability){}
+  Item(ItemSpec t, Effects e)
+    : Object(), type(t), effects(e), name(t.name),
+      durability(type.durability){}
+  Item(std::string n, ItemSpec t, Effects e)
+    : Object(), type(t), effects(e), name(n),
+      durability(type.durability){}
   ItemSpec type;
   Effects effects;
   int count = 0;
   int durability;
 
   bool equipped = false;
+  bool identified = false;
   std::string name;
 
   bool interact(std::shared_ptr<Object>);
-  std::string getTitle();
+  std::string getTitle(bool force = false);
   std::string getFullTitle();
 
   std::shared_ptr<Item> clone() { return std::make_shared<Item>(*this); }
@@ -49,12 +60,6 @@ public:
   ItemSpec type;
 };
 
-class Grass : public Object {
-public:
-  Grass() : Object(), type(ItemType::GRASS) { seeThrough = true; }
-  ItemSpec type;
-};
-
 typedef std::vector<std::shared_ptr<Item>> Items;
 
 // TODO: consumables
@@ -65,6 +70,8 @@ const auto TORCH = std::make_shared<Item>(
     ItemType::TORCH, Effects{std::make_shared<VisibilityModifier>(2.5f)});
 const auto PLATE = std::make_shared<Item>(
     ItemType::PLATE, Effects{std::make_shared<ArmorValue>(R::F(3, 5))});
+const auto GOD_PLATE = std::make_shared<Item>("GoD pLaTe",
+    ItemType::PLATE, Effects{std::make_shared<ArmorValue>(100), std::make_shared<HPModifier>(1000)});
 const auto LEATHER_ARMOR = std::make_shared<Item>(
     ItemType::LEATHER_ARMOR, Effects{std::make_shared<ArmorValue>(R::F(1, 3))});
 const auto HELMET = std::make_shared<Item>(
@@ -76,17 +83,19 @@ const auto GREAVES = std::make_shared<Item>(
 const auto BOOTS = std::make_shared<Item>(
     ItemType::BOOTS, Effects{std::make_shared<ArmorValue>(R::F(1, 3))});
 
-const auto SPEED_RING = std::make_shared<Item>(
+const auto GRASS = std::make_shared<Item>("healing herb", ItemType::GRASS, 1);
+
+const auto SPEED_RING = std::make_shared<Item>("ring of lightning",
     ItemType::GOLD_RING,
-    Effects{std::make_shared<SpecialPostfix>("of lightning"),
+    Effects{
             std::make_shared<SpeedModifier>(0.3)});
 
 const auto SWORD = std::make_shared<Item>(
     ItemType::SWORD, Effects{std::make_shared<MeleeDamage>(
                          R::F(-2, 2), R::I(2, 4), R::I(2, 4))});
 const auto ORK_SWORD = std::make_shared<Item>(
-    ItemType::SWORD, Effects{std::make_shared<MeleeDamage>(
-                         5, 4, 6), std::make_shared<CritModifier>(0.4)});
+    ItemType::SWORD, Effects{std::make_shared<MeleeDamage>(5, 4, 6),
+                             std::make_shared<CritModifier>(0.4)});
 const auto GREAT_AXE = std::make_shared<Item>(
     ItemType::GREAT_AXE, Effects{std::make_shared<MeleeDamage>(-1, 6, 7),
                                  std::make_shared<SpeedModifier>(-0.3f)});
@@ -94,8 +103,8 @@ const auto DAGGER = std::make_shared<Item>(
     ItemType::DAGGER,
     Effects{std::make_shared<MeleeDamage>(R::F(-2, 2), 1, R::I(1, 3))});
 const auto GOBLIN_DAGGER = std::make_shared<Item>(
-    ItemType::DAGGER,
-    Effects{std::make_shared<MeleeDamage>(2, 3, 3), std::make_shared<CritModifier>(0.2)});
+    ItemType::DAGGER, Effects{std::make_shared<MeleeDamage>(2, 3, 3),
+                              std::make_shared<CritModifier>(0.2)});
 const auto GOLD = std::make_shared<Item>(ItemType::GOLD_COINS, 1);
 } // namespace Prototype
 

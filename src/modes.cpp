@@ -440,15 +440,28 @@ void InventoryMode::render(std::shared_ptr<State> state) {
     return;
   }
 
-  for (auto o : objects) {
-    auto item = std::dynamic_pointer_cast<Item>(o);
-    std::vector<std::string> effects;
-    if (item->effects.size() != 0) {
-      for (auto e : item->effects) {
-        effects.push_back(e->getTitle());
-      }
+  namespace ic = ItemCategories;
+  std::vector<ItemCategory> categories = {ic::ARMOR,     ic::WEAPONS,
+                                          ic::JEWELLERY, ic::CONSUMABLES,
+                                          ic::LIGHT,     ic::MISC};
+  auto items = utils::castObjects<Item>(objects);
+  for (auto cat : categories) {
+    Fragments fragments;
+    for (auto item : items) {
+      if (item->type.category != cat)
+        continue;
+      fragments.push_back(F(fmt::format(
+          "     {} {} {}",
+          item->equipped ? "<span weight='bold' color='#F7CA88'>•</span>" : "•",
+          fmt::format(!item->identified && item->type.name != item->name ? "<i>{}</i>" : "{}", item->getFullTitle()),
+          item->equipped ? "<span color='gray'>&lt;equipped&gt;</span>" : "")));
+      fragments.push_back(State::END_LINE.front());
     }
-    state->appendContent(F(fmt::format("     {} {}", item->equipped ? "<b>*</b>" : "-", item->getFullTitle())));
+    if (fragments.size() == 0)
+      continue;
+    state->appendContent(F(fmt::format("<b>{}</b>", cat.name)));
+    state->appendContent(State::END_LINE);
+    state->appendContent(fragments);
     state->appendContent(State::END_LINE);
   }
 }

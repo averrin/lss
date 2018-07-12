@@ -137,7 +137,7 @@ bool EventReactor::slotCallback(std::shared_ptr<Object> o) {
 
   if (std::find_if(app->hero->inventory.begin(), app->hero->inventory.end(),
                    [slot](std::shared_ptr<Item> item) {
-                     return item->type.equipable &&
+                     return item->type.wearableType != INVALID &&
                             std::find(slot->acceptTypes.begin(),
                                       slot->acceptTypes.end(),
                                       item->type.wearableType) !=
@@ -159,7 +159,7 @@ bool EventReactor::slotCallback(std::shared_ptr<Object> o) {
   auto it = std::copy_if(
       app->hero->inventory.begin(), app->hero->inventory.end(),
       equipable.begin(), [slot](std::shared_ptr<Item> item) {
-        return !item->equipped && item->type.equipable &&
+        return !item->equipped && item->type.wearableType != INVALID &&
                std::find(slot->acceptTypes.begin(), slot->acceptTypes.end(),
                          item->type.wearableType) != slot->acceptTypes.end();
       });
@@ -207,7 +207,7 @@ void EventReactor::onEvent(EquipCommandEvent &e) {
     auto shortcut = fmt::format("<span weight='bold'>{}</span> -", letter);
     if (std::find_if(app->hero->inventory.begin(), app->hero->inventory.end(),
                      [slot](std::shared_ptr<Item> item) {
-                       return item->type.equipable && item->durability != 0 &&
+                       return item->type.wearableType != INVALID && item->durability != 0 &&
                               std::find(slot->acceptTypes.begin(),
                                         slot->acceptTypes.end(),
                                         item->type.wearableType) !=
@@ -254,7 +254,7 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
             Spells::TOGGLE_DUAL_WIELD, Spells::TOGGLE_NIGHT_VISION,
             Spells::TOGGLE_MIND_SIGHT, Spells::TOGGLE_MAGIC_TORCH,
             Spells::TOGGLE_FLY, Spells::TOGGLE_CAN_SWIM, Spells::SUMMON_ORK,
-            Spells::SUMMON_PLATE, Spells::TOGGLE_INVULNERABLE}));
+            Spells::SUMMON_PLATE, Spells::TOGGLE_INVULNERABLE, Spells::IDENTIFY}));
   }
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
@@ -312,11 +312,15 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     app->hero->currentLocation->objects.push_back(
         mkEnemy(app->hero->currentLocation, c, app->hero, EnemyType::ORK));
     app->hero->commit("summon ork", 0);
+  } else if (spell == Spells::IDENTIFY) {
+    for (auto i : app->hero->inventory) {
+      i->identified = true;
+    }
   } else if (spell == Spells::SUMMON_PLATE) {
     auto c =
         app->hero->currentLocation
             ->cells[app->hero->currentCell->y + 1][app->hero->currentCell->x];
-    auto item = Prototype::PLATE->roll();
+    auto item = Prototype::GOD_PLATE->roll();
     item->currentCell = c;
     app->hero->currentLocation->objects.push_back(item);
     app->hero->commit("summon plate", 0);

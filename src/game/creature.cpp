@@ -177,7 +177,7 @@ int criticalHit(int m, int d, int e) {
 
 int Creature::hitRoll(int m, int d, int e) {
   auto inShadow = !currentCell->illuminated;
-  float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+  float r = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
   if (inShadow && hasTrait(Traits::DEADLY_SHADOWS)) {
     fmt::print("deadly shadows\n");
     return criticalHit(m, d, e);
@@ -258,7 +258,7 @@ bool Creature::pick(std::shared_ptr<Item> item) {
 
   if (auto it = std::find_if(inventory.begin(), inventory.end(),
                              [item](std::shared_ptr<Item> i) {
-                               return item->getTitle() == i->getTitle();
+                               return item->getTitle(true) == i->getTitle(true);
                              });
       it != inventory.end() && item != 0 && item->count != 0) {
     (*it)->count += item->count;

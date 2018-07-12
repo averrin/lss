@@ -605,7 +605,7 @@ void placeCaves(std::shared_ptr<Location> location) {
             continue;
           }
         } else if (c->type == CellType::FLOOR && rand() % 100 < P::CAVE_GRASS) {
-          auto grass = std::make_shared<Item>(ItemType::GRASS, 1);
+          auto grass = Prototype::GRASS->clone();
           grass->currentCell = c;
           location->objects.push_back(grass);
           continue;
@@ -635,7 +635,7 @@ void makeCavePassage(std::shared_ptr<Location> location) {
           rock->currentCell = c;
           location->objects.push_back(rock);
         } else if (c->type == CellType::FLOOR && rand() % 100 < P::CAVE_GRASS) {
-          auto grass = std::make_shared<Item>(ItemType::GRASS, 1);
+          auto grass = Prototype::GRASS->clone();
           grass->currentCell = c;
           location->objects.push_back(grass);
           continue;
