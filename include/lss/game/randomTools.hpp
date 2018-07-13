@@ -6,6 +6,11 @@
 #include <variant>
 
 namespace R {
+  float R(float min, float max);
+  float R();
+  int Z(int min, int max);
+  int Z();
+
 struct Float {
   float min;
   float max;
@@ -13,7 +18,7 @@ struct Float {
   bool fixed = false;
 
   float roll() {
-    value = rand() % int(max - min + 1) + min;
+    value = R(min, max);
     fixed = true;
     return value;
   }
@@ -34,7 +39,7 @@ struct Int {
   bool fixed = false;
 
   int roll() {
-    value = rand() % int(max - min + 1) + min;
+    value = Z(min, max);
     fixed = true;
     return value;
   }

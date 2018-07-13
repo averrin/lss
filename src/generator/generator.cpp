@@ -17,14 +17,15 @@ int WIDTH = 120;
 int HEIGHT = 60;
 
 namespace P {
-int DOOR = 40;
-int CAVE_PASSAGE = 40;
-int RIVER = 10;
-int TORCHES = 40;
-int ENEMY = 1;
-int CAVE_ROCK = 10;
-int CAVE_GRASS = 5;
-int CAVERN_WALL = 35;
+float CAVERN = 0.30;
+float DOOR = 0.40;
+float CAVE_PASSAGE = 0.40;
+float RIVER = 0.10;
+float TORCHES = 0.40;
+float ENEMY = 0.02;
+float CAVE_ROCK = 0.10;
+float CAVE_GRASS = 0.1;
+float CAVERN_WALL = 0.35;
 } // namespace P
 
 Cells fill(int h, int w, CellSpec type) {
@@ -108,8 +109,8 @@ void placeWalls(std::shared_ptr<Location> location) {
 
 std::shared_ptr<Room> getRoom(int hMax = 11, int hMin = 3, int wMax = 15,
                               int wMin = 3, CellSpec type = CellType::FLOOR) {
-  auto rh = rand() % (hMax - hMin) + hMin;
-  auto rw = rand() % (wMax - wMin) + wMin;
+  auto rh = R::Z(hMin, hMax);
+  auto rw = R::Z(wMin, wMax);
 
   auto cells = fill(rh, rw, type);
   auto room = std::make_shared<Room>(RoomType::HALL, cells);
@@ -301,7 +302,7 @@ void placeDoors(std::shared_ptr<Location> location) {
                 return nc->type == CellType::WALL;
               }) < 6) {
             auto o = location->getObjects(c);
-            if (rand() % 100 > P::DOOR || c->hasFeature(CellFeature::CAVE) ||
+            if (R::R() > P::DOOR || c->hasFeature(CellFeature::CAVE) ||
                 o.size() > 0)
               continue;
             auto nd = false;
@@ -352,7 +353,7 @@ void placeEnemies(std::shared_ptr<Location> location, int threat) {
   for (auto r : location->cells) {
     for (auto c : r) {
       if (c->type == CellType::FLOOR) {
-        if (rand() % 100 > P::ENEMY || location->getObjects(c).size() > 0)
+        if (R::R() > P::ENEMY)
           continue;
         auto et = ets[rand() % ess.size()];
         auto enemy = makeEnemy(location, c, et);
@@ -375,21 +376,21 @@ void makeRiver(std::shared_ptr<Location> location) {
 std::shared_ptr<Location>
 Generator::getRandomLocation(std::shared_ptr<Player> hero) {
   auto spec = LocationSpec{"Dungeon"};
-  if (rand() % 100 < 30) {
+  if (R::R() < P::CAVERN) {
     spec.type = LocationType::CAVERN;
     spec.cellFeatures.push_back(CellFeature::CAVE);
     spec.name = "Cavern";
   }
-  if (rand() % 100 < P::CAVE_PASSAGE) {
+  if (R::R() < P::CAVE_PASSAGE) {
     spec.features.push_back(LocationFeature::CAVE_PASSAGE);
   }
-  if (rand() % 100 < P::RIVER) {
+  if (R::R() < P::RIVER) {
     spec.features.push_back(LocationFeature::RIVER);
   }
-  if (rand() % 100 < P::TORCHES) {
+  if (R::R() < P::TORCHES) {
     spec.features.push_back(LocationFeature::TORCHES);
   }
-  // if (rand() % 100 < 10) {
+  // if (R::R() < 10) {
   //   spec.cellFeatures.push_back(CellFeature::BLOOD);
   //   spec.name = "Temple of blood";
   // }
@@ -543,7 +544,7 @@ void placeCaves(std::shared_ptr<Location> location) {
 
     for (auto r : room->cells) {
       for (auto c : r) {
-        if (rand() % 100 > P::CAVERN_WALL) {
+        if (R::R() > P::CAVERN_WALL) {
           c->type = CellType::FLOOR;
           c->passThrough = true;
         }
@@ -598,13 +599,13 @@ void placeCaves(std::shared_ptr<Location> location) {
         if (fn == 0) {
           c->type = CellType::UNKNOWN_CELL;
         } else if (fn != 8) {
-          if (c->type == CellType::FLOOR && rand() % 100 < P::CAVE_ROCK) {
+          if (c->type == CellType::FLOOR && R::R() < P::CAVE_ROCK) {
             auto rock = std::make_shared<Item>(ItemType::ROCK, 1);
             rock->currentCell = c;
             location->objects.push_back(rock);
             continue;
           }
-        } else if (c->type == CellType::FLOOR && rand() % 100 < P::CAVE_GRASS) {
+        } else if (c->type == CellType::FLOOR && R::R() < P::CAVE_GRASS) {
           auto grass = Prototype::GRASS->clone();
           grass->currentCell = c;
           location->objects.push_back(grass);
@@ -630,11 +631,11 @@ void makeCavePassage(std::shared_ptr<Location> location) {
     location->rooms.push_back(newRoom);
     for (auto r : newRoom->cells) {
       for (auto c : r) {
-        if (c->type == CellType::FLOOR && rand() % 100 < P::CAVE_ROCK) {
+        if (c->type == CellType::FLOOR && R::R() < P::CAVE_ROCK) {
           auto rock = std::make_shared<Item>(ItemType::ROCK, 1);
           rock->currentCell = c;
           location->objects.push_back(rock);
-        } else if (c->type == CellType::FLOOR && rand() % 100 < P::CAVE_GRASS) {
+        } else if (c->type == CellType::FLOOR && R::R() < P::CAVE_GRASS) {
           auto grass = Prototype::GRASS->clone();
           grass->currentCell = c;
           location->objects.push_back(grass);
