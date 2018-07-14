@@ -26,7 +26,7 @@ struct CellSpec {
 };
 
 namespace CellType {
-const CellSpec UNKNOWN_CELL = CellSpec{"unknown", false, false};
+const CellSpec UNKNOWN = CellSpec{"unknown", false, false};
 const CellSpec FLOOR = CellSpec{"floor", true, true};
 const CellSpec WALL = CellSpec{"wall", false, false};
 const CellSpec DOWNSTAIRS = CellSpec{"downstairs", true, true};
@@ -35,8 +35,8 @@ const CellSpec WATER =
     CellSpec{"water", false, true, {Traits::FLY, Traits::CAN_SWIM}};
 }; // namespace CellType
 
-enum VisibilityState { UNKNOWN, SEEN, VISIBLE };
-enum CellFeature { BLOOD, CAVE, MARK1, MARK2 };
+enum class VisibilityState { UNKNOWN, SEEN, VISIBLE };
+enum class CellFeature { BLOOD, CAVE, MARK1, MARK2 };
 
 class Cell {
 public:

@@ -2,11 +2,14 @@
 #define __ROOM_H_
 #include "lss/game/cell.hpp"
 
-enum RoomType {
+enum class RoomType {
   HALL,
   PASSAGE,
-  CAVE_ROOM,
+  CAVERN,
+  CAVE,
 };
+
+enum class RoomFeature { CAVE, DUNGEON };
 
 class Room {
 public:
@@ -17,6 +20,7 @@ public:
   Cells cells;
   RoomType type;
   int threat = 0;
+  std::vector<RoomFeature> features;
 
   int height;
   int width;

@@ -28,8 +28,7 @@ void EventReactor::onEvent(StairEvent &e) {
     app->state->fragments.assign(
         app->hero->currentLocation->cells.size() *
             (app->hero->currentLocation->cells.front().size() + 1),
-        std::make_shared<CellSign>(
-            std::make_shared<Cell>(CellType::UNKNOWN_CELL)));
+        std::make_shared<CellSign>(std::make_shared<Cell>(CellType::UNKNOWN)));
     app->hero->commit("up in er", 0);
     app->invalidate("enter");
   } else if (app->hero->currentCell->type == CellType::DOWNSTAIRS &&
@@ -49,8 +48,7 @@ void EventReactor::onEvent(StairEvent &e) {
     app->state->fragments.assign(
         app->hero->currentLocation->cells.size() *
             (app->hero->currentLocation->cells.front().size() + 1),
-        std::make_shared<CellSign>(
-            std::make_shared<Cell>(CellType::UNKNOWN_CELL)));
+        std::make_shared<CellSign>(std::make_shared<Cell>(CellType::UNKNOWN)));
 
     app->hero->currentLocation->updateView(app->hero);
     app->hero->commit("down in er", 0);
@@ -207,7 +205,8 @@ void EventReactor::onEvent(EquipCommandEvent &e) {
     auto shortcut = fmt::format("<span weight='bold'>{}</span> -", letter);
     if (std::find_if(app->hero->inventory.begin(), app->hero->inventory.end(),
                      [slot](std::shared_ptr<Item> item) {
-                       return item->type.wearableType != INVALID && item->durability != 0 &&
+                       return item->type.wearableType != INVALID &&
+                              item->durability != 0 &&
                               std::find(slot->acceptTypes.begin(),
                                         slot->acceptTypes.end(),
                                         item->type.wearableType) !=
@@ -254,7 +253,8 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
             Spells::TOGGLE_DUAL_WIELD, Spells::TOGGLE_NIGHT_VISION,
             Spells::TOGGLE_MIND_SIGHT, Spells::TOGGLE_MAGIC_TORCH,
             Spells::TOGGLE_FLY, Spells::TOGGLE_CAN_SWIM, Spells::SUMMON_ORK,
-            Spells::SUMMON_PLATE, Spells::TOGGLE_INVULNERABLE, Spells::IDENTIFY}));
+            Spells::SUMMON_PLATE, Spells::TOGGLE_INVULNERABLE,
+            Spells::IDENTIFY}));
   }
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {

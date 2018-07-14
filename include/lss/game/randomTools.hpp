@@ -6,10 +6,10 @@
 #include <variant>
 
 namespace R {
-  float R(float min, float max);
-  float R();
-  int Z(int min, int max);
-  int Z();
+float R(float min, float max);
+float R();
+int Z(int min, int max);
+int Z();
 
 struct Float {
   float min;

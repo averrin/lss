@@ -127,15 +127,23 @@ void InspectMode::render() {
   auto objects = location->getObjects(cell);
   auto cc = app->hero->currentCell;
   auto check = "<span color='green'>✔</span>";
+  app->state->selection.clear();
 
-  // TODO: add room info & display
   app->inspectState->setContent(
       {F(fmt::format("Selected cell: <b>{}.{}</b>", cell->x, cell->y))});
   app->inspectState->appendContent(State::END_LINE);
+
+  if (!app->debug && !app->hero->canSee(cell)) {
+    app->inspectState->appendContent(
+        {F(fmt::format("You cannot see this cell"))});
+    app->inspectState->appendContent(State::END_LINE);
+    return;
+  }
+
   app->inspectState->appendContent(
       {F(fmt::format("Type: <b>{}</b>", cell->type.name))});
   app->inspectState->appendContent(State::END_LINE);
-  if (cell->type == CellType::UNKNOWN_CELL)
+  if (cell->type == CellType::UNKNOWN)
     return;
   app->inspectState->appendContent(
       {F(fmt::format("Type <b>PASS</b>THROUGH: [<b>{}</b>]",
@@ -158,9 +166,21 @@ void InspectMode::render() {
       fmt::format("Cell features count: <b>{}</b>", cell->features.size()))});
   app->inspectState->appendContent(State::END_LINE);
   if (cell->features.size() > 0) {
-    // TODO: convert features to structs with names
-    // app->inspectState->appendContent(State::END_LINE);
+    app->inspectState->appendContent({F("<b>Cell Features</b>")});
+    app->inspectState->appendContent(State::END_LINE);
   }
+  for (auto f : cell->features) {
+    if (f == CellFeature::BLOOD) {
+      app->inspectState->appendContent(
+          {F(fmt::format("BLOOD: [<b>{}</b>]", check))});
+    }
+    if (f == CellFeature::CAVE) {
+      app->inspectState->appendContent(
+          {F(fmt::format("CAVE: [<b>{}</b>]", check))});
+    }
+    app->inspectState->appendContent(State::END_LINE);
+  }
+  app->inspectState->appendContent(State::END_LINE);
   if (cell->room == nullptr) {
     app->inspectState->appendContent(
         {F(fmt::format("<b>Room is nullptr!</b>"))});
@@ -169,6 +189,33 @@ void InspectMode::render() {
     app->inspectState->appendContent(
         {F(fmt::format("Room @ <b>{}.{} [{}x{}]</b>", cell->room->x,
                        cell->room->y, cell->room->width, cell->room->height))});
+    app->inspectState->appendContent(State::END_LINE);
+    app->inspectState->appendContent({F(fmt::format(
+        "Room features count: <b>{}</b>", cell->room->features.size()))});
+    app->inspectState->appendContent(State::END_LINE);
+    if (app->debug) {
+      for (auto r : cell->room->cells) {
+        for (auto c : r) {
+          app->state->selection.push_back({{c->x, c->y}, "#111"});
+        }
+      }
+    }
+
+    if (cell->room->features.size() > 0) {
+      app->inspectState->appendContent({F("<b>Room Features</b>")});
+      app->inspectState->appendContent(State::END_LINE);
+    }
+    for (auto f : cell->room->features) {
+      if (f == RoomFeature::DUNGEON) {
+        app->inspectState->appendContent(
+            {F(fmt::format("DUNGEON: [<b>{}</b>]", check))});
+      }
+      if (f == RoomFeature::CAVE) {
+        app->inspectState->appendContent(
+            {F(fmt::format("CAVE: [<b>{}</b>]", check))});
+      }
+      app->inspectState->appendContent(State::END_LINE);
+    }
     app->inspectState->appendContent(State::END_LINE);
   }
 
@@ -196,7 +243,6 @@ void InspectMode::render() {
   if (cell->type == CellType::WALL)
     return;
 
-  app->state->selection.clear();
   auto allEnemies = utils::castObjects<Enemy>(location->objects);
   for (auto e : allEnemies) {
     if (e->canSee(cell)) {
@@ -340,8 +386,7 @@ bool NormalMode::processKey(KeyEvent event) {
     app->state->fragments.assign(
         app->hero->currentLocation->cells.size() *
             (app->hero->currentLocation->cells.front().size() + 1),
-        std::make_shared<CellSign>(
-            std::make_shared<Cell>(CellType::UNKNOWN_CELL)));
+        std::make_shared<CellSign>(std::make_shared<Cell>(CellType::UNKNOWN)));
     app->hero->commit("regen location", 0);
 
     break;
@@ -453,7 +498,10 @@ void InventoryMode::render(std::shared_ptr<State> state) {
       fragments.push_back(F(fmt::format(
           "     {} {} {}",
           item->equipped ? "<span weight='bold' color='#F7CA88'>•</span>" : "•",
-          fmt::format(!item->identified && item->type.name != item->name ? "<i>{}</i>" : "{}", item->getFullTitle()),
+          fmt::format(!item->identified && item->type.name != item->name
+                          ? "<i>{}</i>"
+                          : "{}",
+                      item->getFullTitle()),
           item->equipped ? "<span color='gray'>&lt;equipped&gt;</span>" : "")));
       fragments.push_back(State::END_LINE.front());
     }

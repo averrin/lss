@@ -1,7 +1,6 @@
 #include "lss/game/item.hpp"
 #include "lss/utils.hpp"
 
-
 bool Item::interact(std::shared_ptr<Object> actor) { return false; }
 
 std::string Item::getFullTitle() {
@@ -21,8 +20,7 @@ std::string Item::getTitle(bool force) {
     }
   }
   return fmt::format(
-      "{}{}{}{}",
-      (identified || force) ? name : type.name,
+      "{}{}{}{}", (identified || force) ? name : type.name,
       specialPostfix.size() == 0
           ? ""
           : fmt::format(" {}", utils::join(specialPostfix, " ")),

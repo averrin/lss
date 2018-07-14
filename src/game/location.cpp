@@ -111,30 +111,9 @@ void Location::onEvent(DigEvent &e) {
   rock->currentCell = e.cell;
   objects.push_back(rock);
 
-  if (auto cell = cells[e.cell->y - 1][e.cell->x];
-      cell->type == CellType::UNKNOWN_CELL)
-    cell->type = CellType::WALL;
-  if (auto cell = cells[e.cell->y][e.cell->x + 1];
-      cell->type == CellType::UNKNOWN_CELL)
-    cell->type = CellType::WALL;
-  if (auto cell = cells[e.cell->y + 1][e.cell->x];
-      cell->type == CellType::UNKNOWN_CELL)
-    cell->type = CellType::WALL;
-  if (auto cell = cells[e.cell->y][e.cell->x - 1];
-      cell->type == CellType::UNKNOWN_CELL)
-    cell->type = CellType::WALL;
-  if (auto cell = cells[e.cell->y - 1][e.cell->x - 1];
-      cell->type == CellType::UNKNOWN_CELL)
-    cell->type = CellType::WALL;
-  if (auto cell = cells[e.cell->y + 1][e.cell->x + 1];
-      cell->type == CellType::UNKNOWN_CELL)
-    cell->type = CellType::WALL;
-  if (auto cell = cells[e.cell->y + 1][e.cell->x - 1];
-      cell->type == CellType::UNKNOWN_CELL)
-    cell->type = CellType::WALL;
-  if (auto cell = cells[e.cell->y + 1][e.cell->x + 1];
-      cell->type == CellType::UNKNOWN_CELL)
-    cell->type = CellType::WALL;
+  for (auto c : getNeighbors(e.cell)) {
+    c->type = CellType::WALL;
+  }
   needUpdateLight = true;
 }
 
@@ -217,7 +196,7 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
 
   for (auto r : cells) {
     for (auto c : r) {
-      if (c->type == CellType::UNKNOWN_CELL)
+      if (c->type == CellType::UNKNOWN)
         continue;
       c->lightSources.clear();
       c->seeThrough = c->type.seeThrough;
@@ -264,7 +243,7 @@ void Location::updateView(std::shared_ptr<Player> hero) {
   updateLight(hero);
   for (auto r : cells) {
     for (auto c : r) {
-      if (c->type == CellType::UNKNOWN_CELL)
+      if (c->type == CellType::UNKNOWN)
         continue;
       if (hero->canSee(c) || hero->hasTrait(Traits::MIND_SIGHT)) {
         c->visibilityState = VisibilityState::VISIBLE;

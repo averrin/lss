@@ -91,10 +91,10 @@ void LSSApp::setup() {
   hero->currentLocation = locations.front();
   hero->currentLocation->enter(hero, locations.front()->enterCell);
 
-  state->fragments.assign(hero->currentLocation->cells.size() *
-                              (hero->currentLocation->cells.front().size() + 1),
-                          std::make_shared<CellSign>(
-                              std::make_shared<Cell>(CellType::UNKNOWN_CELL)));
+  state->fragments.assign(
+      hero->currentLocation->cells.size() *
+          (hero->currentLocation->cells.front().size() + 1),
+      std::make_shared<CellSign>(std::make_shared<Cell>(CellType::UNKNOWN)));
 
   // hero->commit("init", 0);
 

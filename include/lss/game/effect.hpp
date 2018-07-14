@@ -12,67 +12,76 @@
 class Player;
 class Effect {
 public:
-  Effect(AttributeType at, R::rndFloat m) : type(at), modifier(R::F(m)){};
+  Effect(AttributeType at) : type(at){};
+  Effect(AttributeType at, R::rndInt m) : type(at), modifier(R::I(m)){};
   Effect(AttributeType at, bool s) : type(at), special(s) {}
-  Effect(AttributeType at, bool s, R::rndFloat m)
+  Effect(AttributeType at, bool s, R::rndInt m)
       : type(at), special(s), modifier(m) {}
   virtual std::string getTitle() = 0;
   virtual std::shared_ptr<Effect> clone() = 0;
+  virtual std::variant<float, int> getModifier() = 0;
   bool special = false;
   AttributeType type;
-  R::rndFloat modifier;
+  R::rndInt modifier;
 
   void roll() {
-    if (auto m = std::get_if<std::shared_ptr<R::Float>>(&modifier)) {
-      modifier = R::F(modifier);
+    if (auto m = std::get_if<std::shared_ptr<R::Int>>(&modifier)) {
+      modifier = R::I(modifier);
     }
   }
 };
 
 class SpeedModifier : public Effect {
 public:
-  SpeedModifier(R::rndFloat m) : Effect(AttributeType::SPEED, m){};
+  SpeedModifier(R::rndInt m) : Effect(AttributeType::SPEED, m){};
   std::string getTitle();
   std::shared_ptr<Effect> clone() {
     return std::make_shared<SpeedModifier>(modifier);
   };
+  std::variant<float, int> getModifier() { return R::get(modifier); };
 };
 
 class HPModifier : public Effect {
 public:
-  HPModifier(R::rndFloat m) : Effect(AttributeType::HP_MAX, m){};
+  HPModifier(R::rndInt m) : Effect(AttributeType::HP_MAX, m){};
   std::string getTitle();
   std::shared_ptr<Effect> clone() {
     return std::make_shared<HPModifier>(modifier);
   };
+  std::variant<float, int> getModifier() { return R::get(modifier); };
 };
 
 class VisibilityModifier : public Effect {
 public:
-  VisibilityModifier(R::rndFloat m)
-      : Effect(AttributeType::VISIBILITY_DISTANCE, m){};
+  VisibilityModifier(float m)
+      : Effect(AttributeType::VISIBILITY_DISTANCE), vmodifier(m){};
   std::string getTitle();
+  float vmodifier;
+  std::variant<float, int> getModifier() { return vmodifier; };
+
   std::shared_ptr<Effect> clone() {
-    return std::make_shared<VisibilityModifier>(modifier);
+    return std::make_shared<VisibilityModifier>(vmodifier);
   };
 };
 
 class CritModifier : public Effect {
 public:
-  CritModifier(R::rndFloat m) : Effect(AttributeType::CRIT_CHANCE, m){};
+  CritModifier(R::rndInt m) : Effect(AttributeType::CRIT_CHANCE, m){};
   std::string getTitle();
   std::shared_ptr<Effect> clone() {
     return std::make_shared<CritModifier>(modifier);
   };
+  std::variant<float, int> getModifier() { return R::get(modifier); };
 };
 
 class ArmorValue : public Effect {
 public:
-  ArmorValue(R::rndFloat m) : Effect(AttributeType::DEFENSE, true, m){};
+  ArmorValue(R::rndInt m) : Effect(AttributeType::DEFENSE, true, m){};
   std::string getTitle();
   std::shared_ptr<Effect> clone() {
     return std::make_shared<ArmorValue>(modifier);
   };
+  std::variant<float, int> getModifier() { return R::get(modifier); };
 };
 
 class SpecialPostfix : public Effect {
@@ -83,6 +92,7 @@ public:
   std::shared_ptr<Effect> clone() {
     return std::make_shared<SpecialPostfix>(name);
   };
+  std::variant<float, int> getModifier() { return R::get(modifier); };
 };
 
 class SpecialPrefix : public Effect {
@@ -93,11 +103,12 @@ public:
   std::shared_ptr<Effect> clone() {
     return std::make_shared<SpecialPrefix>(name);
   };
+  std::variant<float, int> getModifier() { return R::get(modifier); };
 };
 
 class MeleeDamage : public Effect {
 public:
-  MeleeDamage(R::rndFloat m, R::rndInt d, R::rndInt e)
+  MeleeDamage(R::rndInt m, R::rndInt d, R::rndInt e)
       : Effect(AttributeType::NONE, true, m), dices(R::I(d)), edges(R::I(e)){};
   std::string getTitle();
   R::rndInt dices;
@@ -105,6 +116,7 @@ public:
   std::shared_ptr<Effect> clone() {
     return std::make_shared<MeleeDamage>(modifier, dices, edges);
   };
+  std::variant<float, int> getModifier() { return R::get(modifier); };
 };
 
 typedef std::vector<std::shared_ptr<Effect>> Effects;

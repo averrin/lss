@@ -2,6 +2,7 @@
 #define __CREATURE_H_
 #include <algorithm>
 
+#include "lss/game/effect.hpp"
 #include "lss/game/equipment.hpp"
 #include "lss/game/item.hpp"
 #include "lss/game/object.hpp"
@@ -13,6 +14,7 @@ public:
   std::vector<std::shared_ptr<Cell>> viewField;
   std::shared_ptr<Location> currentLocation;
   std::vector<Trait> traits;
+  Effects activeEffects;
 
   bool move(Direction, bool autoAction = false);
   bool attack(Direction);

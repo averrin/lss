@@ -5,7 +5,6 @@
 #include "Event.hpp"
 #include "EventBus.hpp"
 #include "lss/game/creature.hpp"
-#include "lss/game/effect.hpp"
 #include "lss/game/item.hpp"
 #include "lss/game/lootBox.hpp"
 #include "micropather/micropather.h"
@@ -29,6 +28,7 @@ public:
   LootBox loot;
   std::vector<Trait> traits;
   Items equipped;
+  Effects activeEffects;
   AIType aiType = AGGRESSIVE;
 
   friend bool operator<(const EnemySpec &lhs, const EnemySpec &rhs) {

@@ -1,5 +1,6 @@
 #include "rang.hpp"
 #include <cmath>
+#include <variant>
 
 #include "lss/game/creature.hpp"
 #include "lss/game/enemy.hpp"
@@ -45,15 +46,17 @@ float Attribute::operator()(Creature *c) {
     if (s->item == nullptr ||
         std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
                   s->item->type.wearableType) == s->acceptTypes.end()) {
-      if (s->item != nullptr) {
-        // fmt::print("Skip item {} in {}\n", s->item->name, s->name);
-      }
       continue;
     }
     for (auto e : s->item->effects) {
       if (e->type != type)
         continue;
-      base += R::get(e->modifier);
+      auto mod = e->getModifier();
+      if (auto m = std::get_if<int>(&mod)) {
+        base += *m;
+      } else if (auto m = std::get_if<float>(&mod)) {
+        base += *m;
+      }
     }
   }
   return base;

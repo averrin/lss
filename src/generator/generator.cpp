@@ -26,6 +26,7 @@ float ENEMY = 0.02;
 float CAVE_ROCK = 0.10;
 float CAVE_GRASS = 0.1;
 float CAVERN_WALL = 0.35;
+float BLOOD = 0.01;
 } // namespace P
 
 Cells fill(int h, int w, CellSpec type) {
@@ -54,7 +55,7 @@ void paste(Cells room, std::shared_ptr<Location> location, int x, int y) {
   for (auto r = y; r < room.size() + y && r < bh; r++) {
     for (auto c = x; c < room.front().size() + x && c < bw; c++) {
       auto cell = room[r - y][c - x];
-      if (cell->type == CellType::UNKNOWN_CELL)
+      if (cell->type == CellType::UNKNOWN)
         continue;
       location->cells[r][c] = cell;
       location->cells[r][c]->x = c;
@@ -66,7 +67,7 @@ void paste(Cells room, std::shared_ptr<Location> location, int x, int y) {
 void placeWalls(std::shared_ptr<Location> location) {
   for (auto r : location->cells) {
     for (auto cell : r) {
-      if (cell->type == CellType::UNKNOWN_CELL) {
+      if (cell->type == CellType::UNKNOWN) {
         auto n = location->getNeighbors(cell);
         if (auto nc = std::find_if(n.begin(), n.end(),
                                    [](std::shared_ptr<Cell> c) {
@@ -83,7 +84,7 @@ void placeWalls(std::shared_ptr<Location> location) {
         }
       }
       if (cell == r.front() || cell == r.back()) {
-        if (cell->type != CellType::UNKNOWN_CELL) {
+        if (cell->type != CellType::UNKNOWN) {
           cell->type = CellType::WALL;
           cell->seeThrough = false;
           cell->passThrough = false;
@@ -92,14 +93,14 @@ void placeWalls(std::shared_ptr<Location> location) {
     }
   }
   for (auto cell : location->cells.front()) {
-    if (cell->type != CellType::UNKNOWN_CELL) {
+    if (cell->type != CellType::UNKNOWN) {
       cell->type = CellType::WALL;
       cell->seeThrough = false;
       cell->passThrough = false;
     }
   }
   for (auto cell : location->cells.back()) {
-    if (cell->type != CellType::UNKNOWN_CELL) {
+    if (cell->type != CellType::UNKNOWN) {
       cell->type = CellType::WALL;
       cell->seeThrough = false;
       cell->passThrough = false;
@@ -145,6 +146,13 @@ void makePassageBetweenRooms(std::shared_ptr<Location> location,
     ec = room2->cells[rand() % room2->height][rand() % room2->width];
   }
 
+  if (std::find(room1->features.begin(), room1->features.end(),
+                RoomFeature::DUNGEON) == room1->features.end())
+    room1->features.push_back(RoomFeature::DUNGEON);
+  if (std::find(room2->features.begin(), room2->features.end(),
+                RoomFeature::DUNGEON) == room2->features.end())
+    room2->features.push_back(RoomFeature::DUNGEON);
+
   auto l = 0;
   if (sc->y > ec->y) {
     std::swap(sc, ec);
@@ -154,6 +162,7 @@ void makePassageBetweenRooms(std::shared_ptr<Location> location,
   paste(passage->cells, location, sc->x, sc->y);
   passage->x = sc->x;
   passage->y = sc->y;
+  passage->features.push_back(RoomFeature::DUNGEON);
   location->rooms.push_back(passage);
   sc = passage->cells.back().back();
   if (sc != ec) {
@@ -164,6 +173,7 @@ void makePassageBetweenRooms(std::shared_ptr<Location> location,
     paste(passage->cells, location, sc->x, sc->y);
     passage->x = sc->x;
     passage->y = sc->y;
+    passage->features.push_back(RoomFeature::DUNGEON);
     location->rooms.push_back(passage);
   }
 }
@@ -192,7 +202,7 @@ dig(std::shared_ptr<Cell> start, Direction dir, int length, int minWidth,
     int jWidth, int wind = 0, CellSpec type = CellType::FLOOR) {
   auto cell = start;
   std::vector<CellFeature> f = {CellFeature::CAVE};
-  Cells dCells = fill(HEIGHT, WIDTH, CellType::UNKNOWN_CELL);
+  Cells dCells = fill(HEIGHT, WIDTH, CellType::UNKNOWN);
   for (auto step = 0; step < length; step++) {
     auto width = (jWidth > 1 ? rand() % jWidth : 0) + minWidth;
     // TODO: make wind configurable without crazy magic
@@ -484,10 +494,18 @@ void placeStairs(std::shared_ptr<Location> location) {
 
   location->exitCell->type = CellType::DOWNSTAIRS;
   auto n = location->getNeighbors(location->exitCell);
-  std::for_each(n.begin(), n.end(), [](auto c) { c->type = CellType::FLOOR; });
+  std::for_each(n.begin(), n.end(), [location](auto c) {
+    c->type = CellType::FLOOR;
+    c->room = location->exitCell->room;
+    // TODO: add room resizing
+    // c->room->cells[c->y][c->x] = c;
+  });
   location->enterCell->type = CellType::UPSTAIRS;
   n = location->getNeighbors(location->enterCell);
-  std::for_each(n.begin(), n.end(), [](auto c) { c->type = CellType::FLOOR; });
+  std::for_each(n.begin(), n.end(), [location](auto c) {
+    c->type = CellType::FLOOR;
+    c->room = location->enterCell->room;
+  });
 }
 
 void makePassages(std::shared_ptr<Location> location) {
@@ -522,7 +540,7 @@ void makePassages(std::shared_ptr<Location> location) {
 void placeRooms(std::shared_ptr<Location> location) {
   auto rc = rand() % 12 + 7;
 
-  location->cells = fill(HEIGHT, WIDTH, CellType::UNKNOWN_CELL);
+  location->cells = fill(HEIGHT, WIDTH, CellType::UNKNOWN);
   for (auto n = 0; n < rc; n++) {
     auto room = getRoom();
     auto ry = rand() % (location->cells.size() - room->height - 2) + 2;
@@ -538,7 +556,7 @@ void placeRooms(std::shared_ptr<Location> location) {
 void placeCaves(std::shared_ptr<Location> location) {
   auto rc = rand() % 12 + 7;
 
-  location->cells = fill(HEIGHT, WIDTH, CellType::UNKNOWN_CELL);
+  location->cells = fill(HEIGHT, WIDTH, CellType::UNKNOWN);
   for (auto n = 0; n < rc; n++) {
     auto room = getRoom(44, 12, 44, 12, CellType::WALL);
 
@@ -556,12 +574,14 @@ void placeCaves(std::shared_ptr<Location> location) {
     room->x = rx;
     room->y = ry;
     room->threat = rand() % 4;
+    room->features.push_back(RoomFeature::CAVE);
     location->rooms.push_back(room);
   }
   fixOverlapped(location);
 
   for (auto i = 0; i < 5; i++) {
     for (auto room : location->rooms) {
+      room->type = RoomType::CAVERN;
       for (auto r : room->cells) {
         for (auto c : r) {
           auto n = location->getNeighbors(c);
@@ -589,7 +609,7 @@ void placeCaves(std::shared_ptr<Location> location) {
   for (auto room : location->rooms) {
     for (auto r : room->cells) {
       for (auto c : r) {
-        if (c->type == CellType::UNKNOWN_CELL)
+        if (c->type == CellType::UNKNOWN)
           continue;
         auto n = location->getNeighbors(c);
         auto fn =
@@ -597,7 +617,7 @@ void placeCaves(std::shared_ptr<Location> location) {
               return nc->type == CellType::FLOOR;
             });
         if (fn == 0) {
-          c->type = CellType::UNKNOWN_CELL;
+          c->type = CellType::UNKNOWN;
         } else if (fn != 8) {
           if (c->type == CellType::FLOOR && R::R() < P::CAVE_ROCK) {
             auto rock = std::make_shared<Item>(ItemType::ROCK, 1);
@@ -623,7 +643,8 @@ void makeCavePassage(std::shared_ptr<Location> location) {
   for (auto n = 0; n < rand() % 6 + 2; n++) {
     auto res = randomDig(cell, ds[rand() % ds.size()], rand() % 30);
     cell = res.first;
-    auto newRoom = std::make_shared<Room>(RoomType::CAVE_ROOM, res.second);
+    auto newRoom = std::make_shared<Room>(RoomType::CAVE, res.second);
+    room->features.push_back(RoomFeature::CAVE);
     paste(newRoom->cells, location, 0, 0);
     newRoom->x = 0;
     newRoom->y = 0;
@@ -682,6 +703,9 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
 
   for (auto r : location->cells) {
     for (auto c : r) {
+      if (c->type == CellType::FLOOR && R::R() < P::BLOOD) {
+        c->features.push_back(CellFeature::BLOOD);
+      }
       for (auto cf : location->type.cellFeatures) {
         c->features.push_back(cf);
       }

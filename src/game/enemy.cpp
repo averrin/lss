@@ -19,6 +19,7 @@ Enemy::Enemy(EnemySpec t) : Creature(), type(t) {
   name = type.name;
   traits = type.traits;
   defense = type.defense;
+  activeEffects = type.activeEffects;
 
   equipment = std::make_shared<Equipment>();
   equipment->slots = {

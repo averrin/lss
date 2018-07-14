@@ -1,22 +1,16 @@
 #include "lss/game/randomTools.hpp"
 
 namespace R {
-  float R(float min, float max) {
-    return min + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(max-min)));;
-  }
-  float R() {
-    auto r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-    fmt::print("{}\n", r);
-    return r;
-  }
+float R(float min, float max) {
+  return min + static_cast<float>(rand()) /
+                   (static_cast<float>(RAND_MAX / (max - min)));
+  ;
+}
+float R() { return static_cast<float>(rand()) / static_cast<float>(RAND_MAX); }
 
-  int Z(int min, int max) {
-    return rand() % (max - min + 1) + min;
-  }
+int Z(int min, int max) { return rand() % (max - min + 1) + min; }
 
-  int Z() {
-    return rand() % 100;
-  }
+int Z() { return rand() % 100; }
 
 rndFloat F(float min, float max) {
   return std::make_shared<R::Float>(R::Float{min, max});
