@@ -23,8 +23,8 @@ Yet another unfinished roguelike game.
 - [X] Map generator
 - [X] Cell & location features
 - [X] Light/shadow-related traits
-- [ ] Refactor effects system
 - [ ] Better event log
+- [ ] Refactor effects system
 - [ ] Weights
 - [ ] Passive, patrol and "hero search" AI, stealth
 - [ ] Chests and containers

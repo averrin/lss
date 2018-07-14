@@ -52,7 +52,7 @@ EnemySpec const BAT = {
     1, 3, 0,
     LootBox{100, {}},
     {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB, Traits::FLY},
-    Items{}
+    Items{}, {std::make_shared<Vampire>(1)}
 };
 EnemySpec const BAT_LARGE = {
     "large bat", 0,
@@ -60,7 +60,7 @@ EnemySpec const BAT_LARGE = {
     2, 3, 0,
     LootBox{100, {}},
     {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB, Traits::FLY},
-    Items{}
+    Items{}, {std::make_shared<Vampire>(3)}
 };
 EnemySpec const GOBLIN = {
     "goblin", 1,
@@ -123,6 +123,23 @@ EnemySpec const ORK = {
           }, true},
         {90, {Prototype::GOLD->setCount(100)}}}},
     {}, Items{Prototype::TORCH, Prototype::ORK_SWORD, Prototype::SHIELD}
+};
+
+EnemySpec const ORK_BLACK = {
+    "black ork", 2,
+    1.1, 75, 2,
+    1, 6, 1,
+    LootBox{100, {Prototype::TORCH}, {
+        {70, {}, {
+          {15, {Prototype::PLATE}},
+          {35, {Prototype::SWORD}},
+          {35, {Prototype::HELMET}},
+          {35, {Prototype::SHIELD}},
+          {35, {Prototype::GREAVES}},
+          {35, {Prototype::BOOTS}},
+          }, true},
+        {90, {Prototype::GOLD->setCount(100)}}}},
+    {}, Items{Prototype::TORCH, Prototype::ORK_SWORD, Prototype::SHIELD, Prototype::LEATHER_ARMOR}
 };
 EnemySpec const PIXI = {
     "pixi", 3,

@@ -135,6 +135,18 @@ public:
   std::variant<float, int> getModifier() { return R::get(modifier); };
 };
 
+class Vampire : public Effect {
+public:
+  Vampire(int dmg)
+      : Effect(AttributeType::NONE), damage(dmg){};
+  int damage;
+  std::string getTitle();
+  std::shared_ptr<Effect> clone() {
+    return std::make_shared<Vampire>(damage);
+  };
+  std::variant<float, int> getModifier() { return R::get(modifier); };
+};
+
 typedef std::vector<std::shared_ptr<Effect>> Effects;
 
 #endif
