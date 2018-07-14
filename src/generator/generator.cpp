@@ -61,10 +61,12 @@ void paste(std::vector<std::shared_ptr<Cell>> room,
     // auto room = location->cells[r][c]->room;
     // if (room != nullptr) {
     //     room->cells.erase(
-    //         std::remove(room->cells.begin(), room->cells.end(), location->cells[r][c]));
-      
+    //         std::remove(room->cells.begin(), room->cells.end(),
+    //         location->cells[r][c]));
+
     // }
-    // if (location->cells[r][c]->room != nullptr && cell->room->type == RoomType::PASSAGE) {
+    // if (location->cells[r][c]->room != nullptr && cell->room->type ==
+    // RoomType::PASSAGE) {
     //   continue;
     // }
     location->cells[r][c] = cell;
@@ -170,7 +172,6 @@ std::shared_ptr<Room> makePassage(std::shared_ptr<Cell> start, Direction dir,
 void makePassageBetweenRooms(std::shared_ptr<Location> location,
                              std::shared_ptr<Room> room1,
                              std::shared_ptr<Room> room2) {
-  fmt::print("<");
   auto sc = room1->cells[rand() % room1->cells.size()];
   auto ec = room2->cells[rand() % room2->cells.size()];
   while (sc == ec) {
@@ -207,7 +208,6 @@ void makePassageBetweenRooms(std::shared_ptr<Location> location,
     passage->features.push_back(RoomFeature::DUNGEON);
     location->rooms.push_back(passage);
   }
-  fmt::print(">\n");
 }
 
 void makeFloor(std::shared_ptr<Cell> cell) {
@@ -309,45 +309,63 @@ std::pair<std::shared_ptr<Cell>, Cells> randomDig(std::shared_ptr<Cell> start,
   return dig(start, dir, length, minWidth, jWidth, wind);
 }
 
-// TODO: sort rooms for minimize passage cells
 void fixOverlapped(std::shared_ptr<Location> location) {
-  fmt::print("Fix overlappedd rooms\n");
+  std::map<std::shared_ptr<Room>, std::vector<std::shared_ptr<Cell>>> cache;
+  for (auto r : location->rooms) {
+    cache[r] = {};
+  }
+  for (auto r = 0; r < HEIGHT; r++) {
+    for (auto c = 0; c < WIDTH; c++) {
+      std::vector<std::shared_ptr<Room>> rooms;
+      for (auto room : location->rooms) {
+        if (std::find_if(room->cells.begin(), room->cells.end(),
+                         [&](auto cell) {
+                           return cell->x == c && cell->y == r;
+                         }) != room->cells.end()) {
+          rooms.push_back(room);
+        }
+      }
+      if (rooms.size() == 1) {
+        cache[rooms.front()].push_back(location->cells[r][c]);
+        location->cells[r][c]->room = rooms.front();
+      } else if (rooms.size() != 0) {
 
-  std::sort(location->rooms.begin(), location->rooms.end(),
-           [](std::shared_ptr<Room> a,std::shared_ptr<Room> b) {
-             return a->type > b->type;
-           }
-           );
-  auto bh = location->cells.size();
-  auto bw = location->cells.front().size();
-  for (auto room : location->rooms) {
-    fmt::print("{} {} - ", room->type == RoomType::HALL, room->cells.size());
-    auto cells = room->cells;
-    for (auto c : cells) {
-      if (c->y >= bh || c->x >= bw || c->room != room || c != location->cells[c->y][c->x]) {
-        room->cells.erase(
-            std::remove(room->cells.begin(), room->cells.end(), c));
+        std::vector<std::shared_ptr<Room>> halls(rooms.size());
+        auto it =
+            std::copy_if(rooms.begin(), rooms.end(), halls.begin(),
+                         [](auto r) { return r->type != RoomType::PASSAGE; });
+        halls.resize(std::distance(halls.begin(), it));
+        if (halls.size() == 0) {
+          cache[rooms.front()].push_back(location->cells[r][c]);
+          location->cells[r][c]->room = rooms.front();
+        } else if (halls.size() == 1) {
+          cache[halls.front()].push_back(location->cells[r][c]);
+          location->cells[r][c]->room = halls.front();
+        } else {
+          // TODO: select hall by neighbors
+          cache[halls.front()].push_back(location->cells[r][c]);
+          location->cells[r][c]->room = halls.front();
+        }
       }
     }
-    fmt::print("{}\n", room->cells.size());
   }
+  for (auto room : location->rooms) {
+    room->cells = cache[room];
+  }
+
   auto rooms = location->rooms;
   for (auto room : rooms) {
     if (room->cells.size() == 0) {
       location->rooms.erase(
-            std::remove(location->rooms.begin(), location->rooms.end(), room));
+          std::remove(location->rooms.begin(), location->rooms.end(), room));
     }
-    
   }
-  fmt::print("end Fix overlappedd rooms\n");
 }
 
 void placeDoors(std::shared_ptr<Location> location) {
-  fmt::print("Place doors\n");
   auto d = 0;
   for (auto r : location->cells) {
     for (auto c : r) {
-      // fmt::print("{}", c->type);
       if (c->type == CellType::FLOOR) {
         if ((location->cells[c->y - 1][c->x]->type == CellType::WALL &&
              location->cells[c->y + 1][c->x]->type == CellType::WALL) ||
@@ -384,7 +402,6 @@ void placeDoors(std::shared_ptr<Location> location) {
       }
     }
   }
-  fmt::print("Doors: {}\n", d);
 }
 
 std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Location> location,
@@ -397,11 +414,13 @@ std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Location> location,
 
 // TODO: use room threat and hero level. Add respawn
 void placeEnemies(std::shared_ptr<Location> location, int threat) {
-  fmt::print("Place enemies\n");
   std::map<const EnemySpec, float> table;
   if (location->type.type == LocationType::DUNGEON) {
+    if (threat >= SpawnTable::DUNGEON.size()) threat = SpawnTable::DUNGEON.size() -1;
     table = SpawnTable::DUNGEON[threat];
   } else if (location->type.type == LocationType::CAVERN) {
+    //TODO: use cavern table
+    if (threat >= SpawnTable::DUNGEON.size()) threat = SpawnTable::DUNGEON.size() -1;
     table = SpawnTable::DUNGEON[threat];
   }
   for (auto room : location->rooms) {
@@ -417,7 +436,6 @@ void placeEnemies(std::shared_ptr<Location> location, int threat) {
     for (auto n = cells.size() / 64; n > 0; n--) {
       count += R::Z(0, 3);
     }
-    fmt::print("Threat level: {} - {} [{}]\n", threat, count, cells.size());
     for (; count != 0; count--) {
       auto p = R::R();
       EnemySpec type;
@@ -438,7 +456,6 @@ void placeEnemies(std::shared_ptr<Location> location, int threat) {
       location->objects.push_back(enemy);
     }
   }
-  fmt::print("end Place enemies\n");
 }
 
 void makeRiver(std::shared_ptr<Location> location) {
@@ -523,8 +540,6 @@ auto getRandomCell(std::shared_ptr<Location> location, CellSpec type) {
 }
 
 void placeStairs(std::shared_ptr<Location> location) {
-  fmt::print("place stairs\n");
-
   location->enterCell = getRandomCell(location, CellType::FLOOR);
   location->exitCell = getRandomCell(location, CellType::FLOOR);
   location->dump();
@@ -536,9 +551,7 @@ void placeStairs(std::shared_ptr<Location> location) {
   int result = pather->Solve(location->enterCell.get(),
                              location->exitCell.get(), &path, &totalCost);
 
-
   while (result != micropather::MicroPather::SOLVED || totalCost < 20) {
-    // return;
     location->enterCell = getRandomCell(location, CellType::FLOOR);
     location->exitCell = getRandomCell(location, CellType::FLOOR);
     pather->Reset();
@@ -565,11 +578,9 @@ void placeStairs(std::shared_ptr<Location> location) {
     c->room = location->enterCell->room;
     c->room->cells.push_back(c);
   });
-  fmt::print("end place stairs\n");
 }
 
 void makePassages(std::shared_ptr<Location> location) {
-  fmt::print("place passages\n");
   auto pc = rand() % 10;
   auto n = 0;
   std::set<std::shared_ptr<Room>> rooms;
@@ -595,15 +606,13 @@ void makePassages(std::shared_ptr<Location> location) {
       }
       makePassageBetweenRooms(location, r, room2);
     }
-    for (auto c: r->cells) {
+    for (auto c : r->cells) {
       c->room = r;
     }
   }
-  fmt::print("end place passages\n");
 }
 
 void placeRooms(std::shared_ptr<Location> location) {
-  fmt::print("Place rooms\n");
   auto rc = rand() % 12 + 7;
 
   location->cells = fill(HEIGHT, WIDTH, CellType::UNKNOWN);
@@ -617,11 +626,9 @@ void placeRooms(std::shared_ptr<Location> location) {
     room->threat = rand() % 4;
     location->rooms.push_back(room);
   }
-  fmt::print("end Place rooms\n");
 }
 
 void placeCaves(std::shared_ptr<Location> location) {
-  fmt::print("Place caves\n");
   auto rc = rand() % 12 + 7;
 
   location->cells = fill(HEIGHT, WIDTH, CellType::UNKNOWN);
@@ -649,7 +656,6 @@ void placeCaves(std::shared_ptr<Location> location) {
   }
   fixOverlapped(location);
 
-  fmt::print("evaluate caves\n");
   for (auto i = 0; i < 5; i++) {
     for (auto room : location->rooms) {
       room->type = RoomType::CAVERN;
@@ -674,7 +680,6 @@ void placeCaves(std::shared_ptr<Location> location) {
       }
     }
   }
-  fmt::print("end evaluate caves\n");
 
   for (auto room : location->rooms) {
     for (auto c : room->cells) {
@@ -704,7 +709,6 @@ void placeCaves(std::shared_ptr<Location> location) {
 }
 
 void makeCavePassage(std::shared_ptr<Location> location) {
-  fmt::print("make cave passage\n");
   std::vector<Direction> ds{N, E, S, W};
   auto room = location->rooms[rand() % location->rooms.size()];
   auto cell = room->cells[rand() % room->cells.size()];
@@ -731,11 +735,9 @@ void makeCavePassage(std::shared_ptr<Location> location) {
       }
     }
   }
-  fmt::print("end cave passage\n");
 }
 
 std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
-  fmt::print("Generate location\n");
   auto t0 = std::chrono::system_clock::now();
 
   auto location = std::make_shared<Location>(spec);
