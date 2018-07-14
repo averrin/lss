@@ -77,14 +77,23 @@ std::map<ItemSpec, std::string> itemColors = {
 };
 
 std::map<EnemySpec, std::string> enemySigns = {
-    {EnemyType::RAT, "r"}, {EnemyType::BAT, "b"},  {EnemyType::GOBLIN, "g"},
-    {EnemyType::ORK, "o"}, {EnemyType::PIXI, "p"}, {EnemyType::OGRE, "O"},
+    {EnemyType::RAT, "r"},          {EnemyType::BAT, "b"},
+    {EnemyType::BAT_LARGE, "B"},    {EnemyType::GOBLIN, "g"},
+    {EnemyType::ORK, "o"},          {EnemyType::PIXI, "p"},
+    {EnemyType::OGRE, "O"},         {EnemyType::GOBLIN_LIEUTENANT, "g"},
+    {EnemyType::GOBLIN_ROGUE, "g"},
 };
 
 std::map<EnemySpec, std::string> enemyColors = {
-    {EnemyType::RAT, "gray"},       {EnemyType::BAT, "gray"},
-    {EnemyType::GOBLIN, "green"},   {EnemyType::ORK, "#22cc22"},
-    {EnemyType::OGRE, "darkgreen"}, {EnemyType::PIXI, "pink"},
+    {EnemyType::RAT, "gray"},
+    {EnemyType::BAT, "gray"},
+    {EnemyType::BAT_LARGE, "darkgray"},
+    {EnemyType::GOBLIN, "green"},
+    {EnemyType::ORK, "#22cc22"},
+    {EnemyType::OGRE, "darkgreen"},
+    {EnemyType::PIXI, "pink"},
+    {EnemyType::GOBLIN_LIEUTENANT, "cyan"},
+    {EnemyType::GOBLIN_ROGUE, "darkgreen"},
 };
 
 std::map<CellSpec, std::string> cellSigns = {

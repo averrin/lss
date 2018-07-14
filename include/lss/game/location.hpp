@@ -103,6 +103,20 @@ public:
            std::vector<std::shared_ptr<Cell>>>
       visibilityCache;
 
+  void dump() {
+
+    for (auto r : cells) {
+      for (auto c : r) {
+        if (c == enterCell || c == exitCell) {
+          fmt::print(" ");
+          continue;
+        }
+        fmt::print("{}", c->type.name.front());
+      }
+      fmt::print("\n");
+    }
+  }
+
 private:
   bool needUpdateLight = true;
 

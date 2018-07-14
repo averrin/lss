@@ -190,14 +190,18 @@ void InspectMode::render() {
         {F(fmt::format("Room @ <b>{}.{} [{}x{}]</b>", cell->room->x,
                        cell->room->y, cell->room->width, cell->room->height))});
     app->inspectState->appendContent(State::END_LINE);
+      app->inspectState->appendContent(
+          {F(fmt::format("HALL: [<b>{}</b>]", cell->room->type == RoomType::HALL ? check : " "))});
+    app->inspectState->appendContent(State::END_LINE);
+      app->inspectState->appendContent(
+          {F(fmt::format("PASSAGE: [<b>{}</b>]", cell->room->type == RoomType::PASSAGE ? check : " "))});
+    app->inspectState->appendContent(State::END_LINE);
     app->inspectState->appendContent({F(fmt::format(
         "Room features count: <b>{}</b>", cell->room->features.size()))});
     app->inspectState->appendContent(State::END_LINE);
     if (app->debug) {
-      for (auto r : cell->room->cells) {
-        for (auto c : r) {
-          app->state->selection.push_back({{c->x, c->y}, "#111"});
-        }
+      for (auto c : cell->room->cells) {
+        app->state->selection.push_back({{c->x, c->y}, "#111"});
       }
     }
 

@@ -107,6 +107,11 @@ const auto DAGGER = std::make_shared<Item>(
 const auto GOBLIN_DAGGER = std::make_shared<Item>(
     ItemType::DAGGER, Effects{std::make_shared<MeleeDamage>(2, 3, 3),
                               std::make_shared<CritModifier>(0.2)});
+const auto POISON_DAGGER = std::make_shared<Item>(
+    ItemType::DAGGER, Effects{std::make_shared<MeleeDamage>(2, 3, 3),
+                              std::make_shared<CritModifier>(0.2),
+                              std::make_shared<Poison>(3, 3000)});
+
 const auto GOLD = std::make_shared<Item>(ItemType::GOLD_COINS, 1);
 } // namespace Prototype
 

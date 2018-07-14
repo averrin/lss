@@ -25,3 +25,5 @@ std::string CritModifier::getTitle() {
 std::string ArmorValue::getTitle() {
   return fmt::format("[{:+d}]", R::get(modifier));
 }
+
+std::string Poison::getTitle() { return fmt::format("poisoned"); }

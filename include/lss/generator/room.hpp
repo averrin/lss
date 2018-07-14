@@ -13,11 +13,16 @@ enum class RoomFeature { CAVE, DUNGEON };
 
 class Room {
 public:
-  Room(RoomType t, Cells c) : type(t), cells(c) {
-    height = cells.size();
-    width = cells.front().size();
+  Room(RoomType t, Cells c) : type(t) {
+    height = c.size();
+    width = c.front().size();
+    for (auto r : c) {
+      for (auto cell : r) {
+        cells.push_back(cell);
+      }
+    }
   }
-  Cells cells;
+  std::vector<std::shared_ptr<Cell>> cells;
   RoomType type;
   int threat = 0;
   std::vector<RoomFeature> features;

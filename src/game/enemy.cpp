@@ -253,8 +253,8 @@ bool Enemy::randomPath() {
     return false;
   }
   fmt::print("R: {}.{}\n", currentCell->room->x, currentCell->room->y);
-  auto target = currentCell->room->cells[rand() % currentCell->room->height]
-                                        [rand() % currentCell->room->width];
+  auto target =
+      currentCell->room->cells[rand() % currentCell->room->cells.size()];
   fmt::print("T: {}.{}\n", target->x, target->y);
   auto pather = new micropather::MicroPather(currentLocation.get());
   float totalCost = 0;

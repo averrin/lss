@@ -9,6 +9,9 @@
 
 #include "fmt/format.h"
 
+// TODO: refactor.
+// maybe create variant with int, float, rndInt and rndFloat
+// and write one function for baase modification (see lss/creature.cpp)
 class Player;
 class Effect {
 public:
@@ -115,6 +118,19 @@ public:
   R::rndInt edges;
   std::shared_ptr<Effect> clone() {
     return std::make_shared<MeleeDamage>(modifier, dices, edges);
+  };
+  std::variant<float, int> getModifier() { return R::get(modifier); };
+};
+
+class Poison : public Effect {
+public:
+  Poison(int dmg, int d)
+      : Effect(AttributeType::NONE), damage(dmg), duration(d){};
+  int damage;
+  int duration;
+  std::string getTitle();
+  std::shared_ptr<Effect> clone() {
+    return std::make_shared<Poison>(damage, duration);
   };
   std::variant<float, int> getModifier() { return R::get(modifier); };
 };

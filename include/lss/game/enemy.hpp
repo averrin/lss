@@ -40,21 +40,32 @@ public:
 namespace EnemyType {
 EnemySpec const RAT = {
     "rat", 0,
-    2, 10, 1, 1, 3, 0,
+    2, 10, 1,
+    1, 3, 0,
     LootBox{},
     {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB},
     Items{}
 };
 EnemySpec const BAT = {
     "bat", 0,
-    1.5, 10, 1, 1, 3, 0,
+    1.5, 10, 1,
+    1, 3, 0,
+    LootBox{100, {}},
+    {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB, Traits::FLY},
+    Items{}
+};
+EnemySpec const BAT_LARGE = {
+    "large bat", 0,
+    1.5, 20, 1,
+    2, 3, 0,
     LootBox{100, {}},
     {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB, Traits::FLY},
     Items{}
 };
 EnemySpec const GOBLIN = {
     "goblin", 1,
-    1, 15, 1, 1, 3, 0,
+    1, 15, 1,
+    1, 3, 0,
     LootBox{100, {}, {
         {60, {}, {
           {25, {Prototype::DAGGER}},
@@ -65,6 +76,38 @@ EnemySpec const GOBLIN = {
         {90, {Prototype::GOLD->setCount(50)}}}},
     {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER, Traits::MOB, Traits::DUAL_WIELD},
     Items{Prototype::GOBLIN_DAGGER, Prototype::GOBLIN_DAGGER}
+};
+// Goblin lieutenant
+EnemySpec const GOBLIN_LIEUTENANT = {
+    "goblin lieutenant", 1,
+    1, 25, 1,
+    1, 5, 1,
+    LootBox{100, {}, {
+        {80, {}, {
+          {25, {Prototype::DAGGER}},
+          {25, {Prototype::HELMET}},
+          {25, {Prototype::GREAVES}},
+          {25, {Prototype::BOOTS}},
+          }, true},
+        {90, {Prototype::GOLD->setCount(50)}}}},
+    {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER, Traits::MOB, Traits::DUAL_WIELD},
+    Items{Prototype::GOBLIN_DAGGER, Prototype::GOBLIN_DAGGER, Prototype::LEATHER_ARMOR}
+};
+
+EnemySpec const GOBLIN_ROGUE = {
+    "goblin rogue", 1,
+    1.5, 15, 1,
+    1, 3, 0,
+    LootBox{100, {}, {
+        {60, {}, {
+          {25, {Prototype::DAGGER}},
+          {25, {Prototype::HELMET}},
+          {25, {Prototype::GREAVES}},
+          {25, {Prototype::BOOTS}},
+          }, true},
+        {90, {Prototype::GOLD->setCount(50)}}}},
+    {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER, Traits::MOB, Traits::DUAL_WIELD},
+    Items{Prototype::POISON_DAGGER, Prototype::GOBLIN_DAGGER}
 };
 EnemySpec const ORK = {
     "ork", 2,
