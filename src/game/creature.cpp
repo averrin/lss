@@ -178,16 +178,8 @@ int criticalHit(int m, int d, int e) {
   return damage;
 }
 
+//TODO: move messages logic to logPanel
 int Creature::hitRoll(int m, int d, int e) {
-  auto inShadow = !currentCell->illuminated;
-  float r = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-  if (inShadow && hasTrait(Traits::DEADLY_SHADOWS)) {
-    fmt::print("deadly shadows\n");
-    return criticalHit(m, d, e);
-  } else if (r < CRIT(this)) {
-    fmt::print("{} < {} crit_chance\n", r, CRIT(this));
-    return criticalHit(m, d, e);
-  }
   auto damage = 0;
   for (auto n = 0; n < d; n++) {
     damage += rand() % e + 1;
@@ -199,12 +191,29 @@ int Creature::hitRoll(int m, int d, int e) {
   return damage;
 }
 
-int Creature::getDamage(std::shared_ptr<Object>) {
-  int damage = 0;
+std::shared_ptr<Damage> Creature::updateDamage(std::shared_ptr<Damage> damage, int m, int d, int e) {
+  auto inShadow = !currentCell->illuminated;
+  float r = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+  if (inShadow && hasTrait(Traits::DEADLY_SHADOWS)) {
+    damage->traits.push_back(Traits::DEADLY_SHADOWS);
+    damage->damage += criticalHit(m, d, e);
+    damage->isCritical = true;
+    return damage;
+  } else if (r < CRIT(this)) {
+    damage->damage += criticalHit(m, d, e);
+    damage->isCritical = true;
+    return damage;
+  }
+  damage->damage += hitRoll(m, d, e);
+  return damage;
+}
+
+std::shared_ptr<Damage> Creature::getDamage(std::shared_ptr<Object>) {
+  auto damage = std::make_shared<Damage>();
   auto primaryDmg = getPrimaryDmg();
   if (primaryDmg != std::nullopt) {
     auto [primarySlot, m, d, e] = *primaryDmg;
-    damage += hitRoll(m, d, e);
+    damage = updateDamage(damage, m, d, e);
   }
   auto haveLeft =
       std::count_if(
@@ -222,13 +231,13 @@ int Creature::getDamage(std::shared_ptr<Object>) {
   if (secondaryDmg != std::nullopt && haveLeft) {
     auto [secondarySlot, m, d, e] = *secondaryDmg;
     if (hasTrait(Traits::DUAL_WIELD)) {
-      damage += hitRoll(m, d, e);
+      damage = updateDamage(damage, m, d, e);
     } else {
-      damage += m;
+      damage->damage += m;
     }
   }
-  if (damage == 0) {
-    damage = hitRoll(damage_modifier, damage_dices, damage_edges);
+  if (damage->damage == 0) {
+    damage = updateDamage(damage, damage_modifier, damage_dices, damage_edges);
   }
   if (hasTrait(Traits::MOB)) {
     auto nbrs = currentLocation->getNeighbors(currentCell);
@@ -237,9 +246,7 @@ int Creature::getDamage(std::shared_ptr<Object>) {
               utils::castObjects<Enemy>(currentLocation->getObjects(c));
           return enemies.size() > 0 && enemies.front()->hasTrait(Traits::MOB);
         }) != nbrs.end()) {
-      damage *= 1.5;
-      std::cout << "mob damage: " << rang::fg::red << damage
-                << rang::style::reset << std::endl;
+      damage->traits.push_back(Traits::MOB);
     }
   }
   return damage;

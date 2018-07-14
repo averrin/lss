@@ -153,6 +153,7 @@ void Location::enter(std::shared_ptr<Player> hero, std::shared_ptr<Cell> cell) {
   }
   hero->calcViewField();
   updateView(hero);
+
   hero->commit("location enter", 0);
 
   handlers.push_back(eb::EventBus::AddHandler<CommitEvent>(*this));

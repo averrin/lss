@@ -33,6 +33,10 @@ public:
   bool damaged = true;
   std::string cache;
 
+  friend bool operator==(Fragment &t1, const Fragment &t2) {
+    return t1.template_str == t2.template_str;
+  }
+
 protected:
   std::map<std::string, tpl_arg> args;
   std::string template_str;

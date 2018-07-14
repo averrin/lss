@@ -75,6 +75,8 @@ const auto GOD_PLATE =
     std::make_shared<Item>("GoD pLaTe", ItemType::PLATE,
                            Effects{std::make_shared<ArmorValue>(100),
                                    std::make_shared<HPModifier>(1000)});
+const auto BASIC_LEATHER_ARMOR = std::make_shared<Item>(
+    ItemType::LEATHER_ARMOR, Effects{std::make_shared<ArmorValue>(1)});
 const auto LEATHER_ARMOR = std::make_shared<Item>(
     ItemType::LEATHER_ARMOR, Effects{std::make_shared<ArmorValue>(R::I(1, 3))});
 const auto HELMET = std::make_shared<Item>(
@@ -93,8 +95,7 @@ const auto SPEED_RING =
                            Effects{std::make_shared<SpeedModifier>(0.3)});
 
 const auto BASIC_SWORD = std::make_shared<Item>(
-    ItemType::SWORD, Effects{std::make_shared<MeleeDamage>(
-                         0, 3, 3)});
+    ItemType::SWORD, Effects{std::make_shared<MeleeDamage>(0, 3, 3)});
 const auto SWORD = std::make_shared<Item>(
     ItemType::SWORD, Effects{std::make_shared<MeleeDamage>(
                          R::I(-2, 2), R::I(2, 4), R::I(2, 4))});

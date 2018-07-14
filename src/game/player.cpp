@@ -9,6 +9,7 @@
 #include "lss/game/player.hpp"
 #include "lss/game/slot.hpp"
 #include "lss/game/spell.hpp"
+#include "lss/game/damage.hpp"
 #include "lss/utils.hpp"
 #include "rang.hpp"
 
@@ -16,7 +17,7 @@ DigEvent::DigEvent(eb::ObjectPtr s, std::shared_ptr<Cell> c)
     : eb::Event(s), cell(c) {}
 HeroDiedEvent::HeroDiedEvent(eb::ObjectPtr s) : eb::Event(s) {}
 
-HeroTakeDamageEvent::HeroTakeDamageEvent(eb::ObjectPtr s, int d)
+HeroTakeDamageEvent::HeroTakeDamageEvent(eb::ObjectPtr s, std::shared_ptr<Damage> d)
     : eb::Event(s), damage(d) {}
 
 Player::Player() : Creature() {
@@ -73,7 +74,7 @@ Player::Player() : Creature() {
   auto sword = Prototype::BASIC_SWORD->clone();
   inventory.push_back(sword);
   inventory.push_back(Prototype::TORCH->clone());
-  auto armor = Prototype::LEATHER_ARMOR->clone();
+  auto armor = Prototype::BASIC_LEATHER_ARMOR->clone();
   inventory.push_back(armor);
 
   getSlot(sword->type.wearableType)->equip(sword);
@@ -294,12 +295,12 @@ bool Player::interact(std::shared_ptr<Object> actor) {
   if (hp > 0) {
     auto damage = enemy->getDamage(shared_from_this());
     auto def = DEF(this);
-    if (damage - def < 0) {
-      damage = 0;
+    if (damage->damage - def < 0) {
+      damage->damage = 0;
     } else {
-      damage -= def;
+      damage->damage -= def;
     }
-    hp -= damage;
+    hp -= damage->damage;
     HeroTakeDamageEvent e(enemy, damage);
     eb::EventBus::FireEvent(e);
   }

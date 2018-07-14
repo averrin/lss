@@ -12,6 +12,7 @@ class Item;
 class Slot;
 class Cell;
 class Spell;
+class Damage;
 class DoorOpenedEvent : public eb::Event {
 public:
   DoorOpenedEvent(eb::ObjectPtr);
@@ -19,14 +20,14 @@ public:
 
 class EnemyTakeDamageEvent : public eb::Event {
 public:
-  EnemyTakeDamageEvent(eb::ObjectPtr, int);
-  int damage;
+  EnemyTakeDamageEvent(eb::ObjectPtr, std::shared_ptr<Damage>);
+  std::shared_ptr<Damage> damage;
 };
 
 class HeroTakeDamageEvent : public eb::Event {
 public:
-  HeroTakeDamageEvent(eb::ObjectPtr, int);
-  int damage;
+  HeroTakeDamageEvent(eb::ObjectPtr, std::shared_ptr<Damage>);
+  std::shared_ptr<Damage> damage;
 };
 
 class EnemyDiedEvent : public eb::Event {

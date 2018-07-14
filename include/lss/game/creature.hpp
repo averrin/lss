@@ -7,6 +7,7 @@
 #include "lss/game/item.hpp"
 #include "lss/game/object.hpp"
 #include "lss/game/trait.hpp"
+#include "lss/game/damage.hpp"
 
 class Creature : public Object {
 public:
@@ -25,7 +26,7 @@ public:
   };
   void calcViewField(bool force = false);
   bool interact(std::shared_ptr<Object>);
-  int getDamage(std::shared_ptr<Object>);
+  std::shared_ptr<Damage> getDamage(std::shared_ptr<Object>);
 
   std::string name = "Unnamed";
 
@@ -53,6 +54,7 @@ public:
     return std::find(traits.begin(), traits.end(), t) != traits.end();
   }
   bool hasLight();
+  std::shared_ptr<Damage> updateDamage(std::shared_ptr<Damage>, int m, int d, int e);
   int hitRoll(int m, int d, int e);
   std::shared_ptr<Slot> getSlot(WearableType type);
   std::optional<std::shared_ptr<Slot>> getSlot(WearableType type, bool);

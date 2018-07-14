@@ -71,6 +71,7 @@ set( SRC_FILES
 
 	${SRC_DIR}/statusLine.cpp
 	${SRC_DIR}/heroLine.cpp
+	${SRC_DIR}/logPanel.cpp
 	${SRC_DIR}/eventReactor.cpp
 	${SRC_DIR}/LSSApp.cpp
     ${PANGO_BLOCK_SRC_DIR}/CinderPango.cpp

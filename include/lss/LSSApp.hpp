@@ -27,6 +27,7 @@
 
 #include "fmt/format.h"
 #include "lss/ui/heroLine.hpp"
+#include "lss/ui/logPanel.hpp"
 #include "lss/ui/statusLine.hpp"
 
 #include "lss/generator/generator.hpp"
@@ -69,6 +70,7 @@ public:
   kp::pango::CinderPangoRef statusFrame;
   kp::pango::CinderPangoRef heroFrame;
   kp::pango::CinderPangoRef inspectFrame;
+  kp::pango::CinderPangoRef logFrame;
 
   ModeManager modeManager = ModeManager();
   std::shared_ptr<EventReactor> reactor;
@@ -86,6 +88,7 @@ public:
 
   std::shared_ptr<StatusLine> statusLine;
   std::shared_ptr<HeroLine> heroLine;
+  std::shared_ptr<LogPanel> logPanel;
 
   std::shared_ptr<Generator> generator;
 
@@ -97,6 +100,7 @@ public:
   std::shared_ptr<State> heroState;
   std::shared_ptr<State> gameOverState;
   std::shared_ptr<State> inspectState;
+  std::shared_ptr<State> logState;
 
   std::shared_ptr<Player> hero;
 

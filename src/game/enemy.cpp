@@ -70,12 +70,12 @@ bool Enemy::interact(std::shared_ptr<Object> actor) {
   if (hp > 0) {
     auto damage = hero->getDamage(shared_from_this());
     auto def = DEF(this);
-    if (damage - def < 0) {
-      damage = 0;
+    if (damage->damage - def < 0) {
+      damage->damage = 0;
     } else {
-      damage -= def;
+      damage->damage -= def;
     }
-    hp -= damage;
+    hp -= damage->damage;
     EnemyTakeDamageEvent e(ptr, damage);
     eb::EventBus::FireEvent(e);
   }
@@ -271,6 +271,6 @@ bool Enemy::randomPath() {
   return true;
 }
 
-EnemyTakeDamageEvent::EnemyTakeDamageEvent(eb::ObjectPtr s, int d)
+EnemyTakeDamageEvent::EnemyTakeDamageEvent(eb::ObjectPtr s, std::shared_ptr<Damage> d)
     : eb::Event(s), damage(d) {}
 EnemyDiedEvent::EnemyDiedEvent(eb::ObjectPtr s) : eb::Event(s) {}

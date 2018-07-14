@@ -416,11 +416,13 @@ std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Location> location,
 void placeEnemies(std::shared_ptr<Location> location, int threat) {
   std::map<const EnemySpec, float> table;
   if (location->type.type == LocationType::DUNGEON) {
-    if (threat >= SpawnTable::DUNGEON.size()) threat = SpawnTable::DUNGEON.size() -1;
+    if (threat >= SpawnTable::DUNGEON.size())
+      threat = SpawnTable::DUNGEON.size() - 1;
     table = SpawnTable::DUNGEON[threat];
   } else if (location->type.type == LocationType::CAVERN) {
-    //TODO: use cavern table
-    if (threat >= SpawnTable::DUNGEON.size()) threat = SpawnTable::DUNGEON.size() -1;
+    // TODO: use cavern table
+    if (threat >= SpawnTable::DUNGEON.size())
+      threat = SpawnTable::DUNGEON.size() - 1;
     table = SpawnTable::DUNGEON[threat];
   }
   for (auto room : location->rooms) {
@@ -542,7 +544,7 @@ auto getRandomCell(std::shared_ptr<Location> location, CellSpec type) {
 void placeStairs(std::shared_ptr<Location> location) {
   location->enterCell = getRandomCell(location, CellType::FLOOR);
   location->exitCell = getRandomCell(location, CellType::FLOOR);
-  location->dump();
+  // location->dump();
 
   auto pather = new micropather::MicroPather(location.get());
   micropather::MPVector<void *> path;

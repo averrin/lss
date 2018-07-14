@@ -43,6 +43,10 @@ void LSSApp::setup() {
   inspectFrame->setMinSize(getWindowWidth() / 4.f, getWindowHeight());
   inspectFrame->setMaxSize(getWindowWidth() / 4.f, getWindowHeight());
 
+  logFrame = kp::pango::CinderPango::create();
+  logFrame->setMinSize(getWindowWidth() / 4.f, getWindowHeight());
+  logFrame->setMaxSize(getWindowWidth() / 4.f, getWindowHeight());
+
   /* Modes && States */
   normalMode = std::make_shared<NormalMode>(this);
   state = std::make_shared<State>();
@@ -66,10 +70,11 @@ void LSSApp::setup() {
   statusLine = std::make_shared<StatusLine>(statusState);
 
   heroState = std::make_shared<State>();
-  heroLine = std::make_shared<HeroLine>(heroState);
 
   inspectState = std::make_shared<State>();
   inspectMode = std::make_shared<InspectMode>(this);
+
+  logState = std::make_shared<State>();
 
   state->currentPalette = palettes::DARK;
   statusState->currentPalette = palettes::DARK;
@@ -79,10 +84,13 @@ void LSSApp::setup() {
   gameOverState->currentPalette = palettes::DARK;
   heroState->currentPalette = palettes::DARK;
   inspectState->currentPalette = palettes::DARK;
+  logState->currentPalette = palettes::DARK;
 
   statusLine->setContent(State::normal_mode);
 
   hero = std::make_shared<Player>();
+  heroLine = std::make_shared<HeroLine>(heroState, hero);
+  logPanel = std::make_shared<LogPanel>(logState, hero);
 
   auto l = generator->getRandomLocation(hero);
   l->depth = 0;
@@ -350,6 +358,9 @@ void LSSApp::update() {
   if (inspectFrame != nullptr) {
     inspectState->render(inspectFrame);
   }
+  if (logFrame != nullptr) {
+    logState->render(logFrame);
+  }
 
   lastMode = modeManager.modeFlags->currentMode;
   needRedraw = true;
@@ -392,13 +403,24 @@ void LSSApp::draw() {
              vec2(6, getWindowHeight() - StatusLine::HEIGHT + 6));
   }
 
+  if (logFrame != nullptr &&
+      modeManager.modeFlags->currentMode != Modes::INSPECT) {
+    gl::color(state->currentPalette.bgColorAlt);
+    gl::drawSolidRect(Rectf(getWindowWidth() * 3.f / 4.f, 0, getWindowWidth(),
+                            getWindowHeight()));
+    gl::color(ColorA(1, 1, 1, 1));
+    logFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
+    gl::draw(logFrame->getTexture(),
+             vec2(getWindowWidth() * 3 / 4 + HOffset, VOffset));
+  }
+
   if (inspectFrame != nullptr &&
       modeManager.modeFlags->currentMode == Modes::INSPECT) {
     gl::color(state->currentPalette.bgColorAlt);
     gl::drawSolidRect(Rectf(getWindowWidth() * 3.f / 4.f, 0, getWindowWidth(),
                             getWindowHeight()));
     gl::color(ColorA(1, 1, 1, 1));
-    statusFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
+    inspectFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
     gl::draw(inspectFrame->getTexture(),
              vec2(getWindowWidth() * 3 / 4 + HOffset, VOffset));
   }
