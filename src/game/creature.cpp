@@ -173,12 +173,10 @@ int criticalHit(int m, int d, int e) {
   if (damage < 0) {
     damage = 0;
   }
-  std::cout << "critical hit: " << rang::fg::red << "!" << damage
-            << rang::style::reset << std::endl;
   return damage;
 }
 
-//TODO: move messages logic to logPanel
+// TODO: move messages logic to logPanel
 int Creature::hitRoll(int m, int d, int e) {
   auto damage = 0;
   for (auto n = 0; n < d; n++) {
@@ -191,7 +189,8 @@ int Creature::hitRoll(int m, int d, int e) {
   return damage;
 }
 
-std::shared_ptr<Damage> Creature::updateDamage(std::shared_ptr<Damage> damage, int m, int d, int e) {
+std::shared_ptr<Damage> Creature::updateDamage(std::shared_ptr<Damage> damage,
+                                               int m, int d, int e) {
   auto inShadow = !currentCell->illuminated;
   float r = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
   if (inShadow && hasTrait(Traits::DEADLY_SHADOWS)) {

@@ -15,7 +15,7 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-std::string VERSION = "0.0.7 by Averrin";
+std::string VERSION = "0.0.8 by Averrin";
 
 int HOffset = 24;
 int VOffset = 24;
@@ -40,12 +40,12 @@ void LSSApp::setup() {
   heroFrame->setMaxSize(getWindowWidth(), HeroLine::HEIGHT);
 
   inspectFrame = kp::pango::CinderPango::create();
-  inspectFrame->setMinSize(getWindowWidth() / 4.f, getWindowHeight());
-  inspectFrame->setMaxSize(getWindowWidth() / 4.f, getWindowHeight());
+  inspectFrame->setMinSize(getWindowWidth() / 4.f - 12, getWindowHeight());
+  inspectFrame->setMaxSize(getWindowWidth() / 4.f - 12, getWindowHeight());
 
   logFrame = kp::pango::CinderPango::create();
-  logFrame->setMinSize(getWindowWidth() / 4.f, getWindowHeight());
-  logFrame->setMaxSize(getWindowWidth() / 4.f, getWindowHeight());
+  logFrame->setMinSize(getWindowWidth() / 4.f - 12, getWindowHeight());
+  logFrame->setMaxSize(getWindowWidth() / 4.f - 12, getWindowHeight());
 
   /* Modes && States */
   normalMode = std::make_shared<NormalMode>(this);

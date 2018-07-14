@@ -1,5 +1,7 @@
 ## Changelog
 
+### 0.0.8
+
 ### 0.0.7
 - init dungeon generator
 - river generator
@@ -9,6 +11,8 @@
 - init passive ai
 - randomized effects
 - unidentified items
+- spawn probability table
+- log panel
 
 ### 0.0.6
 - durability for torches

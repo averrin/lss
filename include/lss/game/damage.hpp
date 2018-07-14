@@ -5,11 +5,11 @@
 
 class Damage : public Object {
 public:
-        Damage() : Object() {}
-        int damage = 0;
-        bool isCritical = false;
-        std::vector<Trait> traits;
+  Damage() : Object() {}
+  int damage = 0;
+  bool isCritical = false;
+  std::vector<Trait> traits;
+  int deflicted = 0;
 };
-
 
 #endif // __DAMAGE_H_

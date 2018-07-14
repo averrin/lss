@@ -1,8 +1,8 @@
 #ifndef __LOGPANEL_H_
 #define __LOGPANEL_H_
 
-#include <string>
 #include <deque>
+#include <string>
 
 #include "lss/fragment.hpp"
 #include "lss/game/events.hpp"
@@ -12,9 +12,9 @@
 
 class LogLine {
 public:
-    LogLine(Fragments c) : content(c) {}
-    Fragments content;
-    int count = 1;
+  LogLine(Fragments c) : content(c) {}
+  Fragments content;
+  int count = 1;
 };
 
 class LogPanel : public eb::EventHandler<DoorOpenedEvent>,
@@ -25,6 +25,7 @@ class LogPanel : public eb::EventHandler<DoorOpenedEvent>,
                  public eb::EventHandler<CommitEvent>,
                  public eb::EventHandler<DigEvent>,
                  public eb::EventHandler<DropEvent>,
+                 public eb::EventHandler<HeroDiedEvent>,
                  public eb::EventHandler<LeaveCellEvent>,
                  public eb::EventHandler<EnterCellEvent>,
                  public eb::EventHandler<ItemsFoundEvent>,
@@ -37,6 +38,7 @@ public:
   void appendLine(Fragments content);
   void clear();
 
+  virtual void onEvent(HeroDiedEvent &e) override;
   virtual void onEvent(DoorOpenedEvent &e) override;
   virtual void onEvent(EnemyTakeDamageEvent &e) override;
   virtual void onEvent(HeroTakeDamageEvent &e) override;

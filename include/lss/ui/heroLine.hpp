@@ -11,15 +11,13 @@
 #include "EventHandler.hpp"
 
 class HeroLine : public eb::EventHandler<CommitEvent>,
-                 public eb::EventHandler<HeroTakeDamageEvent>
-{
+                 public eb::EventHandler<HeroTakeDamageEvent> {
 public:
   HeroLine(std::shared_ptr<State> state, std::shared_ptr<Player>);
-std::shared_ptr<Player> hero;
+  std::shared_ptr<Player> hero;
   void setContent(Fragments content);
   void clear();
-    void update();
-
+  void update();
 
   static const int HEIGHT = 30;
 

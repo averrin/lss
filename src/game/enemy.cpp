@@ -69,12 +69,13 @@ bool Enemy::interact(std::shared_ptr<Object> actor) {
   auto ptr = shared_from_this();
   if (hp > 0) {
     auto damage = hero->getDamage(shared_from_this());
-    auto def = DEF(this);
+    auto def = R::Z(0, DEF(this));
     if (damage->damage - def < 0) {
       damage->damage = 0;
     } else {
       damage->damage -= def;
     }
+    damage->deflicted = def;
     hp -= damage->damage;
     EnemyTakeDamageEvent e(ptr, damage);
     eb::EventBus::FireEvent(e);
@@ -115,10 +116,10 @@ Direction getDirFromCell(std::shared_ptr<Cell> c, Cell *nc) {
 
 // TODO: refactor. Divide by actions;
 void Enemy::onEvent(CommitEvent &e) {
-  if (HP(this) <= 0)
+  auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
+  if (HP(this) <= 0 || HP(hero.get()) <= 0)
     return;
   auto t0 = std::chrono::system_clock::now();
-  auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
   calcViewField();
   if (e.actionPoints == 0 ||
       (!canSee(hero->currentCell) && !hero->canSee(currentCell))) {
@@ -271,6 +272,7 @@ bool Enemy::randomPath() {
   return true;
 }
 
-EnemyTakeDamageEvent::EnemyTakeDamageEvent(eb::ObjectPtr s, std::shared_ptr<Damage> d)
+EnemyTakeDamageEvent::EnemyTakeDamageEvent(eb::ObjectPtr s,
+                                           std::shared_ptr<Damage> d)
     : eb::Event(s), damage(d) {}
 EnemyDiedEvent::EnemyDiedEvent(eb::ObjectPtr s) : eb::Event(s) {}

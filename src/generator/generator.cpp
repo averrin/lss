@@ -560,11 +560,17 @@ void placeStairs(std::shared_ptr<Location> location) {
     result = pather->Solve(location->enterCell.get(), location->exitCell.get(),
                            &path, &totalCost);
   }
-  fmt::print("{}.{} -> {}.{} = {}\n", location->enterCell->x,
-             location->enterCell->y, location->exitCell->x,
-             location->exitCell->y, totalCost);
-  fmt::print("\n");
+  // fmt::print("{}.{} -> {}.{} = {}\n", location->enterCell->x,
+  //            location->enterCell->y, location->exitCell->x,
+  //            location->exitCell->y, totalCost);
+
   delete pather;
+
+  location->objects.erase(std::remove_if(
+      location->objects.begin(), location->objects.end(), [&](auto object) {
+        return object->currentCell == location->exitCell ||
+               object->currentCell == location->enterCell;
+      }));
 
   location->exitCell->type = CellType::DOWNSTAIRS;
   auto n = location->getNeighbors(location->exitCell);

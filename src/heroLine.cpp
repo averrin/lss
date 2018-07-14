@@ -8,7 +8,8 @@
 
 using namespace std::string_literals;
 
-HeroLine::HeroLine(std::shared_ptr<State> s, std::shared_ptr<Player> h) : state(s), hero(h) {
+HeroLine::HeroLine(std::shared_ptr<State> s, std::shared_ptr<Player> h)
+    : state(s), hero(h) {
   eb::EventBus::AddHandler<CommitEvent>(*this);
   eb::EventBus::AddHandler<HeroTakeDamageEvent>(*this);
 };
@@ -17,17 +18,10 @@ void HeroLine::setContent(Fragments content) { state->setContent(content); };
 
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 
-void HeroLine::onEvent(CommitEvent &e) {
-  update();
-}
-void HeroLine::onEvent(HeroTakeDamageEvent &e) {
-  update();
-}
+void HeroLine::onEvent(CommitEvent &e) { update(); }
+void HeroLine::onEvent(HeroTakeDamageEvent &e) { update(); }
 
 void HeroLine::update() {
-  fmt::print("update\n");
-  
-  // auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
   auto lightDurability = 0;
   if (hero->hasLight()) {
     auto lightSlot = *std::find_if(

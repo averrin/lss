@@ -23,7 +23,8 @@ Yet another unfinished roguelike game.
 - [X] Map generator
 - [X] Cell & location features
 - [X] Light/shadow-related traits
-- [ ] Better event log
+- [X] Better event log
+- [ ] After death stats
 - [ ] Refactor effects system
 - [ ] Weights
 - [ ] Passive, patrol and "hero search" AI, stealth

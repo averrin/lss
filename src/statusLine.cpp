@@ -24,8 +24,8 @@ void StatusLine::onEvent(DoorOpenedEvent &e) {
 }
 void StatusLine::onEvent(EnemyTakeDamageEvent &e) {
   auto enemy = std::dynamic_pointer_cast<Enemy>(e.getSender());
-  setContent(
-      {F(fmt::format("You hit {}: {} dmg", enemy->type.name, e.damage->damage))});
+  setContent({F(
+      fmt::format("You hit {}: {} dmg", enemy->type.name, e.damage->damage))});
 }
 void StatusLine::onEvent(HeroTakeDamageEvent &e) {
   auto enemy = std::dynamic_pointer_cast<Enemy>(e.getSender());
