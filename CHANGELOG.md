@@ -2,6 +2,7 @@
 
 ### 0.0.8
 - scrolls & potions with random names
+- location loot
 
 ### 0.0.7
 - init dungeon generator

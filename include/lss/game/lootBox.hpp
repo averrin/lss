@@ -12,13 +12,13 @@ struct LootBox {
   Items open() {
     Items loot;
     // TODO: implement float probability
-    auto roll = rand() % 100;
+    auto roll = R::R();
     std::vector<std::string> itemNames;
     for (auto i : items) {
       itemNames.push_back(i->getFullTitle());
     }
-    fmt::print("LootBox roll: {}/{} [{}]\n", roll, probability,
-               utils::join(itemNames, ", "));
+    // fmt::print("LootBox roll: {}/{} [{}]\n", roll, probability,
+               // utils::join(itemNames, ", "));
     if (roll < probability) {
       loot.insert(loot.end(), items.begin(), items.end());
       for (auto child : children) {

@@ -50,7 +50,7 @@ EnemySpec const BAT = {
     "bat", 0,
     1.5, 10, 1,
     1, 3, 0,
-    LootBox{100, {}},
+    LootBox{1, {}},
     {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB, Traits::FLY},
     Items{}, {std::make_shared<Vampire>(1)}
 };
@@ -66,14 +66,15 @@ EnemySpec const GOBLIN = {
     "goblin", 1,
     1, 15, 1,
     1, 3, 0,
-    LootBox{100, {}, {
-        {60, {}, {
-          {25, {Prototype::DAGGER}},
-          {25, {Prototype::HELMET}},
-          {25, {Prototype::GREAVES}},
-          {25, {Prototype::BOOTS}},
+    LootBox{1, {}, {
+        {0.40, {Prototype::POTION_HEAL_LESSER}},
+        {0.60, {}, {
+          {0.25, {Prototype::DAGGER}},
+          {0.25, {Prototype::HELMET}},
+          {0.25, {Prototype::GREAVES}},
+          {0.25, {Prototype::BOOTS}},
           }, true},
-        {90, {Prototype::GOLD->setCount(50)}}}},
+        {0.90, {Prototype::GOLD->setCount(50)}}}},
     {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER, Traits::MOB, Traits::DUAL_WIELD},
     Items{Prototype::GOBLIN_DAGGER, Prototype::GOBLIN_DAGGER}
 };
@@ -82,14 +83,16 @@ EnemySpec const GOBLIN_LIEUTENANT = {
     "goblin lieutenant", 1,
     1, 25, 1,
     1, 5, 1,
-    LootBox{100, {}, {
-        {80, {}, {
-          {25, {Prototype::DAGGER}},
-          {25, {Prototype::HELMET}},
-          {25, {Prototype::GREAVES}},
-          {25, {Prototype::BOOTS}},
+    LootBox{1, {}, {
+        {0.40, {Prototype::POTION_HEAL}},
+        {0.40, {}, {{0.50, {Prototype::SCROLL_IDENTIFICATION}}, {0.50, {Prototype::SCROLL_REVEAL}}}, true},
+        {0.80, {}, {
+          {0.25, {Prototype::DAGGER}},
+          {0.25, {Prototype::HELMET}},
+          {0.25, {Prototype::GREAVES}},
+          {0.25, {Prototype::BOOTS}},
           }, true},
-        {90, {Prototype::GOLD->setCount(50)}}}},
+        {0.90, {Prototype::GOLD->setCount(50)}}}},
     {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER, Traits::MOB, Traits::DUAL_WIELD},
     Items{Prototype::GOBLIN_DAGGER, Prototype::GOBLIN_DAGGER, Prototype::LEATHER_ARMOR}
 };
@@ -98,30 +101,32 @@ EnemySpec const GOBLIN_ROGUE = {
     "goblin rogue", 1,
     1.5, 15, 1,
     1, 3, 0,
-    LootBox{100, {}, {
-        {60, {}, {
-          {25, {Prototype::DAGGER}},
-          {25, {Prototype::HELMET}},
-          {25, {Prototype::GREAVES}},
-          {25, {Prototype::BOOTS}},
+    LootBox{1, {}, {
+        {0.60, {}, {
+          {0.25, {Prototype::DAGGER}},
+          {0.25, {Prototype::HELMET}},
+          {0.25, {Prototype::GREAVES}},
+          {0.25, {Prototype::BOOTS}},
           }, true},
-        {90, {Prototype::GOLD->setCount(50)}}}},
+        {0.90, {Prototype::GOLD->setCount(50)}}}},
     {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER, Traits::MOB, Traits::DUAL_WIELD},
     Items{Prototype::POISON_DAGGER, Prototype::GOBLIN_DAGGER}
 };
 EnemySpec const ORK = {
     "ork", 2,
     1, 55, 2, 1, 6, 1,
-    LootBox{100, {Prototype::TORCH}, {
-        {70, {}, {
-          {15, {Prototype::PLATE}},
-          {35, {Prototype::SWORD}},
-          {35, {Prototype::HELMET}},
-          {35, {Prototype::SHIELD}},
-          {35, {Prototype::GREAVES}},
-          {35, {Prototype::BOOTS}},
+    LootBox{1, {Prototype::TORCH}, {
+        {0.40, {Prototype::POTION_HEAL}},
+        {0.40, {}, {{0.50, {Prototype::SCROLL_IDENTIFICATION}}, {0.50, {Prototype::SCROLL_REVEAL}}}, true},
+        {0.70, {}, {
+          {0.15, {Prototype::PLATE}},
+          {0.35, {Prototype::SWORD}},
+          {0.35, {Prototype::HELMET}},
+          {0.35, {Prototype::SHIELD}},
+          {0.35, {Prototype::GREAVES}},
+          {0.35, {Prototype::BOOTS}},
           }, true},
-        {90, {Prototype::GOLD->setCount(100)}}}},
+        {0.90, {Prototype::GOLD->setCount(100)}}}},
     {}, Items{Prototype::TORCH, Prototype::ORK_SWORD, Prototype::SHIELD}
 };
 
@@ -129,27 +134,28 @@ EnemySpec const ORK_BLACK = {
     "black ork", 2,
     1.1, 75, 2,
     1, 6, 1,
-    LootBox{100, {Prototype::TORCH}, {
-        {70, {}, {
-          {15, {Prototype::PLATE}},
-          {35, {Prototype::SWORD}},
-          {35, {Prototype::HELMET}},
-          {35, {Prototype::SHIELD}},
-          {35, {Prototype::GREAVES}},
-          {35, {Prototype::BOOTS}},
+    LootBox{1, {Prototype::TORCH}, {
+        {0.50, {Prototype::POTION_HEAL}},
+        {0.70, {}, {
+          {0.15, {Prototype::PLATE}},
+          {0.35, {Prototype::SWORD}},
+          {0.35, {Prototype::HELMET}},
+          {0.35, {Prototype::SHIELD}},
+          {0.35, {Prototype::GREAVES}},
+          {0.35, {Prototype::BOOTS}},
           }, true},
-        {90, {Prototype::GOLD->setCount(100)}}}},
+        {0.90, {Prototype::GOLD->setCount(100)}}}},
     {}, Items{Prototype::TORCH, Prototype::ORK_SWORD, Prototype::SHIELD, Prototype::LEATHER_ARMOR}
 };
 EnemySpec const PIXI = {
     "pixi", 3,
     3, 25, 0, 3, 4, 0,
-    {90, {Prototype::GOLD->setCount(200)}, {{10, {Prototype::SPEED_RING}}}},
+    {0.90, {Prototype::GOLD->setCount(200)}, {{10, {Prototype::SPEED_RING}}}},
     {Traits::FLY, Traits::MOB}};
 EnemySpec const OGRE = {
     "ogre", 4,
     1, 100, 2, 1, 6, 1,
-    LootBox{80, {Prototype::GREAT_AXE}},
+    LootBox{0.80, {Prototype::GREAT_AXE}},
     {Traits::NIGHT_VISION},
     Items{Prototype::GREAT_AXE},
 };

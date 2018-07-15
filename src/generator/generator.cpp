@@ -28,6 +28,7 @@ float CAVE_ROCK = 0.10;
 float CAVE_GRASS = 0.1;
 float CAVERN_WALL = 0.35;
 float BLOOD = 0.01;
+float STATUE = 0.001;
 } // namespace P
 
 Cells fill(int h, int w, CellSpec type) {
@@ -89,6 +90,22 @@ void paste(Cells room, std::shared_ptr<Location> location, int x, int y) {
     }
   }
 }
+
+auto getRandomCell(std::shared_ptr<Room> room, CellSpec type) {
+  auto cell = room->cells[rand() % room->cells.size()];
+  while (cell->type != type) {
+    cell = room->cells[rand() % room->cells.size()];
+  }
+  return cell;
+}
+
+auto getRandomCell(std::shared_ptr<Location> location, CellSpec type) {
+  auto room = location->rooms.size() > 1
+                  ? location->rooms[rand() % location->rooms.size()]
+                  : location->rooms.front();
+  return getRandomCell(room, type);
+}
+
 
 void placeWalls(std::shared_ptr<Location> location) {
   for (auto r : location->cells) {
@@ -412,7 +429,35 @@ std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Location> location,
   return enemy;
 }
 
-// TODO: use room threat and hero level. Add respawn
+void placeLoot(std::shared_ptr<Location> location, int threat) {
+  LootBox table;
+  if (location->type.type == LocationType::DUNGEON) {
+    if (threat >= LootTable::DUNGEON.size())
+      threat = LootTable::DUNGEON.size() - 1;
+    table = LootTable::DUNGEON[threat];
+  } else if (location->type.type == LocationType::CAVERN) {
+    // TODO: use cavern table
+    if (threat >= LootTable::DUNGEON.size())
+      threat = LootTable::DUNGEON.size() - 1;
+    table = LootTable::DUNGEON[threat];
+  }
+
+  for (auto room : location->rooms) {
+    auto c = getRandomCell(room, CellType::FLOOR);
+    while (location->getObjects(c).size() != 0) {
+      c = getRandomCell(room, CellType::FLOOR);
+    }
+
+    auto loot = table.open();
+    for (auto item : loot) {
+      auto new_item = item->roll();
+      fmt::print("Place {} at {}.{}\n", new_item->getTitle(true), c->x, c->y);
+      new_item->currentCell = c;
+      location->objects.push_back(new_item);
+    }
+  }
+}
+
 void placeEnemies(std::shared_ptr<Location> location, int threat) {
   std::map<const EnemySpec, float> table;
   if (location->type.type == LocationType::DUNGEON) {
@@ -528,17 +573,6 @@ void placeTorches(std::shared_ptr<Location> location) {
   location->objects.push_back(torch);
 
   fmt::print("Torches: {}\n", n);
-}
-
-auto getRandomCell(std::shared_ptr<Location> location, CellSpec type) {
-  auto room = location->rooms.size() > 1
-                  ? location->rooms[rand() % location->rooms.size()]
-                  : location->rooms.front();
-  auto cell = room->cells[rand() % room->cells.size()];
-  while (cell->type != type) {
-    cell = room->cells[rand() % room->cells.size()];
-  }
-  return cell;
 }
 
 void placeStairs(std::shared_ptr<Location> location) {
@@ -774,6 +808,7 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
     placeDoors(location);
   }
   placeEnemies(location, spec.threat);
+  placeLoot(location, spec.threat);
 
   if (location->hasFeature(LocationFeature::TORCHES)) {
     placeTorches(location);
@@ -786,6 +821,15 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
       }
       for (auto cf : location->type.cellFeatures) {
         c->features.push_back(cf);
+      }
+      if (c->type == CellType::FLOOR && R::R() < P::STATUE) {
+        c->room->features.push_back(RoomFeature::STATUE);
+        auto s = std::make_shared<Statue>();
+        s->currentCell = c;
+        location->objects.push_back(s);
+        for (auto n : location->getNeighbors(c)) {
+          n->features.push_back(CellFeature::BLOOD);
+        }
       }
     }
   }

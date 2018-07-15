@@ -38,6 +38,8 @@ public:
 
 namespace ItemType {
 ItemSpec const TORCH_STAND = {"torch stand", ItemCategories::MISC};
+ItemSpec const STATUE = {"stone statue", ItemCategories::MISC};
+
 ItemSpec const GRASS = {"herb", ItemCategories::CONSUMABLES};
 ItemSpec const SCROLL = {"scroll", ItemCategories::CONSUMABLES};
 ItemSpec const POTION = {"potion", ItemCategories::CONSUMABLES};

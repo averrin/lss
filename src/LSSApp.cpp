@@ -216,6 +216,9 @@ void LSSApp::invalidate() {
     } else if (auto t = std::dynamic_pointer_cast<TorchStand>(o);
                t && hero->canSee(ec)) {
       state->fragments[index] = std::make_shared<ItemSign>(t->type);
+    } else if (auto t = std::dynamic_pointer_cast<Statue>(o);
+               t && hero->canSee(ec)) {
+      state->fragments[index] = std::make_shared<ItemSign>(t->type);
     }
   }
 

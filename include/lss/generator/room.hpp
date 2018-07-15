@@ -9,7 +9,7 @@ enum class RoomType {
   CAVE,
 };
 
-enum class RoomFeature { CAVE, DUNGEON };
+enum class RoomFeature { CAVE, DUNGEON, STATUE };
 
 class Room {
 public:

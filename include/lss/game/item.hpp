@@ -70,6 +70,12 @@ public:
   ItemSpec type;
 };
 
+class Statue : public Object {
+public:
+  Statue() : Object(), type(ItemType::STATUE) { seeThrough = false;  passThrough = false;}
+  ItemSpec type;
+};
+
 class Consumable : public Item {
 public:
   Consumable(std::string un, std::string n, ItemSpec t,
@@ -140,9 +146,13 @@ const auto POTION_HEAL_LESSER = std::make_shared<Consumable>(
 const auto POTION_HEAL = std::make_shared<Consumable>(
     fmt::format("{} potion", utils::getRandomColor()), "heal potion",
     ItemType::POTION, Spells::HEAL);
+
 const auto SCROLL_IDENTIFICATION = std::make_shared<Consumable>(
     fmt::format("scroll labled '{}'", utils::getScrollName()),
     "scroll of identification", ItemType::SCROLL, Spells::IDENTIFY);
+const auto SCROLL_REVEAL = std::make_shared<Consumable>(
+    fmt::format("scroll labled '{}'", utils::getScrollName()),
+    "scroll of reveal", ItemType::SCROLL, Spells::REVEAL);
 
 const auto GOLD = std::make_shared<Item>(ItemType::GOLD_COINS, 1);
 } // namespace Prototype
