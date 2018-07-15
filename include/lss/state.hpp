@@ -27,6 +27,7 @@ public:
   void appendContent(std::shared_ptr<Fragment>);
   void invalidate();
   void setSelect(bool);
+  void clear();
 
   Fragments fragments;
   Position cursor;

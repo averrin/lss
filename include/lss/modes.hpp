@@ -128,6 +128,7 @@ struct modes {
             , "inventory"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
             , "help"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
             , "inspect"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
+            , "game_over"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
         );
     // clang-format on
   }

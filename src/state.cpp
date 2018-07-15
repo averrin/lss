@@ -8,7 +8,7 @@ using namespace Jinja2CppLight;
 using namespace std::string_literals;
 
 void State::setSelect(bool val) {
-  auto needInvalidate = val == select;
+  auto needInvalidate = val != select;
   select = val;
   if (needInvalidate)
     invalidate();
@@ -18,6 +18,11 @@ void State::setContent(Fragments content) {
   fragments = content;
   damaged = true;
 };
+
+void State::clear() {
+  setContent({});
+}
+
 
 void State::appendContent(Fragments content) {
   fragments.insert(fragments.end(), content.begin(), content.end());
@@ -86,7 +91,9 @@ void State::render(kp::pango::CinderPangoRef surface) {
   render(surface);
 };
 
-void State::invalidate() { damaged = true; }
+void State::invalidate() {
+  damaged = true;
+}
 
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 

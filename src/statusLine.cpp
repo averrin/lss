@@ -19,6 +19,9 @@ void StatusLine::setContent(Fragments content) { state->setContent(content); };
 
 void StatusLine::setModeLine(Modes::ModeName mode) {
   switch (mode) {
+  case Modes::NORMAL:
+    setContent(State::normal_mode);
+    break;
   case Modes::INSERT:
     setContent(State::insert_mode);
     break;

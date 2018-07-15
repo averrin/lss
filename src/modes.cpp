@@ -91,6 +91,13 @@ bool GameOverMode::processKey(KeyEvent event) {
     app->processCommand("quit");
     return true;
     break;
+  case KeyEvent::KEY_r:
+    app->modeManager.toNormal();
+    app->hero->currentLocation->leave(app->hero);
+    //FIXME: broken object_select drawing after restart
+    app->startGame();
+    return true;
+    break;
   }
   return false;
 }
@@ -487,6 +494,11 @@ void GameOverMode::render(std::shared_ptr<State> state) {
   state->appendContent(F(fmt::format("EXP:<b>{}</b>", hero->exp)));
   state->appendContent(State::END_LINE);
   state->appendContent(F(fmt::format("GOLD:<b>{}</b>", gold)));
+  state->appendContent(State::END_LINE);
+  state->appendContent(State::END_LINE);
+  state->appendContent(State::END_LINE);
+  state->appendContent(F("Press [<span color='{{orange}}' weight='bold'>q</span>] for exit"
+                        " or [<span color='{{orange}}' weight='bold'>r</span>] for restart"));
 }
 
 void InventoryMode::render(std::shared_ptr<State> state) {

@@ -5,26 +5,33 @@
 
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 
+LogPanel::~LogPanel() {
+  for (auto r : handlers) {
+    r->removeHandler();
+  }
+}
+
 LogPanel::LogPanel(std::shared_ptr<State> s, std::shared_ptr<Player> hero)
     : state(s) {
-  eb::EventBus::AddHandler<ItemTakenEvent>(*this);
-  eb::EventBus::AddHandler<ItemsFoundEvent>(*this);
-  eb::EventBus::AddHandler<MessageEvent>(*this);
-  eb::EventBus::AddHandler<DoorOpenedEvent>(*this);
-  eb::EventBus::AddHandler<EnemyDiedEvent>(*this);
-  eb::EventBus::AddHandler<EnemyTakeDamageEvent>(*this);
-  eb::EventBus::AddHandler<HeroTakeDamageEvent>(*this);
-  eb::EventBus::AddHandler<HeroDiedEvent>(*this);
-
-  eb::EventBus::AddHandler<CommitEvent>(*this);
-  eb::EventBus::AddHandler<EnterCellEvent>(*this, hero);
-  eb::EventBus::AddHandler<LeaveCellEvent>(*this, hero);
-  eb::EventBus::AddHandler<DigEvent>(*this, hero);
-  eb::EventBus::AddHandler<DropEvent>(*this);
+  handlers.push_back(eb::EventBus::AddHandler<ItemTakenEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<ItemsFoundEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<MessageEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<DoorOpenedEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<EnemyDiedEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<EnemyTakeDamageEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<HeroTakeDamageEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<HeroDiedEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<CommitEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<EnterCellEvent>(*this, hero));
+  handlers.push_back(eb::EventBus::AddHandler<LeaveCellEvent>(*this, hero));
+  handlers.push_back(eb::EventBus::AddHandler<DigEvent>(*this, hero));
+  handlers.push_back(eb::EventBus::AddHandler<DropEvent>(*this));
 
   appendLine({F("Long story short...")});
   appendLine(
       {F("You are here. This is dungeon. You need go down. Deal with it.")});
+  appendLine(
+      {F("If you dont know how to roguelike just press <span weight='bold' color='{{orange}}'>?</span>.")});
 };
 
 void LogPanel::appendLine(Fragments line) {

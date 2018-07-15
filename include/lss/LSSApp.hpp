@@ -60,6 +60,10 @@ public:
   }
   bool processCommand(std::string);
   void setListeners();
+  void startGame();
+  void initModes();
+  void initStates();
+
   // std::map<std::string, std::shared_ptr<Location>> locations;
   std::shared_ptr<Location> loadMap(std::string);
   std::vector<std::shared_ptr<Location>> locations;

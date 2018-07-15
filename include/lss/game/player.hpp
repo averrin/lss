@@ -21,6 +21,8 @@ class Player : public Creature,
                public eb::EventHandler<PickCommandEvent> {
 public:
   Player();
+  ~Player();
+  std::vector<eb::HandlerRegistrationPtr> handlers;
   bool monsterSense = false;
   int exp = 0;
 

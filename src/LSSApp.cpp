@@ -47,67 +47,11 @@ void LSSApp::setup() {
   logFrame->setMinSize(getWindowWidth() / 4.f - 12, getWindowHeight());
   logFrame->setMaxSize(getWindowWidth() / 4.f - 12, getWindowHeight());
 
-  /* Modes && States */
-  normalMode = std::make_shared<NormalMode>(this);
-  state = std::make_shared<State>();
-
-  directionMode = std::make_shared<DirectionMode>(this);
-  insertMode = std::make_shared<InsertMode>(this);
-
-  objectSelectMode = std::make_shared<ObjectSelectMode>(this);
-  objectSelectState = std::make_shared<State>();
-
-  helpMode = std::make_shared<HelpMode>(this);
-  helpState = std::make_shared<State>();
-
-  inventoryMode = std::make_shared<InventoryMode>(this);
-  inventoryState = std::make_shared<State>();
-
-  gameOverMode = std::make_shared<GameOverMode>(this);
-  gameOverState = std::make_shared<State>();
-
-  statusState = std::make_shared<State>();
-  statusLine = std::make_shared<StatusLine>(statusState);
-
-  heroState = std::make_shared<State>();
-
-  inspectState = std::make_shared<State>();
-  inspectMode = std::make_shared<InspectMode>(this);
-
-  logState = std::make_shared<State>();
-
-  state->currentPalette = palettes::DARK;
-  statusState->currentPalette = palettes::DARK;
-  objectSelectState->currentPalette = palettes::DARK;
-  helpState->currentPalette = palettes::DARK;
-  inventoryState->currentPalette = palettes::DARK;
-  gameOverState->currentPalette = palettes::DARK;
-  heroState->currentPalette = palettes::DARK;
-  inspectState->currentPalette = palettes::DARK;
-  logState->currentPalette = palettes::DARK;
+  initModes();
+  startGame();
+  setListeners();
 
   statusLine->setContent(State::normal_mode);
-
-  hero = std::make_shared<Player>();
-  heroLine = std::make_shared<HeroLine>(heroState, hero);
-  logPanel = std::make_shared<LogPanel>(logState, hero);
-
-  auto l = generator->getRandomLocation(hero);
-  l->depth = 0;
-  locations.push_back(l);
-
-  hero->currentLocation = locations.front();
-  hero->currentLocation->enter(hero, locations.front()->enterCell);
-
-  state->fragments.assign(
-      hero->currentLocation->cells.size() *
-          (hero->currentLocation->cells.front().size() + 1),
-      std::make_shared<CellSign>(std::make_shared<Cell>(CellType::UNKNOWN)));
-
-  // hero->commit("init", 0);
-
-  invalidate("init");
-  setListeners();
 
   /* Commands */
   commands.push_back(std::make_shared<MoveCommand>());
@@ -125,6 +69,66 @@ void LSSApp::setup() {
   commands.push_back(std::make_shared<UpCommand>());
   commands.push_back(std::make_shared<DownCommand>());
   commands.push_back(std::make_shared<UseCommand>());
+}
+
+void LSSApp::initModes() {
+  normalMode = std::make_shared<NormalMode>(this);
+  directionMode = std::make_shared<DirectionMode>(this);
+  insertMode = std::make_shared<InsertMode>(this);
+  objectSelectMode = std::make_shared<ObjectSelectMode>(this);
+  helpMode = std::make_shared<HelpMode>(this);
+  gameOverMode = std::make_shared<GameOverMode>(this);
+  inspectMode = std::make_shared<InspectMode>(this);
+  inventoryMode = std::make_shared<InventoryMode>(this);
+}
+
+void LSSApp::initStates() {
+  state = std::make_shared<State>();
+  objectSelectState = std::make_shared<State>();
+  helpState = std::make_shared<State>();
+  gameOverState = std::make_shared<State>();
+  statusState = std::make_shared<State>();
+  heroState = std::make_shared<State>();
+  inspectState = std::make_shared<State>();
+  inventoryState = std::make_shared<State>();
+
+  logState = std::make_shared<State>();
+
+  state->currentPalette = palettes::DARK;
+  statusState->currentPalette = palettes::DARK;
+  objectSelectState->currentPalette = palettes::DARK;
+  helpState->currentPalette = palettes::DARK;
+  inventoryState->currentPalette = palettes::DARK;
+  gameOverState->currentPalette = palettes::DARK;
+  heroState->currentPalette = palettes::DARK;
+  inspectState->currentPalette = palettes::DARK;
+  logState->currentPalette = palettes::DARK;
+  
+}
+
+void LSSApp::startGame() {
+  initStates();
+
+  hero = std::make_shared<Player>();
+  heroLine = std::make_shared<HeroLine>(heroState, hero);
+  logPanel = std::make_shared<LogPanel>(logState, hero);
+  statusLine = std::make_shared<StatusLine>(statusState);
+
+  auto l = generator->getRandomLocation(hero);
+  l->depth = 0;
+  locations = {l};
+
+  state->fragments.assign(
+      l->cells.size() *
+          (l->cells.front().size() + 1),
+      std::make_shared<CellSign>(std::make_shared<Cell>(CellType::UNKNOWN)));
+
+  // hero->commit("init", 0);
+  hero->currentLocation = locations.front();
+  hero->currentLocation->enter(hero, locations.front()->enterCell);
+
+  invalidate("init");
+  
 }
 
 void LSSApp::setListeners() { reactor = std::make_shared<EventReactor>(this); }

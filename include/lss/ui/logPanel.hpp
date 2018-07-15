@@ -32,6 +32,8 @@ class LogPanel : public eb::EventHandler<DoorOpenedEvent>,
                  public eb::EventHandler<MessageEvent> {
 public:
   LogPanel(std::shared_ptr<State> state, std::shared_ptr<Player> hero);
+        ~LogPanel();
+  std::vector<eb::HandlerRegistrationPtr> handlers;
   void setContent(Fragments content);
 
   std::deque<std::shared_ptr<LogLine>> lines;

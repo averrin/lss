@@ -14,6 +14,8 @@ class HeroLine : public eb::EventHandler<CommitEvent>,
                  public eb::EventHandler<HeroTakeDamageEvent> {
 public:
   HeroLine(std::shared_ptr<State> state, std::shared_ptr<Player>);
+  ~HeroLine();
+  std::vector<eb::HandlerRegistrationPtr> handlers;
   std::shared_ptr<Player> hero;
   void setContent(Fragments content);
   void clear();

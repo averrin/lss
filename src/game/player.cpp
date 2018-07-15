@@ -21,18 +21,24 @@ HeroTakeDamageEvent::HeroTakeDamageEvent(eb::ObjectPtr s,
                                          std::shared_ptr<Damage> d)
     : eb::Event(s), damage(d) {}
 
+Player::~Player() {
+  for (auto r : handlers) {
+    r->removeHandler();
+  }
+}
+
 Player::Player() : Creature() {
-  eb::EventBus::AddHandler<MoveCommandEvent>(*this);
-  eb::EventBus::AddHandler<WalkCommandEvent>(*this);
-  eb::EventBus::AddHandler<PickCommandEvent>(*this);
-  eb::EventBus::AddHandler<DigCommandEvent>(*this);
-  eb::EventBus::AddHandler<AttackCommandEvent>(*this);
-  eb::EventBus::AddHandler<EquipCommandEvent>(*this);
-  eb::EventBus::AddHandler<UnEquipCommandEvent>(*this);
-  eb::EventBus::AddHandler<DropCommandEvent>(*this);
-  eb::EventBus::AddHandler<WaitCommandEvent>(*this);
-  eb::EventBus::AddHandler<ZapCommandEvent>(*this);
-  eb::EventBus::AddHandler<EnemyDiedEvent>(*this);
+  handlers.push_back(eb::EventBus::AddHandler<MoveCommandEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<WalkCommandEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<PickCommandEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<DigCommandEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<AttackCommandEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<EquipCommandEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<UnEquipCommandEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<DropCommandEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<WaitCommandEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<ZapCommandEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<EnemyDiedEvent>(*this));
 
   equipment = std::make_shared<Equipment>();
   auto right_hand_slot = std::make_shared<Slot>(
