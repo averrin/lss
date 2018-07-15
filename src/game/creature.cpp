@@ -272,6 +272,7 @@ bool Creature::pick(std::shared_ptr<Item> item) {
       it != inventory.end() && item != 0 && item->count != 0) {
     (*it)->count += item->count;
   } else {
+    item->identified = isIdentified(item);
     inventory.push_back(item);
   }
 

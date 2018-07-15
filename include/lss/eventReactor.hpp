@@ -9,6 +9,7 @@
 class EventReactor : public eb::EventHandler<eb::Event>,
                      public eb::EventHandler<EquipCommandEvent>,
                      public eb::EventHandler<DropCommandEvent>,
+                     public eb::EventHandler<UseCommandEvent>,
                      public eb::EventHandler<HelpCommandEvent>,
                      public eb::EventHandler<InventoryCommandEvent>,
                      public eb::EventHandler<CommitEvent>,
@@ -23,6 +24,7 @@ public:
     eb::EventBus::AddHandler<QuitCommandEvent>(*this);
     eb::EventBus::AddHandler<EquipCommandEvent>(*this);
     eb::EventBus::AddHandler<DropCommandEvent>(*this);
+    eb::EventBus::AddHandler<UseCommandEvent>(*this);
     eb::EventBus::AddHandler<ZapCommandEvent>(*this);
     eb::EventBus::AddHandler<HelpCommandEvent>(*this);
     eb::EventBus::AddHandler<InventoryCommandEvent>(*this);
@@ -39,6 +41,7 @@ public:
   virtual void onEvent(HelpCommandEvent &e) override;
   virtual void onEvent(InventoryCommandEvent &e) override;
   virtual void onEvent(DropCommandEvent &e) override;
+  virtual void onEvent(UseCommandEvent &e) override;
   virtual void onEvent(ZapCommandEvent &e) override;
   virtual void onEvent(CommitEvent &e) override;
   virtual void onEvent(StairEvent &e) override;

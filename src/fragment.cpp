@@ -60,7 +60,8 @@ std::map<ItemSpec, std::string> itemSigns = {
     {ItemType::GREAT_AXE, "("},     {ItemType::HELMET, "["},
     {ItemType::SHIELD, "["},        {ItemType::GREAVES, "["},
     {ItemType::BOOTS, "["},         {ItemType::PLATE, "["},
-    {ItemType::LEATHER_ARMOR, "["},
+    {ItemType::LEATHER_ARMOR, "["}, {ItemType::POTION, "!"},
+    {ItemType::SCROLL, "?"},
 };
 
 std::map<ItemSpec, std::string> itemColors = {
@@ -73,14 +74,20 @@ std::map<ItemSpec, std::string> itemColors = {
     {ItemType::GREAT_AXE, "white"},     {ItemType::HELMET, "white"},
     {ItemType::SHIELD, "white"},        {ItemType::GREAVES, "white"},
     {ItemType::BOOTS, "white"},         {ItemType::PLATE, "white"},
-    {ItemType::LEATHER_ARMOR, "white"},
+    {ItemType::LEATHER_ARMOR, "white"}, {ItemType::POTION, "lightblue"},
+    {ItemType::SCROLL, "white"},
 };
 
 std::map<EnemySpec, std::string> enemySigns = {
-    {EnemyType::RAT, "r"},          {EnemyType::BAT, "b"},
-    {EnemyType::BAT_LARGE, "B"},    {EnemyType::GOBLIN, "g"},
-    {EnemyType::ORK, "o"},          {EnemyType::PIXI, "p"},
-    {EnemyType::OGRE, "O"},         {EnemyType::GOBLIN_LIEUTENANT, "g"},
+    {EnemyType::RAT, "r"},
+    {EnemyType::BAT, "b"},
+    {EnemyType::BAT_LARGE, "B"},
+    {EnemyType::GOBLIN, "g"},
+    {EnemyType::ORK_BLACK, "o"},
+    {EnemyType::ORK, "o"},
+    {EnemyType::PIXI, "p"},
+    {EnemyType::OGRE, "O"},
+    {EnemyType::GOBLIN_LIEUTENANT, "g"},
     {EnemyType::GOBLIN_ROGUE, "g"},
 };
 
@@ -90,6 +97,7 @@ std::map<EnemySpec, std::string> enemyColors = {
     {EnemyType::BAT_LARGE, "darkgray"},
     {EnemyType::GOBLIN, "green"},
     {EnemyType::ORK, "#22cc22"},
+    {EnemyType::ORK_BLACK, "darkgray"},
     {EnemyType::OGRE, "darkgreen"},
     {EnemyType::PIXI, "pink"},
     {EnemyType::GOBLIN_LIEUTENANT, "cyan"},

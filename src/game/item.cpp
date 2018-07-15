@@ -20,7 +20,7 @@ std::string Item::getTitle(bool force) {
     }
   }
   return fmt::format(
-      "{}{}{}{}", (identified || force) ? name : type.name,
+      "{}{}{}{}", (identified || force) ? name : unidName,
       specialPostfix.size() == 0
           ? ""
           : fmt::format(" {}", utils::join(specialPostfix, " ")),

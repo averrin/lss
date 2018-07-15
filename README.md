@@ -52,6 +52,7 @@ Yet another unfinished roguelike game.
 * p or , — pick [`/pick`, `/p`]
 * e — equip [`/equip`, `/eq`]
 * shift+d — drop [`/drop`, `/dr`]
+* shift+u — use [`/use`, `/u`]
 * i — inventory [`/inventory`, `/i`]
 * . — wait [`/wait`]
 * z — cast spell [`/zap`, `/z`]

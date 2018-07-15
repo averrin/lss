@@ -3,6 +3,7 @@
 
 #include <string>
 
+#include "lss/actions.hpp"
 #include "lss/fragment.hpp"
 #include "lss/game/events.hpp"
 #include "lss/state.hpp"
@@ -19,6 +20,7 @@ class StatusLine : public eb::EventHandler<DoorOpenedEvent>,
 public:
   StatusLine(std::shared_ptr<State> state);
   void setContent(Fragments content);
+  void setModeLine(Modes::ModeName);
   void clear();
 
   static const int HEIGHT = 30;

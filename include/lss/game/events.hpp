@@ -169,6 +169,13 @@ public:
   std::shared_ptr<Item> item;
 };
 
+class UseCommandEvent : public CommandEvent {
+public:
+  UseCommandEvent(std::shared_ptr<Item>);
+  UseCommandEvent();
+  std::shared_ptr<Item> item;
+};
+
 class WaitCommandEvent : public CommandEvent {
 public:
   WaitCommandEvent();

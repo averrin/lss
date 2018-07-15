@@ -124,6 +124,7 @@ void LSSApp::setup() {
   commands.push_back(std::make_shared<ZapCommand>());
   commands.push_back(std::make_shared<UpCommand>());
   commands.push_back(std::make_shared<DownCommand>());
+  commands.push_back(std::make_shared<UseCommand>());
 }
 
 void LSSApp::setListeners() { reactor = std::make_shared<EventReactor>(this); }
@@ -238,8 +239,10 @@ void LSSApp::keyDown(KeyEvent event) {
   if (modeManager.modeFlags->currentMode != Modes::INSERT) {
     typedCommand = "";
   }
-  if (modeManager.modeFlags->currentMode != prevMode)
+  if (modeManager.modeFlags->currentMode != prevMode) {
+    statusLine->setModeLine(modeManager.modeFlags->currentMode);
     return;
+  }
 
   switch (modeManager.modeFlags->currentMode) {
   case Modes::NORMAL:
@@ -308,6 +311,8 @@ bool LSSApp::processCommand(std::string cmd) {
     eb::EventBus::FireEvent(*e);
   } else if (auto e = dynamic_pointer_cast<StairEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
+  } else if (auto e = dynamic_pointer_cast<UseCommandEvent>(*event)) {
+    eb::EventBus::FireEvent(*e);
   }
   return true;
 }
@@ -343,11 +348,6 @@ void LSSApp::update() {
     s = gameOverState;
     break;
   }
-  if (lastMode == modeManager.modeFlags->currentMode && !s->damaged) {
-    return;
-  }
-
-  s->render(gameFrame);
 
   if (statusFrame != nullptr) {
     statusState->render(statusFrame);
@@ -361,6 +361,12 @@ void LSSApp::update() {
   if (logFrame != nullptr) {
     logState->render(logFrame);
   }
+
+  if (lastMode == modeManager.modeFlags->currentMode && !s->damaged) {
+    return;
+  }
+
+  s->render(gameFrame);
 
   lastMode = modeManager.modeFlags->currentMode;
   needRedraw = true;

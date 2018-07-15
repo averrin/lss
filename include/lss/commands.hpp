@@ -100,4 +100,9 @@ public:
   std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
 };
 
+class UseCommand : public Command {
+public:
+  UseCommand();
+  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
+};
 #endif // __COMMAND_H_

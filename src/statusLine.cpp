@@ -17,6 +17,20 @@ MessageEvent::MessageEvent(eb::ObjectPtr s, std::string m)
 
 void StatusLine::setContent(Fragments content) { state->setContent(content); };
 
+void StatusLine::setModeLine(Modes::ModeName mode) {
+  switch (mode) {
+  case Modes::INSERT:
+    setContent(State::insert_mode);
+    break;
+  case Modes::DIRECTION:
+    setContent(State::direction_mode);
+    break;
+  case Modes::OBJECTSELECT:
+    setContent(State::object_select_mode);
+    break;
+  }
+}
+
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 
 void StatusLine::onEvent(DoorOpenedEvent &e) {

@@ -4,24 +4,32 @@
 #include "lss/game/itemSpec.hpp"
 #include "lss/game/object.hpp"
 #include "lss/game/randomTools.hpp"
+#include "lss/game/spell.hpp"
+#include "lss/utils.hpp"
 #include <variant>
 
 class Item : public Object {
 public:
   Item(std::string n, ItemSpec t)
-      : Object(), type(t), name(n), durability(type.durability) {}
+      : Object(), type(t), unidName(type.name), name(n),
+        durability(type.durability) {}
+  Item(std::string un, std::string n, ItemSpec t)
+      : Object(), type(t), unidName(un), name(n), durability(type.durability) {}
   Item(ItemSpec t)
-      : Object(), type(t), name(t.name), durability(type.durability) {}
+      : Object(), type(t), unidName(type.name), name(t.name),
+        durability(type.durability) {}
   Item(ItemSpec t, int c)
-      : Object(), type(t), count(c), name(t.name), durability(type.durability) {
-  }
+      : Object(), type(t), count(c), unidName(t.name), name(t.name),
+        durability(type.durability) {}
   Item(std::string n, ItemSpec t, int c)
-      : Object(), type(t), count(c), name(n), durability(type.durability) {}
+      : Object(), type(t), count(c), unidName(t.name), name(n),
+        durability(type.durability) {}
   Item(ItemSpec t, Effects e)
-      : Object(), type(t), effects(e), name(t.name),
+      : Object(), type(t), effects(e), unidName(t.name), name(t.name),
         durability(type.durability) {}
   Item(std::string n, ItemSpec t, Effects e)
-      : Object(), type(t), effects(e), name(n), durability(type.durability) {}
+      : Object(), type(t), effects(e), unidName(t.name), name(n),
+        durability(type.durability) {}
   ItemSpec type;
   Effects effects;
   int count = 0;
@@ -29,6 +37,7 @@ public:
 
   bool equipped = false;
   bool identified = false;
+  std::string unidName;
   std::string name;
 
   bool interact(std::shared_ptr<Object>);
@@ -59,6 +68,15 @@ class TorchStand : public Object {
 public:
   TorchStand() : Object(), type(ItemType::TORCH_STAND) { seeThrough = true; }
   ItemSpec type;
+};
+
+class Consumable : public Item {
+public:
+  Consumable(std::string un, std::string n, ItemSpec t,
+             std::shared_ptr<Spell> s)
+      : Item(un, n, t), spell(s) {}
+  std::shared_ptr<Spell> spell;
+  std::shared_ptr<Item> clone() { return std::make_shared<Consumable>(*this); }
 };
 
 typedef std::vector<std::shared_ptr<Item>> Items;
@@ -115,6 +133,16 @@ const auto POISON_DAGGER = std::make_shared<Item>(
     ItemType::DAGGER, Effects{std::make_shared<MeleeDamage>(2, 3, 3),
                               std::make_shared<CritModifier>(0.2),
                               std::make_shared<Poison>(3, 3000)});
+
+const auto POTION_HEAL_LESSER = std::make_shared<Consumable>(
+    fmt::format("{} potion", utils::getRandomColor()), "lesser heal potion",
+    ItemType::POTION, Spells::HEAL_LESSER);
+const auto POTION_HEAL = std::make_shared<Consumable>(
+    fmt::format("{} potion", utils::getRandomColor()), "heal potion",
+    ItemType::POTION, Spells::HEAL);
+const auto SCROLL_IDENTIFICATION = std::make_shared<Consumable>(
+    fmt::format("scroll labled '{}'", utils::getScrollName()),
+    "scroll of identification", ItemType::SCROLL, Spells::IDENTIFY);
 
 const auto GOLD = std::make_shared<Item>(ItemType::GOLD_COINS, 1);
 } // namespace Prototype

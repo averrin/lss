@@ -149,6 +149,8 @@ const Fragments State::HELP = {F(
     "`/eq`]<br>"
     "• <span color='{{orange}}' weight='bold'>shift+d</span> — drop [`/drop`, "
     "`/dr`]<br>"
+    "• <span color='{{orange}}' weight='bold'>shift+u</span> — use [`/use`, "
+    "`/u`]<br>"
     "• <span color='{{orange}}' weight='bold'>z</span> — cast spell "
     "[`/zap`]<br>"
     "• <span color='{{orange}}' weight='bold'>i</span> — inventory "

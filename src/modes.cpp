@@ -316,6 +316,10 @@ bool NormalMode::processKey(KeyEvent event) {
   case KeyEvent::KEY_k:
   case KeyEvent::KEY_y:
   case KeyEvent::KEY_u:
+    if (event.isShiftDown()) {
+      app->processCommand("use");
+      break;
+    }
   case KeyEvent::KEY_b:
   case KeyEvent::KEY_n: {
     auto d = getDir(event.getCode());
@@ -441,9 +445,8 @@ bool InsertMode::processKey(KeyEvent event) {
     app->typedCommand = "";
     return true;
   }
-  if (app->typedCommand.length() == 0) {
-    app->statusLine->setContent(State::insert_mode);
-  } else {
+  app->statusLine->setContent(State::insert_mode);
+  if (app->typedCommand.length() != 0) {
     app->statusLine->setContent(
         {State::insert_mode.front(), F(app->typedCommand)});
   }

@@ -7,6 +7,12 @@ public:
   Spell(std::string n, int c = 0) : Object(), name(n), cost(c) {}
   std::string name;
   int cost;
+  friend bool operator!=(Spell &lhs, const Spell &rhs) {
+    return lhs.name != rhs.name;
+  }
+  friend bool operator==(Spell &lhs, const Spell &rhs) {
+    return lhs.name == rhs.name;
+  }
 };
 
 class ToggleTraitSpell : public Spell {
@@ -22,6 +28,10 @@ const auto MONSTER_FREEZE = std::make_shared<Spell>("Monster Freeze");
 const auto SUMMON_ORK = std::make_shared<Spell>("Summon Ork");
 const auto SUMMON_PLATE = std::make_shared<Spell>("Summon Plate");
 const auto IDENTIFY = std::make_shared<Spell>("Identify");
+const auto HEAL_LESSER = std::make_shared<Spell>("Lesser heal");
+const auto HEAL = std::make_shared<Spell>("Heal");
+const auto HEAL_GREATER = std::make_shared<Spell>("Greater");
+
 const auto TOGGLE_DUAL_WIELD = std::make_shared<ToggleTraitSpell>(
     "Toggle Dual Wield trait", Traits::DUAL_WIELD);
 const auto TOGGLE_NIGHT_VISION = std::make_shared<ToggleTraitSpell>(

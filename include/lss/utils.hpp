@@ -1,5 +1,7 @@
 #ifndef __UTILS_H_
 #define __UTILS_H_
+#include <algorithm>
+#include <chrono>
 #include <memory>
 #include <optional>
 #include <sstream>
@@ -97,6 +99,33 @@ public:
       break;
     }
     return "";
+  }
+
+  static std::string getScrollName() {
+    auto seed = std::chrono::system_clock::now().time_since_epoch().count();
+    srand(seed);
+    auto length = 12;
+    auto randchar = []() -> char {
+      const char charset[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                             "abcdefghijklmnopqrstuvwxyz";
+      const size_t max_index = (sizeof(charset) - 1);
+      return charset[rand() % max_index];
+    };
+    std::string str(length, 0);
+    std::generate_n(str.begin(), length, randchar);
+    return std::string{str};
+  }
+
+  static std::string getRandomColor() {
+    auto seed = std::chrono::system_clock::now().time_since_epoch().count();
+    srand(seed);
+    static std::array<std::string, 21> colors = {
+        "crimson",    "scarlet", "orange", "yellow", "green",    "blue",
+        "indigo",     "violet",  "puce",   "mauve",  "burgundy", "turquoise",
+        "aquamarine", "gray",    "pink",   "white",  "lavender", "tan",
+        "brown",      "cyan",    "black"};
+
+    return colors[rand() % colors.size()];
   }
 };
 

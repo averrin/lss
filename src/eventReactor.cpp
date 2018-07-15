@@ -95,6 +95,53 @@ void EventReactor::onEvent(InventoryCommandEvent &e) {
   app->statusLine->setContent(State::text_mode);
 }
 
+void EventReactor::onEvent(UseCommandEvent &e) {
+  if (e.item != nullptr) {
+    auto spell = std::dynamic_pointer_cast<Consumable>(e.item)->spell;
+
+    app->hero->identify(e.item);
+    std::for_each(app->hero->inventory.begin(), app->hero->inventory.end(),
+                  [&](auto item) {
+                    if (item->getTitle(true) == e.item->getTitle(true)) {
+                      app->hero->identify(item);
+                    }
+                  });
+
+    app->hero->inventory.erase(std::remove(app->hero->inventory.begin(),
+                                           app->hero->inventory.end(), e.item));
+    return castSpell(spell);
+  }
+  app->objectSelectMode->setHeader(F("Items to use: "));
+
+  Items usable(app->hero->inventory.size());
+  auto it =
+      std::copy_if(app->hero->inventory.begin(), app->hero->inventory.end(),
+                   usable.begin(), [](std::shared_ptr<Item> item) {
+                     return item->type.category == ItemCategories::CONSUMABLES;
+                   });
+
+  usable.resize(std::distance(usable.begin(), it));
+  app->objectSelectMode->setObjects(utils::castObjects<Object>(usable));
+
+  Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
+    auto item = std::dynamic_pointer_cast<Item>(o);
+    return fmt::format("<span weight='bold'>{}</span> - {}", letter,
+                       item->getFullTitle());
+  };
+  app->objectSelectMode->setFormatter(formatter);
+
+  app->objectSelectMode->setCallback([&](std::shared_ptr<Object> o) {
+    auto item = std::dynamic_pointer_cast<Item>(o);
+    auto e = std::make_shared<UseCommandEvent>(item);
+    eb::EventBus::FireEvent(*e);
+    app->modeManager.toNormal();
+    return true;
+  });
+
+  app->objectSelectMode->render(app->objectSelectState);
+  app->modeManager.toObjectSelect();
+}
+
 void EventReactor::onEvent(DropCommandEvent &e) {
   if (e.item != nullptr)
     return;
@@ -290,33 +337,36 @@ std::shared_ptr<Enemy> mkEnemy(std::shared_ptr<Location> location,
 }
 
 void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
-  if (spell == Spells::REVEAL) {
+  if (*spell == *Spells::REVEAL) {
     app->hero->currentLocation->reveal();
     app->hero->monsterSense = true;
     app->hero->commit("reveal", 0);
     app->invalidate("reveal");
     app->hero->monsterSense = false;
-  } else if (spell == Spells::MONSTER_SENSE) {
+  } else if (*spell == *Spells::MONSTER_SENSE) {
     app->hero->monsterSense = !app->hero->monsterSense;
-  } else if (spell == Spells::MONSTER_FREEZE) {
+  } else if (*spell == *Spells::MONSTER_FREEZE) {
     for (auto o : app->hero->currentLocation->objects) {
       if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
         e->type.aiType = AIType::NO_AI;
       }
     }
     app->statusLine->setContent({F("Enemy freezed!")});
-  } else if (spell == Spells::SUMMON_ORK) {
+  } else if (*spell == *Spells::SUMMON_ORK) {
     auto c =
         app->hero->currentLocation
             ->cells[app->hero->currentCell->y + 1][app->hero->currentCell->x];
     app->hero->currentLocation->objects.push_back(
         mkEnemy(app->hero->currentLocation, c, app->hero, EnemyType::ORK));
     app->hero->commit("summon ork", 0);
-  } else if (spell == Spells::IDENTIFY) {
+  } else if (*spell == *Spells::IDENTIFY) {
     for (auto i : app->hero->inventory) {
-      i->identified = true;
+      app->hero->identify(i);
     }
-  } else if (spell == Spells::SUMMON_PLATE) {
+
+    MessageEvent me(nullptr, "Your inventory was identified");
+    eb::EventBus::FireEvent(me);
+  } else if (*spell == *Spells::SUMMON_PLATE) {
     auto c =
         app->hero->currentLocation
             ->cells[app->hero->currentCell->y + 1][app->hero->currentCell->x];
@@ -324,6 +374,24 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     item->currentCell = c;
     app->hero->currentLocation->objects.push_back(item);
     app->hero->commit("summon plate", 0);
+  } else if (*spell == *Spells::HEAL_LESSER) {
+    auto heal = R::Z(0, app->hero->HP_MAX(app->hero.get()) / 100 * 10);
+    app->hero->hp += heal;
+    if (app->hero->HP(app->hero.get()) > app->hero->HP_MAX(app->hero.get())) {
+      app->hero->hp = app->hero->HP_MAX(app->hero.get());
+    }
+    app->hero->commit("heal", 0);
+    MessageEvent me(nullptr, fmt::format("You healed {} hp", heal));
+    eb::EventBus::FireEvent(me);
+  } else if (*spell == *Spells::HEAL) {
+    auto heal = R::Z(0, app->hero->HP_MAX(app->hero.get()) / 100 * 50);
+    app->hero->hp += heal;
+    if (app->hero->HP(app->hero.get()) > app->hero->HP_MAX(app->hero.get())) {
+      app->hero->hp = app->hero->HP_MAX(app->hero.get());
+    }
+    app->hero->commit("heal", 0);
+    MessageEvent me(nullptr, fmt::format("You healed {} hp", heal));
+    eb::EventBus::FireEvent(me);
   } else if (auto tspell = std::dynamic_pointer_cast<ToggleTraitSpell>(spell)) {
     if (app->hero->hasTrait(tspell->trait)) {
       app->hero->traits.erase(std::remove(

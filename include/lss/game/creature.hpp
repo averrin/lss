@@ -30,6 +30,17 @@ public:
 
   std::string name = "Unnamed";
 
+  std::vector<std::string> knownItems;
+  void identify(std::shared_ptr<Item> item) {
+    item->identified = true;
+    knownItems.push_back(item->getTitle());
+  }
+  bool isIdentified(std::shared_ptr<Item> item) {
+    return item->identified ||
+           std::find(knownItems.begin(), knownItems.end(),
+                     item->getTitle(true)) != knownItems.end();
+  }
+
   Items inventory;
   std::shared_ptr<Equipment> equipment;
   bool pick(std::shared_ptr<Item>);

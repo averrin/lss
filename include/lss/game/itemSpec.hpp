@@ -8,6 +8,9 @@ struct ItemCategory {
   friend bool operator!=(ItemCategory &lhs, const ItemCategory &rhs) {
     return lhs.name != rhs.name;
   }
+  friend bool operator==(ItemCategory &lhs, const ItemCategory &rhs) {
+    return lhs.name == rhs.name;
+  }
 };
 namespace ItemCategories {
 static const ItemCategory WEAPONS = {"Weapons"};
@@ -36,6 +39,8 @@ public:
 namespace ItemType {
 ItemSpec const TORCH_STAND = {"torch stand", ItemCategories::MISC};
 ItemSpec const GRASS = {"herb", ItemCategories::CONSUMABLES};
+ItemSpec const SCROLL = {"scroll", ItemCategories::CONSUMABLES};
+ItemSpec const POTION = {"potion", ItemCategories::CONSUMABLES};
 
 ItemSpec const ROCK = {"rock", ItemCategories::MISC};
 ItemSpec const PICK_AXE = {"pick axe", ItemCategories::WEAPONS,

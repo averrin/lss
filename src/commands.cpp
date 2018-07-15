@@ -26,6 +26,7 @@ WaitCommand::WaitCommand() : Command({"wait"}) {}
 ZapCommand::ZapCommand() : Command({"zap", "z"s}) {}
 UpCommand::UpCommand() : Command({"up"}) {}
 DownCommand::DownCommand() : Command({"down"}) {}
+UseCommand::UseCommand() : Command({"use", "u"s}) {}
 
 WalkCommandEvent::WalkCommandEvent(Direction d)
     : CommandEvent(nullptr), direction(d) {}
@@ -166,4 +167,12 @@ UpCommand::getEvent(std::string s) {
 std::optional<std::shared_ptr<CommandEvent>>
 DownCommand::getEvent(std::string s) {
   return std::make_shared<StairEvent>(StairType::DOWN);
+}
+
+UseCommandEvent::UseCommandEvent() : CommandEvent(nullptr) {}
+UseCommandEvent::UseCommandEvent(std::shared_ptr<Item> i)
+    : CommandEvent(nullptr), item(i) {}
+std::optional<std::shared_ptr<CommandEvent>>
+UseCommand::getEvent(std::string s) {
+  return std::make_shared<UseCommandEvent>();
 }
