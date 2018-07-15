@@ -331,7 +331,8 @@ std::shared_ptr<Enemy> mkEnemy(std::shared_ptr<Location> location,
   enemy->currentCell = c;
   enemy->currentLocation = location;
 
-  enemy->registration = eb::EventBus::AddHandler<CommitEvent>(*enemy, hero);
+  enemy->handlers.push_back(
+      eb::EventBus::AddHandler<CommitEvent>(*enemy, hero));
   enemy->calcViewField();
   return enemy;
 }

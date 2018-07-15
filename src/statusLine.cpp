@@ -4,18 +4,25 @@
 #include "lss/utils.hpp"
 
 StatusLine::StatusLine(std::shared_ptr<State> s) : state(s) {
-  eb::EventBus::AddHandler<ItemTakenEvent>(*this);
-  eb::EventBus::AddHandler<ItemsFoundEvent>(*this);
-  eb::EventBus::AddHandler<MessageEvent>(*this);
-  eb::EventBus::AddHandler<DoorOpenedEvent>(*this);
-  eb::EventBus::AddHandler<EnemyDiedEvent>(*this);
-  eb::EventBus::AddHandler<EnemyTakeDamageEvent>(*this);
-  eb::EventBus::AddHandler<HeroTakeDamageEvent>(*this);
+  handlers.push_back(eb::EventBus::AddHandler<ItemTakenEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<ItemsFoundEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<MessageEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<DoorOpenedEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<EnemyDiedEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<EnemyTakeDamageEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<HeroTakeDamageEvent>(*this));
 };
 MessageEvent::MessageEvent(eb::ObjectPtr s, std::string m)
     : eb::Event(s), message(m) {}
 
 void StatusLine::setContent(Fragments content) { state->setContent(content); };
+
+StatusLine::~StatusLine() {
+  for (auto r : handlers) {
+    r->removeHandler();
+  }
+  handlers.clear();
+}
 
 void StatusLine::setModeLine(Modes::ModeName mode) {
   switch (mode) {

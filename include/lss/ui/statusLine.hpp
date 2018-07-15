@@ -19,8 +19,10 @@ class StatusLine : public eb::EventHandler<DoorOpenedEvent>,
                    public eb::EventHandler<MessageEvent> {
 public:
   StatusLine(std::shared_ptr<State> state);
+  ~StatusLine();
   void setContent(Fragments content);
   void setModeLine(Modes::ModeName);
+  std::vector<eb::HandlerRegistrationPtr> handlers;
   void clear();
 
   static const int HEIGHT = 30;

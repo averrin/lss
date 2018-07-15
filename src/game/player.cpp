@@ -21,11 +21,7 @@ HeroTakeDamageEvent::HeroTakeDamageEvent(eb::ObjectPtr s,
                                          std::shared_ptr<Damage> d)
     : eb::Event(s), damage(d) {}
 
-Player::~Player() {
-  for (auto r : handlers) {
-    r->removeHandler();
-  }
-}
+Player::~Player() { clearHandlers(); }
 
 Player::Player() : Creature() {
   handlers.push_back(eb::EventBus::AddHandler<MoveCommandEvent>(*this));

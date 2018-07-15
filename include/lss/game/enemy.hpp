@@ -166,7 +166,6 @@ class Enemy : public Creature, public eb::EventHandler<CommitEvent> {
 public:
   Enemy(EnemySpec);
   ~Enemy();
-  eb::HandlerRegistrationPtr registration;
   bool interact(std::shared_ptr<Object>) override;
   std::optional<Items> drop();
 

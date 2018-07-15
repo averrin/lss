@@ -5,10 +5,8 @@
 
 #include "Event.hpp"
 
-class Object;
-typedef std::vector<std::shared_ptr<Object>> Objects;
-
 class Item;
+typedef std::vector<std::shared_ptr<Item>> Items;
 class Slot;
 class Cell;
 class Spell;
@@ -71,8 +69,8 @@ public:
 
 class ItemsFoundEvent : public eb::Event {
 public:
-  ItemsFoundEvent(eb::ObjectPtr, Objects);
-  Objects items;
+  ItemsFoundEvent(eb::ObjectPtr, Items);
+  Items items;
 };
 
 class DigEvent : public eb::Event {

@@ -48,11 +48,7 @@ Enemy::Enemy(EnemySpec t) : Creature(), type(t) {
   }
 }
 
-Enemy::~Enemy() {
-  if (registration != nullptr) {
-    registration->removeHandler();
-  }
-}
+Enemy::~Enemy() { clearHandlers(); }
 
 // TODO: add probability for drops
 std::optional<Items> Enemy::drop() {

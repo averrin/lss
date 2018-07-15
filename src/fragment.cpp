@@ -51,14 +51,13 @@ std::string Fragment::render(State *state) {
 }
 
 std::map<ItemSpec, std::string> itemSigns = {
-    {ItemType::TORCH_STAND, "*"},
-    {ItemType::STATUE, "&amp;"},
+    {ItemType::TORCH_STAND, "*"},   {ItemType::STATUE, "&amp;"},
 
     {ItemType::CORPSE, "%"},        {ItemType::ROCK, "*"},
     {ItemType::PICK_AXE, "("},      {ItemType::SWORD, "("},
     {ItemType::GOLD_RING, "="},     {ItemType::GOLD_COINS, "$"},
     {ItemType::DAGGER, "("},        {ItemType::TORCH, "]"},
-       {ItemType::GRASS, "\""},
+    {ItemType::GRASS, "\""},
 
     {ItemType::GREAT_AXE, "("},     {ItemType::HELMET, "["},
     {ItemType::SHIELD, "["},        {ItemType::GREAVES, "["},

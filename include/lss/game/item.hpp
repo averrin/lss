@@ -72,7 +72,10 @@ public:
 
 class Statue : public Object {
 public:
-  Statue() : Object(), type(ItemType::STATUE) { seeThrough = false;  passThrough = false;}
+  Statue() : Object(), type(ItemType::STATUE) {
+    seeThrough = false;
+    passThrough = false;
+  }
   ItemSpec type;
 };
 

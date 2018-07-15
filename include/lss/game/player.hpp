@@ -22,7 +22,6 @@ class Player : public Creature,
 public:
   Player();
   ~Player();
-  std::vector<eb::HandlerRegistrationPtr> handlers;
   bool monsterSense = false;
   int exp = 0;
 

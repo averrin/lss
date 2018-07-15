@@ -19,10 +19,7 @@ void State::setContent(Fragments content) {
   damaged = true;
 };
 
-void State::clear() {
-  setContent({});
-}
-
+void State::clear() { setContent({}); }
 
 void State::appendContent(Fragments content) {
   fragments.insert(fragments.end(), content.begin(), content.end());
@@ -91,9 +88,7 @@ void State::render(kp::pango::CinderPangoRef surface) {
   render(surface);
 };
 
-void State::invalidate() {
-  damaged = true;
-}
+void State::invalidate() { damaged = true; }
 
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 

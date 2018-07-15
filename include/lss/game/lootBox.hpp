@@ -18,7 +18,7 @@ struct LootBox {
       itemNames.push_back(i->getFullTitle());
     }
     // fmt::print("LootBox roll: {}/{} [{}]\n", roll, probability,
-               // utils::join(itemNames, ", "));
+    // utils::join(itemNames, ", "));
     if (roll < probability) {
       loot.insert(loot.end(), items.begin(), items.end());
       for (auto child : children) {

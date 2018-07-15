@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#include <lss/game/direction.hpp>
+
 using namespace std::string_literals;
 
 class utils {

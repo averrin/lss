@@ -40,7 +40,10 @@ std::map<int, std::map<const EnemySpec, float>> DUNGEON = {
 
 namespace LootTable {
 std::map<int, LootBox> DUNGEON = {
-    {0, {0.01, {}, {
+    {0,
+     {0.01,
+      {},
+      {
           {0.10, {Prototype::PLATE}},
           {0.10, {Prototype::SWORD}},
           {0.10, {Prototype::HELMET}},
@@ -51,8 +54,12 @@ std::map<int, LootBox> DUNGEON = {
           {0.10, {Prototype::SCROLL_REVEAL}},
           {0.10, {Prototype::POTION_HEAL}},
           {0.10, {Prototype::POTION_HEAL_LESSER}},
-          }, true}},
-    {1, {0.015, {}, {
+      },
+      true}},
+    {1,
+     {0.015,
+      {},
+      {
           {0.10, {Prototype::PLATE}},
           {0.10, {Prototype::SWORD}},
           {0.10, {Prototype::HELMET}},
@@ -63,8 +70,8 @@ std::map<int, LootBox> DUNGEON = {
           {0.10, {Prototype::SCROLL_REVEAL}},
           {0.10, {Prototype::POTION_HEAL}},
           {0.10, {Prototype::POTION_HEAL_LESSER}},
-          }, true}}  
-    };
+      },
+      true}}};
 }
 
 #endif // __SPAWNTABLE_H_

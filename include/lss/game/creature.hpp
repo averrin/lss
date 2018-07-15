@@ -8,6 +8,7 @@
 #include "lss/game/item.hpp"
 #include "lss/game/object.hpp"
 #include "lss/game/trait.hpp"
+#include <lss/game/location.hpp>
 
 class Creature : public Object {
 public:

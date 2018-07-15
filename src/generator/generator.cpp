@@ -106,7 +106,6 @@ auto getRandomCell(std::shared_ptr<Location> location, CellSpec type) {
   return getRandomCell(room, type);
 }
 
-
 void placeWalls(std::shared_ptr<Location> location) {
   for (auto r : location->cells) {
     for (auto cell : r) {

@@ -9,8 +9,6 @@
 #include <cmath>
 #include <map>
 
-#include "EventHandler.hpp"
-#include "EventRegisttration.hpp"
 #include "fmt/format.h"
 
 const float TORCH_DISTANCE = 4.5f;
@@ -33,7 +31,8 @@ struct LocationSpec {
 
 class Player;
 class Room;
-class Location : public micropather::Graph,
+class Location : public Object,
+                 public micropather::Graph,
                  public eb::EventHandler<EnemyDiedEvent>,
                  public eb::EventHandler<ItemTakenEvent>,
                  public eb::EventHandler<DigEvent>,
@@ -43,7 +42,8 @@ class Location : public micropather::Graph,
                  public eb::EventHandler<LeaveCellEvent>,
                  public eb::EventHandler<EnterCellEvent> {
 public:
-  Location(LocationSpec t) : type(t), features(t.features) {}
+  Location(LocationSpec t) : Object(), type(t), features(t.features) {}
+  ~Location();
   LocationSpec type;
   Cells cells;
   Objects objects;
@@ -65,7 +65,6 @@ public:
   void enter(std::shared_ptr<Player>, std::shared_ptr<Cell>);
   void leave(std::shared_ptr<Player>);
   Objects getObjects(std::shared_ptr<Cell>);
-  std::vector<eb::HandlerRegistrationPtr> handlers;
 
   std::vector<std::shared_ptr<Cell>> getNeighbors(std::shared_ptr<Cell> cell) {
     return getNeighbors(cell.get());

@@ -2,6 +2,7 @@
 
 #include "EventBus.hpp"
 #include "lss/game/door.hpp"
+#include "lss/game/events.hpp"
 
 Door::Door() : Object("door") {
   passThrough = false;

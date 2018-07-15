@@ -91,7 +91,6 @@ void LSSApp::initStates() {
   heroState = std::make_shared<State>();
   inspectState = std::make_shared<State>();
   inventoryState = std::make_shared<State>();
-
   logState = std::make_shared<State>();
 
   state->currentPalette = palettes::DARK;
@@ -103,7 +102,6 @@ void LSSApp::initStates() {
   heroState->currentPalette = palettes::DARK;
   inspectState->currentPalette = palettes::DARK;
   logState->currentPalette = palettes::DARK;
-  
 }
 
 void LSSApp::startGame() {
@@ -118,17 +116,16 @@ void LSSApp::startGame() {
   l->depth = 0;
   locations = {l};
 
+  state->clear();
   state->fragments.assign(
-      l->cells.size() *
-          (l->cells.front().size() + 1),
+      l->cells.size() * (l->cells.front().size() + 1),
       std::make_shared<CellSign>(std::make_shared<Cell>(CellType::UNKNOWN)));
 
-  // hero->commit("init", 0);
   hero->currentLocation = locations.front();
   hero->currentLocation->enter(hero, locations.front()->enterCell);
 
   invalidate("init");
-  
+  gameFrame->setTextAlignment(kp::pango::TextAlignment::LEFT);
 }
 
 void LSSApp::setListeners() { reactor = std::make_shared<EventReactor>(this); }
@@ -398,6 +395,7 @@ void LSSApp::draw() {
   case Modes::HELP:
   case Modes::OBJECTSELECT:
   case Modes::INVENTORY:
+    gameFrame->setTextAlignment(kp::pango::TextAlignment::LEFT);
     gl::draw(gameFrame->getTexture(), vec2(HOffset, VOffset));
     break;
   case Modes::GAMEOVER:

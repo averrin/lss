@@ -30,8 +30,8 @@ LogPanel::LogPanel(std::shared_ptr<State> s, std::shared_ptr<Player> hero)
   appendLine({F("Long story short...")});
   appendLine(
       {F("You are here. This is dungeon. You need go down. Deal with it.")});
-  appendLine(
-      {F("If you dont know how to roguelike just press <span weight='bold' color='{{orange}}'>?</span>.")});
+  appendLine({F("If you dont know how to roguelike just press [<span "
+                "weight='bold' color='{{orange}}'>?</span>] for controls.")});
 };
 
 void LogPanel::appendLine(Fragments line) {

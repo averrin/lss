@@ -10,8 +10,8 @@ using namespace std::string_literals;
 
 HeroLine::HeroLine(std::shared_ptr<State> s, std::shared_ptr<Player> h)
     : state(s), hero(h) {
- handlers.push_back(eb::EventBus::AddHandler<CommitEvent>(*this));
- handlers.push_back(eb::EventBus::AddHandler<HeroTakeDamageEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<CommitEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<HeroTakeDamageEvent>(*this));
 };
 
 HeroLine::~HeroLine() {

@@ -14,6 +14,8 @@ float getDistance(std::shared_ptr<Cell> c, std::shared_ptr<Cell> cc) {
   return sqrt(pow(cc->x - c->x, 2) + pow(cc->y - c->y, 2));
 }
 
+Location::~Location() { clearHandlers(); }
+
 void Location::invalidateVisibilityCache(std::shared_ptr<Cell> cell) {
   auto vd = TORCH_DISTANCE;
   // fmt::print("--- {} ", visibilityCache.size());
@@ -117,7 +119,7 @@ void Location::onEvent(DigEvent &e) {
   needUpdateLight = true;
 }
 
-ItemsFoundEvent::ItemsFoundEvent(eb::ObjectPtr s, Objects i)
+ItemsFoundEvent::ItemsFoundEvent(eb::ObjectPtr s, Items i)
     : eb::Event(s), items(i) {}
 void Location::onEvent(EnterCellEvent &e) {
   if (auto hero = std::dynamic_pointer_cast<Player>(e.getSender())) {
@@ -129,7 +131,7 @@ void Location::onEvent(EnterCellEvent &e) {
                            });
     items.resize(std::distance(items.begin(), it));
     if (items.size() > 0) {
-      ItemsFoundEvent ie(nullptr, items);
+      ItemsFoundEvent ie(nullptr, utils::castObjects<Item>(items));
       eb::EventBus::FireEvent(ie);
     }
   }
@@ -147,7 +149,8 @@ void Location::enter(std::shared_ptr<Player> hero, std::shared_ptr<Cell> cell) {
 
   for (auto o : objects) {
     if (auto enemy = std::dynamic_pointer_cast<Enemy>(o)) {
-      enemy->registration = eb::EventBus::AddHandler<CommitEvent>(*enemy, hero);
+      enemy->handlers.push_back(
+          eb::EventBus::AddHandler<CommitEvent>(*enemy, hero));
       enemy->calcViewField();
     }
   }
@@ -167,13 +170,11 @@ void Location::enter(std::shared_ptr<Player> hero, std::shared_ptr<Cell> cell) {
 }
 
 void Location::leave(std::shared_ptr<Player> hero) {
-  for (auto r : handlers) {
-    r->removeHandler();
-  }
+  clearHandlers();
 
   for (auto o : objects) {
     if (auto enemy = std::dynamic_pointer_cast<Enemy>(o)) {
-      enemy->registration->removeHandler();
+      enemy->clearHandlers();
     }
   }
 }
