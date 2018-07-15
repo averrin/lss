@@ -1,7 +1,7 @@
 #ifndef __RANDOMTOOLS_H_
 #define __RANDOMTOOLS_H_
-#include <memory>
 #include <cstdlib>
+#include <memory>
 #include <variant>
 
 namespace R {

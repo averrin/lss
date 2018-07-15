@@ -7,7 +7,7 @@
 #include <string>
 #include <variant>
 
-//TODO: find why this unnecessary include is necessary
+// TODO: find why this unnecessary include is necessary
 #include "CinderPango.h"
 
 #include "lss/game/enemy.hpp"

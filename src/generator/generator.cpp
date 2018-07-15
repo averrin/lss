@@ -1,7 +1,7 @@
 #include <chrono>
+#include <fmt/format.h>
 #include <iostream>
 #include <set>
-#include <fmt/format.h>
 
 #include "lss/game/door.hpp"
 #include "lss/game/enemy.hpp"

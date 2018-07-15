@@ -25,10 +25,10 @@
 #include "lss/game/enemy.hpp"
 #include "lss/game/player.hpp"
 
-#include <fmt/format.h>
 #include "lss/ui/heroLine.hpp"
 #include "lss/ui/logPanel.hpp"
 #include "lss/ui/statusLine.hpp"
+#include <fmt/format.h>
 
 #include "lss/generator/generator.hpp"
 

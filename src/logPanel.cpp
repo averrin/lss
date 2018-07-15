@@ -11,8 +11,8 @@ LogPanel::~LogPanel() {
   }
 }
 
-LogPanel::LogPanel(std::shared_ptr<State> s, std::shared_ptr<Player> hero)
-    : state(s) {
+LogPanel::LogPanel(std::shared_ptr<State> s, std::shared_ptr<Player> h)
+    : state(s), hero(h) {
   handlers.push_back(eb::EventBus::AddHandler<ItemTakenEvent>(*this));
   handlers.push_back(eb::EventBus::AddHandler<ItemsFoundEvent>(*this));
   handlers.push_back(eb::EventBus::AddHandler<MessageEvent>(*this));
@@ -105,9 +105,17 @@ void LogPanel::onEvent(EnemyDiedEvent &e) {
 void LogPanel::onEvent(ItemTakenEvent &e) {}
 void LogPanel::onEvent(ItemsFoundEvent &e) {}
 void LogPanel::onEvent(MessageEvent &e) { appendLine({F(e.message)}); }
+
+// TODO: migrate to one cell related event with src and dest (for handling room
+// enter-exit)
 void LogPanel::onEvent(EnterCellEvent &e) {
   if (e.cell->hasFeature(CellFeature::BLOOD)) {
     appendLine({F("The floor is splattered with blood.")});
+  }
+  if (auto t = utils::castObjects<Terrain>(
+          hero->currentLocation->getObjects(e.cell));
+      t.size() == 1 && t.front()->type == TerrainType::ALTAR) {
+    appendLine({F("There is a dark stone altar.")});
   }
 }
 void LogPanel::onEvent(LeaveCellEvent &e) {}

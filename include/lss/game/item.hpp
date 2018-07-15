@@ -6,8 +6,8 @@
 #include "lss/game/randomTools.hpp"
 #include "lss/game/spell.hpp"
 #include "lss/utils.hpp"
-#include <variant>
 #include <fmt/format.h>
+#include <variant>
 
 class Item : public Object {
 public:

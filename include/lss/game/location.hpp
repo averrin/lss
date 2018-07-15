@@ -7,8 +7,8 @@
 #include "lss/game/object.hpp"
 #include "micropather/micropather.h"
 #include <cmath>
-#include <map>
 #include <iostream>
+#include <map>
 
 const float TORCH_DISTANCE = 4.5f;
 
@@ -109,7 +109,7 @@ public:
           std::cout << "*";
           continue;
         }
-        std::cout <<  c->type.name.front();
+        std::cout << c->type.name.front();
       }
       std::cout << std::endl;
     }

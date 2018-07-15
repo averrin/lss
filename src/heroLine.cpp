@@ -1,10 +1,10 @@
 #include "lss/ui/heroLine.hpp"
-#include <fmt/format.h>
 #include "lss/game/events.hpp"
 #include "lss/game/location.hpp"
 #include "lss/game/player.hpp"
 #include "lss/utils.hpp"
 #include <algorithm>
+#include <fmt/format.h>
 
 using namespace std::string_literals;
 

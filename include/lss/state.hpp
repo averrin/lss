@@ -1,7 +1,7 @@
 #ifndef __STATE_H_
 #define __STATE_H_
-#include "lss/fragment.hpp"
 #include "CinderPango.h"
+#include "lss/fragment.hpp"
 #include "lss/palette.hpp"
 #include <string>
 #include <vector>
