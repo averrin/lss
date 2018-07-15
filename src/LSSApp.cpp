@@ -9,6 +9,7 @@
 
 #include "lss/LSSApp.hpp"
 #include "lss/eventReactor.hpp"
+#include "lss/game/terrain.hpp"
 #include "lss/utils.hpp"
 
 using namespace ci;
@@ -214,12 +215,9 @@ void LSSApp::invalidate() {
     } else if (auto i = std::dynamic_pointer_cast<Item>(o);
                i && hero->canSee(ec)) {
       state->fragments[index] = std::make_shared<ItemSign>(i->type);
-    } else if (auto t = std::dynamic_pointer_cast<TorchStand>(o);
+    } else if (auto t = std::dynamic_pointer_cast<Terrain>(o);
                t && hero->canSee(ec)) {
-      state->fragments[index] = std::make_shared<ItemSign>(t->type);
-    } else if (auto t = std::dynamic_pointer_cast<Statue>(o);
-               t && hero->canSee(ec)) {
-      state->fragments[index] = std::make_shared<ItemSign>(t->type);
+      state->fragments[index] = std::make_shared<TerrainSign>(t->type);
     }
   }
 

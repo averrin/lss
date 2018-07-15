@@ -1,7 +1,6 @@
 #ifndef __RANDOMTOOLS_H_
 #define __RANDOMTOOLS_H_
-#include "fmt/format.h"
-#include "rang.hpp"
+#include <memory>
 #include <cstdlib>
 #include <variant>
 
@@ -23,7 +22,6 @@ struct Float {
     return value;
   }
 
-  // NOTE: i know, itn not real float
   operator float() {
     if (!fixed) {
       roll();

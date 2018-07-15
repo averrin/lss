@@ -1,5 +1,5 @@
 #include "lss/ui/heroLine.hpp"
-#include "fmt/format.h"
+#include <fmt/format.h>
 #include "lss/game/events.hpp"
 #include "lss/game/location.hpp"
 #include "lss/game/player.hpp"

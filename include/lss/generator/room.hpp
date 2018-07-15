@@ -9,7 +9,7 @@ enum class RoomType {
   CAVE,
 };
 
-enum class RoomFeature { CAVE, DUNGEON, STATUE };
+enum class RoomFeature { CAVE, DUNGEON, STATUE, ALTAR };
 
 class Room {
 public:
@@ -18,6 +18,8 @@ public:
     width = c.front().size();
     for (auto r : c) {
       for (auto cell : r) {
+        if (cell->type == CellType::UNKNOWN)
+          continue;
         cells.push_back(cell);
       }
     }

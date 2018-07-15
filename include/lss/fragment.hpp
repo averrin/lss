@@ -7,9 +7,12 @@
 #include <string>
 #include <variant>
 
+//TODO: find why this unnecessary include is necessary
 #include "CinderPango.h"
+
 #include "lss/game/enemy.hpp"
 #include "lss/game/item.hpp"
+#include "lss/game/terrain.hpp"
 
 typedef std::variant<int, float, bool, std::string> tpl_arg;
 
@@ -26,7 +29,6 @@ public:
   std::string render(State *s);
   int index;
   int length;
-  PangoRectangle rect;
 
   virtual ~Fragment();
   bool needRender = true;
@@ -65,6 +67,11 @@ public:
 class ItemSign : public Fragment {
 public:
   ItemSign(ItemSpec);
+};
+
+class TerrainSign : public Fragment {
+public:
+  TerrainSign(TerrainSpec);
 };
 
 typedef std::vector<std::shared_ptr<Fragment>> Fragments;

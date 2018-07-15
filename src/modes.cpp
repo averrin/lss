@@ -278,14 +278,14 @@ void InspectMode::render() {
     app->inspectState->appendContent(
         {F(fmt::format("Door: [<b>{}</b>]", isDoor ? check : " "))});
     app->inspectState->appendContent(State::END_LINE);
-    auto isTorch = utils::castObjects<TorchStand>(objects).size() > 0;
-    app->inspectState->appendContent(
-        {F(fmt::format("Torch: [<b>{}</b>]", isTorch ? check : " "))});
-    app->inspectState->appendContent(State::END_LINE);
-    auto isStatue = utils::castObjects<Statue>(objects).size() > 0;
-    app->inspectState->appendContent(
-        {F(fmt::format("Statue: [<b>{}</b>]", isStatue ? check : " "))});
-    app->inspectState->appendContent(State::END_LINE);
+    // auto isTorch = utils::castObjects<TorchStand>(objects).size() > 0;
+    // app->inspectState->appendContent(
+    //     {F(fmt::format("Torch: [<b>{}</b>]", isTorch ? check : " "))});
+    // app->inspectState->appendContent(State::END_LINE);
+    // auto isStatue = utils::castObjects<Statue>(objects).size() > 0;
+    // app->inspectState->appendContent(
+    //     {F(fmt::format("Statue: [<b>{}</b>]", isStatue ? check : " "))});
+    // app->inspectState->appendContent(State::END_LINE);
     auto enemies = utils::castObjects<Enemy>(objects);
     if (enemies.size() > 0) {
       std::vector<std::string> enemyNames;

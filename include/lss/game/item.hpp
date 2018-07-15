@@ -7,6 +7,7 @@
 #include "lss/game/spell.hpp"
 #include "lss/utils.hpp"
 #include <variant>
+#include <fmt/format.h>
 
 class Item : public Object {
 public:
@@ -62,21 +63,6 @@ public:
     item->count = count <= 1 ? count : rand() % count + 1;
     return item;
   }
-};
-
-class TorchStand : public Object {
-public:
-  TorchStand() : Object(), type(ItemType::TORCH_STAND) { seeThrough = true; }
-  ItemSpec type;
-};
-
-class Statue : public Object {
-public:
-  Statue() : Object(), type(ItemType::STATUE) {
-    seeThrough = false;
-    passThrough = false;
-  }
-  ItemSpec type;
 };
 
 class Consumable : public Item {

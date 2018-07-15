@@ -1,5 +1,5 @@
 #include "lss/ui/statusLine.hpp"
-#include "fmt/format.h"
+#include <fmt/format.h>
 #include "lss/game/events.hpp"
 #include "lss/utils.hpp"
 

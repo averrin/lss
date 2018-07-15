@@ -37,14 +37,13 @@ public:
 };
 
 namespace ItemType {
-ItemSpec const TORCH_STAND = {"torch stand", ItemCategories::MISC};
-ItemSpec const STATUE = {"stone statue", ItemCategories::MISC};
-
 ItemSpec const GRASS = {"herb", ItemCategories::CONSUMABLES};
 ItemSpec const SCROLL = {"scroll", ItemCategories::CONSUMABLES};
 ItemSpec const POTION = {"potion", ItemCategories::CONSUMABLES};
 
 ItemSpec const ROCK = {"rock", ItemCategories::MISC};
+ItemSpec const BONES = {"bones", ItemCategories::MISC};
+
 ItemSpec const PICK_AXE = {"pick axe", ItemCategories::WEAPONS,
                            WearableType::WEAPON_TWOHANDED};
 ItemSpec const GREAT_AXE = {"great axe", ItemCategories::WEAPONS,

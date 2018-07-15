@@ -1,6 +1,8 @@
 #include "lss/game/effect.hpp"
 #include "lss/game/player.hpp"
 
+#include <fmt/format.h>
+
 std::string SpeedModifier::getTitle() {
   return fmt::format("speed {:+d}", R::get(modifier));
 }

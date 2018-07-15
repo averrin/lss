@@ -10,6 +10,7 @@
 #include "lss/game/player.hpp"
 #include "lss/game/slot.hpp"
 #include "lss/game/spell.hpp"
+#include "lss/game/terrain.hpp"
 #include "lss/utils.hpp"
 #include "rang.hpp"
 
@@ -252,15 +253,16 @@ void Player::onEvent(WalkCommandEvent &e) {
 }
 
 void Player::onEvent(PickCommandEvent &e) {
-  auto item = std::find_if(
-      currentLocation->objects.begin(), currentLocation->objects.end(),
-      [&](std::shared_ptr<Object> o) {
-        return (std::dynamic_pointer_cast<Item>(o) ||
-                std::dynamic_pointer_cast<TorchStand>(o)) &&
-               o->currentCell == currentCell;
-      });
+  auto item = std::find_if(currentLocation->objects.begin(),
+                           currentLocation->objects.end(),
+                           [&](std::shared_ptr<Object> o) {
+                             return (std::dynamic_pointer_cast<Item>(o) ||
+                                     std::dynamic_pointer_cast<Terrain>(o)) &&
+                                    o->currentCell == currentCell;
+                           });
   if (item != currentLocation->objects.end()) {
-    if (std::dynamic_pointer_cast<TorchStand>(*item)) {
+    if (auto t = std::dynamic_pointer_cast<Terrain>(*item);
+        t && t->type == TerrainType::TORCH_STAND) {
       pick(Prototype::TORCH->clone());
       currentLocation->objects.erase(
           std::remove(currentLocation->objects.begin(),

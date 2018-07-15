@@ -7,8 +7,6 @@
 #include "lss/game/attribute.hpp"
 #include "lss/game/randomTools.hpp"
 
-#include "fmt/format.h"
-
 // TODO: refactor.
 // maybe create variant with int, float, rndInt and rndFloat
 // and write one function for baase modification (see lss/creature.cpp)

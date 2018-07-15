@@ -2,6 +2,7 @@
 
 #include "Jinja2CppLight.h"
 #include "lss/fragment.hpp"
+#include "lss/game/terrain.hpp"
 #include "lss/state.hpp"
 
 using namespace Jinja2CppLight;
@@ -50,9 +51,19 @@ std::string Fragment::render(State *state) {
   return cache;
 }
 
-std::map<ItemSpec, std::string> itemSigns = {
-    {ItemType::TORCH_STAND, "*"},   {ItemType::STATUE, "&amp;"},
+std::map<TerrainSpec, std::string> terrainSigns = {
+    {TerrainType::TORCH_STAND, "*"},
+    {TerrainType::STATUE, "&amp;"},
+    {TerrainType::ALTAR, "_"},
+};
 
+std::map<TerrainSpec, std::string> terrainColors = {
+    {TerrainType::TORCH_STAND, "orange"},
+    {TerrainType::STATUE, "white"},
+    {TerrainType::ALTAR, "gray"},
+};
+
+std::map<ItemSpec, std::string> itemSigns = {
     {ItemType::CORPSE, "%"},        {ItemType::ROCK, "*"},
     {ItemType::PICK_AXE, "("},      {ItemType::SWORD, "("},
     {ItemType::GOLD_RING, "="},     {ItemType::GOLD_COINS, "$"},
@@ -63,17 +74,17 @@ std::map<ItemSpec, std::string> itemSigns = {
     {ItemType::SHIELD, "["},        {ItemType::GREAVES, "["},
     {ItemType::BOOTS, "["},         {ItemType::PLATE, "["},
     {ItemType::LEATHER_ARMOR, "["}, {ItemType::POTION, "!"},
-    {ItemType::SCROLL, "?"},
+    {ItemType::SCROLL, "?"},        {ItemType::BONES, "%"},
 };
 
 std::map<ItemSpec, std::string> itemColors = {
-    {ItemType::STATUE, "white"},
+    {ItemType::BONES, "#aaa"},
 
     {ItemType::CORPSE, "red"},          {ItemType::ROCK, "gray"},
     {ItemType::PICK_AXE, "white"},      {ItemType::SWORD, "#F7CA88"},
     {ItemType::GOLD_RING, "gold"},      {ItemType::GOLD_COINS, "gold"},
     {ItemType::DAGGER, "gray"},         {ItemType::TORCH, "orange"},
-    {ItemType::TORCH_STAND, "orange"},  {ItemType::GRASS, "darkgreen"},
+    {ItemType::GRASS, "darkgreen"},
 
     {ItemType::GREAT_AXE, "white"},     {ItemType::HELMET, "white"},
     {ItemType::SHIELD, "white"},        {ItemType::GREAVES, "white"},
@@ -100,11 +111,11 @@ std::map<EnemySpec, std::string> enemyColors = {
     {EnemyType::BAT, "gray"},
     {EnemyType::BAT_LARGE, "darkgray"},
     {EnemyType::GOBLIN, "green"},
-    {EnemyType::ORK, "#22cc22"},
-    {EnemyType::ORK_BLACK, "darkgray"},
+    {EnemyType::ORK, "#22aa22"},
+    {EnemyType::ORK_BLACK, "#555"},
     {EnemyType::OGRE, "darkgreen"},
     {EnemyType::PIXI, "pink"},
-    {EnemyType::GOBLIN_LIEUTENANT, "cyan"},
+    {EnemyType::GOBLIN_LIEUTENANT, "#008b8b"},
     {EnemyType::GOBLIN_ROGUE, "darkgreen"},
 };
 
@@ -188,3 +199,7 @@ DoorSign::DoorSign(bool opened)
 ItemSign::ItemSign(ItemSpec type)
     : Fragment("<span color='{{color}}'>{{sign}}</span>",
                {{"sign", itemSigns[type]}, {"color", itemColors[type]}}) {}
+TerrainSign::TerrainSign(TerrainSpec type)
+    : Fragment("<span color='{{color}}'>{{sign}}</span>",
+               {{"sign", terrainSigns[type]}, {"color", terrainColors[type]}}) {
+}

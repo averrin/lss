@@ -8,8 +8,7 @@
 #include "micropather/micropather.h"
 #include <cmath>
 #include <map>
-
-#include "fmt/format.h"
+#include <iostream>
 
 const float TORCH_DISTANCE = 4.5f;
 
@@ -107,12 +106,12 @@ public:
     for (auto r : cells) {
       for (auto c : r) {
         if (c == enterCell || c == exitCell) {
-          fmt::print(" ");
+          std::cout << "*";
           continue;
         }
-        fmt::print("{}", c->type.name.front());
+        std::cout <<  c->type.name.front();
       }
-      fmt::print("\n");
+      std::cout << std::endl;
     }
   }
 

@@ -1,6 +1,7 @@
 #include "rang.hpp"
 #include <cmath>
 #include <variant>
+// #include <fmt/format.h>
 
 #include "lss/game/creature.hpp"
 #include "lss/game/enemy.hpp"
@@ -10,7 +11,6 @@
 #include "lss/utils.hpp"
 
 #include "EventBus.hpp"
-#include "fmt/format.h"
 
 float NIGHT_VISION_DISTANCE = 10;
 

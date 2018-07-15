@@ -1,7 +1,6 @@
 #include <list>
 #include <vector>
 
-#include "fmt/format.h"
 #include "lss/game/fov.hpp"
 
 // Huge thanks to LordKelvin

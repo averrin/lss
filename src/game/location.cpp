@@ -8,6 +8,7 @@
 #include "lss/game/item.hpp"
 #include "lss/game/location.hpp"
 #include "lss/game/player.hpp"
+#include "lss/game/terrain.hpp"
 #include "lss/utils.hpp"
 
 float getDistance(std::shared_ptr<Cell> c, std::shared_ptr<Cell> cc) {
@@ -187,8 +188,10 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
   auto hasLight = hero->hasLight();
   auto enemies = utils::castObjects<Enemy>(objects);
   std::vector<std::shared_ptr<Cell>> torches;
-  for (auto ts : utils::castObjects<TorchStand>(objects)) {
-    torches.push_back(ts->currentCell);
+  for (auto ts : utils::castObjects<Terrain>(objects)) {
+    if (ts->type == TerrainType::TORCH_STAND) {
+      torches.push_back(ts->currentCell);
+    }
   }
   for (auto e : enemies) {
     if (e->hasLight()) {
