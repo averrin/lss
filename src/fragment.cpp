@@ -135,7 +135,7 @@ std::map<CellSpec, std::map<bool, std::string>> cellColors = {
 std::map<CellSpec, std::string> cellColorsIlluminated = {
     {CellType::FLOOR, "#765"},      {CellType::WALL, "#cba"},
     {CellType::DOWNSTAIRS, "#cba"}, {CellType::UPSTAIRS, "#cba"},
-    {CellType::WATER, "#88f"},
+    {CellType::WATER, "#77f"},
 };
 
 std::map<CellSpec, std::map<bool, std::string>> cellWeights = {
@@ -194,7 +194,7 @@ EnemySign::EnemySign(EnemySpec type)
     : Fragment("<span color='{{color}}' weight='bold'>{{sign}}</span>",
                {{"sign", enemySigns[type]}, {"color", enemyColors[type]}}) {}
 DoorSign::DoorSign(bool opened)
-    : Fragment("<span weight='bold'>{{sign}}</span>",
+    : Fragment("<span weight='bold' color='#8B5F20'>{{sign}}</span>",
                {{"sign", opened ? "/"s : "+"s}}) {}
 ItemSign::ItemSign(ItemSpec type)
     : Fragment("<span color='{{color}}'>{{sign}}</span>",
