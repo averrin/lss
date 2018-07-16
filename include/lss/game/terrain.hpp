@@ -31,6 +31,7 @@ namespace TerrainType {
 const auto TORCH_STAND = TerrainSpec{"torch stand", false, true};
 const auto STATUE = TerrainSpec{"statue", false, false};
 const auto ALTAR = TerrainSpec{"altar", true, true};
+const auto BUSH = TerrainSpec{"bush", false, true};
 }; // namespace TerrainType
 
 #endif // __TERRAIN_H_

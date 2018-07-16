@@ -3,6 +3,7 @@
 #include <iostream>
 #include <set>
 
+#include "lss/utils.hpp"
 #include "lss/game/door.hpp"
 #include "lss/game/enemy.hpp"
 #include "lss/game/item.hpp"
@@ -33,6 +34,7 @@ float TORCHES = 0.40;
 float ENEMY = 0.02;
 float CAVE_ROCK = 0.10;
 float CAVE_GRASS = 0.1;
+float CAVE_BUSH = 0.4;
 float CAVERN_WALL = 0.35;
 float BLOOD = 0.01;
 float POND = 0.007;
@@ -763,9 +765,19 @@ void placeCaves(std::shared_ptr<Location> location) {
           continue;
         }
       } else if (c->type == CellType::FLOOR && R::R() < P::CAVE_GRASS) {
+        if (R::R() < P::CAVE_BUSH || std::find_if(n.begin(), n.end(), [&](auto nc){
+          auto t = utils::castObjects<Terrain>(location->getObjects(nc));
+          return t.size() == 1 && t.front()->type == TerrainType::BUSH;
+        }) != n.end()) {
+          auto s = std::make_shared<Terrain>(TerrainType::BUSH);
+          s->currentCell = c;
+          location->objects.push_back(s);
+        } else {
         auto grass = Prototype::GRASS->clone();
         grass->currentCell = c;
         location->objects.push_back(grass);
+          
+        }
         continue;
       }
     }
@@ -793,9 +805,16 @@ void makeCavePassage(std::shared_ptr<Location> location) {
         rock->currentCell = c;
         location->objects.push_back(rock);
       } else if (c->type == CellType::FLOOR && R::R() < P::CAVE_GRASS) {
+        if (R::R() < P::CAVE_BUSH) {
+          auto s = std::make_shared<Terrain>(TerrainType::BUSH);
+          s->currentCell = c;
+          location->objects.push_back(s);
+        } else {
         auto grass = Prototype::GRASS->clone();
         grass->currentCell = c;
         location->objects.push_back(grass);
+          
+        }
         continue;
       }
     }

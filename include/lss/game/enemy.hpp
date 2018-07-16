@@ -85,7 +85,7 @@ EnemySpec const GOBLIN_LIEUTENANT = {
     1, 5, 1,
     LootBox{1, {}, {
         {0.40, {Prototype::POTION_HEAL}},
-        {0.40, {}, {{0.50, {Prototype::SCROLL_IDENTIFICATION}}, {0.50, {Prototype::SCROLL_REVEAL}}}, true},
+        {0.40, {}, {{0.30, {Prototype::SCROLL_IDENTIFICATION}}, {0.30, {Prototype::SCROLL_REVEAL}}, {0.30, {Prototype::SCROLL_TELEPORT}}}, true},
         {0.80, {}, {
           {0.25, {Prototype::DAGGER}},
           {0.25, {Prototype::HELMET}},
@@ -117,7 +117,7 @@ EnemySpec const ORK = {
     1, 55, 2, 1, 6, 1,
     LootBox{1, {Prototype::TORCH}, {
         {0.40, {Prototype::POTION_HEAL}},
-        {0.40, {}, {{0.50, {Prototype::SCROLL_IDENTIFICATION}}, {0.50, {Prototype::SCROLL_REVEAL}}}, true},
+        {0.40, {}, {{0.30, {Prototype::SCROLL_IDENTIFICATION}}, {0.30, {Prototype::SCROLL_REVEAL}}, {0.30, {Prototype::SCROLL_TELEPORT}}}, true},
         {0.70, {}, {
           {0.15, {Prototype::PLATE}},
           {0.35, {Prototype::SWORD}},

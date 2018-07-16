@@ -142,6 +142,9 @@ const auto SCROLL_IDENTIFICATION = std::make_shared<Consumable>(
 const auto SCROLL_REVEAL = std::make_shared<Consumable>(
     fmt::format("scroll labled '{}'", utils::getScrollName()),
     "scroll of reveal", ItemType::SCROLL, Spells::REVEAL);
+const auto SCROLL_TELEPORT = std::make_shared<Consumable>(
+    fmt::format("scroll labled '{}'", utils::getScrollName()),
+    "scroll of teleport", ItemType::SCROLL, Spells::TELEPORT_RANDOM);
 
 const auto GOLD = std::make_shared<Item>(ItemType::GOLD_COINS, 1);
 } // namespace Prototype

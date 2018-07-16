@@ -31,6 +31,7 @@ const auto IDENTIFY = std::make_shared<Spell>("Identify");
 const auto HEAL_LESSER = std::make_shared<Spell>("Lesser heal");
 const auto HEAL = std::make_shared<Spell>("Heal");
 const auto HEAL_GREATER = std::make_shared<Spell>("Greater");
+const auto TELEPORT_RANDOM = std::make_shared<Spell>("Teleport");
 
 const auto TOGGLE_DUAL_WIELD = std::make_shared<ToggleTraitSpell>(
     "Toggle Dual Wield trait", Traits::DUAL_WIELD);

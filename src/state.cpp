@@ -33,8 +33,6 @@ void State::appendContent(std::shared_ptr<Fragment> content) {
 
 void State::render(kp::pango::CinderPangoRef surface) {
   if (!damaged) {
-    std::string DEFAULT_FONT = "FiraCode 12";
-    surface->setDefaultTextFont(DEFAULT_FONT);
     surface->setDefaultTextColor(currentPalette.fgColor);
 
     surface->setText(cache);
@@ -82,7 +80,10 @@ void State::render(kp::pango::CinderPangoRef surface) {
   //             << ms.count() << rang::style::reset << '\n';
   // }
   // std::cout << cache << std::endl;
-  cache = "<tt>" + content + "</tt>";
+
+  // std::string DEFAULT_FONT = "Fira Code";
+  // cache = fmt::format("<span font='{}'>{}</span>", DEFAULT_FONT, content);
+  cache = fmt::format("<tt>{}</tt>", content);
 
   damaged = false;
   render(surface);

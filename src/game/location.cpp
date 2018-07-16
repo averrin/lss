@@ -136,6 +136,14 @@ void Location::onEvent(EnterCellEvent &e) {
       eb::EventBus::FireEvent(ie);
     }
   }
+  for (auto t : utils::castObjects<Terrain>(objects)) {
+    if (t->type == TerrainType::BUSH && e.cell == t->currentCell) {
+      objects.erase(std::remove(objects.begin(), objects.end(), t));
+        auto grass = Prototype::GRASS->clone();
+        grass->currentCell = e.cell;
+        objects.push_back(grass);
+    }
+  }
   // if (e.cell->illuminated) {
   invalidateVisibilityCache(e.cell);
   needUpdateLight = true;

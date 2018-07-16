@@ -114,8 +114,12 @@ void LogPanel::onEvent(EnterCellEvent &e) {
   }
   if (auto t = utils::castObjects<Terrain>(
           hero->currentLocation->getObjects(e.cell));
-      t.size() == 1 && t.front()->type == TerrainType::ALTAR) {
-    appendLine({F("There is a dark stone altar.")});
+      t.size() == 1) {
+    if (t.front()->type == TerrainType::ALTAR) {
+      appendLine({F("There is a dark stone altar.")});
+    } else if (t.front()->type == TerrainType::BUSH) {
+      appendLine({F("There are dense bushes.")});
+    }
   }
 }
 void LogPanel::onEvent(LeaveCellEvent &e) {}

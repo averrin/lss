@@ -1,6 +1,7 @@
 #include "lss/eventReactor.hpp"
 #include "lss/game/cell.hpp"
 #include "lss/game/spell.hpp"
+#include "lss/generator/room.hpp"
 #include "lss/state.hpp"
 #include "lss/utils.hpp"
 
@@ -301,7 +302,7 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
             Spells::TOGGLE_MIND_SIGHT, Spells::TOGGLE_MAGIC_TORCH,
             Spells::TOGGLE_FLY, Spells::TOGGLE_CAN_SWIM, Spells::SUMMON_ORK,
             Spells::SUMMON_PLATE, Spells::TOGGLE_INVULNERABLE,
-            Spells::IDENTIFY}));
+            Spells::IDENTIFY, Spells::TELEPORT_RANDOM}));
   }
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
@@ -392,6 +393,13 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     }
     app->hero->commit("heal", 0);
     MessageEvent me(nullptr, fmt::format("You healed {} hp", heal));
+    eb::EventBus::FireEvent(me);
+  } else if (*spell == *Spells::TELEPORT_RANDOM) {
+    auto room = app->hero->currentLocation->rooms[rand() % app->hero->currentLocation->rooms.size()];
+    auto cell = room->cells[rand() % room->cells.size()];
+    app->hero->currentCell = cell;
+    app->hero->commit("Teleport", 0);
+    MessageEvent me(nullptr, fmt::format("You were teleported."));
     eb::EventBus::FireEvent(me);
   } else if (auto tspell = std::dynamic_pointer_cast<ToggleTraitSpell>(spell)) {
     if (app->hero->hasTrait(tspell->trait)) {
