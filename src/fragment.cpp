@@ -126,6 +126,7 @@ std::map<CellSpec, std::string> cellSigns = {
     {CellType::FLOOR, "⋅"s},       {CellType::WALL, "#"s},
     {CellType::UNKNOWN, " "s},     {CellType::DOWNSTAIRS, "&gt;"s},
     {CellType::UPSTAIRS, "&lt;"s}, {CellType::WATER, "="s},
+    {CellType::VOID, "◦"s},
 };
 
 std::map<CellSpec, std::map<bool, std::string>> cellColors = {
@@ -133,12 +134,15 @@ std::map<CellSpec, std::map<bool, std::string>> cellColors = {
     {CellType::WALL, {{false, "#aaa"}, {true, "#555"}}},
     {CellType::DOWNSTAIRS, {{false, "#aaa"}, {true, "#666"}}},
     {CellType::UPSTAIRS, {{false, "#aaa"}, {true, "#666"}}},
-    {CellType::WATER, {{false, "blue"}, {true, "#557"}}}};
+    {CellType::WATER, {{false, "blue"}, {true, "#557"}}},
+    {CellType::VOID, {{false, "#555"}, {true, "#555"}}}
+};
 
 std::map<CellSpec, std::string> cellColorsIlluminated = {
     {CellType::FLOOR, "#765"},      {CellType::WALL, "#cba"},
     {CellType::DOWNSTAIRS, "#cba"}, {CellType::UPSTAIRS, "#cba"},
     {CellType::WATER, "#77f"},
+    {CellType::VOID, "#555"},
 };
 
 std::map<CellSpec, std::map<bool, std::string>> cellWeights = {
@@ -147,6 +151,7 @@ std::map<CellSpec, std::map<bool, std::string>> cellWeights = {
     {CellType::DOWNSTAIRS, {{false, "bold"}, {true, "bold"}}},
     {CellType::UPSTAIRS, {{false, "bold"}, {true, "bold"}}},
     {CellType::WATER, {{false, "normal"}, {true, "normal"}}},
+    {CellType::VOID, {{false, "normal"}, {true, "normal"}}},
 };
 
 std::map<std::string, tpl_arg> getCellArgs(std::shared_ptr<Cell> cell) {
