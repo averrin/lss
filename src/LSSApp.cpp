@@ -115,20 +115,26 @@ void LSSApp::startGame() {
 
   auto l = generator->getRandomLocation(hero);
   l->depth = 0;
-  locations = {l};
+  locations[0] = l;
 
-  bg = std::thread([&]() {
-    for (auto n = 0; n < 25; n++) {
-      locations.push_back(generator->getRandomLocation(hero));
-    }});
+  for (auto n = 1; n < 26; n++) {
+    threads.push_back(std::thread(
+        [&](int n) {
+          auto l = generator->getRandomLocation(hero, n);
+          locations[n] = l;
+          MessageEvent me(nullptr, fmt::format("Generated location count: {}", locations.size()));
+          eb::EventBus::FireEvent(me);
+        },
+        n));
+  }
 
   state->clear();
   state->fragments.assign(
       l->cells.size() * (l->cells.front().size() + 1),
       std::make_shared<CellSign>(std::make_shared<Cell>(CellType::UNKNOWN)));
 
-  hero->currentLocation = locations.front();
-  hero->currentLocation->enter(hero, locations.front()->enterCell);
+  hero->currentLocation = locations[0];
+  hero->currentLocation->enter(hero, locations[0]->enterCell);
 
   invalidate("init");
   gameFrame->setTextAlignment(kp::pango::TextAlignment::LEFT);
@@ -177,9 +183,7 @@ void LSSApp::invalidate() {
 
   auto objects = hero->currentLocation->objects;
   std::sort(objects.begin(), objects.end(),
-            [](auto a, auto b) {
-              return a->zIndex < b->zIndex;
-            });
+            [](auto a, auto b) { return a->zIndex < b->zIndex; });
 
   for (auto o : objects) {
     auto ec = o->currentCell;

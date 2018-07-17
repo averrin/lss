@@ -34,8 +34,10 @@ void EventReactor::onEvent(StairEvent &e) {
     app->invalidate("enter");
   } else if (app->hero->currentCell->type == CellType::DOWNSTAIRS &&
              e.dir == StairType::DOWN) {
-    if (app->locations.size() < 26) {
-      app->locations.push_back(app->generator->getRandomLocation(app->hero));
+    if (app->locations.find(app->currentLevel + 1) == app->locations.end()) {
+      // app->locations[app->currentLevel+1] =
+      // app->generator->getRandomLocation(app->hero);
+      app->threads[app->currentLevel].join();
     }
 
     if (app->currentLevel == 25)
@@ -301,8 +303,8 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
             Spells::TOGGLE_DUAL_WIELD, Spells::TOGGLE_NIGHT_VISION,
             Spells::TOGGLE_MIND_SIGHT, Spells::TOGGLE_MAGIC_TORCH,
             Spells::TOGGLE_FLY, Spells::TOGGLE_CAN_SWIM, Spells::SUMMON_ORK,
-            Spells::SUMMON_PLATE, Spells::TOGGLE_INVULNERABLE,
-            Spells::IDENTIFY, Spells::TELEPORT_RANDOM}));
+            Spells::SUMMON_PLATE, Spells::TOGGLE_INVULNERABLE, Spells::IDENTIFY,
+            Spells::TELEPORT_RANDOM}));
   }
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
@@ -395,7 +397,8 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     MessageEvent me(nullptr, fmt::format("You healed {} hp", heal));
     eb::EventBus::FireEvent(me);
   } else if (*spell == *Spells::TELEPORT_RANDOM) {
-    auto room = app->hero->currentLocation->rooms[rand() % app->hero->currentLocation->rooms.size()];
+    auto room = app->hero->currentLocation
+                    ->rooms[rand() % app->hero->currentLocation->rooms.size()];
     auto cell = room->cells[rand() % room->cells.size()];
     app->hero->currentCell = cell;
     app->hero->commit("Teleport", 0);

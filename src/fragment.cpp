@@ -56,7 +56,7 @@ std::map<TerrainSpec, std::string> terrainSigns = {
     {TerrainType::STATUE, "&amp;"},
     {TerrainType::ALTAR, "_"},
     // {TerrainType::BUSH, "⇞"},
-       {TerrainType::BUSH, "❞"},
+    {TerrainType::BUSH, "❞"},
 };
 
 std::map<TerrainSpec, std::string> terrainColors = {
@@ -123,9 +123,12 @@ std::map<EnemySpec, std::string> enemyColors = {
 };
 
 std::map<CellSpec, std::string> cellSigns = {
-    {CellType::FLOOR, "⋅"s},       {CellType::WALL, "#"s},
-    {CellType::UNKNOWN, " "s},     {CellType::DOWNSTAIRS, "&gt;"s},
-    {CellType::UPSTAIRS, "&lt;"s}, {CellType::WATER, "="s},
+    {CellType::FLOOR, "⋅"s},
+    {CellType::WALL, "#"s},
+    {CellType::UNKNOWN, " "s},
+    {CellType::DOWNSTAIRS, "&gt;"s},
+    {CellType::UPSTAIRS, "&lt;"s},
+    {CellType::WATER, "="s},
     // {CellType::VOID, "◦"s},
     {CellType::VOID, "⌄"s},
 };
@@ -136,14 +139,12 @@ std::map<CellSpec, std::map<bool, std::string>> cellColors = {
     {CellType::DOWNSTAIRS, {{false, "#aaa"}, {true, "#666"}}},
     {CellType::UPSTAIRS, {{false, "#aaa"}, {true, "#666"}}},
     {CellType::WATER, {{false, "blue"}, {true, "#557"}}},
-    {CellType::VOID, {{false, "#555"}, {true, "#555"}}}
-};
+    {CellType::VOID, {{false, "#555"}, {true, "#555"}}}};
 
 std::map<CellSpec, std::string> cellColorsIlluminated = {
     {CellType::FLOOR, "#765"},      {CellType::WALL, "#cba"},
     {CellType::DOWNSTAIRS, "#cba"}, {CellType::UPSTAIRS, "#cba"},
-    {CellType::WATER, "#77f"},
-    {CellType::VOID, "#555"},
+    {CellType::WATER, "#77f"},      {CellType::VOID, "#555"},
 };
 
 std::map<CellSpec, std::map<bool, std::string>> cellWeights = {
@@ -167,19 +168,21 @@ std::map<std::string, tpl_arg> getCellArgs(std::shared_ptr<Cell> cell) {
     }
 
     if (cell->type != CellType::VOID) {
-    if (cell->hasFeature(CellFeature::CAVE) && cell->type != CellType::WATER) {
-      color = "#897546";
+      if (cell->hasFeature(CellFeature::CAVE) &&
+          cell->type != CellType::WATER) {
+        color = "#897546";
+      }
+      if (cell->hasFeature(CellFeature::BLOOD)) {
+        color = "darkred";
+      }
+      if (cell->hasFeature(CellFeature::MARK1)) {
+        color = "blue";
+      }
+      if (cell->hasFeature(CellFeature::MARK2)) {
+        color = "green";
+      }
     }
-    if (cell->hasFeature(CellFeature::BLOOD)) {
-      color = "darkred";
-    }
-    if (cell->hasFeature(CellFeature::MARK1)) {
-      color = "blue";
-    }
-    if (cell->hasFeature(CellFeature::MARK2)) {
-      color = "green";
-    }
-  }}
+  }
   return {
       {"sign", cellSigns[cell->type]},
       {"color", color},

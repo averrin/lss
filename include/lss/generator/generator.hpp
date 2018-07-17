@@ -7,7 +7,8 @@ class Generator {
 public:
   Generator();
   std::shared_ptr<Location> getLocation(LocationSpec);
-  std::shared_ptr<Location> getRandomLocation(std::shared_ptr<Player>);
+  std::shared_ptr<Location> getRandomLocation(std::shared_ptr<Player>,
+                                              int depth = -1);
 };
 
 #endif // __GENERATOR_H_

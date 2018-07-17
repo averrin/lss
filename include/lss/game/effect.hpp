@@ -147,7 +147,9 @@ public:
   TraitEffect(Trait t) : Effect(AttributeType::TRAITS), trait(t){};
   Trait trait;
   std::string getTitle();
-  std::shared_ptr<Effect> clone() { return std::make_shared<TraitEffect>(trait); };
+  std::shared_ptr<Effect> clone() {
+    return std::make_shared<TraitEffect>(trait);
+  };
   std::variant<float, int> getModifier() { return 0; };
 };
 

@@ -65,18 +65,18 @@ public:
   bool hasTrait(Trait t) {
     auto allTraits = traits;
 
-  for (auto s : equipment->slots) {
-    if (s->item == nullptr ||
-        std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
-                  s->item->type.wearableType) == s->acceptTypes.end()) {
-      continue;
-    }
-    for (auto e : s->item->effects) {
-      if(auto et = std::dynamic_pointer_cast<TraitEffect>(e)){
-        allTraits.push_back(et->trait);
+    for (auto s : equipment->slots) {
+      if (s->item == nullptr ||
+          std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
+                    s->item->type.wearableType) == s->acceptTypes.end()) {
+        continue;
+      }
+      for (auto e : s->item->effects) {
+        if (auto et = std::dynamic_pointer_cast<TraitEffect>(e)) {
+          allTraits.push_back(et->trait);
+        }
       }
     }
-  }
     return std::find(allTraits.begin(), allTraits.end(), t) != allTraits.end();
   }
   bool hasLight();

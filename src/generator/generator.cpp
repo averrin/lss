@@ -3,7 +3,6 @@
 #include <iostream>
 #include <set>
 
-#include "lss/utils.hpp"
 #include "lss/game/door.hpp"
 #include "lss/game/enemy.hpp"
 #include "lss/game/item.hpp"
@@ -12,11 +11,12 @@
 #include "lss/generator/generator.hpp"
 #include "lss/generator/room.hpp"
 #include "lss/generator/spawnTable.hpp"
+#include "lss/utils.hpp"
 #include "rang.hpp"
 
 Generator::Generator() {}
 
-bool DEBUG = true;
+bool DEBUG = false;
 void log(std::string msg) {
   if (DEBUG)
     fmt::print("{}\n", msg);
@@ -535,9 +535,10 @@ void placeEnemies(std::shared_ptr<Location> location, int threat) {
       auto c = cells[rand() % cells.size()];
 
       pather->Reset();
-      int result = pather->Solve(c.get(),
-                             location->enterCell.get(), &path, &totalCost);
-      if (result != micropather::MicroPather::SOLVED) continue;
+      int result =
+          pather->Solve(c.get(), location->enterCell.get(), &path, &totalCost);
+      if (result != micropather::MicroPather::SOLVED)
+        continue;
 
       auto enemy = makeEnemy(location, c, type);
       location->objects.push_back(enemy);
@@ -554,10 +555,13 @@ void makeRiver(std::shared_ptr<Location> location) {
   paste(river.second, location, 0, 0);
 }
 
+// TODO: respect void on prev location
 std::shared_ptr<Location>
-Generator::getRandomLocation(std::shared_ptr<Player> hero) {
-  int depth = 0;
-  if (hero->currentLocation != nullptr) {
+Generator::getRandomLocation(std::shared_ptr<Player> hero, int depth) {
+  if (depth == -1 && hero->currentLocation == nullptr) {
+    depth = 0;
+  }
+  if (depth == -1) {
     depth = hero->currentLocation->depth + 1;
   }
   auto spec = LocationSpec{"Dungeon"};
@@ -795,18 +799,18 @@ void placeCaves(std::shared_ptr<Location> location) {
           continue;
         }
       } else if (c->type == CellType::FLOOR && R::R() < P::CAVE_GRASS) {
-        if (R::R() < P::CAVE_BUSH || std::find_if(n.begin(), n.end(), [&](auto nc){
-          auto t = utils::castObjects<Terrain>(location->getObjects(nc));
-          return t.size() == 1 && t.front()->type == TerrainType::BUSH;
-        }) != n.end()) {
+        if (R::R() < P::CAVE_BUSH ||
+            std::find_if(n.begin(), n.end(), [&](auto nc) {
+              auto t = utils::castObjects<Terrain>(location->getObjects(nc));
+              return t.size() == 1 && t.front()->type == TerrainType::BUSH;
+            }) != n.end()) {
           auto s = std::make_shared<Terrain>(TerrainType::BUSH);
           s->currentCell = c;
           location->objects.push_back(s);
         } else {
-        auto grass = Prototype::GRASS->clone();
-        grass->currentCell = c;
-        location->objects.push_back(grass);
-          
+          auto grass = Prototype::GRASS->clone();
+          grass->currentCell = c;
+          location->objects.push_back(grass);
         }
         continue;
       }
@@ -840,10 +844,9 @@ void makeCavePassage(std::shared_ptr<Location> location) {
           s->currentCell = c;
           location->objects.push_back(s);
         } else {
-        auto grass = Prototype::GRASS->clone();
-        grass->currentCell = c;
-        location->objects.push_back(grass);
-          
+          auto grass = Prototype::GRASS->clone();
+          grass->currentCell = c;
+          location->objects.push_back(grass);
         }
         continue;
       }
@@ -898,11 +901,12 @@ void placeAltar(std::shared_ptr<Location> location) {
   }
 }
 
-std::shared_ptr<Room> placeBlob(std::shared_ptr<Location> location, CellSpec type) {
+std::shared_ptr<Room> placeBlob(std::shared_ptr<Location> location,
+                                CellSpec type) {
   auto room = getRoom(16, 3, 16, 3, CellType::WALL);
   auto ltc = getRandomCell(location);
   // auto ltc = room[]
-  while (ltc->x + room->width >= WIDTH || ltc->y + room->height >= HEIGHT ) {
+  while (ltc->x + room->width >= WIDTH || ltc->y + room->height >= HEIGHT) {
     ltc = getRandomCell(location, CellType::FLOOR);
   }
 
@@ -928,34 +932,44 @@ std::shared_ptr<Room> placeBlob(std::shared_ptr<Location> location, CellSpec typ
         if (vn < 4) {
           c->type = CellType::WALL;
           c->passThrough = false;
-      } else if (c->type != type) {
-        if (vn >= 6) {
-          c->type = type;
-          c->passThrough = type.passThrough;
-          c->seeThrough = type.seeThrough;
+        } else if (c->type != type) {
+          if (vn >= 6) {
+            c->type = type;
+            c->passThrough = type.passThrough;
+            c->seeThrough = type.seeThrough;
+          }
+        }
+      }
+    }
+
+    for (auto c : room->cells) {
+      auto n = location->getNeighbors(c);
+      if (std::count_if(n.begin(), n.end(),
+                        [type](auto nc) { return nc->type == type; }) == 0) {
+        // c->type = CellType::FLOOR;
+      }
+    }
+    if (location->type.type == LocationType::DUNGEON) {
+      for (auto c : room->cells) {
+        if (c->type == CellType::WALL) {
+          c->type = CellType::FLOOR;
+        }
+      }
+    } else {
+      for (auto c : room->cells) {
+        auto n = location->getNeighbors(c);
+        auto fn =
+            std::count_if(n.begin(), n.end(), [](std::shared_ptr<Cell> nc) {
+              return nc->type == CellType::FLOOR;
+            });
+        if (fn == 0) {
+          c->type = CellType::UNKNOWN;
         }
       }
     }
   }
 
-  for (auto c : room->cells) {
-      auto n = location->getNeighbors(c);
-      if (std::count_if(n.begin(), n.end(), [type](auto nc) {
-        return nc->type == type;
-      }) == 0) {
-        // c->type = CellType::FLOOR;
-      }
-  }
-  for (auto c : room->cells) {
-    if (c->type == CellType::WALL) {
-      c->type = CellType::FLOOR;
-    }
-  }
-
-  }
-
   return room;
-  
 }
 
 std::shared_ptr<Room> placeVoid(std::shared_ptr<Location> location) {
@@ -966,10 +980,12 @@ std::shared_ptr<Room> placeLake(std::shared_ptr<Location> location) {
   return placeBlob(location, CellType::WATER);
 }
 
+//FIXME: sometimes generation hanging forever=(
 std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   auto t0 = std::chrono::system_clock::now();
 
   auto location = std::make_shared<Location>(spec);
+  location->depth = spec.threat;
 
   if (spec.type == LocationType::DUNGEON) {
     placeRooms(location);
@@ -1021,7 +1037,6 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
     placeAltar(location);
   }
 
-
   for (auto r : location->cells) {
     for (auto c : r) {
       if (c->type == CellType::FLOOR && R::R() < P::BLOOD) {
@@ -1035,9 +1050,9 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
         c->features.push_back(cf);
       }
       if (c->room != nullptr &&
-                 (c->room->type == RoomType::CAVERN ||
-                  c->room->type == RoomType::CAVE) &&
-                 c->type == CellType::FLOOR && R::R() < P::POND) {
+          (c->room->type == RoomType::CAVERN ||
+           c->room->type == RoomType::CAVE) &&
+          c->type == CellType::FLOOR && R::R() < P::POND) {
         c->type = CellType::WATER;
       }
     }
@@ -1046,7 +1061,8 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   auto t1 = std::chrono::system_clock::now();
   using milliseconds = std::chrono::duration<double, std::milli>;
   milliseconds ms = t1 - t0;
-  std::cout << "location gen time taken: " << rang::fg::green << ms.count()
+  std::cout << rang::fg::yellow << location->depth << rang::style::reset
+            << " location gen time taken: " << rang::fg::green << ms.count()
             << rang::style::reset << '\n';
   return location;
 }

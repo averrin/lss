@@ -223,7 +223,7 @@ void Player::onEvent(DigCommandEvent &e) {
   eb::EventBus::FireEvent(de);
 }
 
-//TODO: fix stops parallel rooms (maybe count  < 3...)
+// TODO: fix stops parallel rooms (maybe count  < 3...)
 void Player::onEvent(WalkCommandEvent &e) {
   auto enemies = utils::castObjects<Enemy>(currentLocation->objects);
   while (move(e.direction)) {
@@ -246,7 +246,8 @@ void Player::onEvent(WalkCommandEvent &e) {
     auto nbrs = currentLocation->getNeighbors(currentCell);
     if (std::find_if(nbrs.begin(), nbrs.end(), [&](std::shared_ptr<Cell> c) {
           return /*utils::castObjects<Door>(currentLocation->getObjects(c))
-                     .size() > 0 || */(c->type == CellType::FLOOR && c->room != currentCell->room);
+                     .size() > 0 || */
+              (c->type == CellType::FLOOR && c->room != currentCell->room);
         }) != nbrs.end()) {
       break;
     }

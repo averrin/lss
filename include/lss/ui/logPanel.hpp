@@ -35,7 +35,7 @@ public:
   LogPanel(std::shared_ptr<State> state, std::shared_ptr<Player> hero);
   ~LogPanel();
   std::vector<eb::HandlerRegistrationPtr> handlers;
-std::shared_ptr<Player> hero;
+  std::shared_ptr<Player> hero;
   void setContent(Fragments content);
 
   std::deque<std::shared_ptr<LogLine>> lines;

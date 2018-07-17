@@ -66,7 +66,8 @@ public:
 
   // std::map<std::string, std::shared_ptr<Location>> locations;
   std::shared_ptr<Location> loadMap(std::string);
-  std::vector<std::shared_ptr<Location>> locations;
+  std::map<int, std::shared_ptr<Location>> locations;
+  std::vector<std::thread> threads;
   int currentLevel = 0;
   bool debug = false;
 

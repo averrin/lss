@@ -23,7 +23,7 @@ const Trait CAN_SWIM = {"Swimming"};
 const Trait INVULNERABLE = {"Invulnerable"};
 const Trait MOB = {"Mob"};
 
-//TODO: make it works for hero
+// TODO: make it works for hero
 const Trait DEADLY_SHADOWS = {"Deadly shadows"};
 const Trait SHADOW_RUNNER = {"Shadow runner"};
 } // namespace Traits

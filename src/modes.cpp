@@ -324,15 +324,19 @@ bool NormalMode::processKey(KeyEvent event) {
   case KeyEvent::KEY_j:
   case KeyEvent::KEY_h:
   case KeyEvent::KEY_l:
-    //TODO: create command
+    // TODO: create command
     if (event.isShiftDown()) {
       auto slot = app->hero->getSlot(WearableType::LIGHT);
       if (slot->item != nullptr) {
         app->hero->unequip(slot);
       } else {
-        if (auto torch = std::find_if(app->hero->inventory.begin(), app->hero->inventory.end(), [](auto i) {
-              return i->type.wearableType == WearableType::LIGHT && i->durability > 0;
-            }); torch != app->hero->inventory.end()) {
+        if (auto torch = std::find_if(
+                app->hero->inventory.begin(), app->hero->inventory.end(),
+                [](auto i) {
+                  return i->type.wearableType == WearableType::LIGHT &&
+                         i->durability > 0;
+                });
+            torch != app->hero->inventory.end()) {
           app->hero->equip(slot, *torch);
         }
       }
@@ -415,7 +419,8 @@ bool NormalMode::processKey(KeyEvent event) {
     break;
   case KeyEvent::KEY_r:
     // app->hero->currentLocation->leave(app->hero);
-    // app->hero->currentLocation = app->generator->getRandomLocation(app->hero);
+    // app->hero->currentLocation =
+    // app->generator->getRandomLocation(app->hero);
     // app->hero->currentLocation->enter(app->hero,
     //                                   app->hero->currentLocation->enterCell);
     // app->state->fragments.assign(

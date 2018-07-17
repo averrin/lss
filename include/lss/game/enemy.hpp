@@ -175,7 +175,7 @@ public:
   micropather::MPVector<void *> path;
   micropather::MPVector<void *> pathToHero;
   int step;
-  micropather::MicroPather* pather = nullptr;
+  micropather::MicroPather *pather = nullptr;
   bool randomPath();
 
   virtual void onEvent(CommitEvent &e) override;
