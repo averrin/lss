@@ -24,6 +24,7 @@ Yet another unfinished roguelike game.
 - [X] Cell & location features
 - [X] Light/shadow-related traits
 - [X] Better event log
+- [ ] Hero status page
 - [ ] After death stats
 - [ ] Refactor effects system
 - [ ] Weights
@@ -32,6 +33,7 @@ Yet another unfinished roguelike game.
 - [ ] Ranged selection and weapons
 - [X] Randomized monsters and loot
 - [ ] Leveling
+- [ ] Passthrough seed
 - [ ] Hundreds of other features...
 
 ## Controls
@@ -53,6 +55,7 @@ Yet another unfinished roguelike game.
 * e — equip [`/equip`, `/eq`]
 * shift+d — drop [`/drop`, `/dr`]
 * shift+u — use [`/use`, `/u`]
+* shift+l — [un]equip light [`/light`, `/l`]
 * i — inventory [`/inventory`, `/i`]
 * . — wait [`/wait`]
 * z — cast spell [`/zap`, `/z`]

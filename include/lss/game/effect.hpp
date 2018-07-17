@@ -142,6 +142,15 @@ public:
   std::variant<float, int> getModifier() { return R::get(modifier); };
 };
 
+class TraitEffect : public Effect {
+public:
+  TraitEffect(Trait t) : Effect(AttributeType::TRAITS), trait(t){};
+  Trait trait;
+  std::string getTitle();
+  std::shared_ptr<Effect> clone() { return std::make_shared<TraitEffect>(trait); };
+  std::variant<float, int> getModifier() { return 0; };
+};
+
 typedef std::vector<std::shared_ptr<Effect>> Effects;
 
 #endif

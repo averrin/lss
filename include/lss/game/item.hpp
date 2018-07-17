@@ -100,8 +100,7 @@ const auto PLATE = std::make_shared<Item>(
     ItemType::PLATE, Effects{std::make_shared<ArmorValue>(R::I(3, 5))});
 const auto GOD_PLATE =
     std::make_shared<Item>("GoD pLaTe", ItemType::PLATE,
-                           Effects{std::make_shared<ArmorValue>(100),
-                                   std::make_shared<HPModifier>(1000)});
+                           Effects{std::make_shared<TraitEffect>(Traits::INVULNERABLE)});
 const auto BASIC_LEATHER_ARMOR = std::make_shared<Item>(
     ItemType::LEATHER_ARMOR, Effects{std::make_shared<ArmorValue>(1)});
 const auto LEATHER_ARMOR = std::make_shared<Item>(
@@ -115,7 +114,10 @@ const auto GREAVES = std::make_shared<Item>(
 const auto BOOTS = std::make_shared<Item>(
     ItemType::BOOTS, Effects{std::make_shared<ArmorValue>(R::I(1, 3))});
 
-const auto GRASS = std::make_shared<Item>("healing herb", ItemType::GRASS, 1);
+const auto BOOTS_OF_FLY = std::make_shared<Item>("flying boots",
+    ItemType::BOOTS, Effects{std::make_shared<TraitEffect>(Traits::FLY)});
+
+const auto GRASS = std::make_shared<Item>("just herb", ItemType::GRASS, 1);
 
 const auto SPEED_RING =
     std::make_shared<Item>("ring of lightning", ItemType::GOLD_RING,
@@ -142,6 +144,11 @@ const auto POISON_DAGGER = std::make_shared<Item>(
     ItemType::DAGGER, Effects{std::make_shared<MeleeDamage>(2, 3, 3),
                               std::make_shared<CritModifier>(0.2),
                               std::make_shared<Poison>(3, 3000)});
+
+const auto SWORD_OF_DUALWIELD = std::make_shared<Item>("sword of dualwield",
+    ItemType::SWORD, Effects{std::make_shared<MeleeDamage>(
+                         R::I(-2, 2), R::I(2, 4), R::I(2, 4)),
+                            std::make_shared<TraitEffect>(Traits::DUAL_WIELD)});
 
 const auto POTION_HEAL_LESSER = std::make_shared<Consumable>(
     fmt::format("{} potion", utils::getRandomColor()), "lesser heal potion",

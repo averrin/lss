@@ -6,6 +6,8 @@
 - statues & altars
 - bushes
 - teleport spell
+- lakes && void
+- permanent trait effect (for items)
 
 
 ### 0.0.7

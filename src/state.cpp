@@ -154,6 +154,8 @@ const Fragments State::HELP = {F(
     "`/dr`]<br>"
     "• <span color='{{orange}}' weight='bold'>shift+u</span> — use [`/use`, "
     "`/u`]<br>"
+    "• <span color='{{orange}}' weight='bold'>shift+l</span> — [un]equip [`/light`, "
+    "`/l`]<br>"
     "• <span color='{{orange}}' weight='bold'>z</span> — cast spell "
     "[`/zap`]<br>"
     "• <span color='{{orange}}' weight='bold'>i</span> — inventory "

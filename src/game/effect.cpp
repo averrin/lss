@@ -30,3 +30,4 @@ std::string ArmorValue::getTitle() {
 
 std::string Poison::getTitle() { return fmt::format("poisoned"); }
 std::string Vampire::getTitle() { return fmt::format("life steal"); }
+std::string TraitEffect::getTitle() { return fmt::format(trait.name); }

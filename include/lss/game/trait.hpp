@@ -20,10 +20,12 @@ const Trait MIND_SIGHT = {"Mind sight"};
 const Trait MAGIC_TORCH = {"Magic torch"};
 const Trait FLY = {"Fly"};
 const Trait CAN_SWIM = {"Swimming"};
-const Trait DEADLY_SHADOWS = {"Deadly shadows"};
-const Trait SHADOW_RUNNER = {"Shadow runner"};
 const Trait INVULNERABLE = {"Invulnerable"};
 const Trait MOB = {"Mob"};
+
+//TODO: make it works for hero
+const Trait DEADLY_SHADOWS = {"Deadly shadows"};
+const Trait SHADOW_RUNNER = {"Shadow runner"};
 } // namespace Traits
 
 #endif // __TRAIT_H_
