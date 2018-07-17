@@ -29,9 +29,8 @@ namespace P {
 float CAVERN = 0.30;
 float DOOR = 0.40;
 float CAVE_PASSAGE = 0.40;
-float RIVER = 0.10;
+float RIVER = 0.20;
 float TORCHES = 0.40;
-float ENEMY = 0.02;
 float CAVE_ROCK = 0.10;
 float CAVE_GRASS = 0.1;
 float CAVE_BUSH = 0.4;
@@ -40,8 +39,10 @@ float BLOOD = 0.01;
 float POND = 0.007;
 float BONES = 0.004;
 // TODO: move to location features
-float STATUE = 0.0004;
-float ALTAR = 0.0004;
+float STATUE = 0.1;
+float ALTAR = 0.1;
+float VOID = 0.1;
+float LAKE = 0.1;
 } // namespace P
 
 Cells fill(int h, int w, CellSpec type) {
@@ -548,14 +549,26 @@ Generator::getRandomLocation(std::shared_ptr<Player> hero) {
     spec.cellFeatures.push_back(CellFeature::CAVE);
     spec.name = "Cavern";
   }
-  if (R::R() < P::CAVE_PASSAGE) {
+  if (spec.type == LocationType::DUNGEON && R::R() < P::CAVE_PASSAGE) {
     spec.features.push_back(LocationFeature::CAVE_PASSAGE);
   }
-  if (R::R() < P::RIVER) {
+  if (spec.type == LocationType::CAVERN && R::R() < P::RIVER) {
     spec.features.push_back(LocationFeature::RIVER);
   }
   if (R::R() < P::TORCHES) {
     spec.features.push_back(LocationFeature::TORCHES);
+  }
+  if (R::R() < P::STATUE) {
+    spec.features.push_back(LocationFeature::STATUE);
+  }
+  if (spec.type == LocationType::DUNGEON && R::R() < P::ALTAR) {
+    spec.features.push_back(LocationFeature::ALTAR);
+  }
+  if (R::R() < P::VOID) {
+    spec.features.push_back(LocationFeature::VOID);
+  }
+  if (spec.type == LocationType::CAVERN && R::R() < P::LAKE) {
+    spec.features.push_back(LocationFeature::LAKE);
   }
   spec.threat = depth;
   auto l = getLocation(spec);
@@ -821,6 +834,58 @@ void makeCavePassage(std::shared_ptr<Location> location) {
   }
 }
 
+void placeStatue(std::shared_ptr<Location> location) {
+  log("place statue");
+  auto room = location->rooms[rand() % location->rooms.size()];
+  while (room->type != RoomType::HALL && room->type != RoomType::CAVERN) {
+    room = location->rooms[rand() % location->rooms.size()];
+  }
+  auto cell = getRandomCell(room, CellType::FLOOR);
+  while (location->getObjects(cell).size() != 0) {
+    cell = getRandomCell(room, CellType::FLOOR);
+  }
+
+  room->features.push_back(RoomFeature::STATUE);
+  auto s = std::make_shared<Terrain>(TerrainType::STATUE);
+  s->currentCell = cell;
+  location->objects.push_back(s);
+  for (auto n : location->getNeighbors(cell)) {
+    n->features.push_back(CellFeature::BLOOD);
+    if (R::R() < 0.2 && n->type == CellType::FLOOR) {
+      auto bones = std::make_shared<Item>(ItemType::BONES, 1);
+      bones->currentCell = n;
+      location->objects.push_back(bones);
+    }
+  }
+}
+
+void placeAltar(std::shared_ptr<Location> location) {
+  log("place altar");
+  auto room = location->rooms[rand() % location->rooms.size()];
+  while (room->type != RoomType::HALL && room->type != RoomType::CAVERN) {
+    room = location->rooms[rand() % location->rooms.size()];
+  }
+  auto cell = getRandomCell(room, CellType::FLOOR);
+  while (location->getObjects(cell).size() != 0) {
+    cell = getRandomCell(room, CellType::FLOOR);
+  }
+
+  room->features.push_back(RoomFeature::ALTAR);
+  auto s = std::make_shared<Terrain>(TerrainType::ALTAR);
+  s->currentCell = cell;
+  location->objects.push_back(s);
+  if (R::R() < 0.5) {
+    for (auto n : location->getNeighbors(cell)) {
+      n->features.push_back(CellFeature::BLOOD);
+    }
+  }
+}
+
+void placeVoid(std::shared_ptr<Location> location) {
+  }
+void placeLake(std::shared_ptr<Location> location) {
+  }
+
 std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   auto t0 = std::chrono::system_clock::now();
 
@@ -856,6 +921,22 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
     placeTorches(location);
   }
 
+  if (location->hasFeature(LocationFeature::STATUE)) {
+    placeStatue(location);
+  }
+
+  if (location->hasFeature(LocationFeature::ALTAR)) {
+    placeAltar(location);
+  }
+
+  if (location->hasFeature(LocationFeature::VOID)) {
+    placeVoid(location);
+  }
+
+  if (location->hasFeature(LocationFeature::LAKE)) {
+    placeLake(location);
+  }
+
   for (auto r : location->cells) {
     for (auto c : r) {
       if (c->type == CellType::FLOOR && R::R() < P::BLOOD) {
@@ -868,37 +949,7 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
       for (auto cf : location->type.cellFeatures) {
         c->features.push_back(cf);
       }
-      if (c->room != nullptr && c->room->type != RoomType::PASSAGE &&
-          c->type == CellType::FLOOR && location->getObjects(c).size() == 0 &&
-          R::R() < P::STATUE) {
-        c->room->features.push_back(RoomFeature::STATUE);
-        auto s = std::make_shared<Terrain>(TerrainType::STATUE);
-        s->currentCell = c;
-        location->objects.push_back(s);
-        for (auto n : location->getNeighbors(c)) {
-          n->features.push_back(CellFeature::BLOOD);
-          if (R::R() < 0.3 && n->type == CellType::FLOOR) {
-            auto bones = std::make_shared<Item>(ItemType::BONES, 1);
-            bones->currentCell = n;
-            location->objects.push_back(bones);
-          }
-        }
-      } else if (c->room != nullptr && c->room->type != RoomType::PASSAGE &&
-                 c->type == CellType::FLOOR &&
-                 location->getObjects(c).size() == 0 && R::R() < P::ALTAR) {
-        c->room->features.push_back(RoomFeature::ALTAR);
-        auto s = std::make_shared<Terrain>(TerrainType::ALTAR);
-        s->currentCell = c;
-        location->objects.push_back(s);
-        for (auto n : location->getNeighbors(c)) {
-          n->features.push_back(CellFeature::BLOOD);
-          if (R::R() < 0.3 && n->type == CellType::FLOOR) {
-            auto bones = std::make_shared<Item>(ItemType::BONES, 1);
-            bones->currentCell = n;
-            location->objects.push_back(bones);
-          }
-        }
-      } else if (c->room != nullptr &&
+      if (c->room != nullptr &&
                  (c->room->type == RoomType::CAVERN ||
                   c->room->type == RoomType::CAVE) &&
                  c->type == CellType::FLOOR && R::R() < P::POND) {

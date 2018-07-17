@@ -17,6 +17,8 @@ float NIGHT_VISION_DISTANCE = 10;
 Creature::Creature() {
   passThrough = false;
   seeThrough = false;
+
+  zIndex = 2;
 }
 
 float Attribute::operator()(Creature *c) {

@@ -22,6 +22,7 @@ public:
   bool passThrough = true;
   bool seeThrough = true;
   std::string name;
+  int zIndex = 0;
 
   std::vector<eb::HandlerRegistrationPtr> handlers;
   std::shared_ptr<Cell> currentCell;

@@ -16,6 +16,10 @@ enum LocationFeature {
   CAVE_PASSAGE,
   RIVER,
   TORCHES,
+  STATUE,
+  ALTAR,
+  LAKE,
+  VOID
 };
 
 enum LocationType { DUNGEON, CAVERN };

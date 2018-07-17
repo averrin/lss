@@ -13,24 +13,38 @@ class Item : public Object {
 public:
   Item(std::string n, ItemSpec t)
       : Object(), type(t), unidName(type.name), name(n),
-        durability(type.durability) {}
+        durability(type.durability) {
+    zIndex = 1;
+  }
   Item(std::string un, std::string n, ItemSpec t)
-      : Object(), type(t), unidName(un), name(n), durability(type.durability) {}
+      : Object(), type(t), unidName(un), name(n), durability(type.durability) {
+    zIndex = 1;
+  }
   Item(ItemSpec t)
       : Object(), type(t), unidName(type.name), name(t.name),
-        durability(type.durability) {}
+        durability(type.durability) {
+    zIndex = 1;
+  }
   Item(ItemSpec t, int c)
       : Object(), type(t), count(c), unidName(t.name), name(t.name),
-        durability(type.durability) {}
+        durability(type.durability) {
+    zIndex = 1;
+  }
   Item(std::string n, ItemSpec t, int c)
       : Object(), type(t), count(c), unidName(t.name), name(n),
-        durability(type.durability) {}
+        durability(type.durability) {
+    zIndex = 1;
+  }
   Item(ItemSpec t, Effects e)
       : Object(), type(t), effects(e), unidName(t.name), name(t.name),
-        durability(type.durability) {}
+        durability(type.durability) {
+    zIndex = 1;
+  }
   Item(std::string n, ItemSpec t, Effects e)
       : Object(), type(t), effects(e), unidName(t.name), name(n),
-        durability(type.durability) {}
+        durability(type.durability) {
+    zIndex = 1;
+  }
   ItemSpec type;
   Effects effects;
   int count = 0;

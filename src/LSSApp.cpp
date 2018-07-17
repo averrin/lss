@@ -172,9 +172,8 @@ void LSSApp::invalidate() {
 
   auto objects = hero->currentLocation->objects;
   std::sort(objects.begin(), objects.end(),
-            [](std::shared_ptr<Object> a, std::shared_ptr<Object> b) {
-              return std::dynamic_pointer_cast<Creature>(b) &&
-                     !std::dynamic_pointer_cast<Creature>(a);
+            [](auto a, auto b) {
+              return a->zIndex < b->zIndex;
             });
 
   for (auto o : objects) {

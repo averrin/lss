@@ -119,7 +119,7 @@ std::map<EnemySpec, std::string> enemyColors = {
     {EnemyType::OGRE, "darkgreen"},
     {EnemyType::PIXI, "pink"},
     {EnemyType::GOBLIN_LIEUTENANT, "#008b8b"},
-    {EnemyType::GOBLIN_ROGUE, "darkgreen"},
+    {EnemyType::GOBLIN_ROGUE, "darkslategray"},
 };
 
 std::map<CellSpec, std::string> cellSigns = {

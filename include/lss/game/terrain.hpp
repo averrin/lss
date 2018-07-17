@@ -23,6 +23,7 @@ public:
   Terrain(TerrainSpec t) : Object(), type(t) {
     seeThrough = t.seeThrough;
     passThrough = t.passThrough;
+    zIndex = 2;
   }
   TerrainSpec type;
 };
