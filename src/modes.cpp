@@ -414,15 +414,19 @@ bool NormalMode::processKey(KeyEvent event) {
     app->processCommand("zap");
     break;
   case KeyEvent::KEY_r:
-    app->hero->currentLocation->leave(app->hero);
-    app->hero->currentLocation = app->generator->getRandomLocation(app->hero);
-    app->hero->currentLocation->enter(app->hero,
-                                      app->hero->currentLocation->enterCell);
-    app->state->fragments.assign(
-        app->hero->currentLocation->cells.size() *
-            (app->hero->currentLocation->cells.front().size() + 1),
-        std::make_shared<CellSign>(std::make_shared<Cell>(CellType::UNKNOWN)));
-    app->hero->commit("regen location", 0);
+    // app->hero->currentLocation->leave(app->hero);
+    // app->hero->currentLocation = app->generator->getRandomLocation(app->hero);
+    // app->hero->currentLocation->enter(app->hero,
+    //                                   app->hero->currentLocation->enterCell);
+    // app->state->fragments.assign(
+    //     app->hero->currentLocation->cells.size() *
+    //         (app->hero->currentLocation->cells.front().size() + 1),
+    //     std::make_shared<CellSign>(std::make_shared<Cell>(CellType::UNKNOWN)));
+
+    app->hero->currentCell = app->hero->currentLocation->exitCell;
+    app->processCommand("down");
+
+    // app->hero->commit("regen location", 0);
 
     break;
   case KeyEvent::KEY_SLASH:

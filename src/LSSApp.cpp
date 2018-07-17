@@ -117,6 +117,11 @@ void LSSApp::startGame() {
   l->depth = 0;
   locations = {l};
 
+  bg = std::thread([&]() {
+    for (auto n = 0; n < 25; n++) {
+      locations.push_back(generator->getRandomLocation(hero));
+    }});
+
   state->clear();
   state->fragments.assign(
       l->cells.size() * (l->cells.front().size() + 1),

@@ -113,6 +113,8 @@ public:
   std::string typedCommand;
   std::string pendingCommand;
   bool needRedraw = true;
+
+  std::thread bg;
 };
 
 #endif // __LSSAPP_H_
