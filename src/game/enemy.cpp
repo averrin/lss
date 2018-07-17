@@ -128,6 +128,10 @@ void Enemy::onEvent(CommitEvent &e) {
     return;
   }
 
+  if (pather == nullptr) {
+    pather = new micropather::MicroPather(currentLocation.get());
+  }
+
   actionPoints += e.actionPoints;
 
   // TODO: add lastheropoint and attack hero if its near
@@ -149,12 +153,10 @@ void Enemy::onEvent(CommitEvent &e) {
         actionPoints -= attackCost;
       }
     } else {
-      auto pather = new micropather::MicroPather(currentLocation.get());
       float totalCost = 0;
       pather->Reset();
       int result = pather->Solve(currentCell.get(), hero->currentCell.get(),
                                  &path, &totalCost);
-      delete pather;
       if (result != micropather::MicroPather::SOLVED) {
         // TODO: who print this? fix it.
         fmt::print("cannot find path to hero [{}.{} -> {}.{}]\n",

@@ -39,7 +39,7 @@ void HeroLine::update() {
         });
     lightDurability = lightSlot->item->durability;
   }
-  std::string locationFeatures = "___";
+  std::string locationFeatures = "_______";
   if (hero->currentLocation->hasFeature(LocationFeature::TORCHES)) {
     locationFeatures[0] = 'T';
   }
@@ -48,6 +48,18 @@ void HeroLine::update() {
   }
   if (hero->currentLocation->hasFeature(LocationFeature::RIVER)) {
     locationFeatures[2] = 'R';
+  }
+  if (hero->currentLocation->hasFeature(LocationFeature::STATUE)) {
+    locationFeatures[3] = 'S';
+  }
+  if (hero->currentLocation->hasFeature(LocationFeature::ALTAR)) {
+    locationFeatures[4] = 'A';
+  }
+  if (hero->currentLocation->hasFeature(LocationFeature::VOID)) {
+    locationFeatures[5] = 'V';
+  }
+  if (hero->currentLocation->hasFeature(LocationFeature::LAKE)) {
+    locationFeatures[6] = 'L';
   }
   setContent({
       F(fmt::format("<b>{}</b> [{}]", hero->name, hero->level)),

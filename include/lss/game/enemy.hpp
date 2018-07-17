@@ -40,7 +40,7 @@ public:
 namespace EnemyType {
 EnemySpec const RAT = {
     "rat", 0,
-    2, 10, 1,
+    2, 3, 1,
     1, 3, 0,
     LootBox{},
     {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB},
@@ -48,7 +48,7 @@ EnemySpec const RAT = {
 };
 EnemySpec const BAT = {
     "bat", 0,
-    1.5, 10, 1,
+    1.5, 3, 1,
     1, 3, 0,
     LootBox{1, {}},
     {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB, Traits::FLY},
@@ -56,7 +56,7 @@ EnemySpec const BAT = {
 };
 EnemySpec const BAT_LARGE = {
     "large bat", 0,
-    1.5, 20, 1,
+    1.5, 10, 1,
     2, 3, 0,
     LootBox{100, {}},
     {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB, Traits::FLY},
@@ -175,6 +175,7 @@ public:
   micropather::MPVector<void *> path;
   micropather::MPVector<void *> pathToHero;
   int step;
+  micropather::MicroPather* pather = nullptr;
   bool randomPath();
 
   virtual void onEvent(CommitEvent &e) override;

@@ -16,7 +16,7 @@
 
 Generator::Generator() {}
 
-bool DEBUG = false;
+bool DEBUG = true;
 void log(std::string msg) {
   if (DEBUG)
     fmt::print("{}\n", msg);
@@ -38,11 +38,11 @@ float CAVERN_WALL = 0.35;
 float BLOOD = 0.01;
 float POND = 0.007;
 float BONES = 0.004;
-// TODO: move to location features
+
 float STATUE = 0.1;
 float ALTAR = 0.1;
-float VOID = 0.1;
-float LAKE = 0.1;
+float VOID = 0.5;
+float LAKE = 0.5;
 } // namespace P
 
 Cells fill(int h, int w, CellSpec type) {
@@ -113,10 +113,13 @@ auto getRandomCell(std::shared_ptr<Room> room, CellSpec type) {
   return cell;
 }
 
+auto getRandomCell(std::shared_ptr<Location> location) {
+  auto room = location->rooms[rand() % location->rooms.size()];
+  return room->cells[rand() % room->cells.size()];
+}
+
 auto getRandomCell(std::shared_ptr<Location> location, CellSpec type) {
-  auto room = location->rooms.size() > 1
-                  ? location->rooms[rand() % location->rooms.size()]
-                  : location->rooms.front();
+  auto room = location->rooms[rand() % location->rooms.size()];
   return getRandomCell(room, type);
 }
 
@@ -131,6 +134,7 @@ void placeWalls(std::shared_ptr<Location> location) {
                                      return c->type == CellType::FLOOR ||
                                             c->type == CellType::DOWNSTAIRS ||
                                             c->type == CellType::WATER ||
+                                            c->type == CellType::VOID ||
                                             c->type == CellType::UPSTAIRS;
                                    });
             nc != n.end()) {
@@ -467,6 +471,9 @@ void placeLoot(std::shared_ptr<Location> location, int threat) {
       c = getRandomCell(room, CellType::FLOOR);
       n++;
     }
+    if (n == 20) {
+      continue;
+    }
 
     auto loot = table.open();
     for (auto item : loot) {
@@ -481,6 +488,10 @@ void placeLoot(std::shared_ptr<Location> location, int threat) {
 void placeEnemies(std::shared_ptr<Location> location, int threat) {
   log("place enemies");
   std::map<const EnemySpec, float> table;
+  auto pather = new micropather::MicroPather(location.get());
+  micropather::MPVector<void *> path;
+  float totalCost = 0;
+
   if (location->type.type == LocationType::DUNGEON) {
     if (threat >= SpawnTable::DUNGEON.size())
       threat = SpawnTable::DUNGEON.size() - 1;
@@ -522,6 +533,12 @@ void placeEnemies(std::shared_ptr<Location> location, int threat) {
         }
       }
       auto c = cells[rand() % cells.size()];
+
+      pather->Reset();
+      int result = pather->Solve(c.get(),
+                             location->enterCell.get(), &path, &totalCost);
+      if (result != micropather::MicroPather::SOLVED) continue;
+
       auto enemy = makeEnemy(location, c, type);
       location->objects.push_back(enemy);
     }
@@ -881,10 +898,73 @@ void placeAltar(std::shared_ptr<Location> location) {
   }
 }
 
-void placeVoid(std::shared_ptr<Location> location) {
+std::shared_ptr<Room> placeBlob(std::shared_ptr<Location> location, CellSpec type) {
+  auto room = getRoom(16, 3, 16, 3, CellType::WALL);
+  auto ltc = getRandomCell(location);
+  // auto ltc = room[]
+  while (ltc->x + room->width >= WIDTH || ltc->y + room->height >= HEIGHT ) {
+    ltc = getRandomCell(location, CellType::FLOOR);
   }
-void placeLake(std::shared_ptr<Location> location) {
+
+  for (auto c : room->cells) {
+    if (R::R() > 0.35) {
+      c->type = type;
+      c->passThrough = type.passThrough;
+      c->seeThrough = type.seeThrough;
+    }
   }
+  paste(room->cells, location, ltc->x, ltc->y);
+
+  for (auto r : location->cells) {
+    for (auto c : r) {
+      auto n = location->getNeighbors(c);
+      auto vn =
+          std::count_if(n.begin(), n.end(), [type](std::shared_ptr<Cell> nc) {
+            return nc->type == type;
+          });
+      vn += 8 - n.size();
+
+      if (c->type == type) {
+        if (vn < 4) {
+          c->type = CellType::WALL;
+          c->passThrough = false;
+      } else if (c->type != type) {
+        if (vn >= 6) {
+          c->type = type;
+          c->passThrough = type.passThrough;
+          c->seeThrough = type.seeThrough;
+        }
+      }
+    }
+  }
+
+  for (auto c : room->cells) {
+      auto n = location->getNeighbors(c);
+      if (std::count_if(n.begin(), n.end(), [type](auto nc) {
+        return nc->type == type;
+      }) == 0) {
+        // c->type = CellType::FLOOR;
+      }
+  }
+  for (auto c : room->cells) {
+    if (c->type == CellType::WALL) {
+      c->type = CellType::FLOOR;
+    }
+  }
+
+  }
+
+  return room;
+  
+}
+
+std::shared_ptr<Room> placeVoid(std::shared_ptr<Location> location) {
+  return placeBlob(location, CellType::VOID);
+}
+
+std::shared_ptr<Room> placeLake(std::shared_ptr<Location> location) {
+  return placeBlob(location, CellType::WATER);
+}
 
 std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   auto t0 = std::chrono::system_clock::now();
@@ -908,12 +988,24 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
     makeRiver(location);
   }
 
+  std::shared_ptr<Room> voidRoom;
+  std::shared_ptr<Room> lakeRoom;
+
+  if (location->hasFeature(LocationFeature::VOID)) {
+    voidRoom = placeVoid(location);
+  }
+
+  if (location->hasFeature(LocationFeature::LAKE)) {
+    lakeRoom = placeLake(location);
+  }
+
   placeStairs(location);
   placeWalls(location);
 
   if (spec.type == LocationType::DUNGEON) {
     placeDoors(location);
   }
+
   placeEnemies(location, spec.threat);
   placeLoot(location, spec.threat);
 
@@ -929,13 +1021,6 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
     placeAltar(location);
   }
 
-  if (location->hasFeature(LocationFeature::VOID)) {
-    placeVoid(location);
-  }
-
-  if (location->hasFeature(LocationFeature::LAKE)) {
-    placeLake(location);
-  }
 
   for (auto r : location->cells) {
     for (auto c : r) {
