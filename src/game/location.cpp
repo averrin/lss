@@ -65,10 +65,10 @@ void Location::onEvent(CommitEvent &e) {
 void Location::onEvent(DropEvent &e) {
   if (e.item == nullptr)
     return;
-  auto item = std::make_shared<Item>(*e.item);
-  item->currentCell =
-      std::dynamic_pointer_cast<Creature>(e.getSender())->currentCell;
-  objects.push_back(item);
+    auto item = e.item->clone();
+    item->currentCell =
+        std::dynamic_pointer_cast<Creature>(e.getSender())->currentCell;
+    objects.push_back(item);
 }
 
 void Location::onEvent(EnemyDiedEvent &e) {
@@ -78,9 +78,8 @@ void Location::onEvent(EnemyDiedEvent &e) {
     auto loot = enemy->drop();
     if (loot != std::nullopt) {
       for (auto item : *loot) {
-        auto new_item = item->roll();
-        new_item->currentCell = enemy->currentCell;
-        objects.push_back(new_item);
+        item->currentCell = enemy->currentCell;
+        objects.push_back(item);
       }
     }
     invalidateVisibilityCache(enemy->currentCell);

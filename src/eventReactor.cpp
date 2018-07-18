@@ -117,14 +117,7 @@ void EventReactor::onEvent(UseCommandEvent &e) {
   }
   app->objectSelectMode->setHeader(F("Items to use: "));
 
-  Items usable(app->hero->inventory.size());
-  auto it =
-      std::copy_if(app->hero->inventory.begin(), app->hero->inventory.end(),
-                   usable.begin(), [](std::shared_ptr<Item> item) {
-                     return item->type.category == ItemCategories::CONSUMABLES;
-                   });
-
-  usable.resize(std::distance(usable.begin(), it));
+  auto usable = utils::castObjects<Consumable>(app->hero->inventory);
   app->objectSelectMode->setObjects(utils::castObjects<Object>(usable));
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
@@ -132,14 +125,14 @@ void EventReactor::onEvent(UseCommandEvent &e) {
     return fmt::format("<span weight='bold'>{}</span> - {}{}", letter,
                        item->getFullTitle(), item->spell == nullptr ? "*" : "");
     }
-    return "Cast error"s;
+    return "Unknown error"s;
   };
   app->objectSelectMode->setFormatter(formatter);
 
   app->objectSelectMode->setCallback([&](std::shared_ptr<Object> o) {
-    auto item = std::dynamic_pointer_cast<Item>(o);
-    auto e = std::make_shared<UseCommandEvent>(item);
-    eb::EventBus::FireEvent(*e);
+    auto item = std::dynamic_pointer_cast<Consumable>(o);
+    UseCommandEvent e(item);
+    eb::EventBus::FireEvent(e);
     app->modeManager.toNormal();
     return true;
   });
@@ -308,12 +301,16 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
             Spells::TOGGLE_FLY, Spells::TOGGLE_CAN_SWIM, Spells::SUMMON_ORK,
             Spells::SUMMON_PLATE, Spells::TOGGLE_INVULNERABLE, Spells::IDENTIFY,
             Spells::TELEPORT_RANDOM}));
+  } else {
+    app->objectSelectMode->setObjects({});
   }
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
-    auto spell = std::dynamic_pointer_cast<Spell>(o);
+    if (auto spell = std::dynamic_pointer_cast<Spell>(o)) {
     return fmt::format("<span weight='bold'>{}</span> - {}", letter,
                        spell->name);
+    }
+    return "Unknown error"s;
   };
   app->objectSelectMode->setFormatter(formatter);
 
@@ -378,9 +375,10 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
         app->hero->currentLocation
             ->cells[app->hero->currentCell->y + 1][app->hero->currentCell->x];
     // auto item = Prototype::GOD_PLATE->roll();
-    auto item = Prototype::POTION_HEAL->roll();
-    item->currentCell = c;
-    app->hero->currentLocation->objects.push_back(item);
+    auto lt = LootBox{1, {Prototype::POTION_HEAL}};
+    auto items = lt.open();
+    items.front()->currentCell = c;
+    app->hero->currentLocation->objects.push_back(items.front());
     app->hero->commit("summon plate", 0);
   } else if (*spell == *Spells::HEAL_LESSER) {
     auto heal = R::Z(app->hero->HP_MAX(app->hero.get()) / 100 * 10, app->hero->HP_MAX(app->hero.get()) / 100 * 25);

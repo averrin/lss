@@ -11,14 +11,7 @@ struct LootBox {
 
   Items open() {
     Items loot;
-    // TODO: implement float probability
     auto roll = R::R();
-    std::vector<std::string> itemNames;
-    for (auto i : items) {
-      itemNames.push_back(i->getFullTitle());
-    }
-    // fmt::print("LootBox roll: {}/{} [{}]\n", roll, probability,
-    // utils::join(itemNames, ", "));
     if (roll < probability) {
       loot.insert(loot.end(), items.begin(), items.end());
       for (auto child : children) {
@@ -30,6 +23,8 @@ struct LootBox {
         }
       }
     }
+    //TODO: remove useless roll calls
+    std::transform(loot.begin(), loot.end(), loot.begin(), [](auto item) {return item->roll();});
     return loot;
   };
 };

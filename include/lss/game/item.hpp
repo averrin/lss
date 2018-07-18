@@ -59,8 +59,8 @@ public:
   std::string getTitle(bool force = false);
   std::string getFullTitle();
 
-  std::shared_ptr<Item> clone() { return std::make_shared<Item>(*this); }
-  std::shared_ptr<Item> roll() {
+  virtual std::shared_ptr<Item> clone() { return std::make_shared<Item>(*this); }
+  virtual std::shared_ptr<Item> roll() {
     auto item = std::make_shared<Item>(*this);
     item->count = count <= 1 ? count : rand() % count + 1;
     item->effects.clear();
@@ -85,14 +85,13 @@ public:
              std::shared_ptr<Spell> s)
       : Item(un, n, t), spell(s) {}
   std::shared_ptr<Spell> spell;
-  std::shared_ptr<Consumable> clone() { return std::make_shared<Consumable>(*this); }
-  std::shared_ptr<Consumable> roll() { return std::make_shared<Consumable>(*this); }
+  std::shared_ptr<Item> clone() { return std::make_shared<Consumable>(*this); }
+  std::shared_ptr<Item> roll() {
+    return std::make_shared<Consumable>(*this);
+  }
 };
 
 typedef std::vector<std::shared_ptr<Item>> Items;
-
-// TODO: consumables
-// TODO: randomized items
 
 namespace Prototype {
 const auto TORCH = std::make_shared<Item>(
