@@ -210,7 +210,7 @@ void InspectMode::render() {
     app->inspectState->appendContent(State::END_LINE);
     if (app->debug) {
       for (auto c : cell->room->cells) {
-        app->state->selection.push_back({{c->x, c->y}, "#111"});
+        app->state->selection.push_back({{c->x, c->y}, "#f11"});
       }
     }
 

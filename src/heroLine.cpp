@@ -39,28 +39,7 @@ void HeroLine::update() {
         });
     lightDurability = lightSlot->item->durability;
   }
-  std::string locationFeatures = "_______";
-  if (hero->currentLocation->hasFeature(LocationFeature::TORCHES)) {
-    locationFeatures[0] = 'T';
-  }
-  if (hero->currentLocation->hasFeature(LocationFeature::CAVE_PASSAGE)) {
-    locationFeatures[1] = 'C';
-  }
-  if (hero->currentLocation->hasFeature(LocationFeature::RIVER)) {
-    locationFeatures[2] = 'R';
-  }
-  if (hero->currentLocation->hasFeature(LocationFeature::STATUE)) {
-    locationFeatures[3] = 'S';
-  }
-  if (hero->currentLocation->hasFeature(LocationFeature::ALTAR)) {
-    locationFeatures[4] = 'A';
-  }
-  if (hero->currentLocation->hasFeature(LocationFeature::VOID)) {
-    locationFeatures[5] = 'V';
-  }
-  if (hero->currentLocation->hasFeature(LocationFeature::LAKE)) {
-    locationFeatures[6] = 'L';
-  }
+  auto locationFeatures = hero->currentLocation->getFeaturesTag();
   setContent({
       F(fmt::format("<b>{}</b> [{}]", hero->name, hero->level)),
       F(fmt::format("   <b>HP</b>:{}/{}   <b>SPD</b>:{}   <b>DMG</b>:{}   "
@@ -71,8 +50,8 @@ void HeroLine::update() {
       F(fmt::format("{}", hero->hasLight()
                               ? fmt::format("   L&lt;{}&gt;", lightDurability)
                               : "")),
-      F(fmt::format("   <b>P</b>:{}.{} D:{} [{} {}]", hero->currentCell->x,
+      F(fmt::format("   <b>P</b>:{}.{} D:{} [{} {}].{}", hero->currentCell->x,
                     hero->currentCell->y, hero->currentLocation->depth,
-                    hero->currentLocation->type.name, locationFeatures)),
+                    hero->currentLocation->type.name, locationFeatures, hero->currentLocation->rooms.size())),
   });
 }

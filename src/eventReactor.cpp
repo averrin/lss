@@ -37,6 +37,7 @@ void EventReactor::onEvent(StairEvent &e) {
     if (app->locations.find(app->currentLevel + 1) == app->locations.end()) {
       // app->locations[app->currentLevel+1] =
       // app->generator->getRandomLocation(app->hero);
+      fmt::print("Wait for location generation\n");
       app->threads[app->currentLevel].join();
     }
 

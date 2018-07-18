@@ -122,8 +122,8 @@ void LSSApp::startGame() {
         [&](int n) {
           auto l = generator->getRandomLocation(hero, n);
           locations[n] = l;
-          MessageEvent me(nullptr, fmt::format("Generated location count: {}", locations.size()));
-          eb::EventBus::FireEvent(me);
+          // MessageEvent me(nullptr, fmt::format("Generated location count: {}", locations.size()));
+          // eb::EventBus::FireEvent(me);
         },
         n));
   }

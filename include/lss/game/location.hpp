@@ -68,6 +68,31 @@ public:
   void enter(std::shared_ptr<Player>, std::shared_ptr<Cell>);
   void leave(std::shared_ptr<Player>);
   Objects getObjects(std::shared_ptr<Cell>);
+    std::string getFeaturesTag() {
+      std::string locationFeatures = "_______";
+      if (hasFeature(LocationFeature::TORCHES)) {
+        locationFeatures[0] = 'T';
+      }
+      if (hasFeature(LocationFeature::CAVE_PASSAGE)) {
+        locationFeatures[1] = 'C';
+      }
+      if (hasFeature(LocationFeature::RIVER)) {
+        locationFeatures[2] = 'R';
+      }
+      if (hasFeature(LocationFeature::STATUE)) {
+        locationFeatures[3] = 'S';
+      }
+      if (hasFeature(LocationFeature::ALTAR)) {
+        locationFeatures[4] = 'A';
+      }
+      if (hasFeature(LocationFeature::VOID)) {
+        locationFeatures[5] = 'V';
+      }
+      if (hasFeature(LocationFeature::LAKE)) {
+        locationFeatures[6] = 'L';
+      }
+      return locationFeatures;
+    }
 
   std::vector<std::shared_ptr<Cell>> getNeighbors(std::shared_ptr<Cell> cell) {
     return getNeighbors(cell.get());
