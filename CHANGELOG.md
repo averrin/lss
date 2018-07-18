@@ -8,6 +8,7 @@
 - teleport spell
 - lakes && void
 - permanent trait effect (for items)
+- background location generation
 
 
 ### 0.0.7

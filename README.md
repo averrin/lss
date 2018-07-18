@@ -25,6 +25,7 @@ Yet another unfinished roguelike game.
 - [X] Light/shadow-related traits
 - [X] Better event log
 - [ ] Hero status page
+- [ ] Debug menus for summoning enemies/items & location creator
 - [ ] After death stats
 - [ ] Refactor effects system
 - [ ] Weights

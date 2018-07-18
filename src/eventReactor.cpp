@@ -100,7 +100,6 @@ void EventReactor::onEvent(InventoryCommandEvent &e) {
 }
 
 void EventReactor::onEvent(UseCommandEvent &e) {
-  //FIXME: second usage fails, spell == nullptr.
   if (auto c = std::dynamic_pointer_cast<Consumable>(e.item); c && e.item != nullptr) {
     auto spell = c->spell;
 
@@ -129,9 +128,11 @@ void EventReactor::onEvent(UseCommandEvent &e) {
   app->objectSelectMode->setObjects(utils::castObjects<Object>(usable));
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
-    auto item = std::dynamic_pointer_cast<Item>(o);
-    return fmt::format("<span weight='bold'>{}</span> - {}", letter,
-                       item->getFullTitle());
+    if(auto item = std::dynamic_pointer_cast<Consumable>(o)) {
+    return fmt::format("<span weight='bold'>{}</span> - {}{}", letter,
+                       item->getFullTitle(), item->spell == nullptr ? "*" : "");
+    }
+    return "Cast error"s;
   };
   app->objectSelectMode->setFormatter(formatter);
 
@@ -376,7 +377,8 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     auto c =
         app->hero->currentLocation
             ->cells[app->hero->currentCell->y + 1][app->hero->currentCell->x];
-    auto item = Prototype::GOD_PLATE->roll();
+    // auto item = Prototype::GOD_PLATE->roll();
+    auto item = Prototype::POTION_HEAL->roll();
     item->currentCell = c;
     app->hero->currentLocation->objects.push_back(item);
     app->hero->commit("summon plate", 0);
