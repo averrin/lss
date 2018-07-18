@@ -67,3 +67,6 @@ Yet another unfinished roguelike game.
 * F1 — debug mode (show enemy pathes, allow uber spells)
 * shift+i — inspect mode
 
+## More screenshots
+![screenshot_cavern](https://raw.githubusercontent.com/averrin/lss/master/screenshot_cavern.png)
+

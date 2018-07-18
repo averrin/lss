@@ -1165,8 +1165,7 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
         c->features.push_back(cf);
       }
       if (c->room != nullptr &&
-          (c->room->type == RoomType::CAVERN ||
-           c->room->type == RoomType::CAVE) &&
+          (c->room->type == RoomType::CAVERN) &&
           c->type == CellType::FLOOR && R::R() < P::POND) {
         c->type = CellType::WATER;
       }
