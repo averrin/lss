@@ -59,19 +59,22 @@ void LogPanel::onEvent(DoorOpenedEvent &e) {
   appendLine({F(fmt::format("You opened the door"))});
 }
 void LogPanel::onEvent(EnemyTakeDamageEvent &e) {
+  hero->report.damageInflicted += e.damage->damage;
   auto enemy = std::dynamic_pointer_cast<Enemy>(e.getSender());
   if (e.damage > 0) {
     appendLine(
         {F(fmt::format("You <b>hit</b> {}: <b>{}</b> dmg{}", enemy->type.name,
                        e.damage->damage,
-                       e.damage->deflicted > 0
-                           ? fmt::format(" [{} deflicted]", e.damage->deflicted)
+                       e.damage->deflected > 0
+                           ? fmt::format(" [{} deflected]", e.damage->deflected)
                            : ""))});
   } else {
     appendLine({F(fmt::format("You miss {}", enemy->type.name))});
   }
 }
 void LogPanel::onEvent(HeroTakeDamageEvent &e) {
+  hero->report.damageTaken += e.damage->damage;
+  hero->report.damageDeflected += e.damage->deflected;
   auto enemy = std::dynamic_pointer_cast<Enemy>(e.getSender());
   if (e.damage->damage > 0) {
     std::string tags = "";
@@ -87,8 +90,8 @@ void LogPanel::onEvent(HeroTakeDamageEvent &e) {
         e.damage->isCritical ? "red" : "{{orange}}",
         e.damage->isCritical ? "!" : "", e.damage->damage, enemy->type.name,
         tags,
-        e.damage->deflicted > 0
-            ? fmt::format(" [{} deflicted]", e.damage->deflicted)
+        e.damage->deflected > 0
+            ? fmt::format(" [{} deflected]", e.damage->deflected)
             : ""))});
   } else {
     auto name = enemy->type.name;
@@ -99,6 +102,8 @@ void LogPanel::onEvent(HeroTakeDamageEvent &e) {
 void LogPanel::onEvent(EnemyDiedEvent &e) {
   auto enemy = std::dynamic_pointer_cast<Enemy>(e.getSender());
   auto name = enemy->type.name;
+  hero->report.kills[name]++;
+
   name[0] = toupper(name[0]);
   appendLine({F(fmt::format("{} died", name))});
 }
@@ -125,6 +130,8 @@ void LogPanel::onEvent(EnterCellEvent &e) {
 void LogPanel::onEvent(LeaveCellEvent &e) {}
 void LogPanel::onEvent(DigEvent &e) {}
 void LogPanel::onEvent(DropEvent &e) {}
-void LogPanel::onEvent(CommitEvent &e) {}
+void LogPanel::onEvent(CommitEvent &e) {
+  hero->report.apCommited += e.actionPoints;
+}
 
 void LogPanel::onEvent(HeroDiedEvent &e) { appendLine({F("You died...")}); }

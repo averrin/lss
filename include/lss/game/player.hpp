@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "lss/game/creature.hpp"
+#include "lss/game/report.hpp"
 
 typedef std::vector<std::shared_ptr<Item>> Items;
 
@@ -24,6 +25,7 @@ public:
   ~Player();
   bool monsterSense = false;
   int exp = 0;
+  Report report;
 
   bool equip(std::shared_ptr<Slot>, std::shared_ptr<Item>);
   bool equip(std::shared_ptr<Item>);

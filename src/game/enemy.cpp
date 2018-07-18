@@ -71,7 +71,7 @@ bool Enemy::interact(std::shared_ptr<Object> actor) {
     } else {
       damage->damage -= def;
     }
-    damage->deflicted = def;
+    damage->deflected = def;
     hp -= damage->damage;
     EnemyTakeDamageEvent e(ptr, damage);
     eb::EventBus::FireEvent(e);

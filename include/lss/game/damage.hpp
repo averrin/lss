@@ -9,7 +9,7 @@ public:
   int damage = 0;
   bool isCritical = false;
   std::vector<Trait> traits;
-  int deflicted = 0;
+  int deflected = 0;
 };
 
 #endif // __DAMAGE_H_
