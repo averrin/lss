@@ -99,8 +99,9 @@ void EventReactor::onEvent(InventoryCommandEvent &e) {
 }
 
 void EventReactor::onEvent(UseCommandEvent &e) {
-  if (e.item != nullptr) {
-    auto spell = std::dynamic_pointer_cast<Consumable>(e.item)->spell;
+  //FIXME: second usage fails, spell == nullptr.
+  if (auto c = std::dynamic_pointer_cast<Consumable>(e.item); c && e.item != nullptr) {
+    auto spell = c->spell;
 
     app->hero->identify(e.item);
     std::for_each(app->hero->inventory.begin(), app->hero->inventory.end(),
@@ -379,7 +380,7 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     app->hero->currentLocation->objects.push_back(item);
     app->hero->commit("summon plate", 0);
   } else if (*spell == *Spells::HEAL_LESSER) {
-    auto heal = R::Z(0, app->hero->HP_MAX(app->hero.get()) / 100 * 10);
+    auto heal = R::Z(app->hero->HP_MAX(app->hero.get()) / 100 * 10, app->hero->HP_MAX(app->hero.get()) / 100 * 25);
     app->hero->hp += heal;
     if (app->hero->HP(app->hero.get()) > app->hero->HP_MAX(app->hero.get())) {
       app->hero->hp = app->hero->HP_MAX(app->hero.get());
@@ -388,7 +389,7 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     MessageEvent me(nullptr, fmt::format("You healed {} hp", heal));
     eb::EventBus::FireEvent(me);
   } else if (*spell == *Spells::HEAL) {
-    auto heal = R::Z(0, app->hero->HP_MAX(app->hero.get()) / 100 * 50);
+    auto heal = R::Z(app->hero->HP_MAX(app->hero.get()) / 100 * 25, app->hero->HP_MAX(app->hero.get()) / 100 * 50);
     app->hero->hp += heal;
     if (app->hero->HP(app->hero.get()) > app->hero->HP_MAX(app->hero.get())) {
       app->hero->hp = app->hero->HP_MAX(app->hero.get());

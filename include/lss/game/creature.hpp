@@ -35,6 +35,12 @@ public:
   void identify(std::shared_ptr<Item> item) {
     item->identified = true;
     knownItems.push_back(item->getTitle());
+    std::for_each(inventory.begin(), inventory.end(),
+                  [&](auto i) {
+                    if (!i->identified && i->getTitle(true) == item->getTitle(true)) {
+                      identify(i);
+                    }
+                  });
   }
   bool isIdentified(std::shared_ptr<Item> item) {
     return item->identified ||
