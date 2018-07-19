@@ -382,8 +382,8 @@ void fixOverlapped(std::shared_ptr<Location> location) {
       auto it = std::copy_if(location->rooms.begin(), location->rooms.end(),
                              rooms.begin(), [&](auto room) {
                                auto result =
-                                   room->x <= c && room->x + room->width >= c &&
-                                   room->y <= r && room->y + room->height >= r;
+                                   room->x <= c && room->x + room->width > c &&
+                                   room->y <= r && room->y + room->height > r;
                                return result;
                              });
       rooms.resize(std::distance(rooms.begin(), it));
@@ -704,11 +704,13 @@ void placeStairs(std::shared_ptr<Location> location) {
 
   delete pather;
 
-  // location->objects.erase(std::remove_if(
-  //     location->objects.begin(), location->objects.end(), [&](auto object) {
-  //       return object->currentCell == location->exitCell ||
-  //              object->currentCell == location->enterCell;
-  //     }));
+  if (location->objects.size() > 0) {
+    location->objects.erase(std::remove_if(
+        location->objects.begin(), location->objects.end(), [location](auto o) {
+          return o->currentCell == location->exitCell ||
+                o->currentCell == location->enterCell;
+        }));
+  }
 
   location->exitCell->type = CellType::DOWNSTAIRS;
   auto n = location->getNeighbors(location->exitCell);
