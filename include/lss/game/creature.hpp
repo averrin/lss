@@ -100,9 +100,17 @@ public:
   Attribute CRIT = Attribute(AttributeType::CRIT_CHANCE);
 
   std::shared_ptr<Cell> getCell(std::shared_ptr<Cell>, Direction);
+  void applyEoT(EoT, int);
 
 private:
   std::shared_ptr<Cell> cachedCell;
 };
+
+// namespace EoT {
+//   const auto HEAL = std::make_shared<OverTimeEffect>(500,
+//     [](std::shared_ptr<Creature> c){
+//             c->hp += 5;
+//   });
+// }
 
 #endif // __CREATURE_H_

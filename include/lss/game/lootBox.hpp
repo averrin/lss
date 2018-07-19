@@ -32,20 +32,21 @@ struct LootBox {
 
 namespace LootBoxes {
 const std::vector<LootBox> POTIONS = {
-    {0.14, {Prototype::POTION_HEAL_LESSER}},
-    {0.14, {Prototype::POTION_HEAL}},
-    {0.14, {Prototype::POTION_GOD_SPEED}},
-    // {0.30, {Prototype::POTION_HP_BOOST}},
-    {0.14, {Prototype::POTION_VISIBILITY_BOOST}},
-    {0.14, {Prototype::POTION_CRIT_BOOST}},
-    {0.14, {Prototype::POTION_LEVITATION}},
-    {0.14, {Prototype::POTION_REGENERATION}},
+    {0.125, {Prototype::POTION_HEAL_LESSER}},
+    {0.125, {Prototype::POTION_HEAL}},
+    {0.125, {Prototype::POTION_GOD_SPEED}},
+    // {25.30, {Prototype::POTION_HP_BOOST}},
+    {0.125, {Prototype::POTION_VISIBILITY_BOOST}},
+    {0.125, {Prototype::POTION_CRIT_BOOST}},
+    {0.125, {Prototype::POTION_LEVITATION}},
+    {0.125, {Prototype::POTION_REGENERATION}},
+    {0.125, {Prototype::POTION_POISON}},
 };
 const std::vector<LootBox> SCROLLS = {
     {0.30, {Prototype::SCROLL_IDENTIFICATION}},
     {0.30, {Prototype::SCROLL_REVEAL}},
     {0.30, {Prototype::SCROLL_TELEPORT}}};
 ;
-};
+}; // namespace LootBoxes
 
 #endif // __LOOTBOX_H_

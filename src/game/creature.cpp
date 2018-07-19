@@ -21,6 +21,7 @@ Creature::Creature() {
   zIndex = 2;
 }
 
+// TOD: implement attribute setter (for hp_boost spell)
 float Attribute::operator()(Creature *c) {
   float base = 0;
   switch (type) {
@@ -219,7 +220,7 @@ std::shared_ptr<Damage> Creature::getDamage(std::shared_ptr<Object>) {
   auto damage = std::make_shared<Damage>();
   auto primaryDmg = getPrimaryDmg();
   if (primaryDmg != std::nullopt) {
-    auto[primarySlot, m, d, e] = *primaryDmg;
+    auto [primarySlot, m, d, e] = *primaryDmg;
     damage = updateDamage(damage, m, d, e);
   }
   auto haveLeft =
@@ -236,7 +237,7 @@ std::shared_ptr<Damage> Creature::getDamage(std::shared_ptr<Object>) {
           }) > 0;
   auto secondaryDmg = getSecondaryDmg(nullptr);
   if (secondaryDmg != std::nullopt && haveLeft) {
-    auto[secondarySlot, m, d, e] = *secondaryDmg;
+    auto [secondarySlot, m, d, e] = *secondaryDmg;
     if (hasTrait(Traits::DUAL_WIELD)) {
       damage = updateDamage(damage, m, d, e);
     } else {
@@ -386,4 +387,15 @@ bool Creature::hasLight() {
                         return item->type.wearableType == WearableType::LIGHT &&
                                item->equipped;
                       }) != inventory.end();
+}
+
+void Creature::applyEoT(EoT eot, int modifier) {
+  switch (eot) {
+  case EoT::HEAL:
+    hp += modifier;
+    break;
+  case EoT::POISON:
+    hp -= modifier;
+    break;
+  }
 }

@@ -1,18 +1,18 @@
 #ifndef __EFFECT_H_
 #define __EFFECT_H_
+#include <functional>
 #include <memory>
 #include <variant>
 #include <vector>
-#include <functional>
 
 #include "lss/game/attribute.hpp"
+#include "lss/game/overtime.hpp"
 #include "lss/game/randomTools.hpp"
 
 // TODO: refactor.
 // maybe create variant with int, float, rndInt and rndFloat
 // and write one function for baase modification (see lss/creature.cpp)
 // and maybe make it Objects for castObjects filtering;
-class Player;
 class Effect {
 public:
   Effect(AttributeType at) : type(at){};
@@ -174,19 +174,35 @@ typedef std::function<void(std::shared_ptr<Creature>)> EffectApplier;
 
 class OverTimeEffect : public Effect {
 public:
-  OverTimeEffect(int t, EffectApplier ea)
-      : Effect(AttributeType::NONE), tick(t), applier(ea){};
-    int tick;
-    int accomulator = 0;
-    EffectApplier applier;
+  OverTimeEffect(R::rndInt m, int ti, EoT t)
+      : Effect(AttributeType::NONE, m), tick(ti), type(t){};
+  int tick;
+  int accomulator = 0;
+  // EffectApplier applier;
+  EoT type;
   std::string getTitle();
   std::shared_ptr<Effect> clone() {
-    return std::make_shared<OverTimeEffect>(tick, applier);
+    return std::make_shared<OverTimeEffect>(modifier, tick, type);
   };
-  std::variant<float, int> getModifier() { return 0; };
 
-  void apply(std::shared_ptr<Creature> c, int ap);
+  std::variant<float, int> getModifier() { return R::get(modifier); };
+  int getModifier(int ap) {
+    auto result = 0;
+    auto m = std::get<int>(getModifier());
+
+    accomulator += ap;
+    while (accomulator >= tick) {
+      accomulator -= tick;
+      result += m;
+    }
+    return m;
+  }
 };
+
+namespace OverTimeEffects {
+const auto HEAL = std::make_shared<OverTimeEffect>(5, 500, EoT::HEAL);
+const auto POISON = std::make_shared<OverTimeEffect>(3, 500, EoT::POISON);
+} // namespace OverTimeEffects
 
 typedef std::vector<std::shared_ptr<Effect>> Effects;
 

@@ -363,8 +363,9 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     }
     app->statusLine->setContent({F("Enemy freezed!")});
   } else if (*spell == *Spells::SUMMON_ORK) {
-    auto c = app->hero->currentLocation->cells[app->hero->currentCell->y + 1]
-                                              [app->hero->currentCell->x];
+    auto c =
+        app->hero->currentLocation
+            ->cells[app->hero->currentCell->y + 1][app->hero->currentCell->x];
     app->hero->currentLocation->objects.push_back(
         mkEnemy(app->hero->currentLocation, c, app->hero, EnemyType::ORK));
     app->hero->commit("summon ork", 0);
@@ -376,8 +377,9 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     MessageEvent me(nullptr, "Your inventory was identified");
     eb::EventBus::FireEvent(me);
   } else if (*spell == *Spells::SUMMON_PLATE) {
-    auto c = app->hero->currentLocation->cells[app->hero->currentCell->y + 1]
-                                              [app->hero->currentCell->x];
+    auto c =
+        app->hero->currentLocation
+            ->cells[app->hero->currentCell->y + 1][app->hero->currentCell->x];
     // auto item = Prototype::GOD_PLATE->roll();
     auto lt = LootBox{1, {Prototype::POTION_REGENERATION}};
     auto items = lt.open();

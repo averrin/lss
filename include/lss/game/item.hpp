@@ -183,6 +183,10 @@ const auto POTION_REGENERATION = std::make_shared<Consumable>(
     fmt::format("{} potion", utils::getRandomColor()), "regeneration potion",
     ItemType::POTION, Spells::EOT_HEAL);
 
+const auto POTION_POISON = std::make_shared<Consumable>(
+    fmt::format("{} potion", utils::getRandomColor()), "poison",
+    ItemType::POTION, Spells::EOT_POISON);
+
 const auto SCROLL_IDENTIFICATION = std::make_shared<Consumable>(
     fmt::format("scroll labled '{}'", utils::getScrollName()),
     "scroll of identification", ItemType::SCROLL, Spells::IDENTIFY);

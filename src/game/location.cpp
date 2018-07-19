@@ -22,7 +22,7 @@ void Location::invalidateVisibilityCache(std::shared_ptr<Cell> cell) {
   // fmt::print("--- {} ", visibilityCache.size());
   std::vector<std::pair<std::shared_ptr<Cell>, float>> hits;
   for (auto ls : cell->lightSources) {
-    for (auto[lsk, _] : visibilityCache) {
+    for (auto [lsk, _] : visibilityCache) {
       if (lsk.first != ls && lsk.first != player->currentCell)
         continue;
       // fmt::print("cache hit: {}.{} - {}\n", lsk.first->x, lsk.first->y,
@@ -67,9 +67,15 @@ void Location::onEvent(CommitEvent &e) {
         player->activeEffects.erase(std::remove(
             player->activeEffects.begin(), player->activeEffects.end(), ef));
       }
+
+      if (auto eot = std::dynamic_pointer_cast<OverTimeEffect>(le->effect)) {
+        auto m = eot->getModifier(e.actionPoints);
+        player->applyEoT(eot->type, m);
+      }
     }
     if (auto eot = std::dynamic_pointer_cast<OverTimeEffect>(ef)) {
-      eot->apply(player, e.actionPoints);
+      auto m = eot->getModifier(e.actionPoints);
+      player->applyEoT(eot->type, m);
     }
   }
 
@@ -295,7 +301,8 @@ void Location::AdjacentCost(void *state,
     if (!n->passThrough && (player == nullptr || n != player->currentCell))
       continue;
     micropather::StateCost nodeCost = {
-        (void *)&(*n), LeastCostEstimate(state, (void *)&(*n)),
+        (void *)&(*n),
+        LeastCostEstimate(state, (void *)&(*n)),
     };
     neighbors->push_back(nodeCost);
   }

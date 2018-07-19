@@ -11,6 +11,7 @@
 - background location generation
 - more info in game over screen
 - lasting effects with duration
+- over time effects
 
 
 ### 0.0.7
