@@ -2,6 +2,7 @@
 #define __SPELL_H_
 #include "lss/game/effect.hpp"
 #include "lss/game/object.hpp"
+#include "lss/game/overtime.hpp"
 
 class Spell : public Object {
 public:
@@ -75,6 +76,10 @@ const auto CRIT_BOOST = std::make_shared<EffectSpell>(
 const auto LEVITATION = std::make_shared<EffectSpell>(
     "Levitation", std::make_shared<LastingEffect>(
                       std::make_shared<TraitEffect>(Traits::FLY), 10000));
+
+const auto EOT_HEAL = std::make_shared<EffectSpell>(
+    "Regeneration", std::make_shared<LastingEffect>(
+                      EoT::HEAL, 10000));
 } // namespace Spells
 
 #endif // __SPELL_H_

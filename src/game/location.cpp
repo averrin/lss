@@ -68,6 +68,9 @@ void Location::onEvent(CommitEvent &e) {
             player->activeEffects.begin(), player->activeEffects.end(), ef));
       }
     }
+    if (auto eot = std::dynamic_pointer_cast<OverTimeEffect>(ef)) {
+      eot->apply(player, e.actionPoints);
+    }
   }
 
   LocationChangeEvent ec(nullptr);

@@ -32,6 +32,20 @@ std::string ArmorValue::getTitle() {
   return fmt::format("[{:+d}]", R::get(modifier));
 }
 
+//TODO: get name in constructor
+std::string OverTimeEffect::getTitle() {
+  return fmt::format("not implemented");
+}
+
 std::string Poison::getTitle() { return fmt::format("poisoned"); }
 std::string Vampire::getTitle() { return fmt::format("life steal"); }
 std::string TraitEffect::getTitle() { return fmt::format(trait.name); }
+
+
+void OverTimeEffect::apply(std::shared_ptr<Creature> c, int ap) {
+    accomulator += ap;
+    while (accomulator >= tick) {
+        c->hp += 5;
+        accomulator -= tick;
+    }
+}

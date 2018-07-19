@@ -3,6 +3,7 @@
 #include <memory>
 #include <variant>
 #include <vector>
+#include <functional>
 
 #include "lss/game/attribute.hpp"
 #include "lss/game/randomTools.hpp"
@@ -166,6 +167,25 @@ public:
     return std::make_shared<LastingEffect>(effect, duration);
   };
   std::variant<float, int> getModifier() { return effect->getModifier(); };
+};
+
+class OverTimeEffect;
+typedef std::function<void(std::shared_ptr<Creature>)> EffectApplier;
+
+class OverTimeEffect : public Effect {
+public:
+  OverTimeEffect(int t, EffectApplier ea)
+      : Effect(AttributeType::NONE), tick(t), applier(ea){};
+    int tick;
+    int accomulator = 0;
+    EffectApplier applier;
+  std::string getTitle();
+  std::shared_ptr<Effect> clone() {
+    return std::make_shared<OverTimeEffect>(tick, applier);
+  };
+  std::variant<float, int> getModifier() { return 0; };
+
+  void apply(std::shared_ptr<Creature> c, int ap);
 };
 
 typedef std::vector<std::shared_ptr<Effect>> Effects;

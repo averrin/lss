@@ -379,7 +379,7 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     auto c = app->hero->currentLocation->cells[app->hero->currentCell->y + 1]
                                               [app->hero->currentCell->x];
     // auto item = Prototype::GOD_PLATE->roll();
-    auto lt = LootBox{1, {Prototype::POTION_HP_BOOST}};
+    auto lt = LootBox{1, {Prototype::POTION_REGENERATION}};
     auto items = lt.open();
     items.front()->currentCell = c;
     app->hero->currentLocation->objects.push_back(items.front());
