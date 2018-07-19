@@ -24,6 +24,10 @@ std::string CritModifier::getTitle() {
   return fmt::format("crit chance {:+d}", R::get(modifier));
 }
 
+std::string LastingEffect::getTitle() {
+  return fmt::format("{} for {}ap", effect->getTitle(), duration);
+}
+
 std::string ArmorValue::getTitle() {
   return fmt::format("[{:+d}]", R::get(modifier));
 }

@@ -44,6 +44,9 @@ float Attribute::operator()(Creature *c) {
     break;
   }
 
+  Effects effects;
+  effects.insert(effects.end(), c->activeEffects.begin(),
+                 c->activeEffects.end());
   for (auto s : c->equipment->slots) {
     if (s->item == nullptr ||
         std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
@@ -53,12 +56,15 @@ float Attribute::operator()(Creature *c) {
     for (auto e : s->item->effects) {
       if (e->type != type)
         continue;
-      auto mod = e->getModifier();
-      if (auto m = std::get_if<int>(&mod)) {
-        base += *m;
-      } else if (auto m = std::get_if<float>(&mod)) {
-        base += *m;
-      }
+      effects.push_back(e);
+    }
+  }
+  for (auto e : effects) {
+    auto mod = e->getModifier();
+    if (auto m = std::get_if<int>(&mod)) {
+      base += *m;
+    } else if (auto m = std::get_if<float>(&mod)) {
+      base += *m;
     }
   }
   return base;
@@ -213,7 +219,7 @@ std::shared_ptr<Damage> Creature::getDamage(std::shared_ptr<Object>) {
   auto damage = std::make_shared<Damage>();
   auto primaryDmg = getPrimaryDmg();
   if (primaryDmg != std::nullopt) {
-    auto [primarySlot, m, d, e] = *primaryDmg;
+    auto[primarySlot, m, d, e] = *primaryDmg;
     damage = updateDamage(damage, m, d, e);
   }
   auto haveLeft =
@@ -230,7 +236,7 @@ std::shared_ptr<Damage> Creature::getDamage(std::shared_ptr<Object>) {
           }) > 0;
   auto secondaryDmg = getSecondaryDmg(nullptr);
   if (secondaryDmg != std::nullopt && haveLeft) {
-    auto [secondarySlot, m, d, e] = *secondaryDmg;
+    auto[secondarySlot, m, d, e] = *secondaryDmg;
     if (hasTrait(Traits::DUAL_WIELD)) {
       damage = updateDamage(damage, m, d, e);
     } else {

@@ -67,7 +67,7 @@ EnemySpec const GOBLIN = {
     1, 15, 1,
     1, 3, 0,
     LootBox{1, {}, {
-        {0.40, {Prototype::POTION_HEAL_LESSER}},
+        {0.40, {}, LootBoxes::POTIONS, true},
         {0.60, {}, {
           {0.25, {Prototype::DAGGER}},
           {0.25, {Prototype::HELMET}},
@@ -85,7 +85,8 @@ EnemySpec const GOBLIN_LIEUTENANT = {
     1, 5, 1,
     LootBox{1, {}, {
         {0.40, {Prototype::POTION_HEAL}},
-        {0.40, {}, {{0.30, {Prototype::SCROLL_IDENTIFICATION}}, {0.30, {Prototype::SCROLL_REVEAL}}, {0.30, {Prototype::SCROLL_TELEPORT}}}, true},
+        {0.20, {}, LootBoxes::POTIONS, true},
+        {0.40, {}, LootBoxes::SCROLLS, true},
         {0.80, {}, {
           {0.25, {Prototype::DAGGER}},
           {0.25, {Prototype::HELMET}},
@@ -117,7 +118,7 @@ EnemySpec const ORK = {
     1, 55, 2, 1, 6, 1,
     LootBox{1, {Prototype::TORCH}, {
         {0.40, {Prototype::POTION_HEAL}},
-        {0.40, {}, {{0.30, {Prototype::SCROLL_IDENTIFICATION}}, {0.30, {Prototype::SCROLL_REVEAL}}, {0.30, {Prototype::SCROLL_TELEPORT}}}, true},
+        {0.40, {}, LootBoxes::SCROLLS, true},
         {0.70, {}, {
           {0.15, {Prototype::PLATE}},
           {0.35, {Prototype::SWORD}},
@@ -136,6 +137,7 @@ EnemySpec const ORK_BLACK = {
     1, 6, 1,
     LootBox{1, {Prototype::TORCH}, {
         {0.50, {Prototype::POTION_HEAL}},
+        {0.20, {}, LootBoxes::POTIONS, true},
         {0.70, {}, {
           {0.15, {Prototype::PLATE}},
           {0.35, {Prototype::SWORD}},
@@ -150,7 +152,9 @@ EnemySpec const ORK_BLACK = {
 EnemySpec const PIXI = {
     "pixi", 3,
     3, 25, 0, 3, 4, 0,
-    {0.90, {Prototype::GOLD->setCount(200)}, {{10, {Prototype::SPEED_RING}}}},
+    {0.90, {Prototype::GOLD->setCount(200)}, {
+        {0.40, {}, LootBoxes::SCROLLS, true},
+        {10, {Prototype::SPEED_RING}}}},
     {Traits::FLY, Traits::MOB}};
 EnemySpec const OGRE = {
     "ogre", 4,

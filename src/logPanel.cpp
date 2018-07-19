@@ -89,10 +89,9 @@ void LogPanel::onEvent(HeroTakeDamageEvent &e) {
         "You take <span color='{}'><b>{}{}</b></span> dmg from {}{}{}",
         e.damage->isCritical ? "red" : "{{orange}}",
         e.damage->isCritical ? "!" : "", e.damage->damage, enemy->type.name,
-        tags,
-        e.damage->deflected > 0
-            ? fmt::format(" [{} deflected]", e.damage->deflected)
-            : ""))});
+        tags, e.damage->deflected > 0
+                  ? fmt::format(" [{} deflected]", e.damage->deflected)
+                  : ""))});
   } else {
     auto name = enemy->type.name;
     name[0] = toupper(name[0]);

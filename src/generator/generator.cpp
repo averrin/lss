@@ -22,7 +22,6 @@ void log(std::string msg) {
     fmt::print("{}\n", msg);
 }
 
-
 int WIDTH = 120;
 int HEIGHT = 60;
 
@@ -109,14 +108,15 @@ void paste(Cells room, std::shared_ptr<Location> location, int x, int y) {
   }
 }
 
-std::optional<std::shared_ptr<Cell>> getRandomCell(std::shared_ptr<Room> room, CellSpec type) {
+std::optional<std::shared_ptr<Cell>> getRandomCell(std::shared_ptr<Room> room,
+                                                   CellSpec type) {
   std::vector<std::shared_ptr<Cell>> cells(room->cells.size());
-  auto it =
-        std::copy_if(room->cells.begin(), room->cells.end(), cells.begin(),
-                      [type](auto cell) { return cell->type == type; });
+  auto it = std::copy_if(room->cells.begin(), room->cells.end(), cells.begin(),
+                         [type](auto cell) { return cell->type == type; });
   cells.resize(std::distance(cells.begin(), it));
   if (cells.size() == 0) {
-    // std::cout << rang::fg::red << "FATAL: " << "cannot get random cell with this type" << rang::style::reset << std::endl;
+    // std::cout << rang::fg::red << "FATAL: " << "cannot get random cell with
+    // this type" << rang::style::reset << std::endl;
     return std::nullopt;
   }
 
@@ -132,16 +132,18 @@ auto getRandomCell(std::shared_ptr<Location> location) {
   return room->cells[rand() % room->cells.size()];
 }
 
-std::optional<std::shared_ptr<Cell>> getRandomCell(std::shared_ptr<Location> location, CellSpec type) {
+std::optional<std::shared_ptr<Cell>>
+getRandomCell(std::shared_ptr<Location> location, CellSpec type) {
   if (location->rooms.size() == 0) {
     // return std::nullopt;
   }
-  
+
   auto room = location->rooms[rand() % location->rooms.size()];
   auto rc = getRandomCell(room, type);
   auto n = location->rooms.size();
   while (!rc && n > 0) {
-    auto rc = getRandomCell(location->rooms[rand() % location->rooms.size()], type);
+    auto rc =
+        getRandomCell(location->rooms[rand() % location->rooms.size()], type);
     n--;
   }
   return rc;
@@ -377,11 +379,13 @@ void fixOverlapped(std::shared_ptr<Location> location) {
   for (auto r = 0; r < HEIGHT; r++) {
     for (auto c = 0; c < WIDTH; c++) {
       std::vector<std::shared_ptr<Room>> rooms(location->rooms.size());
-      auto it =
-            std::copy_if(location->rooms.begin(), location->rooms.end(), rooms.begin(),
-                         [&](auto room) {
-                          auto result = room->x <= c && room->x + room->width >= c && room->y <= r && room->y + room->height >= r;
-                          return result; });
+      auto it = std::copy_if(location->rooms.begin(), location->rooms.end(),
+                             rooms.begin(), [&](auto room) {
+                               auto result =
+                                   room->x <= c && room->x + room->width >= c &&
+                                   room->y <= r && room->y + room->height >= r;
+                               return result;
+                             });
       rooms.resize(std::distance(rooms.begin(), it));
       if (rooms.size() == 1) {
         cache[rooms.front()].push_back(location->cells[r][c]);
@@ -486,11 +490,17 @@ void placeLoot(std::shared_ptr<Location> location, int threat) {
   for (auto room : location->rooms) {
     auto rc = getRandomCell(room, CellType::FLOOR);
     std::shared_ptr<Cell> c;
-    if (rc) c = *rc; else continue;
+    if (rc)
+      c = *rc;
+    else
+      continue;
     auto n = 0;
     while (location->getObjects(c).size() != 0 && n < 20) {
       rc = getRandomCell(room, CellType::FLOOR);
-      if (rc) c = *rc; else continue;
+      if (rc)
+        c = *rc;
+      else
+        continue;
       n++;
     }
     if (n == 20) {
@@ -500,7 +510,8 @@ void placeLoot(std::shared_ptr<Location> location, int threat) {
     auto loot = table.open();
     for (auto item : loot) {
       auto new_item = item->roll();
-      // fmt::print("Place {} at {}.{}\n", new_item->getTitle(true), c->x, c->y);
+      // fmt::print("Place {} at {}.{}\n", new_item->getTitle(true), c->x,
+      // c->y);
       new_item->currentCell = c;
       location->objects.push_back(new_item);
     }
@@ -529,8 +540,8 @@ void placeEnemies(std::shared_ptr<Location> location, int threat) {
       continue;
     std::vector<std::shared_ptr<Cell>> cells(room->cells.size());
     auto it =
-          std::copy_if(room->cells.begin(), room->cells.end(), cells.begin(),
-                        [](auto cell) { return cell->type == CellType::FLOOR; });
+        std::copy_if(room->cells.begin(), room->cells.end(), cells.begin(),
+                     [](auto cell) { return cell->type == CellType::FLOOR; });
     cells.resize(std::distance(cells.begin(), it));
     if (cells.size() == 0)
       continue;
@@ -546,7 +557,7 @@ void placeEnemies(std::shared_ptr<Location> location, int threat) {
                     [&](auto rec) { fullP += rec.second; });
       p *= fullP;
       float ap = 0;
-      for (auto [et, tp] : table) {
+      for (auto[et, tp] : table) {
         ap += tp;
         if (p <= ap) {
           type = et;
@@ -946,7 +957,8 @@ std::shared_ptr<Room> placeBlob(std::shared_ptr<Location> location,
   auto room = getRoom(16, 3, 16, 3, CellType::WALL);
   auto ltcr = getRandomCell(location, CellType::FLOOR);
   // auto ltc = room[]
-  while (!ltcr || (*ltcr)->x + room->width >= WIDTH || (*ltcr)->y + room->height >= HEIGHT) {
+  while (!ltcr || (*ltcr)->x + room->width >= WIDTH ||
+         (*ltcr)->y + room->height >= HEIGHT) {
     ltcr = getRandomCell(location, CellType::FLOOR);
   }
   auto ltc = *ltcr;
@@ -1001,19 +1013,21 @@ std::shared_ptr<Room> placeBlob(std::shared_ptr<Location> location,
       }
     } else {
       for (auto n = 0; n < 5; n++) {
-      for (auto c : room->cells) {
-        if (c->type == CellType::WALL) {
-        auto n = location->getNeighbors(c);
-        auto fn =
-            std::count_if(n.begin(), n.end(), [](std::shared_ptr<Cell> nc) {
-              return nc->type == CellType::FLOOR;
-            });
-        if (fn == 0) {
-          c->type = CellType::UNKNOWN;
-        } else if (fn >= 3) {
-          c->type = CellType::FLOOR;
-        } 
-      }}}
+        for (auto c : room->cells) {
+          if (c->type == CellType::WALL) {
+            auto n = location->getNeighbors(c);
+            auto fn =
+                std::count_if(n.begin(), n.end(), [](std::shared_ptr<Cell> nc) {
+                  return nc->type == CellType::FLOOR;
+                });
+            if (fn == 0) {
+              c->type = CellType::UNKNOWN;
+            } else if (fn >= 3) {
+              c->type = CellType::FLOOR;
+            }
+          }
+        }
+      }
     }
   }
 
@@ -1028,7 +1042,7 @@ std::shared_ptr<Room> placeLake(std::shared_ptr<Location> location) {
   return placeBlob(location, CellType::WATER);
 }
 
-//FIXME: sometimes generation hanging forever=(
+// FIXME: sometimes generation hanging forever=(
 std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   using milliseconds = std::chrono::duration<double, std::milli>;
 
@@ -1039,9 +1053,11 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
 
   auto location = std::make_shared<Location>(spec);
   location->depth = spec.threat;
-  std::cout << rang::fg::yellow << (spec.type == LocationType::DUNGEON ? "DUN" : "CAV") << location->getFeaturesTag() << "  " << location->depth << rang::style::reset
-            << " gen started"
-            << rang::style::reset << '\n';
+  std::cout << rang::fg::yellow
+            << (spec.type == LocationType::DUNGEON ? "DUN" : "CAV")
+            << location->getFeaturesTag() << "  " << location->depth
+            << rang::style::reset << " gen started" << rang::style::reset
+            << '\n';
 
   if (spec.type == LocationType::DUNGEON) {
     start = std::chrono::system_clock::now();
@@ -1067,10 +1083,10 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
     timings["placeCaves"] = end - start;
   }
 
-    start = std::chrono::system_clock::now();
-    fixOverlapped(location);
-    end = std::chrono::system_clock::now();
-    timings["fixOverlapped"] = end - start;
+  start = std::chrono::system_clock::now();
+  fixOverlapped(location);
+  end = std::chrono::system_clock::now();
+  timings["fixOverlapped"] = end - start;
 
   if (location->hasFeature(LocationFeature::RIVER)) {
     start = std::chrono::system_clock::now();
@@ -1089,7 +1105,6 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
     fixOverlapped(location);
     end = std::chrono::system_clock::now();
     timings["fixOverlapped-void"] = end - start;
-
   }
 
   if (location->hasFeature(LocationFeature::LAKE)) {
@@ -1131,24 +1146,24 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   timings["placeLoot"] = end - start;
 
   if (location->hasFeature(LocationFeature::TORCHES)) {
-  start = std::chrono::system_clock::now();
+    start = std::chrono::system_clock::now();
     placeTorches(location);
-  end = std::chrono::system_clock::now();
-  timings["placeTorches"] = end - start;
+    end = std::chrono::system_clock::now();
+    timings["placeTorches"] = end - start;
   }
 
   if (location->hasFeature(LocationFeature::STATUE)) {
-  start = std::chrono::system_clock::now();
+    start = std::chrono::system_clock::now();
     placeStatue(location);
-  end = std::chrono::system_clock::now();
-  timings["placeStatue"] = end - start;
+    end = std::chrono::system_clock::now();
+    timings["placeStatue"] = end - start;
   }
 
   if (location->hasFeature(LocationFeature::ALTAR)) {
-  start = std::chrono::system_clock::now();
+    start = std::chrono::system_clock::now();
     placeAltar(location);
-  end = std::chrono::system_clock::now();
-  timings["placeAltar"] = end - start;
+    end = std::chrono::system_clock::now();
+    timings["placeAltar"] = end - start;
   }
 
   start = std::chrono::system_clock::now();
@@ -1164,8 +1179,7 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
       for (auto cf : location->type.cellFeatures) {
         c->features.push_back(cf);
       }
-      if (c->room != nullptr &&
-          (c->room->type == RoomType::CAVERN) &&
+      if (c->room != nullptr && (c->room->type == RoomType::CAVERN) &&
           c->type == CellType::FLOOR && R::R() < P::POND) {
         c->type = CellType::WATER;
       }
@@ -1175,14 +1189,17 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   timings["cellFeatures"] = end - start;
 
   std::vector<std::string> timeMarks;
-  for (auto [mark, ms] : timings) {
+  for (auto[mark, ms] : timings) {
     timeMarks.push_back(fmt::format("{}: {}", mark, ms.count()));
   }
 
   auto t1 = std::chrono::system_clock::now();
   using milliseconds = std::chrono::duration<double, std::milli>;
   milliseconds ms = t1 - t0;
-  std::cout << rang::fg::blue << (spec.type == LocationType::DUNGEON ? "DUN" : "CAV") << location->getFeaturesTag() << "  " << location->depth << rang::style::reset
+  std::cout << rang::fg::blue
+            << (spec.type == LocationType::DUNGEON ? "DUN" : "CAV")
+            << location->getFeaturesTag() << "  " << location->depth
+            << rang::style::reset
             << " location gen time taken: " << rang::fg::green << ms.count()
             << rang::style::reset << '\n';
   std::cout << utils::join(timeMarks, ", ") << std::endl;

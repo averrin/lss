@@ -22,7 +22,7 @@ void Location::invalidateVisibilityCache(std::shared_ptr<Cell> cell) {
   // fmt::print("--- {} ", visibilityCache.size());
   std::vector<std::pair<std::shared_ptr<Cell>, float>> hits;
   for (auto ls : cell->lightSources) {
-    for (auto [lsk, _] : visibilityCache) {
+    for (auto[lsk, _] : visibilityCache) {
       if (lsk.first != ls && lsk.first != player->currentCell)
         continue;
       // fmt::print("cache hit: {}.{} - {}\n", lsk.first->x, lsk.first->y,
@@ -58,6 +58,18 @@ void Location::onEvent(CommitEvent &e) {
   //           << rang::style::reset << ": " << rang::fg::green << ms.count()
   //           << rang::style::reset << '\n';
 
+  // TODO: and all enemies on loction (not only this maybe)
+  auto effects = player->activeEffects;
+  for (auto ef : effects) {
+    if (auto le = std::dynamic_pointer_cast<LastingEffect>(ef)) {
+      le->currentDuration -= e.actionPoints;
+      if (le->currentDuration <= 0) {
+        player->activeEffects.erase(std::remove(
+            player->activeEffects.begin(), player->activeEffects.end(), ef));
+      }
+    }
+  }
+
   LocationChangeEvent ec(nullptr);
   eb::EventBus::FireEvent(ec);
 }
@@ -65,10 +77,10 @@ void Location::onEvent(CommitEvent &e) {
 void Location::onEvent(DropEvent &e) {
   if (e.item == nullptr)
     return;
-    auto item = e.item->clone();
-    item->currentCell =
-        std::dynamic_pointer_cast<Creature>(e.getSender())->currentCell;
-    objects.push_back(item);
+  auto item = e.item->clone();
+  item->currentCell =
+      std::dynamic_pointer_cast<Creature>(e.getSender())->currentCell;
+  objects.push_back(item);
 }
 
 void Location::onEvent(EnemyDiedEvent &e) {
@@ -280,8 +292,7 @@ void Location::AdjacentCost(void *state,
     if (!n->passThrough && (player == nullptr || n != player->currentCell))
       continue;
     micropather::StateCost nodeCost = {
-        (void *)&(*n),
-        LeastCostEstimate(state, (void *)&(*n)),
+        (void *)&(*n), LeastCostEstimate(state, (void *)&(*n)),
     };
     neighbors->push_back(nodeCost);
   }

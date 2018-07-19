@@ -10,6 +10,7 @@
 // TODO: refactor.
 // maybe create variant with int, float, rndInt and rndFloat
 // and write one function for baase modification (see lss/creature.cpp)
+// and maybe make it Objects for castObjects filtering;
 class Player;
 class Effect {
 public:
@@ -151,6 +152,20 @@ public:
     return std::make_shared<TraitEffect>(trait);
   };
   std::variant<float, int> getModifier() { return 0; };
+};
+
+class LastingEffect : public Effect {
+public:
+  LastingEffect(std::shared_ptr<Effect> e, int d)
+      : Effect(e->type), effect(e), duration(d), currentDuration(d){};
+  std::shared_ptr<Effect> effect;
+  int duration;
+  int currentDuration;
+  std::string getTitle();
+  std::shared_ptr<Effect> clone() {
+    return std::make_shared<LastingEffect>(effect, duration);
+  };
+  std::variant<float, int> getModifier() { return effect->getModifier(); };
 };
 
 typedef std::vector<std::shared_ptr<Effect>> Effects;

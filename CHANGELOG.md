@@ -9,6 +9,8 @@
 - lakes && void
 - permanent trait effect (for items)
 - background location generation
+- more info in game over screen
+- lasting effects with duration
 
 
 ### 0.0.7

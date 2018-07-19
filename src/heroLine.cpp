@@ -52,6 +52,7 @@ void HeroLine::update() {
                               : "")),
       F(fmt::format("   <b>P</b>:{}.{} D:{} [{} {}].{}", hero->currentCell->x,
                     hero->currentCell->y, hero->currentLocation->depth,
-                    hero->currentLocation->type.name, locationFeatures, hero->currentLocation->rooms.size())),
+                    hero->currentLocation->type.name, locationFeatures,
+                    hero->currentLocation->rooms.size())),
   });
 }

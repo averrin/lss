@@ -100,7 +100,8 @@ void EventReactor::onEvent(InventoryCommandEvent &e) {
 }
 
 void EventReactor::onEvent(UseCommandEvent &e) {
-  if (auto c = std::dynamic_pointer_cast<Consumable>(e.item); c && e.item != nullptr) {
+  if (auto c = std::dynamic_pointer_cast<Consumable>(e.item);
+      c && e.item != nullptr) {
     auto spell = c->spell;
 
     app->hero->identify(e.item);
@@ -113,6 +114,10 @@ void EventReactor::onEvent(UseCommandEvent &e) {
 
     app->hero->inventory.erase(std::remove(app->hero->inventory.begin(),
                                            app->hero->inventory.end(), e.item));
+
+    auto me = std::make_shared<MessageEvent>(
+        nullptr, fmt::format("You use {}", e.item->getTitle()));
+    eb::EventBus::FireEvent(*me);
     return castSpell(spell);
   }
   app->objectSelectMode->setHeader(F("Items to use: "));
@@ -121,9 +126,10 @@ void EventReactor::onEvent(UseCommandEvent &e) {
   app->objectSelectMode->setObjects(utils::castObjects<Object>(usable));
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
-    if(auto item = std::dynamic_pointer_cast<Consumable>(o)) {
-    return fmt::format("<span weight='bold'>{}</span> - {}{}", letter,
-                       item->getFullTitle(), item->spell == nullptr ? "*" : "");
+    if (auto item = std::dynamic_pointer_cast<Consumable>(o)) {
+      return fmt::format("<span weight='bold'>{}</span> - {}{}", letter,
+                         item->getFullTitle(),
+                         item->spell == nullptr ? "*" : "");
     }
     return "Unknown error"s;
   };
@@ -307,8 +313,8 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
     if (auto spell = std::dynamic_pointer_cast<Spell>(o)) {
-    return fmt::format("<span weight='bold'>{}</span> - {}", letter,
-                       spell->name);
+      return fmt::format("<span weight='bold'>{}</span> - {}", letter,
+                         spell->name);
     }
     return "Unknown error"s;
   };
@@ -357,9 +363,8 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     }
     app->statusLine->setContent({F("Enemy freezed!")});
   } else if (*spell == *Spells::SUMMON_ORK) {
-    auto c =
-        app->hero->currentLocation
-            ->cells[app->hero->currentCell->y + 1][app->hero->currentCell->x];
+    auto c = app->hero->currentLocation->cells[app->hero->currentCell->y + 1]
+                                              [app->hero->currentCell->x];
     app->hero->currentLocation->objects.push_back(
         mkEnemy(app->hero->currentLocation, c, app->hero, EnemyType::ORK));
     app->hero->commit("summon ork", 0);
@@ -371,17 +376,17 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     MessageEvent me(nullptr, "Your inventory was identified");
     eb::EventBus::FireEvent(me);
   } else if (*spell == *Spells::SUMMON_PLATE) {
-    auto c =
-        app->hero->currentLocation
-            ->cells[app->hero->currentCell->y + 1][app->hero->currentCell->x];
+    auto c = app->hero->currentLocation->cells[app->hero->currentCell->y + 1]
+                                              [app->hero->currentCell->x];
     // auto item = Prototype::GOD_PLATE->roll();
-    auto lt = LootBox{1, {Prototype::POTION_HEAL}};
+    auto lt = LootBox{1, {Prototype::POTION_HP_BOOST}};
     auto items = lt.open();
     items.front()->currentCell = c;
     app->hero->currentLocation->objects.push_back(items.front());
     app->hero->commit("summon plate", 0);
   } else if (*spell == *Spells::HEAL_LESSER) {
-    auto heal = R::Z(app->hero->HP_MAX(app->hero.get()) / 100 * 10, app->hero->HP_MAX(app->hero.get()) / 100 * 25);
+    auto heal = R::Z(app->hero->HP_MAX(app->hero.get()) / 100 * 10,
+                     app->hero->HP_MAX(app->hero.get()) / 100 * 25);
     app->hero->hp += heal;
     if (app->hero->HP(app->hero.get()) > app->hero->HP_MAX(app->hero.get())) {
       app->hero->hp = app->hero->HP_MAX(app->hero.get());
@@ -390,7 +395,8 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     MessageEvent me(nullptr, fmt::format("You healed {} hp", heal));
     eb::EventBus::FireEvent(me);
   } else if (*spell == *Spells::HEAL) {
-    auto heal = R::Z(app->hero->HP_MAX(app->hero.get()) / 100 * 25, app->hero->HP_MAX(app->hero.get()) / 100 * 50);
+    auto heal = R::Z(app->hero->HP_MAX(app->hero.get()) / 100 * 25,
+                     app->hero->HP_MAX(app->hero.get()) / 100 * 50);
     app->hero->hp += heal;
     if (app->hero->HP(app->hero.get()) > app->hero->HP_MAX(app->hero.get())) {
       app->hero->hp = app->hero->HP_MAX(app->hero.get());
@@ -414,6 +420,9 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
       app->hero->traits.push_back(tspell->trait);
     }
     app->hero->commit("toggle trait", 0);
+  } else if (auto espell = std::dynamic_pointer_cast<EffectSpell>(spell)) {
+    app->hero->activeEffects.push_back(espell->effect);
+    app->hero->commit("apply effect", 0);
   }
 }
 

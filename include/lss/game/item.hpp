@@ -59,7 +59,9 @@ public:
   std::string getTitle(bool force = false);
   std::string getFullTitle();
 
-  virtual std::shared_ptr<Item> clone() { return std::make_shared<Item>(*this); }
+  virtual std::shared_ptr<Item> clone() {
+    return std::make_shared<Item>(*this);
+  }
   virtual std::shared_ptr<Item> roll() {
     auto item = std::make_shared<Item>(*this);
     item->count = count <= 1 ? count : rand() % count + 1;
@@ -86,9 +88,7 @@ public:
       : Item(un, n, t), spell(s) {}
   std::shared_ptr<Spell> spell;
   std::shared_ptr<Item> clone() { return std::make_shared<Consumable>(*this); }
-  std::shared_ptr<Item> roll() {
-    return std::make_shared<Consumable>(*this);
-  }
+  std::shared_ptr<Item> roll() { return std::make_shared<Consumable>(*this); }
 };
 
 typedef std::vector<std::shared_ptr<Item>> Items;
@@ -151,12 +151,33 @@ const auto SWORD_OF_DUALWIELD = std::make_shared<Item>(
     Effects{std::make_shared<MeleeDamage>(R::I(-2, 2), R::I(2, 4), R::I(2, 4)),
             std::make_shared<TraitEffect>(Traits::DUAL_WIELD)});
 
+// TODO: make colors unique
 const auto POTION_HEAL_LESSER = std::make_shared<Consumable>(
     fmt::format("{} potion", utils::getRandomColor()), "lesser heal potion",
     ItemType::POTION, Spells::HEAL_LESSER);
 const auto POTION_HEAL = std::make_shared<Consumable>(
     fmt::format("{} potion", utils::getRandomColor()), "heal potion",
     ItemType::POTION, Spells::HEAL);
+
+const auto POTION_GOD_SPEED = std::make_shared<Consumable>(
+    fmt::format("{} potion", utils::getRandomColor()), "god speed potion",
+    ItemType::POTION, Spells::GOD_SPEED);
+
+const auto POTION_HP_BOOST = std::make_shared<Consumable>(
+    fmt::format("{} potion", utils::getRandomColor()), "health boost potion",
+    ItemType::POTION, Spells::HP_BOOST);
+
+const auto POTION_VISIBILITY_BOOST = std::make_shared<Consumable>(
+    fmt::format("{} potion", utils::getRandomColor()),
+    "visibility boost potion", ItemType::POTION, Spells::VISIBILITY_BOOST);
+
+const auto POTION_CRIT_BOOST = std::make_shared<Consumable>(
+    fmt::format("{} potion", utils::getRandomColor()),
+    "crit chance boost potion", ItemType::POTION, Spells::CRIT_BOOST);
+
+const auto POTION_LEVITATION = std::make_shared<Consumable>(
+    fmt::format("{} potion", utils::getRandomColor()), "levitation potion",
+    ItemType::POTION, Spells::LEVITATION);
 
 const auto SCROLL_IDENTIFICATION = std::make_shared<Consumable>(
     fmt::format("scroll labled '{}'", utils::getScrollName()),

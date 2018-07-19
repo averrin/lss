@@ -116,8 +116,8 @@ bool InspectMode::processKey(KeyEvent event) {
     if (d == std::nullopt)
       break;
     auto nc = app->hero->getCell(
-        app->hero->currentLocation
-            ->cells[app->state->cursor.y][app->state->cursor.x],
+        app->hero->currentLocation->cells[app->state->cursor.y]
+                                         [app->state->cursor.x],
         *utils::getDirectionByName(*d));
     app->state->cursor = {nc->x, nc->y};
     app->state->invalidate();
@@ -518,20 +518,25 @@ void GameOverMode::render(std::shared_ptr<State> state) {
   state->appendContent(State::END_LINE);
   state->appendContent(F(fmt::format("GOLD:            <b>{}</b>", gold)));
   state->appendContent(State::END_LINE);
-  state->appendContent(F(fmt::format("DMG TAKEN:       <b>{}</b>", hero->report.damageTaken)));
+  state->appendContent(
+      F(fmt::format("DMG TAKEN:       <b>{}</b>", hero->report.damageTaken)));
   state->appendContent(State::END_LINE);
-  state->appendContent(F(fmt::format("DMG INFLICTED:   <b>{}</b>", hero->report.damageInflicted)));
+  state->appendContent(F(
+      fmt::format("DMG INFLICTED:   <b>{}</b>", hero->report.damageInflicted)));
   state->appendContent(State::END_LINE);
-  state->appendContent(F(fmt::format("DMG DEFLECTED:   <b>{}</b>", hero->report.damageDeflected)));
+  state->appendContent(F(
+      fmt::format("DMG DEFLECTED:   <b>{}</b>", hero->report.damageDeflected)));
   state->appendContent(State::END_LINE);
-  state->appendContent(F(fmt::format("AP COMMITED:     <b>{}</b>", hero->report.apCommited)));
+  state->appendContent(
+      F(fmt::format("AP COMMITED:     <b>{}</b>", hero->report.apCommited)));
   state->appendContent(State::END_LINE);
   state->appendContent(State::END_LINE);
 
   state->appendContent(F(fmt::format("<b>KILLS</b>:")));
   state->appendContent(State::END_LINE);
-  for (auto [name, kills] : hero->report.kills) {
-    state->appendContent(F(fmt::format("{:14}   <b>{}</b>", name+":", kills)));
+  for (auto[name, kills] : hero->report.kills) {
+    state->appendContent(
+        F(fmt::format("{:14}   <b>{}</b>", name + ":", kills)));
     state->appendContent(State::END_LINE);
   }
 

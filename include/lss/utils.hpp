@@ -121,11 +121,13 @@ public:
   static std::string getRandomColor() {
     auto seed = std::chrono::system_clock::now().time_since_epoch().count();
     srand(seed);
-    static std::array<std::string, 21> colors = {
-        "crimson",    "scarlet", "orange", "yellow", "green",    "blue",
-        "indigo",     "violet",  "puce",   "mauve",  "burgundy", "turquoise",
-        "aquamarine", "gray",    "pink",   "white",  "lavender", "tan",
-        "brown",      "cyan",    "black"};
+    static std::array<std::string, 28> colors = {
+        "crimson",  "scarlet",   "orange",     "yellow",  "green",
+        "blue",     "indigo",    "violet",     "puce",    "mauve",
+        "burgundy", "turquoise", "aquamarine", "gray",    "pink",
+        "white",    "lavender",  "tan",        "brown",   "cyan",
+        "black",    "clear",     "milky",      "rainbow", "murky",
+        "bubbling", "sparkling", "magenta"};
 
     return colors[rand() % colors.size()];
   }

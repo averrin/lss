@@ -23,10 +23,28 @@ struct LootBox {
         }
       }
     }
-    //TODO: remove useless roll calls
-    std::transform(loot.begin(), loot.end(), loot.begin(), [](auto item) {return item->roll();});
+    // TODO: remove useless roll calls
+    std::transform(loot.begin(), loot.end(), loot.begin(),
+                   [](auto item) { return item->roll(); });
     return loot;
   };
+};
+
+namespace LootBoxes {
+const std::vector<LootBox> POTIONS = {
+    {0.166, {Prototype::POTION_HEAL_LESSER}},
+    {0.166, {Prototype::POTION_HEAL}},
+    {0.166, {Prototype::POTION_GOD_SPEED}},
+    // {0.30, {Prototype::POTION_HP_BOOST}},
+    {0.166, {Prototype::POTION_VISIBILITY_BOOST}},
+    {0.166, {Prototype::POTION_CRIT_BOOST}},
+    {0.166, {Prototype::POTION_LEVITATION}},
+};
+const std::vector<LootBox> SCROLLS = {
+    {0.30, {Prototype::SCROLL_IDENTIFICATION}},
+    {0.30, {Prototype::SCROLL_REVEAL}},
+    {0.30, {Prototype::SCROLL_TELEPORT}}};
+;
 };
 
 #endif // __LOOTBOX_H_
