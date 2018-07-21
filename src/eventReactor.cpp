@@ -381,7 +381,7 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
         app->hero->currentLocation
             ->cells[app->hero->currentCell->y + 1][app->hero->currentCell->x];
     // auto item = Prototype::GOD_PLATE->roll();
-    auto lt = LootBox{1, {Prototype::POTION_REGENERATION}};
+    auto lt = LootBox{1, {Prototype::POTION_CONFUSION}};
     auto items = lt.open();
     items.front()->currentCell = c;
     app->hero->currentLocation->objects.push_back(items.front());
@@ -423,6 +423,9 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     }
     app->hero->commit("toggle trait", 0);
   } else if (auto espell = std::dynamic_pointer_cast<EffectSpell>(spell)) {
+
+    MessageEvent me(nullptr, fmt::format("Apply {} effect", espell->name));
+    eb::EventBus::FireEvent(me);
     app->hero->activeEffects.push_back(espell->effect);
     app->hero->commit("apply effect", 0);
   }

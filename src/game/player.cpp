@@ -186,6 +186,12 @@ bool Player::equip(std::shared_ptr<Slot> slot, std::shared_ptr<Item> item) {
 }
 
 void Player::onEvent(MoveCommandEvent &e) {
+
+  if (hasTrait(Traits::CONFUSED)) {
+    auto ds = std::vector<std::string>{"e", "s", "w", "n", "nw", "ne", "sw", "se"};
+    auto d = ds[rand() % ds.size()];
+    e.direction = *utils::getDirectionByName(d);
+  }
   if (move(e.direction, true)) {
     commit("move", ap_cost::STEP / SPEED(this));
   } else {
@@ -194,6 +200,17 @@ void Player::onEvent(MoveCommandEvent &e) {
 }
 
 void Player::onEvent(AttackCommandEvent &e) {
+  if (hasTrait(Traits::CONFUSED)) {
+    auto ds = std::vector<std::string>{"e", "s", "w", "n", "nw", "ne", "sw", "se"};
+    auto d = ds[rand() % ds.size()];
+    e.direction = *utils::getDirectionByName(d);
+  }
+  if (hasTrait(Traits::CONFUSED)) {
+    auto ds = std::vector<std::string>{"e", "s", "w", "n", "nw", "ne", "sw", "se"};
+    auto d = ds[rand() % ds.size()];
+    e.direction = *utils::getDirectionByName(d);
+  }
+
   if (attack(e.direction)) {
     fmt::print("attack [{}]\n", ap_cost::ATTACK / SPEED(this));
     commit("attack", ap_cost::ATTACK / SPEED(this));
@@ -225,6 +242,12 @@ void Player::onEvent(DigCommandEvent &e) {
 
 // TODO: fix stops parallel rooms (maybe count  < 3...)
 void Player::onEvent(WalkCommandEvent &e) {
+  if (hasTrait(Traits::CONFUSED)) {
+    auto ds = std::vector<std::string>{"e", "s", "w", "n", "nw", "ne", "sw", "se"};
+    auto d = ds[rand() % ds.size()];
+    e.direction = *utils::getDirectionByName(d);
+  }
+
   auto enemies = utils::castObjects<Enemy>(currentLocation->objects);
   while (move(e.direction)) {
     commit("walk move", ap_cost::STEP / SPEED(this), true);

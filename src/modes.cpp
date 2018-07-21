@@ -351,10 +351,16 @@ bool NormalMode::processKey(KeyEvent event) {
     }
   case KeyEvent::KEY_b:
   case KeyEvent::KEY_n: {
-    auto d = getDir(event.getCode());
-    if (d == std::nullopt)
-      break;
-    app->processCommand(*d);
+    if (!app->hero->hasTrait(Traits::CONFUSED)) {
+      auto d = getDir(event.getCode());
+      if (d == std::nullopt)
+        break;
+      app->processCommand(*d);
+    } else {
+      auto ds = std::vector<std::string>{"e", "s", "w", "n", "nw", "ne", "sw", "se"};
+      auto d = ds[rand() % ds.size()];
+      app->processCommand(d);
+    }
   } break;
   case KeyEvent::KEY_PERIOD:
     if (event.isShiftDown()) {

@@ -76,6 +76,10 @@ const auto LEVITATION = std::make_shared<EffectSpell>(
     "Levitation", std::make_shared<LastingEffect>(
                       std::make_shared<TraitEffect>(Traits::FLY), 10000));
 
+const auto CONFUSION = std::make_shared<EffectSpell>(
+    "Confusion", std::make_shared<LastingEffect>(
+                      std::make_shared<TraitEffect>(Traits::CONFUSED), 50000));
+
 const auto EOT_HEAL = std::make_shared<EffectSpell>(
     "Regeneration",
     std::make_shared<LastingEffect>(OverTimeEffects::HEAL, 5000));

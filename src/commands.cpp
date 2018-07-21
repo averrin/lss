@@ -38,6 +38,7 @@ WalkCommand::getEvent(std::string cmd) {
   if (tokens.size() > 1) {
     dirString = tokens[1];
   }
+
   auto direction = utils::getDirectionByName(dirString);
   if (direction == std::nullopt) {
     MessageEvent me(nullptr,

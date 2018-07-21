@@ -22,6 +22,7 @@ const Trait FLY = {"Fly"};
 const Trait CAN_SWIM = {"Swimming"};
 const Trait INVULNERABLE = {"Invulnerable"};
 const Trait MOB = {"Mob"};
+const Trait CONFUSED = {"Confused"};
 
 // TODO: make it works for hero
 const Trait DEADLY_SHADOWS = {"Deadly shadows"};

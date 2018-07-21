@@ -82,6 +82,13 @@ public:
         }
       }
     }
+    for (auto e : activeEffects) {
+      if (auto le = std::dynamic_pointer_cast<LastingEffect>(e)) {
+        if (auto et = std::dynamic_pointer_cast<TraitEffect>(le->effect)) {
+          allTraits.push_back(et->trait);
+        }
+      }
+    }
     return std::find(allTraits.begin(), allTraits.end(), t) != allTraits.end();
   }
   bool hasLight();
