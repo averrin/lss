@@ -19,6 +19,8 @@ public:
 class ToggleTraitSpell : public Spell {
 public:
   ToggleTraitSpell(std::string n, Trait t) : Spell(n), trait(t) {}
+  ToggleTraitSpell(std::string n, Trait t, float p) : Spell(n), trait(t), probability(p) {}
+  float probability = 1;
   Trait trait;
 };
 
@@ -54,6 +56,8 @@ const auto TOGGLE_CAN_SWIM = std::make_shared<ToggleTraitSpell>(
     "Toggle Swimming trait", Traits::CAN_SWIM);
 const auto TOGGLE_INVULNERABLE = std::make_shared<ToggleTraitSpell>(
     "Toggle Invulnerable trait", Traits::INVULNERABLE);
+const auto TOGGLE_JUMPY = std::make_shared<ToggleTraitSpell>(
+    "Toggle Jumpy trait", Traits::JUMPY);
 
 const auto GOD_SPEED = std::make_shared<EffectSpell>(
     "Make you faster than Flash",

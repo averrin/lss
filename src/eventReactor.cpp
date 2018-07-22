@@ -306,7 +306,7 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
             Spells::TOGGLE_MIND_SIGHT, Spells::TOGGLE_MAGIC_TORCH,
             Spells::TOGGLE_FLY, Spells::TOGGLE_CAN_SWIM, Spells::SUMMON_ORK,
             Spells::SUMMON_PLATE, Spells::TOGGLE_INVULNERABLE, Spells::IDENTIFY,
-            Spells::TELEPORT_RANDOM}));
+            Spells::TELEPORT_RANDOM, Spells::TOGGLE_JUMPY}));
   } else {
     app->objectSelectMode->setObjects({});
   }
@@ -415,11 +415,20 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     MessageEvent me(nullptr, fmt::format("You were teleported."));
     eb::EventBus::FireEvent(me);
   } else if (auto tspell = std::dynamic_pointer_cast<ToggleTraitSpell>(spell)) {
-    if (app->hero->hasTrait(tspell->trait)) {
-      app->hero->traits.erase(std::remove(
-          app->hero->traits.begin(), app->hero->traits.end(), tspell->trait));
+    if (R::R() < tspell->probability) {
+      if (app->hero->hasTrait(tspell->trait)) {
+        app->hero->traits.erase(std::remove(
+            app->hero->traits.begin(), app->hero->traits.end(), tspell->trait));
+        MessageEvent me(nullptr, fmt::format("Undo {}", tspell->name));
+        eb::EventBus::FireEvent(me);
+      } else {
+        app->hero->traits.push_back(tspell->trait);
+        MessageEvent me(nullptr, fmt::format("Apply {}", tspell->name));
+        eb::EventBus::FireEvent(me);
+      }
     } else {
-      app->hero->traits.push_back(tspell->trait);
+        MessageEvent me(nullptr, fmt::format("Nothing happens"));
+        eb::EventBus::FireEvent(me);
     }
     app->hero->commit("toggle trait", 0);
   } else if (auto espell = std::dynamic_pointer_cast<EffectSpell>(spell)) {

@@ -8,6 +8,7 @@
 #include "lss/game/events.hpp"
 #include "lss/game/fov.hpp"
 #include "lss/game/player.hpp"
+#include "lss/generator/room.hpp"
 #include "lss/utils.hpp"
 
 #include "EventBus.hpp"
@@ -185,7 +186,6 @@ int criticalHit(int m, int d, int e) {
   return damage;
 }
 
-// TODO: move messages logic to logPanel
 int Creature::hitRoll(int m, int d, int e) {
   auto damage = 0;
   for (auto n = 0; n < d; n++) {
@@ -334,6 +334,16 @@ std::optional<std::shared_ptr<Slot>> Creature::getSlot(WearableType type,
 bool Creature::move(Direction d, bool autoAction) {
   auto cc = currentCell;
   auto nc = getCell(currentCell, d);
+
+  if (hasTrait(Traits::JUMPY) && R::R() < 0.01) {
+    auto room = currentLocation
+                    ->rooms[rand() % currentLocation->rooms.size()];
+    nc = room->cells[rand() % room->cells.size()];
+
+    MessageEvent me(nullptr, "Your feel jumpy.");
+    eb::EventBus::FireEvent(me);
+  }
+
   auto obstacle = std::find_if(currentLocation->objects.begin(),
                                currentLocation->objects.end(),
                                [&](std::shared_ptr<Object> o) {
