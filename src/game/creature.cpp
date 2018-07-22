@@ -44,6 +44,12 @@ float Attribute::operator()(Creature *c) {
   case AttributeType::CRIT_CHANCE:
     base = c->crit_chance;
     break;
+  case AttributeType::MP:
+    base = c->mp;
+    break;
+  case AttributeType::MP_MAX:
+    base = c->mp_max;
+    break;
   }
 
   Effects effects;

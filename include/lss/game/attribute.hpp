@@ -6,6 +6,8 @@ enum AttributeType {
   NONE,
   HP,
   HP_MAX,
+  MP,
+  MP_MAX,
   SPEED,
   VISIBILITY_DISTANCE,
   DAMAGE,

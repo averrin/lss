@@ -66,6 +66,8 @@ Player::Player() : Creature() {
 
   hp_max = 100;
   hp = hp_max;
+  mp_max = 50;
+  mp = mp_max;
   damage_dices = 1;
   damage_edges = 1;
   damage_modifier = 0;
@@ -316,7 +318,8 @@ void Player::onEvent(WaitCommandEvent &e) {
 void Player::onEvent(ZapCommandEvent &e) {
   if (e.spell == nullptr)
     return;
-  // commit("zap", e.spell->cost);
+  mp -= e.spell->cost;
+  commit("zap", e.spell->ap);
 }
 
 //TODO: move to creature

@@ -300,21 +300,25 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
 
   if (app->debug) {
     app->objectSelectMode->setObjects(
-        utils::castObjects<Object>(std::vector<std::shared_ptr<Spell>>{
-            Spells::REVEAL, Spells::MONSTER_SENSE, Spells::MONSTER_FREEZE,
-            Spells::TOGGLE_DUAL_WIELD, Spells::TOGGLE_NIGHT_VISION,
-            Spells::TOGGLE_MIND_SIGHT, Spells::TOGGLE_MAGIC_TORCH,
-            Spells::TOGGLE_FLY, Spells::TOGGLE_CAN_SWIM, Spells::SUMMON_ORK,
-            Spells::SUMMON_PLATE, Spells::TOGGLE_INVULNERABLE, Spells::IDENTIFY,
-            Spells::TELEPORT_RANDOM, Spells::TOGGLE_JUMPY}));
+        utils::castObjects<Object>(Spells::USABLE));
   } else {
-    app->objectSelectMode->setObjects({});
+    std::vector<std::shared_ptr<Spell>> spells(Spells::USABLE.size());
+  auto it =
+      std::copy_if(Spells::USABLE.begin(), Spells::USABLE.end(),
+                   spells.begin(),
+                   [](auto spell) { return spell->cost != 0; });
+
+    spells.resize(std::distance(spells.begin(), it));
+    
+    app->objectSelectMode->setObjects(utils::castObjects<Object>(spells));
   }
 
-  Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
+  Formatter formatter = [&](std::shared_ptr<Object> o, std::string letter) {
     if (auto spell = std::dynamic_pointer_cast<Spell>(o)) {
-      return fmt::format("<span weight='bold'>{}</span> - {}", letter,
-                         spell->name);
+      auto castable = spell->cost <= app->hero->MP(app->hero.get());
+      return fmt::format("<span{}><span weight='bold'>{}</span> - {:32} {}</span>",
+                  castable ? "" : " color='gray'", letter,
+                         spell->name, spell->cost);
     }
     return "Unknown error"s;
   };
@@ -322,6 +326,8 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
 
   app->objectSelectMode->setCallback([&](std::shared_ptr<Object> o) {
     auto spell = std::dynamic_pointer_cast<Spell>(o);
+    auto castable = spell->cost <= app->hero->MP(app->hero.get());
+    if (!castable) return false;
     auto e = std::make_shared<ZapCommandEvent>(spell);
     eb::EventBus::FireEvent(*e);
     app->modeManager.toNormal();
@@ -355,13 +361,13 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     app->hero->monsterSense = false;
   } else if (*spell == *Spells::MONSTER_SENSE) {
     app->hero->monsterSense = !app->hero->monsterSense;
-  } else if (*spell == *Spells::MONSTER_FREEZE) {
-    for (auto o : app->hero->currentLocation->objects) {
-      if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
-        e->type.aiType = AIType::NO_AI;
-      }
-    }
-    app->statusLine->setContent({F("Enemy freezed!")});
+  // } else if (*spell == *Spells::MONSTER_FREEZE) {
+  //   for (auto o : app->hero->currentLocation->objects) {
+  //     if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
+  //       e->type.aiType = AIType::NO_AI;
+  //     }
+  //   }
+  //   app->statusLine->setContent({F("Enemy freezed!")});
   } else if (*spell == *Spells::SUMMON_ORK) {
     auto c =
         app->hero->currentLocation

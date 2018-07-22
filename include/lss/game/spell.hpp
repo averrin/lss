@@ -5,9 +5,10 @@
 
 class Spell : public Object {
 public:
-  Spell(std::string n, int c = 0) : Object(), name(n), cost(c) {}
+  Spell(std::string n, int c = 0, int a = 0) : Object(), name(n), cost(c), ap(a) {}
   std::string name;
   int cost;
+  int ap;
   friend bool operator!=(Spell &lhs, const Spell &rhs) {
     return lhs.name != rhs.name;
   }
@@ -31,16 +32,17 @@ public:
 };
 
 namespace Spells {
-const auto REVEAL = std::make_shared<Spell>("Reveal");
-const auto MONSTER_SENSE = std::make_shared<Spell>("Monster Sense");
-const auto MONSTER_FREEZE = std::make_shared<Spell>("Monster Freeze");
+const auto REVEAL = std::make_shared<Spell>("Reveal", 25);
+const auto MONSTER_SENSE = std::make_shared<Spell>("Monster Sense", 25);
+// const auto MONSTER_FREEZE = std::make_shared<Spell>("Monster Freeze");
 const auto SUMMON_ORK = std::make_shared<Spell>("Summon Ork");
-const auto SUMMON_PLATE = std::make_shared<Spell>("Summon Plate");
-const auto IDENTIFY = std::make_shared<Spell>("Identify");
-const auto HEAL_LESSER = std::make_shared<Spell>("Lesser heal");
-const auto HEAL = std::make_shared<Spell>("Heal");
-const auto HEAL_GREATER = std::make_shared<Spell>("Greater");
-const auto TELEPORT_RANDOM = std::make_shared<Spell>("Teleport");
+const auto SUMMON_PLATE = std::make_shared<Spell>("Summon thing");
+
+const auto IDENTIFY = std::make_shared<Spell>("Identify", 30);
+const auto HEAL_LESSER = std::make_shared<Spell>("Lesser heal", 5);
+const auto HEAL = std::make_shared<Spell>("Heal", 25);
+const auto HEAL_GREATER = std::make_shared<Spell>("Greater Heal", 45);
+const auto TELEPORT_RANDOM = std::make_shared<Spell>("Teleport", 20);
 
 const auto TOGGLE_DUAL_WIELD = std::make_shared<ToggleTraitSpell>(
     "Toggle Dual Wield trait", Traits::DUAL_WIELD);
@@ -59,6 +61,7 @@ const auto TOGGLE_INVULNERABLE = std::make_shared<ToggleTraitSpell>(
 const auto TOGGLE_JUMPY = std::make_shared<ToggleTraitSpell>(
     "Toggle Jumpy trait", Traits::JUMPY);
 
+  /* for consumables */
 const auto GOD_SPEED = std::make_shared<EffectSpell>(
     "Make you faster than Flash",
     std::make_shared<LastingEffect>(std::make_shared<SpeedModifier>(2), 10000));
@@ -90,6 +93,20 @@ const auto EOT_HEAL = std::make_shared<EffectSpell>(
 
 const auto EOT_POISON = std::make_shared<EffectSpell>(
     "Poison", std::make_shared<LastingEffect>(OverTimeEffects::POISON, 5000));
+
+const std::vector<std::shared_ptr<Spell>> USABLE = {
+            Spells::REVEAL, Spells::MONSTER_SENSE, /*Spells::MONSTER_FREEZE,*/
+            Spells::HEAL_LESSER, Spells::HEAL, Spells::HEAL_GREATER,
+            Spells::IDENTIFY, Spells::TELEPORT_RANDOM,
+
+            Spells::SUMMON_PLATE,
+
+            Spells::TOGGLE_DUAL_WIELD, Spells::TOGGLE_NIGHT_VISION,
+            Spells::TOGGLE_MIND_SIGHT, Spells::TOGGLE_MAGIC_TORCH,
+            Spells::TOGGLE_FLY, Spells::TOGGLE_CAN_SWIM, Spells::SUMMON_ORK,
+            Spells::TOGGLE_INVULNERABLE,  Spells::TOGGLE_JUMPY}; 
 } // namespace Spells
+
+
 
 #endif // __SPELL_H_

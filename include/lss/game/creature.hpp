@@ -63,6 +63,9 @@ public:
   int defense = 0;
   int level = 0;
 
+  int mp = 0;
+  int mp_max = 0;
+
   std::optional<std::tuple<std::shared_ptr<Slot>, int, int, int>>
   getPrimaryDmg();
   std::optional<std::tuple<std::shared_ptr<Slot>, int, int, int>>
@@ -100,6 +103,9 @@ public:
 
   Attribute HP = Attribute(AttributeType::HP);
   Attribute HP_MAX = Attribute(AttributeType::HP_MAX);
+  Attribute MP = Attribute(AttributeType::MP);
+  Attribute MP_MAX = Attribute(AttributeType::MP_MAX);
+
   Attribute SPEED = Attribute(AttributeType::SPEED);
   Attribute VISIBILITY_DISTANCE = Attribute(AttributeType::VISIBILITY_DISTANCE);
   Attribute DMG = Attribute(AttributeType::DAMAGE);
