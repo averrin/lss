@@ -244,7 +244,33 @@ void LSSApp::invalidate() {
 
 void LSSApp::mouseDown(MouseEvent event) {}
 
+void LSSApp::repeatTimer() {
+  if (lastKeyEvent != nullopt) {
+    std::thread([&]() {
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        if (lastKeyEvent != nullopt) {
+          repeatKeyEvent = true;
+          repeatTimer();
+        }
+    }).detach();
+  }
+}
+
+void LSSApp::keyUp(KeyEvent event) {
+  repeatKeyEvent = false;
+  lastKeyEvent = std::nullopt;
+}
+
 void LSSApp::keyDown(KeyEvent event) {
+  lastKeyEvent = event;
+  std::thread([&]() {
+      std::this_thread::sleep_for(std::chrono::milliseconds(200));
+      if (lastKeyEvent != nullopt) {
+        repeatTimer();
+      }
+  }).detach();
+
+
   auto prevMode = modeManager.modeFlags->currentMode;
   modeManager.processKey(event);
   if (modeManager.modeFlags->currentMode != Modes::INSERT) {
@@ -371,6 +397,11 @@ void LSSApp::update() {
   }
   if (logFrame != nullptr) {
     logState->render(logFrame);
+  }
+
+  if (repeatKeyEvent && lastKeyEvent) {
+    repeatKeyEvent = false;
+    keyDown(*lastKeyEvent);
   }
 
   if (lastMode == modeManager.modeFlags->currentMode && !s->damaged) {

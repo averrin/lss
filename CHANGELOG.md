@@ -1,6 +1,7 @@
 ## Changelog
 
 ### 0.0.9
+- repeat key
 
 ### 0.0.8
 - scrolls & potions with random names

@@ -46,6 +46,7 @@ public:
   void mouseDown(MouseEvent event) override;
   void update() override;
   void keyDown(KeyEvent event) override;
+  void keyUp(KeyEvent event) override;
   void draw() override;
   void invalidate();
   void invalidate(std::string reason) {
@@ -63,6 +64,10 @@ public:
   void startGame();
   void initModes();
   void initStates();
+
+  std::optional<KeyEvent> lastKeyEvent;
+  bool repeatKeyEvent = false;
+  void repeatTimer();
 
   // std::map<std::string, std::shared_ptr<Location>> locations;
   std::shared_ptr<Location> loadMap(std::string);
