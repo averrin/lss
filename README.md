@@ -24,9 +24,9 @@ Yet another unfinished roguelike game.
 - [X] Cell & location features
 - [X] Light/shadow-related traits
 - [X] Better event log
+- [X] After death stats
 - [ ] Hero status page
 - [ ] Debug menus for summoning enemies/items & location creator
-- [ ] After death stats
 - [ ] Refactor effects system
 - [ ] Weights
 - [ ] Passive, patrol and "hero search" AI, stealth

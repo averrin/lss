@@ -12,6 +12,8 @@
 - more info in game over screen
 - lasting effects with duration
 - over time effects
+- confusion & jumpy
+- on hit effect
 
 
 ### 0.0.7
