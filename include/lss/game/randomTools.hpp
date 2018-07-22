@@ -3,12 +3,19 @@
 #include <cstdlib>
 #include <memory>
 #include <variant>
+#include <iostream>
+#include <iomanip>
+#include <string>
+#include <map>
+#include <random>
+#include <cmath>
 
 namespace R {
 float R(float min, float max);
 float R();
 int Z(int min, int max);
 int Z();
+int N(int mean, int dev);
 
 struct Float {
   float min;

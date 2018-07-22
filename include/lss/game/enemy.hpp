@@ -47,6 +47,15 @@ EnemySpec const RAT = {
     Items{}
 };
 
+EnemySpec const SNAKE = {
+    "snake", 0,
+    1.5, 3, 1,
+    2, 3, 1,
+    LootBox{1, {}},
+    {},
+    Items{}
+};
+
 EnemySpec const VIPER = {
     "viper", 0,
     2, 3, 1,

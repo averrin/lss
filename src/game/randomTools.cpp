@@ -1,5 +1,8 @@
 #include "lss/game/randomTools.hpp"
 
+std::random_device rd{};
+std::mt19937 gen{rd()};
+ 
 namespace R {
 float R(float min, float max) {
   return min + static_cast<float>(rand()) /
@@ -11,6 +14,12 @@ float R() { return static_cast<float>(rand()) / static_cast<float>(RAND_MAX); }
 int Z(int min, int max) { return rand() % (max - min + 1) + min; }
 
 int Z() { return rand() % 100; }
+
+  int N(int mean, int dev) {
+    std::normal_distribution<> d{double(mean), double(dev)};
+ 
+    return std::round(d(gen));
+  }
 
 rndFloat F(float min, float max) {
   return std::make_shared<R::Float>(R::Float{min, max});

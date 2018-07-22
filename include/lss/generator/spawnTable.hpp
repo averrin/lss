@@ -9,6 +9,7 @@ std::map<int, std::map<const EnemySpec, float>> DUNGEON = {
      {
          {EnemyType::RAT, 0.4},
          {EnemyType::BAT, 0.3},
+         {EnemyType::SNAKE, 0.3},
          {EnemyType::VIPER, 0.2},
          {EnemyType::BAT_LARGE, 0.1},
      }},
@@ -16,6 +17,7 @@ std::map<int, std::map<const EnemySpec, float>> DUNGEON = {
      {
          {EnemyType::RAT, 0.5},
          {EnemyType::BAT, 0.4},
+         {EnemyType::SNAKE, 0.3},
          {EnemyType::VIPER, 0.2},
          {EnemyType::BAT_LARGE, 0.15},
          {EnemyType::GOBLIN, 0.4},
@@ -25,6 +27,7 @@ std::map<int, std::map<const EnemySpec, float>> DUNGEON = {
      {
          {EnemyType::BAT, 0.2},
          {EnemyType::BAT_LARGE, 0.4},
+         {EnemyType::SNAKE, 0.3},
          {EnemyType::VIPER, 0.2},
          {EnemyType::GOBLIN, 0.4},
          {EnemyType::GOBLIN_LIEUTENANT, 0.2},
@@ -44,23 +47,6 @@ std::map<int, std::map<const EnemySpec, float>> DUNGEON = {
 namespace LootTable {
 std::map<int, LootBox> DUNGEON = {
     {0,
-     {0.01,
-      {},
-      {
-          {0.10, {Prototype::PLATE}},
-          {0.10, {Prototype::SWORD}},
-          {0.10, {Prototype::HELMET}},
-          {0.10, {Prototype::SHIELD}},
-          {0.10, {Prototype::GREAVES}},
-          {0.10, {Prototype::BOOTS}},
-          {0.10, {Prototype::SCROLL_IDENTIFICATION}},
-          {0.10, {Prototype::SCROLL_REVEAL}},
-          {0.10, {Prototype::SCROLL_TELEPORT}},
-          {0.10, {Prototype::POTION_HEAL}},
-          {0.10, {Prototype::POTION_HEAL_LESSER}},
-      },
-      true}},
-    {1,
      {0.03,
       {},
       {
@@ -70,15 +56,11 @@ std::map<int, LootBox> DUNGEON = {
           {0.10, {Prototype::SHIELD}},
           {0.10, {Prototype::GREAVES}},
           {0.10, {Prototype::BOOTS}},
-          {0.10, {Prototype::SCROLL_IDENTIFICATION}},
-          {0.10, {Prototype::SCROLL_REVEAL}},
-          {0.10, {Prototype::SCROLL_TELEPORT}},
-          {0.10, {Prototype::POTION_HEAL}},
-          {0.10, {Prototype::POTION_HEAL_LESSER}},
+          {0.10, {}, LootBoxes::SCROLLS, true},
+          {0.10, {}, LootBoxes::POTIONS, true},
       },
       true}},
-
-    {2,
+    {1,
      {0.04,
       {},
       {
@@ -88,11 +70,23 @@ std::map<int, LootBox> DUNGEON = {
           {0.10, {Prototype::SHIELD}},
           {0.10, {Prototype::GREAVES}},
           {0.10, {Prototype::BOOTS}},
-          {0.10, {Prototype::SCROLL_IDENTIFICATION}},
-          {0.10, {Prototype::SCROLL_TELEPORT}},
-          {0.10, {Prototype::SCROLL_REVEAL}},
-          {0.10, {Prototype::POTION_HEAL}},
-          {0.10, {Prototype::POTION_HEAL_LESSER}},
+          {0.10, {}, LootBoxes::SCROLLS, true},
+          {0.10, {}, LootBoxes::POTIONS, true},
+      },
+      true}},
+
+    {2,
+     {0.05,
+      {},
+      {
+          {0.10, {Prototype::PLATE}},
+          {0.10, {Prototype::SWORD}},
+          {0.10, {Prototype::HELMET}},
+          {0.10, {Prototype::SHIELD}},
+          {0.10, {Prototype::GREAVES}},
+          {0.10, {Prototype::BOOTS}},
+          {0.10, {}, LootBoxes::SCROLLS, true},
+          {0.10, {}, LootBoxes::POTIONS, true},
       },
       true}}};
 }

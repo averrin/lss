@@ -545,7 +545,8 @@ void placeEnemies(std::shared_ptr<Location> location, int threat) {
     cells.resize(std::distance(cells.begin(), it));
     if (cells.size() == 0)
       continue;
-    int count = R::Z(0, 3);
+    int count = R::N(1, 2);
+    if (count < 0) count = 0;
     for (auto n = cells.size() / 64; n > 0; n--) {
       count += R::Z(0, 3);
     }
@@ -1055,11 +1056,13 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
 
   auto location = std::make_shared<Location>(spec);
   location->depth = spec.threat;
-  std::cout << rang::fg::yellow
+  if (DEBUG) {
+    std::cout << rang::fg::yellow
             << (spec.type == LocationType::DUNGEON ? "DUN" : "CAV")
             << location->getFeaturesTag() << "  " << location->depth
             << rang::style::reset << " gen started" << rang::style::reset
             << '\n';
+  }
 
   if (spec.type == LocationType::DUNGEON) {
     start = std::chrono::system_clock::now();
@@ -1198,12 +1201,14 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   auto t1 = std::chrono::system_clock::now();
   using milliseconds = std::chrono::duration<double, std::milli>;
   milliseconds ms = t1 - t0;
-  std::cout << rang::fg::blue
-            << (spec.type == LocationType::DUNGEON ? "DUN" : "CAV")
-            << location->getFeaturesTag() << "  " << location->depth
-            << rang::style::reset
-            << " location gen time taken: " << rang::fg::green << ms.count()
-            << rang::style::reset << '\n';
-  std::cout << utils::join(timeMarks, ", ") << std::endl;
+  if (DEBUG) {
+    std::cout << rang::fg::blue
+              << (spec.type == LocationType::DUNGEON ? "DUN" : "CAV")
+              << location->getFeaturesTag() << "  " << location->depth
+              << rang::style::reset
+              << " location gen time taken: " << rang::fg::green << ms.count()
+              << rang::style::reset << '\n';
+    std::cout << utils::join(timeMarks, ", ") << std::endl;
+  }
   return location;
 }
