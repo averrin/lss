@@ -399,6 +399,7 @@ bool Creature::hasLight() {
                       }) != inventory.end();
 }
 
+//FIXME: poison adds modifier to max_hp 
 void Creature::applyEoT(EoT eot, int modifier) {
   switch (eot) {
   case EoT::HEAL:

@@ -79,6 +79,11 @@ void Location::onEvent(CommitEvent &e) {
     }
   }
 
+  if (player->HP(player.get()) <= 0) {
+    HeroDiedEvent e2(player);
+    eb::EventBus::FireEvent(e2);
+  }
+
   LocationChangeEvent ec(nullptr);
   eb::EventBus::FireEvent(ec);
 }

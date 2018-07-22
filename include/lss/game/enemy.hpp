@@ -46,13 +46,22 @@ EnemySpec const RAT = {
     {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB},
     Items{}
 };
+
+EnemySpec const VIPER = {
+    "viper", 0,
+    2, 3, 1,
+    1, 3, 0,
+    LootBox{1, {}},
+    {},
+    Items{Prototype::POISON_FANG}
+};
 EnemySpec const BAT = {
     "bat", 0,
     1.5, 3, 1,
     1, 3, 0,
     LootBox{1, {}},
     {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB, Traits::FLY},
-    Items{}, {std::make_shared<Vampire>(1)}
+    Items{}, {} //vampire
 };
 EnemySpec const BAT_LARGE = {
     "large bat", 0,
@@ -60,7 +69,7 @@ EnemySpec const BAT_LARGE = {
     2, 3, 0,
     LootBox{100, {}},
     {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB, Traits::FLY},
-    Items{}, {std::make_shared<Vampire>(3)}
+    Items{}, {} //vampire
 };
 EnemySpec const GOBLIN = {
     "goblin", 1,

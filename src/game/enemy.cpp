@@ -58,10 +58,26 @@ std::optional<Items> Enemy::drop() {
   return loot;
 }
 
+//TODO: move to creature
 bool Enemy::interact(std::shared_ptr<Object> actor) {
   if (hasTrait(Traits::INVULNERABLE))
     return true;
   auto hero = std::dynamic_pointer_cast<Player>(actor);
+  for (auto s : equipment->slots) {
+    if (s->item == nullptr ||
+        std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
+                  s->item->type.wearableType) == s->acceptTypes.end()) {
+      continue;
+    }
+    for (auto e : s->item->effects) {
+      if (auto ohe = std::dynamic_pointer_cast<OnHitEffect>(e)) {
+        if (R::R() < ohe->probability) {
+          hero->activeEffects.push_back(ohe->effect);
+        }
+      }
+    }
+  }
+
   auto ptr = shared_from_this();
   if (hp > 0) {
     auto damage = hero->getDamage(shared_from_this());

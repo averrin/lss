@@ -144,7 +144,12 @@ const auto GOBLIN_DAGGER = std::make_shared<Item>(
 const auto POISON_DAGGER = std::make_shared<Item>(
     ItemType::DAGGER, Effects{std::make_shared<MeleeDamage>(2, 3, 3),
                               std::make_shared<CritModifier>(0.2),
-                              std::make_shared<Poison>(3, 3000)});
+                              std::make_shared<OnHitEffect>(std::make_shared<LastingEffect>(OverTimeEffects::POISON, 5000), 0.3)});
+
+const auto POISON_FANG = std::make_shared<Item>(
+    ItemType::ENEMY, Effects{std::make_shared<MeleeDamage>(2, 3, 3),
+                              std::make_shared<CritModifier>(0.2),
+                              std::make_shared<OnHitEffect>(std::make_shared<LastingEffect>(OverTimeEffects::POISON, 5000), 0.3)});
 
 const auto SWORD_OF_DUALWIELD = std::make_shared<Item>(
     "sword of dualwield", ItemType::SWORD,

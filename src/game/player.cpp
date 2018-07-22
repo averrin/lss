@@ -319,10 +319,28 @@ void Player::onEvent(ZapCommandEvent &e) {
   // commit("zap", e.spell->cost);
 }
 
+//TODO: move to creature
 bool Player::interact(std::shared_ptr<Object> actor) {
   if (hasTrait(Traits::INVULNERABLE) || HP(this) <= 0)
     return true;
   auto enemy = std::dynamic_pointer_cast<Enemy>(actor);
+
+
+  for (auto s : equipment->slots) {
+    if (s->item == nullptr ||
+        std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
+                  s->item->type.wearableType) == s->acceptTypes.end()) {
+      continue;
+    }
+    for (auto e : s->item->effects) {
+      if (auto ohe = std::dynamic_pointer_cast<OnHitEffect>(e)) {
+        if (R::R() < ohe->probability) {
+          enemy->activeEffects.push_back(ohe->effect);
+        }
+      }
+    }
+  }
+
   auto ptr = shared_from_this();
   if (hp > 0) {
     auto damage = enemy->getDamage(shared_from_this());

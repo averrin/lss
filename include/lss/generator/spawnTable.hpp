@@ -7,14 +7,16 @@ namespace SpawnTable {
 std::map<int, std::map<const EnemySpec, float>> DUNGEON = {
     {0,
      {
-         {EnemyType::RAT, 0.5},
-         {EnemyType::BAT, 0.4},
+         {EnemyType::RAT, 0.4},
+         {EnemyType::BAT, 0.3},
+         {EnemyType::VIPER, 0.2},
          {EnemyType::BAT_LARGE, 0.1},
      }},
     {1,
      {
          {EnemyType::RAT, 0.5},
          {EnemyType::BAT, 0.4},
+         {EnemyType::VIPER, 0.2},
          {EnemyType::BAT_LARGE, 0.15},
          {EnemyType::GOBLIN, 0.4},
          {EnemyType::GOBLIN_ROGUE, 0.1},
@@ -23,6 +25,7 @@ std::map<int, std::map<const EnemySpec, float>> DUNGEON = {
      {
          {EnemyType::BAT, 0.2},
          {EnemyType::BAT_LARGE, 0.4},
+         {EnemyType::VIPER, 0.2},
          {EnemyType::GOBLIN, 0.4},
          {EnemyType::GOBLIN_LIEUTENANT, 0.2},
          {EnemyType::GOBLIN_ROGUE, 0.1},

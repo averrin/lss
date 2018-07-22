@@ -99,6 +99,7 @@ std::map<ItemSpec, std::string> itemColors = {
 std::map<EnemySpec, std::string> enemySigns = {
     {EnemyType::RAT, "r"},
     {EnemyType::BAT, "b"},
+    {EnemyType::VIPER, "s"},
     {EnemyType::BAT_LARGE, "B"},
     {EnemyType::GOBLIN, "g"},
     {EnemyType::ORK_BLACK, "o"},
@@ -112,6 +113,7 @@ std::map<EnemySpec, std::string> enemySigns = {
 std::map<EnemySpec, std::string> enemyColors = {
     {EnemyType::RAT, "gray"},
     {EnemyType::BAT, "gray"},
+    {EnemyType::VIPER, "darkgreen"},
     {EnemyType::BAT_LARGE, "darkgray"},
     {EnemyType::GOBLIN, "green"},
     {EnemyType::ORK, "#22aa22"},

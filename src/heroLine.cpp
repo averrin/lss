@@ -4,6 +4,7 @@
 #include "lss/game/player.hpp"
 #include "lss/utils.hpp"
 #include <algorithm>
+#include <string>
 #include <fmt/format.h>
 
 using namespace std::string_literals;
@@ -40,8 +41,10 @@ void HeroLine::update() {
     lightDurability = lightSlot->item->durability;
   }
   auto locationFeatures = hero->currentLocation->getFeaturesTag();
+  std::string effects = "";
+  for_each(hero->activeEffects.begin(), hero->activeEffects.end(), [&](auto e){ effects.append(e->getSign()); });
   setContent({
-      F(fmt::format("<b>{}</b> [{}]", hero->name, hero->level)),
+      F(fmt::format("<b>{}</b> [{}]   {}", hero->name, hero->level, effects)),
       F(fmt::format("   <b>HP</b>:{}/{}   <b>SPD</b>:{}   <b>DMG</b>:{}   "
                     "<b>DEF</b>:{}   <b>EXP</b>:{}",
                     hero->HP(hero.get()), hero->HP_MAX(hero.get()),

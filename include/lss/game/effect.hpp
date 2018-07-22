@@ -21,6 +21,7 @@ public:
   Effect(AttributeType at, bool s, R::rndInt m)
       : type(at), special(s), modifier(m) {}
   virtual std::string getTitle() = 0;
+  virtual std::string getSign() = 0;
   virtual std::shared_ptr<Effect> clone() = 0;
   virtual std::variant<float, int> getModifier() = 0;
   bool special = false;
@@ -38,6 +39,7 @@ class SpeedModifier : public Effect {
 public:
   SpeedModifier(R::rndInt m) : Effect(AttributeType::SPEED, m){};
   std::string getTitle();
+  std::string getSign();
   std::shared_ptr<Effect> clone() {
     return std::make_shared<SpeedModifier>(modifier);
   };
@@ -48,6 +50,7 @@ class HPModifier : public Effect {
 public:
   HPModifier(R::rndInt m) : Effect(AttributeType::HP_MAX, m){};
   std::string getTitle();
+  std::string getSign();
   std::shared_ptr<Effect> clone() {
     return std::make_shared<HPModifier>(modifier);
   };
@@ -59,6 +62,7 @@ public:
   VisibilityModifier(float m)
       : Effect(AttributeType::VISIBILITY_DISTANCE), vmodifier(m){};
   std::string getTitle();
+  std::string getSign();
   float vmodifier;
   std::variant<float, int> getModifier() { return vmodifier; };
 
@@ -71,6 +75,7 @@ class CritModifier : public Effect {
 public:
   CritModifier(R::rndInt m) : Effect(AttributeType::CRIT_CHANCE, m){};
   std::string getTitle();
+  std::string getSign();
   std::shared_ptr<Effect> clone() {
     return std::make_shared<CritModifier>(modifier);
   };
@@ -81,6 +86,7 @@ class ArmorValue : public Effect {
 public:
   ArmorValue(R::rndInt m) : Effect(AttributeType::DEFENSE, true, m){};
   std::string getTitle();
+  std::string getSign();
   std::shared_ptr<Effect> clone() {
     return std::make_shared<ArmorValue>(modifier);
   };
@@ -91,6 +97,7 @@ class SpecialPostfix : public Effect {
 public:
   SpecialPostfix(std::string n) : Effect(AttributeType::NONE, true), name(n){};
   std::string getTitle() { return name; };
+  std::string getSign() { return ""; };
   std::string name;
   std::shared_ptr<Effect> clone() {
     return std::make_shared<SpecialPostfix>(name);
@@ -102,6 +109,7 @@ class SpecialPrefix : public Effect {
 public:
   SpecialPrefix(std::string n) : Effect(AttributeType::NONE, true), name(n){};
   std::string getTitle() { return name; };
+    std::string getSign() { return ""; };
   std::string name;
   std::shared_ptr<Effect> clone() {
     return std::make_shared<SpecialPrefix>(name);
@@ -114,6 +122,7 @@ public:
   MeleeDamage(R::rndInt m, R::rndInt d, R::rndInt e)
       : Effect(AttributeType::NONE, true, m), dices(R::I(d)), edges(R::I(e)){};
   std::string getTitle();
+  std::string getSign();
   R::rndInt dices;
   R::rndInt edges;
   std::shared_ptr<Effect> clone() {
@@ -122,33 +131,12 @@ public:
   std::variant<float, int> getModifier() { return R::get(modifier); };
 };
 
-class Poison : public Effect {
-public:
-  Poison(int dmg, int d)
-      : Effect(AttributeType::NONE), damage(dmg), duration(d){};
-  int damage;
-  int duration;
-  std::string getTitle();
-  std::shared_ptr<Effect> clone() {
-    return std::make_shared<Poison>(damage, duration);
-  };
-  std::variant<float, int> getModifier() { return R::get(modifier); };
-};
-
-class Vampire : public Effect {
-public:
-  Vampire(int dmg) : Effect(AttributeType::NONE), damage(dmg){};
-  int damage;
-  std::string getTitle();
-  std::shared_ptr<Effect> clone() { return std::make_shared<Vampire>(damage); };
-  std::variant<float, int> getModifier() { return R::get(modifier); };
-};
-
 class TraitEffect : public Effect {
 public:
   TraitEffect(Trait t) : Effect(AttributeType::TRAITS), trait(t){};
   Trait trait;
   std::string getTitle();
+  std::string getSign();
   std::shared_ptr<Effect> clone() {
     return std::make_shared<TraitEffect>(trait);
   };
@@ -163,11 +151,27 @@ public:
   int duration;
   int currentDuration;
   std::string getTitle();
+  std::string getSign();
   std::shared_ptr<Effect> clone() {
     return std::make_shared<LastingEffect>(effect, duration);
   };
   std::variant<float, int> getModifier() { return effect->getModifier(); };
 };
+
+class OnHitEffect : public Effect {
+public:
+  OnHitEffect(std::shared_ptr<Effect> e, float p)
+      : Effect(e->type), effect(e), probability(p){};
+  std::shared_ptr<Effect> effect;
+  float probability;
+  std::string getTitle();
+  std::string getSign();
+  std::shared_ptr<Effect> clone() {
+    return std::make_shared<OnHitEffect>(effect, probability);
+  };
+  std::variant<float, int> getModifier() { return effect->getModifier(); };
+};
+
 
 class OverTimeEffect;
 typedef std::function<void(std::shared_ptr<Creature>)> EffectApplier;
@@ -181,6 +185,7 @@ public:
   // EffectApplier applier;
   EoT type;
   std::string getTitle();
+  std::string getSign();
   std::shared_ptr<Effect> clone() {
     return std::make_shared<OverTimeEffect>(modifier, tick, type);
   };
