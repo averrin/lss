@@ -387,7 +387,7 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
         app->hero->currentLocation
             ->cells[app->hero->currentCell->y + 1][app->hero->currentCell->x];
     // auto item = Prototype::GOD_PLATE->roll();
-    auto lt = LootBox{1, {Prototype::POTION_POISON}};
+    auto lt = LootBox{1, {Prototype::POTION_MANA}};
     auto items = lt.open();
     items.front()->currentCell = c;
     app->hero->currentLocation->objects.push_back(items.front());
@@ -411,6 +411,15 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     }
     app->hero->commit("heal", 0);
     MessageEvent me(nullptr, fmt::format("You healed {} hp", heal));
+  } else if (*spell == *Spells::RESTORE_MANA) {
+    auto heal = R::Z(app->hero->MP_MAX(app->hero.get()) / 100 * 25,
+                     app->hero->MP_MAX(app->hero.get()) / 100 * 50);
+    app->hero->mp += heal;
+    if (app->hero->MP(app->hero.get()) > app->hero->MP_MAX(app->hero.get())) {
+      app->hero->mp = app->hero->MP_MAX(app->hero.get());
+    }
+    app->hero->commit("mana", 0);
+    MessageEvent me(nullptr, fmt::format("Your {} mp restored", heal));
     eb::EventBus::FireEvent(me);
   } else if (*spell == *Spells::TELEPORT_RANDOM) {
     auto room = app->hero->currentLocation

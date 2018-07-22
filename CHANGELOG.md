@@ -14,6 +14,7 @@
 - over time effects
 - confusion & jumpy
 - on hit effect
+- mana points
 
 
 ### 0.0.7

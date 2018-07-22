@@ -164,6 +164,10 @@ const auto POTION_HEAL = std::make_shared<Consumable>(
     fmt::format("{} potion", utils::getRandomColor()), "heal potion",
     ItemType::POTION, Spells::HEAL);
 
+const auto POTION_MANA = std::make_shared<Consumable>(
+    fmt::format("{} potion", utils::getRandomColor()), "restore mana potion",
+    ItemType::POTION, Spells::RESTORE_MANA);
+
 const auto POTION_GOD_SPEED = std::make_shared<Consumable>(
     fmt::format("{} potion", utils::getRandomColor()), "god speed potion",
     ItemType::POTION, Spells::GOD_SPEED);

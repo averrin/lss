@@ -42,6 +42,7 @@ const std::vector<LootBox> POTIONS = {
     {0.1, {Prototype::POTION_REGENERATION}},
     {0.1, {Prototype::POTION_POISON}},
     {0.1, {Prototype::POTION_CONFUSION}},
+    {0.1, {Prototype::POTION_MANA}},
 };
 const std::vector<LootBox> SCROLLS = {
     {0.30, {Prototype::SCROLL_IDENTIFICATION}},

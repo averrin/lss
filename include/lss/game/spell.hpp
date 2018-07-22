@@ -62,6 +62,8 @@ const auto TOGGLE_JUMPY = std::make_shared<ToggleTraitSpell>(
     "Toggle Jumpy trait", Traits::JUMPY);
 
   /* for consumables */
+const auto RESTORE_MANA = std::make_shared<Spell>("Greater mana");
+
 const auto GOD_SPEED = std::make_shared<EffectSpell>(
     "Make you faster than Flash",
     std::make_shared<LastingEffect>(std::make_shared<SpeedModifier>(2), 10000));
@@ -99,7 +101,7 @@ const std::vector<std::shared_ptr<Spell>> USABLE = {
             Spells::HEAL_LESSER, Spells::HEAL, Spells::HEAL_GREATER,
             Spells::IDENTIFY, Spells::TELEPORT_RANDOM,
 
-            Spells::SUMMON_PLATE,
+            Spells::SUMMON_PLATE, Spells::RESTORE_MANA,
 
             Spells::TOGGLE_DUAL_WIELD, Spells::TOGGLE_NIGHT_VISION,
             Spells::TOGGLE_MIND_SIGHT, Spells::TOGGLE_MAGIC_TORCH,
