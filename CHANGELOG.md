@@ -1,5 +1,7 @@
 ## Changelog
 
+### 0.0.9
+
 ### 0.0.8
 - scrolls & potions with random names
 - location loot
@@ -29,7 +31,7 @@
 - spawn probability table
 - log panel
 
-### 0.0.6
+### 0.0.0 - 0.0.6
 - durability for torches
 - enemies with torches
 - init armor
