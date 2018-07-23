@@ -1,12 +1,8 @@
 #ifndef __ACTIONS_H_
 #define __ACTIONS_H_
-#include "cinder/app/App.h"
 #include "lss/fragment.hpp"
 #include "lss/palette.hpp"
 #include <string>
-
-using namespace ci;
-using namespace ci::app;
 
 struct Modes {
   enum ModeName {

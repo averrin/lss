@@ -1,7 +1,6 @@
 #pragma once
 #ifndef __PALETTE_H_
 #define __PALETTE_H_
-#include "cinder/gl/gl.h"
 #include <string>
 
 struct Palette {

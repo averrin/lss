@@ -11,12 +11,6 @@
 #include <string>
 #include <utility>
 
-#include "cinder/Rand.h"
-#include "cinder/app/App.h"
-#include "cinder/app/RendererGl.h"
-#include "cinder/gl/gl.h"
-
-#include "CinderPango.h"
 #include "lss/commands.hpp"
 #include "lss/modes.hpp"
 #include "lss/state.hpp"
@@ -35,9 +29,6 @@
 #include "EventBus.hpp"
 #include "EventHandler.hpp"
 #include "rang.hpp"
-
-using namespace ci;
-using namespace ci::app;
 
 class EventReactor;
 class LSSApp : public App {

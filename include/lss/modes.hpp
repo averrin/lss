@@ -3,11 +3,6 @@
 #include <functional>
 #include <memory>
 
-#include "cinder/app/App.h"
-
-using namespace ci;
-using namespace ci::app;
-
 #include <boost/sml.hpp>
 namespace sml = boost::sml;
 

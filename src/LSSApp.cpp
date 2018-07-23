@@ -12,11 +12,7 @@
 #include "lss/game/terrain.hpp"
 #include "lss/utils.hpp"
 
-using namespace ci;
-using namespace ci::app;
-using namespace std;
-
-std::string VERSION = "0.0.9 by Averrin";
+std::string VERSION = "0.1.0 by Averrin";
 
 int HOffset = 24;
 int VOffset = 24;
@@ -490,5 +486,3 @@ void LSSApp::draw() {
                                getWindowHeight() - StatusLine::HEIGHT + 12));
   needRedraw = false;
 }
-
-CINDER_APP(LSSApp, RendererGl)
