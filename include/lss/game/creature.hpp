@@ -119,11 +119,4 @@ private:
   std::shared_ptr<Cell> cachedCell;
 };
 
-// namespace EoT {
-//   const auto HEAL = std::make_shared<OverTimeEffect>(500,
-//     [](std::shared_ptr<Creature> c){
-//             c->hp += 5;
-//   });
-// }
-
 #endif // __CREATURE_H_

@@ -41,7 +41,7 @@ public:
 namespace EnemyType {
 EnemySpec const RAT = {
     "rat", 0,
-    2, 0, 3, 1,
+    2, 3, 0, 1,
     1, 3, 0,
     LootBox{1, {}},
     {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB},

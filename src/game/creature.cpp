@@ -68,6 +68,7 @@ float Attribute::operator()(Creature *c) {
     }
   }
   for (auto e : effects) {
+    if (std::dynamic_pointer_cast<OverTimeEffect>(e)) continue;
     auto mod = e->getModifier();
     if (auto m = std::get_if<int>(&mod)) {
       base += *m;
@@ -407,10 +408,18 @@ bool Creature::hasLight() {
 
 //FIXME: poison adds modifier to max_hp 
 void Creature::applyEoT(EoT eot, int modifier) {
+  fmt::print("apply eot m: {}\n", modifier);
   switch (eot) {
-  case EoT::HEAL:
+  case EoT::HEAL: {
     hp += modifier;
-    break;
+    auto max = HP_MAX(this);
+    if (hp > max) hp = max;
+    }break;
+  case EoT::MANA_RESTORE: {
+    mp += modifier;
+    auto max = MP_MAX(this);
+    if (mp > max) mp = max;
+    }break;
   case EoT::POISON:
     hp -= modifier;
     break;

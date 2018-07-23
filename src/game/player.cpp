@@ -73,6 +73,8 @@ Player::Player() : Creature() {
   damage_modifier = 0;
   visibility_distance = 3.2f;
 
+  activeEffects.push_back(OverTimeEffects::MANA_RESTORE);
+
   name = "Unnamed hero";
 
   // auto dagger = Prototype::DAGGER->clone();
@@ -318,8 +320,10 @@ void Player::onEvent(WaitCommandEvent &e) {
 void Player::onEvent(ZapCommandEvent &e) {
   if (e.spell == nullptr)
     return;
-  mp -= e.spell->cost;
+  //TODO: do it before applying spell
   commit("zap", e.spell->ap);
+  mp -= e.spell->cost;
+  commit("after zap", 0, true);
 }
 
 //TODO: move to creature

@@ -411,6 +411,15 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     }
     app->hero->commit("heal", 0);
     MessageEvent me(nullptr, fmt::format("You healed {} hp", heal));
+  } else if (*spell == *Spells::HEAL_GREATER) {
+    auto heal = R::Z(app->hero->HP_MAX(app->hero.get()) / 100 * 50,
+                     app->hero->HP_MAX(app->hero.get()) / 100 * 100);
+    app->hero->hp += heal;
+    if (app->hero->HP(app->hero.get()) > app->hero->HP_MAX(app->hero.get())) {
+      app->hero->hp = app->hero->HP_MAX(app->hero.get());
+    }
+    app->hero->commit("heal", 0);
+    MessageEvent me(nullptr, fmt::format("You healed {} hp", heal));
   } else if (*spell == *Spells::RESTORE_MANA) {
     auto heal = R::Z(app->hero->MP_MAX(app->hero.get()) / 100 * 25,
                      app->hero->MP_MAX(app->hero.get()) / 100 * 50);

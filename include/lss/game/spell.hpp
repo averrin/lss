@@ -32,16 +32,16 @@ public:
 };
 
 namespace Spells {
-const auto REVEAL = std::make_shared<Spell>("Reveal", 25);
-const auto MONSTER_SENSE = std::make_shared<Spell>("Monster Sense", 25);
+const auto REVEAL = std::make_shared<Spell>("Reveal", 50, 2000);
+const auto MONSTER_SENSE = std::make_shared<Spell>("Monster Sense");
 // const auto MONSTER_FREEZE = std::make_shared<Spell>("Monster Freeze");
 const auto SUMMON_ORK = std::make_shared<Spell>("Summon Ork");
 const auto SUMMON_PLATE = std::make_shared<Spell>("Summon thing");
 
-const auto IDENTIFY = std::make_shared<Spell>("Identify", 30);
-const auto HEAL_LESSER = std::make_shared<Spell>("Lesser heal", 5);
-const auto HEAL = std::make_shared<Spell>("Heal", 25);
-const auto HEAL_GREATER = std::make_shared<Spell>("Greater Heal", 45);
+const auto IDENTIFY = std::make_shared<Spell>("Identify", 30, 500);
+const auto HEAL_LESSER = std::make_shared<Spell>("Lesser heal", 5, 1000);
+const auto HEAL = std::make_shared<Spell>("Heal", 25, 2000);
+const auto HEAL_GREATER = std::make_shared<Spell>("Greater Heal", 45, 5000);
 const auto TELEPORT_RANDOM = std::make_shared<Spell>("Teleport", 20);
 
 const auto TOGGLE_DUAL_WIELD = std::make_shared<ToggleTraitSpell>(
