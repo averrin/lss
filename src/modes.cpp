@@ -94,7 +94,6 @@ bool GameOverMode::processKey(KeyEvent event) {
   case KeyEvent::KEY_r:
     app->modeManager.toNormal();
     app->hero->currentLocation->leave(app->hero);
-    // FIXME: broken object_select drawing after restart
     app->startGame();
     return true;
     break;

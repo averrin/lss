@@ -214,7 +214,6 @@ void Enemy::onEvent(CommitEvent &e) {
       }
     }
   } else {
-    // FIXME: crashes
     if (step >= path.size() - 1 || path.size() == 0 ||
         currentCell.get() == static_cast<Cell *>(path[path.size() - 1])) {
       if (!randomPath()) {

@@ -1045,7 +1045,6 @@ std::shared_ptr<Room> placeLake(std::shared_ptr<Location> location) {
   return placeBlob(location, CellType::WATER);
 }
 
-// FIXME: sometimes generation hanging forever=(
 std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   using milliseconds = std::chrono::duration<double, std::milli>;
 
