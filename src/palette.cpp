@@ -2,9 +2,9 @@
 
 const Palette palettes::DARK =
     Palette{"dark",
-            ci::Color(0xcc / 255.f, 0xcc / 255.f, 0xcc / 255.f),
-            ci::Color(0x1d / 255.f, 0x1f / 255.f, 0x22 / 255.f),
-            ci::Color(0x0d / 255.f, 0x0f / 255.f, 0x12 / 255.f),
+            SDL_Color{0xcc, 0xcc, 0xcc, 0xFF},
+            SDL_Color{0x1d, 0x1f, 0x22, 0xFF},
+            SDL_Color{0x0d, 0x0f, 0x12, 0xFF},
             "#81b69d",
             "#cc6666",
             "#81a2be",
@@ -19,9 +19,9 @@ const Palette palettes::DARK =
 
 const Palette palettes::LIGHT =
     Palette{"light",
-            ci::Color(0x11 / 255.f, 0x11 / 255.f, 0x11 / 255.f),
-            ci::Color(0xcc / 255.f, 0xcc / 255.f, 0xcc / 255.f),
-            ci::Color(0xbb / 255.f, 0xbb / 255.f, 0xbb / 255.f),
+            SDL_Color{0x11, 0x11, 0x11, 0xFF},
+            SDL_Color{0xcc, 0xcc, 0xcc, 0xFF},
+            SDL_Color{0xbb, 0xbb, 0xbb, 0xFF},
             "#137a63",
             "#cc6666",
             "MidnightBlue",

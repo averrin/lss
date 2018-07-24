@@ -2,6 +2,7 @@
 #define __STATE_H_
 #include "lss/fragment.hpp"
 #include "lss/palette.hpp"
+#include "lss/pango.hpp"
 #include <string>
 #include <vector>
 
@@ -18,7 +19,7 @@ struct Selection {
 class State {
 public:
   Palette currentPalette;
-  void render(kp::pango::CinderPangoRef);
+  void render(pango::SurfaceRef);
   std::string renderStatus();
 
   void setContent(Fragments);

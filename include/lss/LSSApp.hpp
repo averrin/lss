@@ -10,10 +10,13 @@
 #include <stdio.h>
 #include <string>
 #include <utility>
+#include <thread>
 
 #include "lss/commands.hpp"
 #include "lss/modes.hpp"
 #include "lss/state.hpp"
+#include "lss/keyEvent.hpp"
+#include "lss/pango.hpp"
 
 #include "lss/game/door.hpp"
 #include "lss/game/enemy.hpp"
@@ -31,14 +34,13 @@
 #include "rang.hpp"
 
 class EventReactor;
-class LSSApp : public App {
+class LSSApp {
 public:
-  void setup() override;
-  void mouseDown(MouseEvent event) override;
-  void update() override;
-  void keyDown(KeyEvent event) override;
-  void keyUp(KeyEvent event) override;
-  void draw() override;
+  void setup();
+  void update();
+  void keyDown(KeyEvent event);
+  void keyUp(KeyEvent event);
+  void draw();
   void invalidate();
   void invalidate(std::string reason) {
     // fmt::print("Invalidate reason: {}\n", reason);
@@ -67,11 +69,11 @@ public:
   int currentLevel = 0;
   bool debug = false;
 
-  kp::pango::CinderPangoRef gameFrame;
-  kp::pango::CinderPangoRef statusFrame;
-  kp::pango::CinderPangoRef heroFrame;
-  kp::pango::CinderPangoRef inspectFrame;
-  kp::pango::CinderPangoRef logFrame;
+  pango::SurfaceRef gameFrame;
+  pango::SurfaceRef statusFrame;
+  pango::SurfaceRef heroFrame;
+  pango::SurfaceRef inspectFrame;
+  pango::SurfaceRef logFrame;
 
   ModeManager modeManager = ModeManager();
   std::shared_ptr<EventReactor> reactor;

@@ -8,6 +8,9 @@ namespace sml = boost::sml;
 
 #include "lss/actions.hpp"
 #include "lss/state.hpp"
+#include "lss/keyEvent.hpp"
+
+#include <SDL.h>
 
 // TODO: add exit method for modes;
 class LSSApp;

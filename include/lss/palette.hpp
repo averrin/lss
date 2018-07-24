@@ -2,12 +2,13 @@
 #ifndef __PALETTE_H_
 #define __PALETTE_H_
 #include <string>
+#include <SDL.h>
 
 struct Palette {
   std::string name;
-  ci::Color fgColor;
-  ci::Color bgColor;
-  ci::Color bgColorAlt;
+  SDL_Color fgColor;
+  SDL_Color bgColor;
+  SDL_Color bgColorAlt;
 
   std::string green;
   std::string red;

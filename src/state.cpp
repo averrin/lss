@@ -31,7 +31,7 @@ void State::appendContent(std::shared_ptr<Fragment> content) {
   damaged = true;
 };
 
-void State::render(kp::pango::CinderPangoRef surface) {
+void State::render(pango::SurfaceRef surface) {
   if (!damaged) {
     surface->setDefaultTextColor(currentPalette.fgColor);
 

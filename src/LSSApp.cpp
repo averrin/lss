@@ -19,28 +19,28 @@ int VOffset = 24;
 
 void LSSApp::setup() {
   srand(time(NULL));
-  kp::pango::CinderPango::setTextRenderer(kp::pango::TextRenderer::FREETYPE);
+  pango::Surface::setTextRenderer(kp::pango::TextRenderer::FREETYPE);
 
   /* Frames */
-  gameFrame = kp::pango::CinderPango::create();
+  gameFrame = pango::Surface::create();
   gameFrame->setMinSize(800, 600);
   gameFrame->setMaxSize(getWindowWidth(),
                         getWindowHeight() - StatusLine::HEIGHT);
   gameFrame->disableWrap();
 
-  statusFrame = kp::pango::CinderPango::create();
+  statusFrame = pango::Surface::create();
   statusFrame->setMinSize(getWindowWidth(), StatusLine::HEIGHT);
   statusFrame->setMaxSize(getWindowWidth(), StatusLine::HEIGHT);
 
-  heroFrame = kp::pango::CinderPango::create();
+  heroFrame = pango::Surface::create();
   heroFrame->setMinSize(getWindowWidth(), HeroLine::HEIGHT);
   heroFrame->setMaxSize(getWindowWidth(), HeroLine::HEIGHT);
 
-  inspectFrame = kp::pango::CinderPango::create();
+  inspectFrame = pango::Surface::create();
   inspectFrame->setMinSize(getWindowWidth() / 4.f - 12, getWindowHeight());
   inspectFrame->setMaxSize(getWindowWidth() / 4.f - 12, getWindowHeight());
 
-  logFrame = kp::pango::CinderPango::create();
+  logFrame = pango::Surface::create();
   logFrame->setMinSize(getWindowWidth() / 4.f - 12, getWindowHeight());
   logFrame->setMaxSize(getWindowWidth() / 4.f - 12, getWindowHeight());
 

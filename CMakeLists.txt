@@ -23,6 +23,9 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules")
 find_package( HarfBuzz REQUIRED )
 find_package( Cairo REQUIRED )
 find_package( Pango REQUIRED )
+find_package( PkgConfig REQUIRED )
+pkg_check_modules( FreeType REQUIRED freetype2)
+pkg_check_modules( PangoFT REQUIRED pangoft2)
 
 find_package(SDL2 REQUIRED COMPONENTS main)
 if(NOT WIN32)
@@ -40,35 +43,40 @@ set( SRC_FILES
 	${FMT_DIR}/src/format.cc
     ${MP_DIR}/micropather.cpp
 
-	${SRC_DIR}/fragment.cpp
-	${SRC_DIR}/palette.cpp
-	${SRC_DIR}/state.cpp
+	# ${SRC_DIR}/fragment.cpp
+	# ${SRC_DIR}/palette.cpp
+	# ${SRC_DIR}/state.cpp
 
-	${SRC_DIR}/modes.cpp
-	${SRC_DIR}/commands.cpp
+	# ${SRC_DIR}/modes.cpp
+	# ${SRC_DIR}/commands.cpp
 
-	${SRC_DIR}/game/cell.cpp
-	${SRC_DIR}/game/fov.cpp
-	${SRC_DIR}/game/location.cpp
-	${SRC_DIR}/game/object.cpp
-	${SRC_DIR}/game/effect.cpp
-	${SRC_DIR}/game/overtime.cpp
-	${SRC_DIR}/game/randomTools.cpp
-	${SRC_DIR}/game/item.cpp
-	${SRC_DIR}/game/creature.cpp
-	${SRC_DIR}/game/enemy.cpp
-	${SRC_DIR}/game/slot.cpp
-	${SRC_DIR}/game/equipment.cpp
-	${SRC_DIR}/game/player.cpp
-	${SRC_DIR}/game/door.cpp
+	# ${SRC_DIR}/game/cell.cpp
+	# ${SRC_DIR}/game/fov.cpp
+	# ${SRC_DIR}/game/location.cpp
+	# ${SRC_DIR}/game/object.cpp
+	# ${SRC_DIR}/game/effect.cpp
+	# ${SRC_DIR}/game/overtime.cpp
+	# ${SRC_DIR}/game/randomTools.cpp
+	# ${SRC_DIR}/game/item.cpp
+	# ${SRC_DIR}/game/creature.cpp
+	# ${SRC_DIR}/game/enemy.cpp
+	# ${SRC_DIR}/game/slot.cpp
+	# ${SRC_DIR}/game/equipment.cpp
+	# ${SRC_DIR}/game/player.cpp
+	# ${SRC_DIR}/game/door.cpp
 
-	${SRC_DIR}/generator/generator.cpp
+	# ${SRC_DIR}/generator/generator.cpp
 
-	${SRC_DIR}/statusLine.cpp
-	${SRC_DIR}/heroLine.cpp
-	${SRC_DIR}/logPanel.cpp
-	${SRC_DIR}/eventReactor.cpp
+	# ${SRC_DIR}/statusLine.cpp
+	# ${SRC_DIR}/heroLine.cpp
+	# ${SRC_DIR}/logPanel.cpp
+	# ${SRC_DIR}/eventReactor.cpp
 	# ${SRC_DIR}/LSSApp.cpp
+
+	${SRC_DIR}/SDL_Pango.cpp
+    gl2/Context.cpp
+    Main.cpp
+
     )
 
 # add_subdirectory(backward-cpp)
@@ -82,9 +90,15 @@ include_directories(
     PUBLIC ${FOV_DIR}
     PUBLIC ${BUS_DIR}
     PUBLIC ${FMT_DIR}/include
-    ${SDL2_INCLUDE_DIRS} ${SDL2main_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} ${CMAKE_BINARY_DIR})
-add_executable(${EXE_NAME}  ${SRC_FILES} Main.cpp gl2/Context.cpp)
-target_link_libraries(${EXE_NAME} ${SDL2_LIBS} ${OPENGL_LIBRARIES})
+    ${PANGO_INCLUDE_DIRS}
+    ${FREETYPE_INCLUDE_DIRS}
+    ${PANGOFT_INCLUDE_DIRS}
+    ${SDL2_INCLUDE_DIRS}
+    ${SDL2main_INCLUDE_DIRS}
+    ${OPENGL_INCLUDE_DIR}
+    ${CMAKE_BINARY_DIR})
+add_executable(${EXE_NAME} ${SRC_FILES})
+target_link_libraries(${EXE_NAME} ${PANGO_LIBRARIES} ${SDL2_LIBS} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${PANGOFT_LIBRARIES} pangoft2-1.0 fontconfig freetype )
 
 # Copy SDL2 DLLs to output folder on Windows
 if(WIN32)

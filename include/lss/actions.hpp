@@ -2,6 +2,7 @@
 #define __ACTIONS_H_
 #include "lss/fragment.hpp"
 #include "lss/palette.hpp"
+#include "lss/keyEvent.hpp"
 #include <string>
 
 struct Modes {
