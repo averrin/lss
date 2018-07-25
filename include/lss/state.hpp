@@ -58,7 +58,7 @@ public:
 
   bool damaged = true;
 
-private:
+// private:
   std::string cache;
 };
 

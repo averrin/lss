@@ -43,8 +43,9 @@ class EventReactor;
 class LSSApp {
 public:
   ~LSSApp();
-  float getWindowWidth() { return 800; }
-  float getWindowHeight() { return 600; }
+  SDL_DisplayMode dm;
+  float getWindowWidth() { return dm.w; }
+  float getWindowHeight() { return dm.h; }
   void setup();
   void update();
   void keyDown(KeyEvent event);
@@ -56,7 +57,6 @@ public:
   SDL_Surface *surface = nullptr;
   SDL_Texture* background = nullptr;
   Uint32 rmask, gmask, bmask, amask;
-  SDLPango_Context *context = nullptr;
 
   pango::SurfaceRef gameFrame;
   pango::SurfaceRef statusFrame;

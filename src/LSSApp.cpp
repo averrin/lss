@@ -25,55 +25,38 @@ void LSSApp::setup() {
   assert(rc >= 0);
   (void) rc;
 
+  if (SDL_GetDesktopDisplayMode(0, &dm))
+  {
+      printf("Error getting desktop display mode\n");
+      return;
+  }
   window = SDL_CreateWindow("Long Story Short", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                                  800, 600, SDL_WINDOW_OPENGL);
+                                  dm.w, dm.h, SDL_WINDOW_OPENGL);
   assert(window);
+  SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+  SDL_ShowCursor(false);
   SDL_ShowWindow(window);
 
   renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-  context = SDLPango_CreateContext();
 
-  SDLPango_SetColor(context, &palettes::DARK.fgColor);
-  SDLPango_SetMinimumSize(context, 800, 600);
+  SDL_Log("Vendor     : %s\n", GL_NO_CHECK(GetString(GL_VENDOR)));
+  SDL_Log("Renderer   : %s\n", GL_NO_CHECK(GetString(GL_RENDERER)));
+  SDL_Log("Version    : %s\n", GL_NO_CHECK(GetString(GL_VERSION)));
+  // SDL_Log("Extensions : %s\n", GL_NO_CHECK(GetString(GL_EXTENSIONS)));
+  SDL_Log("Width      : %d\n", dm.w);
+  SDL_Log("Height     : %d\n", dm.h);
+  // SDL_Log("\n");
 
-        #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-            rmask = 0xff000000;
-            gmask = 0x00ff0000;
-            bmask = 0x0000ff00;
-            amask = 0x000000ff;
-        #else
-            rmask = 0x000000ff;
-            gmask = 0x0000ff00;
-            bmask = 0x00ff0000;
-            amask = 0xff000000;
-        #endif
-
-        surface = SDL_CreateRGBSurface(0, 800, 600, 32, rmask, gmask, bmask, amask);
-
-        SDLPango_Draw(context, surface, 0, 0);
-
-        background = SDL_CreateTextureFromSurface(renderer, surface);
-
-        SDL_SetRenderDrawColor(renderer, 0x1d, 0x1f, 0x22, 0xff);
-        SDL_RenderClear(renderer);
-
-        SDL_RenderCopy(renderer, background, NULL, NULL);
 
 #ifdef _WIN32
         // Initialize GLES2 function table
         glFuncTable.initialize();
 #endif
 
-        // Log GL driver info
-  SDL_Log("Vendor     : %s\n", GL_NO_CHECK(GetString(GL_VENDOR)));
-  SDL_Log("Renderer   : %s\n", GL_NO_CHECK(GetString(GL_RENDERER)));
-  SDL_Log("Version    : %s\n", GL_NO_CHECK(GetString(GL_VERSION)));
-  // SDL_Log("Extensions : %s\n", GL_NO_CHECK(GetString(GL_EXTENSIONS)));
-  SDL_Log("\n");
-
   /* Frames */
   gameFrame = pango::Surface::create();
-  gameFrame->setMinSize(800, 600);
+  gameFrame->setMinSize(getWindowWidth(),
+                        getWindowHeight() - StatusLine::HEIGHT);
   gameFrame->setMaxSize(getWindowWidth(),
                         getWindowHeight() - StatusLine::HEIGHT);
   gameFrame->disableWrap();
@@ -460,15 +443,11 @@ void LSSApp::update() {
 
 void LSSApp::draw() {
 
-        SDLPango_SetMarkup(context, fmt::format("boom <b>{}</b>", rand() % 500).c_str(), -1);
-        SDLPango_Draw(context, surface, 0, 0);
-        background = SDL_CreateTextureFromSurface(renderer, surface);
-
-        SDL_RenderClear(renderer);
-
-        SDL_RenderCopy(renderer, background, NULL, NULL);
-
-        SDL_RenderPresent(renderer);
+  std::cout << "draw" << std::endl;
+  background = SDL_CreateTextureFromSurface(renderer, gameFrame->getTexture());
+  SDL_RenderClear(renderer);
+  SDL_RenderCopy(renderer, background, NULL, NULL);
+  SDL_RenderPresent(renderer);
   // // if (!needRedraw) return;
   // // fmt::print(".");
 
@@ -549,8 +528,6 @@ void LSSApp::draw() {
 }
 
 LSSApp::~LSSApp() {
-    SDLPango_FreeContext(context);
-    SDL_FreeSurface(surface);
     SDL_DestroyWindow(window);
     SDL_Quit();
 }
