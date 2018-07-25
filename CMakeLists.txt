@@ -13,9 +13,9 @@ get_filename_component( FMT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/fmt" ABSOLU
 get_filename_component( MP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/micropather" ABSOLUTE )
 
 # Write demo-config.h
-message("Generating header file: ${CMAKE_BINARY_DIR}/demo-config.h")
+message("Generating header file: ${CMAKE_BINARY_DIR}/config.hpp")
 set(DEMO_ENABLE_MULTISAMPLE 0 CACHE BOOL "Enable multisample anti-aliasing")
-configure_file(demo-config.h.in "${CMAKE_BINARY_DIR}/demo-config.h")
+configure_file(demo-config.h.in "${CMAKE_BINARY_DIR}/config.hpp")
 
 # Find SDL2 and OpenGL
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules")
@@ -42,35 +42,38 @@ set( SRC_FILES
 
 	${FMT_DIR}/src/format.cc
     ${MP_DIR}/micropather.cpp
+    
+	${SRC_DIR}/pango.cpp
+	${SRC_DIR}/keyEvent.cpp
 
-	# ${SRC_DIR}/fragment.cpp
-	# ${SRC_DIR}/palette.cpp
-	# ${SRC_DIR}/state.cpp
+	${SRC_DIR}/fragment.cpp
+	${SRC_DIR}/palette.cpp
+	${SRC_DIR}/state.cpp
 
-	# ${SRC_DIR}/modes.cpp
-	# ${SRC_DIR}/commands.cpp
+	${SRC_DIR}/modes.cpp
+	${SRC_DIR}/commands.cpp
 
-	# ${SRC_DIR}/game/cell.cpp
-	# ${SRC_DIR}/game/fov.cpp
-	# ${SRC_DIR}/game/location.cpp
-	# ${SRC_DIR}/game/object.cpp
-	# ${SRC_DIR}/game/effect.cpp
-	# ${SRC_DIR}/game/overtime.cpp
-	# ${SRC_DIR}/game/randomTools.cpp
-	# ${SRC_DIR}/game/item.cpp
-	# ${SRC_DIR}/game/creature.cpp
-	# ${SRC_DIR}/game/enemy.cpp
-	# ${SRC_DIR}/game/slot.cpp
-	# ${SRC_DIR}/game/equipment.cpp
-	# ${SRC_DIR}/game/player.cpp
-	# ${SRC_DIR}/game/door.cpp
+	${SRC_DIR}/game/cell.cpp
+	${SRC_DIR}/game/fov.cpp
+	${SRC_DIR}/game/location.cpp
+	${SRC_DIR}/game/object.cpp
+	${SRC_DIR}/game/effect.cpp
+	${SRC_DIR}/game/overtime.cpp
+	${SRC_DIR}/game/randomTools.cpp
+	${SRC_DIR}/game/item.cpp
+	${SRC_DIR}/game/creature.cpp
+	${SRC_DIR}/game/enemy.cpp
+	${SRC_DIR}/game/slot.cpp
+	${SRC_DIR}/game/equipment.cpp
+	${SRC_DIR}/game/player.cpp
+	${SRC_DIR}/game/door.cpp
 
-	# ${SRC_DIR}/generator/generator.cpp
+	${SRC_DIR}/generator/generator.cpp
 
-	# ${SRC_DIR}/statusLine.cpp
-	# ${SRC_DIR}/heroLine.cpp
-	# ${SRC_DIR}/logPanel.cpp
-	# ${SRC_DIR}/eventReactor.cpp
+	${SRC_DIR}/statusLine.cpp
+	${SRC_DIR}/heroLine.cpp
+	${SRC_DIR}/logPanel.cpp
+	${SRC_DIR}/eventReactor.cpp
 	# ${SRC_DIR}/LSSApp.cpp
 
 	${SRC_DIR}/SDL_Pango.cpp

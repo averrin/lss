@@ -6,12 +6,12 @@
 namespace pango {
     typedef std::shared_ptr<class Surface> SurfaceRef;
     class Surface {
-        public:
+    public:
         static SurfaceRef create();
 
-	void setText(std::string text);
-	bool render(bool force = false);
-	void setDefaultTextColor(SDL_Color color);
+        void setText(std::string text);
+        bool render(bool force = false);
+        void setDefaultTextColor(SDL_Color color);
     };
 
 }

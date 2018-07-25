@@ -4,7 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include "gl2/Context.h"
-#include <demo-config.h>
+#include <config.hpp>
 #include <SDL_Pango.hpp>
 #include <fmt/format.h>
 #include <random>
