@@ -9,14 +9,14 @@
 #include <sstream>
 #include <stdio.h>
 #include <string>
-#include <utility>
 #include <thread>
+#include <utility>
 
 #include "lss/commands.hpp"
-#include "lss/modes.hpp"
-#include "lss/state.hpp"
 #include "lss/keyEvent.hpp"
+#include "lss/modes.hpp"
 #include "lss/pango.hpp"
+#include "lss/state.hpp"
 
 #include "lss/game/door.hpp"
 #include "lss/game/enemy.hpp"
@@ -36,6 +36,8 @@
 class EventReactor;
 class LSSApp {
 public:
+  float getWindowWidth() { return 800; }
+  float getWindowHeight() { return 600; }
   void setup();
   void update();
   void keyDown(KeyEvent event);

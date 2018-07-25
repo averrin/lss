@@ -1,14 +1,14 @@
 #ifndef __RANDOMTOOLS_H_
 #define __RANDOMTOOLS_H_
-#include <cstdlib>
-#include <memory>
-#include <variant>
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include <map>
-#include <random>
 #include <cmath>
+#include <cstdlib>
+#include <iomanip>
+#include <iostream>
+#include <map>
+#include <memory>
+#include <random>
+#include <string>
+#include <variant>
 
 namespace R {
 float R(float min, float max);

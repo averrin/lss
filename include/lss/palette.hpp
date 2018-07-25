@@ -1,8 +1,8 @@
 #pragma once
 #ifndef __PALETTE_H_
 #define __PALETTE_H_
-#include <string>
 #include <SDL.h>
+#include <string>
 
 struct Palette {
   std::string name;

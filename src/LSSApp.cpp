@@ -19,7 +19,7 @@ int VOffset = 24;
 
 void LSSApp::setup() {
   srand(time(NULL));
-  pango::Surface::setTextRenderer(kp::pango::TextRenderer::FREETYPE);
+  // pango::Surface::setTextRenderer(pango::TextRenderer::FREETYPE);
 
   /* Frames */
   gameFrame = pango::Surface::create();
@@ -134,7 +134,7 @@ void LSSApp::startGame() {
   hero->currentLocation->enter(hero, locations[0]->enterCell);
 
   invalidate("init");
-  gameFrame->setTextAlignment(kp::pango::TextAlignment::LEFT);
+  gameFrame->setTextAlignment(pango::TextAlignment::LEFT);
 }
 
 void LSSApp::setListeners() { reactor = std::make_shared<EventReactor>(this); }
@@ -238,16 +238,14 @@ void LSSApp::invalidate() {
   state->invalidate();
 }
 
-void LSSApp::mouseDown(MouseEvent event) {}
-
 void LSSApp::repeatTimer() {
-  if (lastKeyEvent != nullopt) {
+  if (lastKeyEvent != std::nullopt) {
     std::thread([&]() {
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
-        if (lastKeyEvent != nullopt) {
-          repeatKeyEvent = true;
-          repeatTimer();
-        }
+      std::this_thread::sleep_for(std::chrono::milliseconds(200));
+      if (lastKeyEvent != std::nullopt) {
+        repeatKeyEvent = true;
+        repeatTimer();
+      }
     }).detach();
   }
 }
@@ -260,12 +258,11 @@ void LSSApp::keyUp(KeyEvent event) {
 void LSSApp::keyDown(KeyEvent event) {
   lastKeyEvent = event;
   std::thread([&]() {
-      std::this_thread::sleep_for(std::chrono::milliseconds(200));
-      if (lastKeyEvent != nullopt) {
-        repeatTimer();
-      }
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    if (lastKeyEvent != std::nullopt) {
+      repeatTimer();
+    }
   }).detach();
-
 
   auto prevMode = modeManager.modeFlags->currentMode;
   modeManager.processKey(event);
@@ -318,33 +315,34 @@ bool LSSApp::processCommand(std::string cmd) {
     return false;
 
   // TODO: do it automagicaly
-  if (auto e = dynamic_pointer_cast<MoveCommandEvent>(*event)) {
+  if (auto e = std::dynamic_pointer_cast<MoveCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
-  } else if (auto e = dynamic_pointer_cast<QuitCommandEvent>(*event)) {
+  } else if (auto e = std::dynamic_pointer_cast<QuitCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
-  } else if (auto e = dynamic_pointer_cast<PickCommandEvent>(*event)) {
+  } else if (auto e = std::dynamic_pointer_cast<PickCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
-  } else if (auto e = dynamic_pointer_cast<DigCommandEvent>(*event)) {
+  } else if (auto e = std::dynamic_pointer_cast<DigCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
-  } else if (auto e = dynamic_pointer_cast<WalkCommandEvent>(*event)) {
+  } else if (auto e = std::dynamic_pointer_cast<WalkCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
-  } else if (auto e = dynamic_pointer_cast<AttackCommandEvent>(*event)) {
+  } else if (auto e = std::dynamic_pointer_cast<AttackCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
-  } else if (auto e = dynamic_pointer_cast<EquipCommandEvent>(*event)) {
+  } else if (auto e = std::dynamic_pointer_cast<EquipCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
-  } else if (auto e = dynamic_pointer_cast<HelpCommandEvent>(*event)) {
+  } else if (auto e = std::dynamic_pointer_cast<HelpCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
-  } else if (auto e = dynamic_pointer_cast<InventoryCommandEvent>(*event)) {
+  } else if (auto e =
+                 std::dynamic_pointer_cast<InventoryCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
-  } else if (auto e = dynamic_pointer_cast<DropCommandEvent>(*event)) {
+  } else if (auto e = std::dynamic_pointer_cast<DropCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
-  } else if (auto e = dynamic_pointer_cast<WaitCommandEvent>(*event)) {
+  } else if (auto e = std::dynamic_pointer_cast<WaitCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
-  } else if (auto e = dynamic_pointer_cast<ZapCommandEvent>(*event)) {
+  } else if (auto e = std::dynamic_pointer_cast<ZapCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
-  } else if (auto e = dynamic_pointer_cast<StairEvent>(*event)) {
+  } else if (auto e = std::dynamic_pointer_cast<StairEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
-  } else if (auto e = dynamic_pointer_cast<UseCommandEvent>(*event)) {
+  } else if (auto e = std::dynamic_pointer_cast<UseCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
   }
   return true;
@@ -355,7 +353,7 @@ void LSSApp::update() {
   // gl::clear(state->currentPalette.bgColor);
   auto s = state;
 
-  gl::enableAlphaBlendingPremult();
+  // gl::enableAlphaBlendingPremult();
   gameFrame->setSpacing(0);
 
   switch (modeManager.modeFlags->currentMode) {
@@ -411,78 +409,81 @@ void LSSApp::update() {
 }
 
 void LSSApp::draw() {
-  // if (!needRedraw) return;
-  // fmt::print(".");
+  // // if (!needRedraw) return;
+  // // fmt::print(".");
 
-  gl::color(state->currentPalette.bgColor);
-  gl::drawSolidRect(
-      Rectf(0, 0, getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT));
-  gl::color(ColorA(1, 1, 1, 1));
+  // gl::color(state->currentPalette.bgColor);
+  // gl::drawSolidRect(
+  //     Rectf(0, 0, getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT));
+  // gl::color(ColorA(1, 1, 1, 1));
 
-  switch (modeManager.modeFlags->currentMode) {
-  case Modes::INSPECT:
-  case Modes::NORMAL:
-  case Modes::INSERT:
-  case Modes::DIRECTION:
-  case Modes::HINTS:
-  case Modes::LEADER:
-  case Modes::HELP:
-  case Modes::OBJECTSELECT:
-  case Modes::INVENTORY:
-    gameFrame->setTextAlignment(kp::pango::TextAlignment::LEFT);
-    gl::draw(gameFrame->getTexture(), vec2(HOffset, VOffset));
-    break;
-  case Modes::GAMEOVER:
-    gameFrame->setTextAlignment(kp::pango::TextAlignment::CENTER);
-    gl::draw(gameFrame->getTexture(), vec2(HOffset, VOffset));
-    break;
-  }
+  // switch (modeManager.modeFlags->currentMode) {
+  // case Modes::INSPECT:
+  // case Modes::NORMAL:
+  // case Modes::INSERT:
+  // case Modes::DIRECTION:
+  // case Modes::HINTS:
+  // case Modes::LEADER:
+  // case Modes::HELP:
+  // case Modes::OBJECTSELECT:
+  // case Modes::INVENTORY:
+  //   gameFrame->setTextAlignment(kp::pango::TextAlignment::LEFT);
+  //   gl::draw(gameFrame->getTexture(), vec2(HOffset, VOffset));
+  //   break;
+  // case Modes::GAMEOVER:
+  //   gameFrame->setTextAlignment(kp::pango::TextAlignment::CENTER);
+  //   gl::draw(gameFrame->getTexture(), vec2(HOffset, VOffset));
+  //   break;
+  // }
 
-  if (statusFrame != nullptr) {
-    gl::color(state->currentPalette.bgColorAlt);
-    gl::drawSolidRect(Rectf(0, getWindowHeight() - StatusLine::HEIGHT,
-                            getWindowWidth(), getWindowHeight()));
-    gl::color(ColorA(1, 1, 1, 1));
-    statusFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
-    gl::draw(statusFrame->getTexture(),
-             vec2(6, getWindowHeight() - StatusLine::HEIGHT + 6));
-  }
+  // if (statusFrame != nullptr) {
+  //   gl::color(state->currentPalette.bgColorAlt);
+  //   gl::drawSolidRect(Rectf(0, getWindowHeight() - StatusLine::HEIGHT,
+  //                           getWindowWidth(), getWindowHeight()));
+  //   gl::color(ColorA(1, 1, 1, 1));
+  //   statusFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
+  //   gl::draw(statusFrame->getTexture(),
+  //            vec2(6, getWindowHeight() - StatusLine::HEIGHT + 6));
+  // }
 
-  if (logFrame != nullptr &&
-      modeManager.modeFlags->currentMode != Modes::INSPECT) {
-    gl::color(state->currentPalette.bgColorAlt);
-    gl::drawSolidRect(Rectf(getWindowWidth() * 3.f / 4.f, 0, getWindowWidth(),
-                            getWindowHeight()));
-    gl::color(ColorA(1, 1, 1, 1));
-    logFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
-    gl::draw(logFrame->getTexture(),
-             vec2(getWindowWidth() * 3 / 4 + HOffset, VOffset));
-  }
+  // if (logFrame != nullptr &&
+  //     modeManager.modeFlags->currentMode != Modes::INSPECT) {
+  //   gl::color(state->currentPalette.bgColorAlt);
+  //   gl::drawSolidRect(Rectf(getWindowWidth() * 3.f / 4.f, 0,
+  //   getWindowWidth(),
+  //                           getWindowHeight()));
+  //   gl::color(ColorA(1, 1, 1, 1));
+  //   logFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
+  //   gl::draw(logFrame->getTexture(),
+  //            vec2(getWindowWidth() * 3 / 4 + HOffset, VOffset));
+  // }
 
-  if (inspectFrame != nullptr &&
-      modeManager.modeFlags->currentMode == Modes::INSPECT) {
-    gl::color(state->currentPalette.bgColorAlt);
-    gl::drawSolidRect(Rectf(getWindowWidth() * 3.f / 4.f, 0, getWindowWidth(),
-                            getWindowHeight()));
-    gl::color(ColorA(1, 1, 1, 1));
-    inspectFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
-    gl::draw(inspectFrame->getTexture(),
-             vec2(getWindowWidth() * 3 / 4 + HOffset, VOffset));
-  }
+  // if (inspectFrame != nullptr &&
+  //     modeManager.modeFlags->currentMode == Modes::INSPECT) {
+  //   gl::color(state->currentPalette.bgColorAlt);
+  //   gl::drawSolidRect(Rectf(getWindowWidth() * 3.f / 4.f, 0,
+  //   getWindowWidth(),
+  //                           getWindowHeight()));
+  //   gl::color(ColorA(1, 1, 1, 1));
+  //   inspectFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
+  //   gl::draw(inspectFrame->getTexture(),
+  //            vec2(getWindowWidth() * 3 / 4 + HOffset, VOffset));
+  // }
 
-  if (heroFrame != nullptr) {
-    gl::color(state->currentPalette.bgColor);
-    gl::drawSolidRect(
-        Rectf(0, getWindowHeight() - StatusLine::HEIGHT - HeroLine::HEIGHT,
-              getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT));
-    gl::color(ColorA(1, 1, 1, 1));
-    heroFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
-    gl::draw(
-        heroFrame->getTexture(),
-        vec2(6, getWindowHeight() - StatusLine::HEIGHT + 6 - HeroLine::HEIGHT));
-  }
+  // if (heroFrame != nullptr) {
+  //   gl::color(state->currentPalette.bgColor);
+  //   gl::drawSolidRect(
+  //       Rectf(0, getWindowHeight() - StatusLine::HEIGHT - HeroLine::HEIGHT,
+  //             getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT));
+  //   gl::color(ColorA(1, 1, 1, 1));
+  //   heroFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
+  //   gl::draw(
+  //       heroFrame->getTexture(),
+  //       vec2(6, getWindowHeight() - StatusLine::HEIGHT + 6 -
+  //       HeroLine::HEIGHT));
+  // }
 
-  gl::drawString(VERSION, vec2(getWindowWidth() - 120,
-                               getWindowHeight() - StatusLine::HEIGHT + 12));
-  needRedraw = false;
+  // gl::drawString(VERSION, vec2(getWindowWidth() - 120,
+  //                              getWindowHeight() - StatusLine::HEIGHT + 12));
+  // needRedraw = false;
 }

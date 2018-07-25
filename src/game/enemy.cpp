@@ -60,7 +60,7 @@ std::optional<Items> Enemy::drop() {
   return loot;
 }
 
-//TODO: move to creature
+// TODO: move to creature
 bool Enemy::interact(std::shared_ptr<Object> actor) {
   if (hasTrait(Traits::INVULNERABLE))
     return true;

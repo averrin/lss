@@ -4,8 +4,8 @@
 #include "lss/game/player.hpp"
 #include "lss/utils.hpp"
 #include <algorithm>
-#include <string>
 #include <fmt/format.h>
+#include <string>
 
 using namespace std::string_literals;
 
@@ -42,10 +42,12 @@ void HeroLine::update() {
   }
   auto locationFeatures = hero->currentLocation->getFeaturesTag();
   std::string effects = "";
-  for_each(hero->activeEffects.begin(), hero->activeEffects.end(), [&](auto e){ effects.append(e->getSign()); });
+  for_each(hero->activeEffects.begin(), hero->activeEffects.end(),
+           [&](auto e) { effects.append(e->getSign()); });
   setContent({
       F(fmt::format("<b>{}</b> [{}]   {}", hero->name, hero->level, effects)),
-      F(fmt::format("   <b>HP</b>:{}/{}   <b>MP</b>:{}/{}   <b>SPD</b>:{}   <b>DMG</b>:{}   "
+      F(fmt::format("   <b>HP</b>:{}/{}   <b>MP</b>:{}/{}   <b>SPD</b>:{}   "
+                    "<b>DMG</b>:{}   "
                     "<b>DEF</b>:{}   <b>EXP</b>:{}",
                     hero->HP(hero.get()), hero->HP_MAX(hero.get()),
                     hero->MP(hero.get()), hero->MP_MAX(hero.get()),

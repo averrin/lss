@@ -49,7 +49,7 @@ public:
   ~Location();
   LocationSpec type;
   Cells cells;
-    Objects objects {};
+  Objects objects{};
   std::shared_ptr<Player> player;
   int depth = 0;
 

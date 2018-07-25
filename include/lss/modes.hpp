@@ -7,8 +7,8 @@
 namespace sml = boost::sml;
 
 #include "lss/actions.hpp"
-#include "lss/state.hpp"
 #include "lss/keyEvent.hpp"
+#include "lss/state.hpp"
 
 #include <SDL.h>
 

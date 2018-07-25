@@ -44,7 +44,8 @@ ItemSpec const POTION = {"potion", ItemCategories::CONSUMABLES};
 ItemSpec const ROCK = {"rock", ItemCategories::MISC};
 ItemSpec const BONES = {"bones", ItemCategories::MISC};
 
-ItemSpec const ENEMY = {"enemy item", ItemCategories::MISC, WearableType::ENEMY};
+ItemSpec const ENEMY = {"enemy item", ItemCategories::MISC,
+                        WearableType::ENEMY};
 
 ItemSpec const PICK_AXE = {"pick axe", ItemCategories::WEAPONS,
                            WearableType::WEAPON_TWOHANDED};

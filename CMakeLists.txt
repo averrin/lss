@@ -27,6 +27,9 @@ find_package( PkgConfig REQUIRED )
 pkg_check_modules( FreeType REQUIRED freetype2)
 pkg_check_modules( PangoFT REQUIRED pangoft2)
 
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
 find_package(SDL2 REQUIRED COMPONENTS main)
 if(NOT WIN32)
     find_package(OpenGL REQUIRED)
@@ -74,7 +77,7 @@ set( SRC_FILES
 	${SRC_DIR}/heroLine.cpp
 	${SRC_DIR}/logPanel.cpp
 	${SRC_DIR}/eventReactor.cpp
-	# ${SRC_DIR}/LSSApp.cpp
+	${SRC_DIR}/LSSApp.cpp
 
 	${SRC_DIR}/SDL_Pango.cpp
     gl2/Context.cpp
@@ -101,7 +104,7 @@ include_directories(
     ${OPENGL_INCLUDE_DIR}
     ${CMAKE_BINARY_DIR})
 add_executable(${EXE_NAME} ${SRC_FILES})
-target_link_libraries(${EXE_NAME} ${PANGO_LIBRARIES} ${SDL2_LIBS} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${PANGOFT_LIBRARIES} pangoft2-1.0 fontconfig freetype )
+target_link_libraries(${EXE_NAME} ${PANGO_LIBRARIES} ${SDL2_LIBS} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${PANGOFT_LIBRARIES} pangoft2-1.0 fontconfig freetype Threads::Threads)
 
 # Copy SDL2 DLLs to output folder on Windows
 if(WIN32)

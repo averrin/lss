@@ -109,7 +109,7 @@ class SpecialPrefix : public Effect {
 public:
   SpecialPrefix(std::string n) : Effect(AttributeType::NONE, true), name(n){};
   std::string getTitle() { return name; };
-    std::string getSign() { return ""; };
+  std::string getSign() { return ""; };
   std::string name;
   std::shared_ptr<Effect> clone() {
     return std::make_shared<SpecialPrefix>(name);
@@ -172,7 +172,6 @@ public:
   std::variant<float, int> getModifier() { return effect->getModifier(); };
 };
 
-
 class OverTimeEffect;
 typedef std::function<void(std::shared_ptr<Creature>)> EffectApplier;
 
@@ -206,7 +205,8 @@ public:
 
 namespace OverTimeEffects {
 const auto HEAL = std::make_shared<OverTimeEffect>(5, 500, EoT::HEAL);
-const auto MANA_RESTORE = std::make_shared<OverTimeEffect>(1, 15000, EoT::MANA_RESTORE);
+const auto MANA_RESTORE =
+    std::make_shared<OverTimeEffect>(1, 15000, EoT::MANA_RESTORE);
 const auto POISON = std::make_shared<OverTimeEffect>(3, 500, EoT::POISON);
 } // namespace OverTimeEffects
 

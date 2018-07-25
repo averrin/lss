@@ -115,8 +115,8 @@ bool InspectMode::processKey(KeyEvent event) {
     if (d == std::nullopt)
       break;
     auto nc = app->hero->getCell(
-        app->hero->currentLocation
-            ->cells[app->state->cursor.y][app->state->cursor.x],
+        app->hero->currentLocation->cells[app->state->cursor.y]
+                                         [app->state->cursor.x],
         *utils::getDirectionByName(*d));
     app->state->cursor = {nc->x, nc->y};
     app->state->invalidate();
@@ -356,7 +356,8 @@ bool NormalMode::processKey(KeyEvent event) {
         break;
       app->processCommand(*d);
     } else {
-      auto ds = std::vector<std::string>{"e", "s", "w", "n", "nw", "ne", "sw", "se"};
+      auto ds =
+          std::vector<std::string>{"e", "s", "w", "n", "nw", "ne", "sw", "se"};
       auto d = ds[rand() % ds.size()];
       app->processCommand(d);
     }
@@ -539,7 +540,7 @@ void GameOverMode::render(std::shared_ptr<State> state) {
 
   state->appendContent(F(fmt::format("<b>KILLS</b>:")));
   state->appendContent(State::END_LINE);
-  for (auto [name, kills] : hero->report.kills) {
+  for (auto[name, kills] : hero->report.kills) {
     state->appendContent(
         F(fmt::format("{:14}   <b>{}</b>", name + ":", kills)));
     state->appendContent(State::END_LINE);

@@ -303,22 +303,21 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
         utils::castObjects<Object>(Spells::USABLE));
   } else {
     std::vector<std::shared_ptr<Spell>> spells(Spells::USABLE.size());
-  auto it =
-      std::copy_if(Spells::USABLE.begin(), Spells::USABLE.end(),
-                   spells.begin(),
-                   [](auto spell) { return spell->cost != 0; });
+    auto it = std::copy_if(Spells::USABLE.begin(), Spells::USABLE.end(),
+                           spells.begin(),
+                           [](auto spell) { return spell->cost != 0; });
 
     spells.resize(std::distance(spells.begin(), it));
-    
+
     app->objectSelectMode->setObjects(utils::castObjects<Object>(spells));
   }
 
   Formatter formatter = [&](std::shared_ptr<Object> o, std::string letter) {
     if (auto spell = std::dynamic_pointer_cast<Spell>(o)) {
       auto castable = spell->cost <= app->hero->MP(app->hero.get());
-      return fmt::format("<span{}><span weight='bold'>{}</span> - {:32} {}</span>",
-                  castable ? "" : " color='gray'", letter,
-                         spell->name, spell->cost);
+      return fmt::format(
+          "<span{}><span weight='bold'>{}</span> - {:32} {}</span>",
+          castable ? "" : " color='gray'", letter, spell->name, spell->cost);
     }
     return "Unknown error"s;
   };
@@ -327,7 +326,8 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
   app->objectSelectMode->setCallback([&](std::shared_ptr<Object> o) {
     auto spell = std::dynamic_pointer_cast<Spell>(o);
     auto castable = spell->cost <= app->hero->MP(app->hero.get());
-    if (!castable) return false;
+    if (!castable)
+      return false;
     auto e = std::make_shared<ZapCommandEvent>(spell);
     eb::EventBus::FireEvent(*e);
     app->modeManager.toNormal();
@@ -361,17 +361,16 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     app->hero->monsterSense = false;
   } else if (*spell == *Spells::MONSTER_SENSE) {
     app->hero->monsterSense = !app->hero->monsterSense;
-  // } else if (*spell == *Spells::MONSTER_FREEZE) {
-  //   for (auto o : app->hero->currentLocation->objects) {
-  //     if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
-  //       e->type.aiType = AIType::NO_AI;
-  //     }
-  //   }
-  //   app->statusLine->setContent({F("Enemy freezed!")});
+    // } else if (*spell == *Spells::MONSTER_FREEZE) {
+    //   for (auto o : app->hero->currentLocation->objects) {
+    //     if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
+    //       e->type.aiType = AIType::NO_AI;
+    //     }
+    //   }
+    //   app->statusLine->setContent({F("Enemy freezed!")});
   } else if (*spell == *Spells::SUMMON_ORK) {
-    auto c =
-        app->hero->currentLocation
-            ->cells[app->hero->currentCell->y + 1][app->hero->currentCell->x];
+    auto c = app->hero->currentLocation->cells[app->hero->currentCell->y + 1]
+                                              [app->hero->currentCell->x];
     app->hero->currentLocation->objects.push_back(
         mkEnemy(app->hero->currentLocation, c, app->hero, EnemyType::ORK));
     app->hero->commit("summon ork", 0);
@@ -383,9 +382,8 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
     MessageEvent me(nullptr, "Your inventory was identified");
     eb::EventBus::FireEvent(me);
   } else if (*spell == *Spells::SUMMON_PLATE) {
-    auto c =
-        app->hero->currentLocation
-            ->cells[app->hero->currentCell->y + 1][app->hero->currentCell->x];
+    auto c = app->hero->currentLocation->cells[app->hero->currentCell->y + 1]
+                                              [app->hero->currentCell->x];
     // auto item = Prototype::GOD_PLATE->roll();
     auto lt = LootBox{1, {Prototype::POTION_MANA}};
     auto items = lt.open();
@@ -451,8 +449,8 @@ void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
         eb::EventBus::FireEvent(me);
       }
     } else {
-        MessageEvent me(nullptr, fmt::format("Nothing happens"));
-        eb::EventBus::FireEvent(me);
+      MessageEvent me(nullptr, fmt::format("Nothing happens"));
+      eb::EventBus::FireEvent(me);
     }
     app->hero->commit("toggle trait", 0);
   } else if (auto espell = std::dynamic_pointer_cast<EffectSpell>(spell)) {

@@ -51,8 +51,7 @@ Player::Player() : Creature() {
                              std::vector<WearableType>{RIGHT_PAULDRON}),
       std::make_shared<Slot>("Left pauldron",
                              std::vector<WearableType>{LEFT_PAULDRON}),
-      right_hand_slot,
-      left_hand_slot,
+      right_hand_slot, left_hand_slot,
       std::make_shared<Slot>("Right gauntlet",
                              std::vector<WearableType>{RIGHT_GAUNTLET}),
       std::make_shared<Slot>("Left gauntlet",
@@ -114,10 +113,10 @@ std::string Player::getDmgDesc() {
           }) > 0;
 
   if (primaryDmg != std::nullopt && haveLeft) {
-    auto [primarySlot, m, d, e] = *primaryDmg;
+    auto[primarySlot, m, d, e] = *primaryDmg;
     auto secondaryDmg = getSecondaryDmg(primarySlot);
     if (secondaryDmg != std::nullopt) {
-      auto [secondarySlot, m2, d2, e2] = *secondaryDmg;
+      auto[secondarySlot, m2, d2, e2] = *secondaryDmg;
       return fmt::format("{:+d} {}d{}{}", m, d, e,
                          hasTrait(Traits::DUAL_WIELD)
                              ? fmt::format(" ({:+d} {}d{})", m2, d2, e2)
@@ -126,13 +125,13 @@ std::string Player::getDmgDesc() {
   } else if (haveLeft) {
     auto secondaryDmg = getSecondaryDmg(nullptr);
     if (secondaryDmg != std::nullopt) {
-      auto [secondarySlot, m2, d2, e2] = *secondaryDmg;
+      auto[secondarySlot, m2, d2, e2] = *secondaryDmg;
       return hasTrait(Traits::DUAL_WIELD)
                  ? fmt::format("~ {:+d} {}d{}", m2, d2, e2)
                  : fmt::format("~ {:+d}", m2);
     }
   } else if (primaryDmg != std::nullopt) {
-    auto [primarySlot, m, d, e] = *primaryDmg;
+    auto[primarySlot, m, d, e] = *primaryDmg;
     return fmt::format("{:+d} {}d{}", m, d, e);
   }
   return fmt::format("{:+d} {}d{}", damage_modifier, damage_dices,
@@ -192,7 +191,8 @@ bool Player::equip(std::shared_ptr<Slot> slot, std::shared_ptr<Item> item) {
 void Player::onEvent(MoveCommandEvent &e) {
 
   if (hasTrait(Traits::CONFUSED)) {
-    auto ds = std::vector<std::string>{"e", "s", "w", "n", "nw", "ne", "sw", "se"};
+    auto ds =
+        std::vector<std::string>{"e", "s", "w", "n", "nw", "ne", "sw", "se"};
     auto d = ds[rand() % ds.size()];
     e.direction = *utils::getDirectionByName(d);
   }
@@ -205,12 +205,14 @@ void Player::onEvent(MoveCommandEvent &e) {
 
 void Player::onEvent(AttackCommandEvent &e) {
   if (hasTrait(Traits::CONFUSED)) {
-    auto ds = std::vector<std::string>{"e", "s", "w", "n", "nw", "ne", "sw", "se"};
+    auto ds =
+        std::vector<std::string>{"e", "s", "w", "n", "nw", "ne", "sw", "se"};
     auto d = ds[rand() % ds.size()];
     e.direction = *utils::getDirectionByName(d);
   }
   if (hasTrait(Traits::CONFUSED)) {
-    auto ds = std::vector<std::string>{"e", "s", "w", "n", "nw", "ne", "sw", "se"};
+    auto ds =
+        std::vector<std::string>{"e", "s", "w", "n", "nw", "ne", "sw", "se"};
     auto d = ds[rand() % ds.size()];
     e.direction = *utils::getDirectionByName(d);
   }
@@ -247,7 +249,8 @@ void Player::onEvent(DigCommandEvent &e) {
 // TODO: fix stops parallel rooms (maybe count  < 3...)
 void Player::onEvent(WalkCommandEvent &e) {
   if (hasTrait(Traits::CONFUSED)) {
-    auto ds = std::vector<std::string>{"e", "s", "w", "n", "nw", "ne", "sw", "se"};
+    auto ds =
+        std::vector<std::string>{"e", "s", "w", "n", "nw", "ne", "sw", "se"};
     auto d = ds[rand() % ds.size()];
     e.direction = *utils::getDirectionByName(d);
   }
@@ -320,18 +323,17 @@ void Player::onEvent(WaitCommandEvent &e) {
 void Player::onEvent(ZapCommandEvent &e) {
   if (e.spell == nullptr)
     return;
-  //TODO: do it before applying spell
+  // TODO: do it before applying spell
   commit("zap", e.spell->ap);
   mp -= e.spell->cost;
   commit("after zap", 0, true);
 }
 
-//TODO: move to creature
+// TODO: move to creature
 bool Player::interact(std::shared_ptr<Object> actor) {
   if (hasTrait(Traits::INVULNERABLE) || HP(this) <= 0)
     return true;
   auto enemy = std::dynamic_pointer_cast<Enemy>(actor);
-
 
   for (auto s : equipment->slots) {
     if (s->item == nullptr ||

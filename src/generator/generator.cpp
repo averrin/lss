@@ -546,7 +546,8 @@ void placeEnemies(std::shared_ptr<Location> location, int threat) {
     if (cells.size() == 0)
       continue;
     int count = R::N(1, 2);
-    if (count < 0) count = 0;
+    if (count < 0)
+      count = 0;
     for (auto n = cells.size() / 64; n > 0; n--) {
       count += R::Z(0, 3);
     }
@@ -558,7 +559,7 @@ void placeEnemies(std::shared_ptr<Location> location, int threat) {
                     [&](auto rec) { fullP += rec.second; });
       p *= fullP;
       float ap = 0;
-      for (auto [et, tp] : table) {
+      for (auto[et, tp] : table) {
         ap += tp;
         if (p <= ap) {
           type = et;
@@ -709,7 +710,7 @@ void placeStairs(std::shared_ptr<Location> location) {
     location->objects.erase(std::remove_if(
         location->objects.begin(), location->objects.end(), [location](auto o) {
           return o->currentCell == location->exitCell ||
-                o->currentCell == location->enterCell;
+                 o->currentCell == location->enterCell;
         }));
   }
 
@@ -1057,10 +1058,10 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   location->depth = spec.threat;
   if (DEBUG) {
     std::cout << rang::fg::yellow
-            << (spec.type == LocationType::DUNGEON ? "DUN" : "CAV")
-            << location->getFeaturesTag() << "  " << location->depth
-            << rang::style::reset << " gen started" << rang::style::reset
-            << '\n';
+              << (spec.type == LocationType::DUNGEON ? "DUN" : "CAV")
+              << location->getFeaturesTag() << "  " << location->depth
+              << rang::style::reset << " gen started" << rang::style::reset
+              << '\n';
   }
 
   if (spec.type == LocationType::DUNGEON) {
@@ -1193,7 +1194,7 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   timings["cellFeatures"] = end - start;
 
   std::vector<std::string> timeMarks;
-  for (auto [mark, ms] : timings) {
+  for (auto[mark, ms] : timings) {
     timeMarks.push_back(fmt::format("{}: {}", mark, ms.count()));
   }
 

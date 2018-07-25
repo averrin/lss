@@ -68,7 +68,8 @@ float Attribute::operator()(Creature *c) {
     }
   }
   for (auto e : effects) {
-    if (std::dynamic_pointer_cast<OverTimeEffect>(e)) continue;
+    if (std::dynamic_pointer_cast<OverTimeEffect>(e))
+      continue;
     auto mod = e->getModifier();
     if (auto m = std::get_if<int>(&mod)) {
       base += *m;
@@ -227,7 +228,7 @@ std::shared_ptr<Damage> Creature::getDamage(std::shared_ptr<Object>) {
   auto damage = std::make_shared<Damage>();
   auto primaryDmg = getPrimaryDmg();
   if (primaryDmg != std::nullopt) {
-    auto [primarySlot, m, d, e] = *primaryDmg;
+    auto[primarySlot, m, d, e] = *primaryDmg;
     damage = updateDamage(damage, m, d, e);
   }
   auto haveLeft =
@@ -244,7 +245,7 @@ std::shared_ptr<Damage> Creature::getDamage(std::shared_ptr<Object>) {
           }) > 0;
   auto secondaryDmg = getSecondaryDmg(nullptr);
   if (secondaryDmg != std::nullopt && haveLeft) {
-    auto [secondarySlot, m, d, e] = *secondaryDmg;
+    auto[secondarySlot, m, d, e] = *secondaryDmg;
     if (hasTrait(Traits::DUAL_WIELD)) {
       damage = updateDamage(damage, m, d, e);
     } else {
@@ -343,8 +344,7 @@ bool Creature::move(Direction d, bool autoAction) {
   auto nc = getCell(currentCell, d);
 
   if (hasTrait(Traits::JUMPY) && R::R() < 0.01) {
-    auto room = currentLocation
-                    ->rooms[rand() % currentLocation->rooms.size()];
+    auto room = currentLocation->rooms[rand() % currentLocation->rooms.size()];
     nc = room->cells[rand() % room->cells.size()];
 
     MessageEvent me(nullptr, "Your feel jumpy.");
@@ -412,13 +412,15 @@ void Creature::applyEoT(EoT eot, int modifier) {
   case EoT::HEAL: {
     hp += modifier;
     auto max = HP_MAX(this);
-    if (hp > max) hp = max;
-    }break;
+    if (hp > max)
+      hp = max;
+  } break;
   case EoT::MANA_RESTORE: {
     mp += modifier;
     auto max = MP_MAX(this);
-    if (mp > max) mp = max;
-    }break;
+    if (mp > max)
+      mp = max;
+  } break;
   case EoT::POISON:
     hp -= modifier;
     break;
