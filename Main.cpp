@@ -29,14 +29,14 @@ public:
     SDLPango_Context *context;
     SDL_Color textcolor = {0xcc, 0xcc, 0xcc, 0xff};
 
-    int width = 640;
-    int height = 200;
+    int width = 800;
+    int height = 600;
     int margin = 10;
 
     AppState() {
         // Initial values
-        m_sdlWindow = NULL;
-        m_sdlGLContextDrawing = NULL;
+        m_sdlWindow = nullptr;
+        m_sdlGLContextDrawing = nullptr;
         m_renderWidth = 0;
         m_renderHeight = 0;
 
@@ -45,13 +45,6 @@ public:
         assert(rc >= 0);
         (void) rc;
 
-        // Set SDL GL attributes
-        // SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-        // SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-        // SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
-        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
-    
         // Create SDL window
         m_sdlWindow = SDL_CreateWindow("Long Story Short", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                                        width, height, SDL_WINDOW_OPENGL);
@@ -64,14 +57,6 @@ public:
 
         SDLPango_SetColor(context, &textcolor);
         SDLPango_SetMinimumSize(context, width - margin, height - margin);
-
-        SDLPango_SetMarkup(context, "boom <b>1111</b>", -1);
-
-        // Create SDL GL context
-        // m_sdlGLContextDrawing = SDL_GL_CreateContext(m_sdlWindow);
-        // assert(m_sdlGLContextDrawing);
-        // SDL_GL_MakeCurrent(m_sdlWindow, m_sdlGLContextDrawing);
-        // SDL_GL_SetSwapInterval(-1);
 
         #if SDL_BYTEORDER == SDL_BIG_ENDIAN
             rmask = 0xff000000;
@@ -90,7 +75,6 @@ public:
         SDLPango_Draw(context, surface, margin, margin);
 
         background = SDL_CreateTextureFromSurface(renderer, surface);
-        SDL_FreeSurface(surface);
 
         SDL_SetRenderDrawColor(renderer, 0x1d, 0x1f, 0x22, 0xff);
         SDL_RenderClear(renderer);
@@ -102,9 +86,6 @@ public:
         glFuncTable.initialize();
 #endif
 
-        // Get render buffer width/height
-        SDL_GL_GetDrawableSize(m_sdlWindow, &m_renderWidth, &m_renderHeight);
-
         // Log GL driver info
         SDL_Log("Vendor     : %s\n", GL_NO_CHECK(GetString(GL_VENDOR)));
         SDL_Log("Renderer   : %s\n", GL_NO_CHECK(GetString(GL_RENDERER)));
@@ -115,9 +96,8 @@ public:
 
     ~AppState() {
         SDLPango_FreeContext(context);
-        // SDL_GL_MakeCurrent(NULL, NULL);
+        SDL_FreeSurface(surface);
         SDL_DestroyWindow(m_sdlWindow);
-        // SDL_GL_DeleteContext(m_sdlGLContextDrawing);
         SDL_Quit();
     }
 };
@@ -130,14 +110,6 @@ class View {
 public:
     AppState* m_appState;
 
-    // GL resources
-    GLuint m_shaderID;
-    GLint m_vertPositionAttrib;
-    GLint m_vertNormalAttrib;
-    GLint m_modelToCameraAttrib;
-    GLint m_cameraToViewportAttrib;
-    GLint m_colorAttrib;
-
     View(AppState *appState) : m_appState(appState) {
     }
 
@@ -146,29 +118,15 @@ public:
 
     void update() {
 
-        SDLPango_SetMarkup(m_appState->context, fmt::format("boom <b>{}</b>", rand() % 5).c_str(), -1);
+        SDLPango_SetMarkup(m_appState->context, fmt::format("boom <b>{}</b>", rand() % 500).c_str(), -1);
         SDLPango_Draw(m_appState->context, m_appState->surface, m_appState->margin, m_appState->margin);
+        m_appState->background = SDL_CreateTextureFromSurface(m_appState->renderer, m_appState->surface);
 
-        // Clear viewport
-        // GL_CHECK(Viewport(0, 0, (GLsizei) m_appState->m_renderWidth, (GLsizei) m_appState->m_renderHeight));
-        // GL_CHECK(ClearColor(0.9f, 0.9f, 0.9f, 1));
-        // GL_CHECK(Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
+        SDL_RenderClear(m_appState->renderer);
 
-        // // Disable alpha blend
-        // GL_CHECK(Disable(GL_BLEND));
+        SDL_RenderCopy(m_appState->renderer, m_appState->background, NULL, NULL);
 
-        // // Enable depth test
-        // GL_CHECK(Enable(GL_DEPTH_TEST));
-        // GL_CHECK(DepthMask(GL_TRUE));
-
-        // // Enable face culling
-        // GL_CHECK(Enable(GL_CULL_FACE));
-        // GL_CHECK(CullFace(GL_BACK));
-        // GL_CHECK(FrontFace(GL_CCW));
-
-        // // Present framebuffer
         SDL_RenderPresent(m_appState->renderer);
-        // SDL_GL_SwapWindow(m_appState->m_sdlWindow);
     }
 };
 
