@@ -80,8 +80,8 @@ set( SRC_FILES
 	${SRC_DIR}/LSSApp.cpp
 
 	${SRC_DIR}/SDL_Pango.cpp
-    gl2/Context.cpp
-    Main.cpp
+    ${INC_DIR}/gl2/Context.cpp
+    # Main.cpp
 
     )
 

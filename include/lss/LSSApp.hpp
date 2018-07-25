@@ -1,5 +1,6 @@
 #ifndef __LSSAPP_H_
 #define __LSSAPP_H_
+#include <config.hpp>
 
 #include <chrono>
 #include <cmath>
@@ -11,6 +12,11 @@
 #include <string>
 #include <thread>
 #include <utility>
+
+#include <SDL.h>
+#include <SDL_Pango.hpp>
+#include "gl2/Context.h"
+#include <assert.h>
 
 #include "lss/commands.hpp"
 #include "lss/keyEvent.hpp"
@@ -36,6 +42,7 @@
 class EventReactor;
 class LSSApp {
 public:
+  ~LSSApp();
   float getWindowWidth() { return 800; }
   float getWindowHeight() { return 600; }
   void setup();
@@ -43,6 +50,22 @@ public:
   void keyDown(KeyEvent event);
   void keyUp(KeyEvent event);
   void draw();
+
+  SDL_Window* window = nullptr;
+  SDL_Renderer *renderer = nullptr;
+  SDL_Surface *surface = nullptr;
+  SDL_Texture* background = nullptr;
+  Uint32 rmask, gmask, bmask, amask;
+  SDLPango_Context *context = nullptr;
+
+  pango::SurfaceRef gameFrame;
+  pango::SurfaceRef statusFrame;
+  pango::SurfaceRef heroFrame;
+  pango::SurfaceRef inspectFrame;
+  pango::SurfaceRef logFrame;
+
+
+
   void invalidate();
   void invalidate(std::string reason) {
     // fmt::print("Invalidate reason: {}\n", reason);
@@ -70,12 +93,6 @@ public:
   std::vector<std::thread> threads;
   int currentLevel = 0;
   bool debug = false;
-
-  pango::SurfaceRef gameFrame;
-  pango::SurfaceRef statusFrame;
-  pango::SurfaceRef heroFrame;
-  pango::SurfaceRef inspectFrame;
-  pango::SurfaceRef logFrame;
 
   ModeManager modeManager = ModeManager();
   std::shared_ptr<EventReactor> reactor;
@@ -114,8 +131,6 @@ public:
   std::string typedCommand;
   std::string pendingCommand;
   bool needRedraw = true;
-
-  std::thread bg;
 };
 
 #endif // __LSSAPP_H_
