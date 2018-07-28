@@ -76,7 +76,7 @@ void EventReactor::onEvent(LocationChangeEvent &e) {
   app->invalidate("location change");
 }
 
-void EventReactor::onEvent(QuitCommandEvent &e) { exit(0); }
+void EventReactor::onEvent(QuitCommandEvent &e) { app->running = false; }
 
 void EventReactor::onEvent(HelpCommandEvent &e) {
   app->helpMode->setHeader(State::HELP_HEADER.front());

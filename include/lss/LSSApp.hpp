@@ -44,19 +44,18 @@ class LSSApp {
 public:
   ~LSSApp();
   SDL_DisplayMode dm;
-  float getWindowWidth() { return dm.w; }
-  float getWindowHeight() { return dm.h; }
+  int getWindowWidth() { return dm.w; }
+  int getWindowHeight() { return dm.h; }
   void setup();
   void update();
   void keyDown(KeyEvent event);
   void keyUp(KeyEvent event);
   void draw();
+  bool running = true;
 
   SDL_Window* window = nullptr;
   SDL_Renderer *renderer = nullptr;
-  SDL_Surface *surface = nullptr;
-  SDL_Texture* background = nullptr;
-  Uint32 rmask, gmask, bmask, amask;
+  int gameWidth, gameHeight;
 
   pango::SurfaceRef gameFrame;
   pango::SurfaceRef statusFrame;

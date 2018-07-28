@@ -129,6 +129,7 @@ Surface::~Surface() {
 	// g_object_unref(pangoContext); // this one crashes Windows?
 	g_object_unref(fontMap);
 	g_object_unref(pangoLayout);
+	SDL_DestroyTexture(mTexture);
 }
 
 #pragma mark - Getters / Setters
@@ -503,12 +504,25 @@ bool Surface::render(bool force) {
 			// if (mTexture != nullptr) {
 			// 	SDL_FreeSurface(mTexture);
 			// }
-			if (mTexture == nullptr) {
-				mTexture = SDL_CreateTextureFromSurface(renderer, SDL_CreateRGBSurfaceWithFormatFrom(pixels, mPixelWidth, mPixelHeight, 32, mPixelWidth*sizeof(Uint32), SDL_PIXELFORMAT_BGRA32));
-			} else {
-				mTexture = SDL_CreateTextureFromSurface(renderer, SDL_CreateRGBSurfaceWithFormatFrom(pixels, mPixelWidth, mPixelHeight, 32, mPixelWidth*sizeof(Uint32), SDL_PIXELFORMAT_BGRA32));
-				// SDL_UpdateTexture(mTexture, NULL, pixels, mPixelWidth*4);
-			}
+			auto surf = SDL_CreateRGBSurfaceWithFormatFrom(pixels, mPixelWidth, mPixelHeight, 32, mPixelWidth*sizeof(Uint32), SDL_PIXELFORMAT_BGRA32);
+			// if (mTexture == nullptr) {
+				// mTexture = SDL_CreateTexture(renderer,
+											 // SDL_PIXELFORMAT_BGRA32, SDL_TEXTUREACCESS_STREAMING,
+											 // mPixelWidth, mPixelHeight);
+			// }
+			mTexture = SDL_CreateTextureFromSurface(renderer, surf);
+			SDL_FreeSurface(surf);
+
+			// SDL_Rect dst = {0,0, mPixelWidth, mPixelHeight};
+			// p_log("before update");
+			// SDL_UpdateTexture(mTexture, &dst, pixels, mPixelWidth*sizeof(Uint32));
+			// p_log("after update");
+			// int pitch;
+			// void *pixels_old;
+			// SDL_LockTexture(mTexture, NULL, &pixels_old, &pitch);
+			// pixels_old = pixels;
+			// p_log("before unlock");
+			// SDL_UnlockTexture(mTexture);
 
 			mNeedsTextRender = false;
 		}

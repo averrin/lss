@@ -31,9 +31,27 @@ void LSSApp::setup() {
       printf("Error getting desktop display mode\n");
       return;
   }
+  gameWidth = dm.w * 3 / 4 - VOffset;
+  gameHeight = dm.h - StatusLine::HEIGHT - HeroLine::HEIGHT - HOffset;
+
   window = SDL_CreateWindow("Long Story Short", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                                   dm.w, dm.h, SDL_WINDOW_OPENGL);
   assert(window);
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
+
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
+
+    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1); 
+    // glEnable(GL_MULTISAMPLE);
+
+
+  SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" );
   SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
   SDL_ShowCursor(false);
   SDL_ShowWindow(window);
@@ -56,10 +74,8 @@ void LSSApp::setup() {
 
   /* Frames */
   gameFrame = pango::Surface::create(renderer);
-  gameFrame->setMinSize(getWindowWidth(),
-                        getWindowHeight() - StatusLine::HEIGHT);
-  gameFrame->setMaxSize(getWindowWidth(),
-                        getWindowHeight() - StatusLine::HEIGHT);
+  gameFrame->setMinSize(gameWidth, gameHeight);
+  gameFrame->setMaxSize(gameWidth, gameHeight);
   gameFrame->disableWrap();
 
   statusFrame = pango::Surface::create(renderer);
@@ -444,10 +460,6 @@ void LSSApp::update() {
 
 void LSSApp::draw() {
   SDL_RenderClear(renderer);
-  auto flip = SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL;
-  SDL_RenderCopyEx(renderer, gameFrame->getTexture(), NULL, NULL, 0, NULL, SDL_FLIP_VERTICAL);
-  SDL_RenderPresent(renderer);
-  SDL_Delay(16);
   // // if (!needRedraw) return;
   // // fmt::print(".");
 
@@ -455,81 +467,64 @@ void LSSApp::draw() {
   // gl::drawSolidRect(
   //     Rectf(0, 0, getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT));
   // gl::color(ColorA(1, 1, 1, 1));
+  SDL_Rect dst;
+  switch (modeManager.modeFlags->currentMode) {
+  case Modes::INSPECT:
+  case Modes::NORMAL:
+  case Modes::INSERT:
+  case Modes::DIRECTION:
+  case Modes::HINTS:
+  case Modes::LEADER:
+  case Modes::HELP:
+  case Modes::OBJECTSELECT:
+  case Modes::INVENTORY:
+    gameFrame->setTextAlignment(pango::TextAlignment::LEFT);
+    dst = {HOffset, VOffset, gameWidth, gameHeight};
+    SDL_RenderCopyEx(renderer, gameFrame->getTexture(), NULL, &dst, 0, NULL, SDL_FLIP_VERTICAL);
+    break;
+  case Modes::GAMEOVER:
+    gameFrame->setTextAlignment(pango::TextAlignment::CENTER);
+    dst = {HOffset, VOffset, gameWidth, gameHeight};
+    SDL_RenderCopyEx(renderer, gameFrame->getTexture(), NULL, &dst, 0, NULL, SDL_FLIP_VERTICAL);
+    break;
+  }
 
-  // switch (modeManager.modeFlags->currentMode) {
-  // case Modes::INSPECT:
-  // case Modes::NORMAL:
-  // case Modes::INSERT:
-  // case Modes::DIRECTION:
-  // case Modes::HINTS:
-  // case Modes::LEADER:
-  // case Modes::HELP:
-  // case Modes::OBJECTSELECT:
-  // case Modes::INVENTORY:
-  //   gameFrame->setTextAlignment(kp::pango::TextAlignment::LEFT);
-  //   gl::draw(gameFrame->getTexture(), vec2(HOffset, VOffset));
-  //   break;
-  // case Modes::GAMEOVER:
-  //   gameFrame->setTextAlignment(kp::pango::TextAlignment::CENTER);
-  //   gl::draw(gameFrame->getTexture(), vec2(HOffset, VOffset));
-  //   break;
-  // }
+  if (statusFrame != nullptr) {
+    dst = {HOffset, getWindowHeight() - StatusLine::HEIGHT, getWindowWidth() - HOffset , StatusLine::HEIGHT};
+    SDL_RenderCopyEx(renderer, statusFrame->getTexture(), NULL, &dst, 0, NULL, SDL_FLIP_VERTICAL);
+  }
 
-  // if (statusFrame != nullptr) {
-  //   gl::color(state->currentPalette.bgColorAlt);
-  //   gl::drawSolidRect(Rectf(0, getWindowHeight() - StatusLine::HEIGHT,
-  //                           getWindowWidth(), getWindowHeight()));
-  //   gl::color(ColorA(1, 1, 1, 1));
-  //   statusFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
-  //   gl::draw(statusFrame->getTexture(),
-  //            vec2(6, getWindowHeight() - StatusLine::HEIGHT + 6));
-  // }
+  if (logFrame != nullptr &&
+      modeManager.modeFlags->currentMode != Modes::INSPECT) {
+      dst = { HOffset + gameWidth, 0, getWindowWidth() / 4, getWindowHeight()};
+      SDL_RenderCopyEx(renderer, logFrame->getTexture(), NULL, &dst, 0, NULL, SDL_FLIP_VERTICAL);
+  }
 
-  // if (logFrame != nullptr &&
-  //     modeManager.modeFlags->currentMode != Modes::INSPECT) {
-  //   gl::color(state->currentPalette.bgColorAlt);
-  //   gl::drawSolidRect(Rectf(getWindowWidth() * 3.f / 4.f, 0,
-  //   getWindowWidth(),
-  //                           getWindowHeight()));
-  //   gl::color(ColorA(1, 1, 1, 1));
-  //   logFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
-  //   gl::draw(logFrame->getTexture(),
-  //            vec2(getWindowWidth() * 3 / 4 + HOffset, VOffset));
-  // }
+  if (inspectFrame != nullptr &&
+      modeManager.modeFlags->currentMode == Modes::INSPECT) {
+      dst = { HOffset + gameWidth, 0, getWindowWidth() / 4, getWindowHeight()};
+      SDL_RenderCopyEx(renderer, inspectFrame->getTexture(), NULL, &dst, 0, NULL, SDL_FLIP_VERTICAL);
+  }
 
-  // if (inspectFrame != nullptr &&
-  //     modeManager.modeFlags->currentMode == Modes::INSPECT) {
-  //   gl::color(state->currentPalette.bgColorAlt);
-  //   gl::drawSolidRect(Rectf(getWindowWidth() * 3.f / 4.f, 0,
-  //   getWindowWidth(),
-  //                           getWindowHeight()));
-  //   gl::color(ColorA(1, 1, 1, 1));
-  //   inspectFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
-  //   gl::draw(inspectFrame->getTexture(),
-  //            vec2(getWindowWidth() * 3 / 4 + HOffset, VOffset));
-  // }
-
-  // if (heroFrame != nullptr) {
-  //   gl::color(state->currentPalette.bgColor);
-  //   gl::drawSolidRect(
-  //       Rectf(0, getWindowHeight() - StatusLine::HEIGHT - HeroLine::HEIGHT,
-  //             getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT));
-  //   gl::color(ColorA(1, 1, 1, 1));
-  //   heroFrame->setBackgroundColor(ColorA(0, 0, 0, 0));
-  //   gl::draw(
-  //       heroFrame->getTexture(),
-  //       vec2(6, getWindowHeight() - StatusLine::HEIGHT + 6 -
-  //       HeroLine::HEIGHT));
-  // }
+  if (heroFrame != nullptr) {
+    dst = {HOffset, getWindowHeight() - StatusLine::HEIGHT - HeroLine::HEIGHT, getWindowWidth() - HOffset, HeroLine::HEIGHT};
+    SDL_RenderCopyEx(renderer, heroFrame->getTexture(), NULL, &dst, 0, NULL, SDL_FLIP_VERTICAL);
+  }
 
   // gl::drawString(VERSION, vec2(getWindowWidth() - 120,
-  //                              getWindowHeight() - StatusLine::HEIGHT + 12));
-  // needRedraw = false;
+                               // getWindowHeight() - StatusLine::HEIGHT + 12));
+  needRedraw = false;
+  SDL_RenderPresent(renderer);
+  SDL_Delay(16);
 }
 
 LSSApp::~LSSApp() {
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+  SDL_DestroyRenderer(renderer);
+  SDL_DestroyWindow(window);
+  SDL_Quit();
+  for (auto t = 0; t < threads.size(); t++) {
+    threads[t].join();
+  }
 }
 
 
@@ -537,8 +532,7 @@ int main(int argc, char *argv[]) {
   auto app = new LSSApp();
   app->setup();
     Uint32 lastTick = SDL_GetTicks();
-    bool running = true;
-    while (running) {
+    while (app->running) {
         Uint32 now = SDL_GetTicks();
         if (now - lastTick < 16) {
             SDL_Delay(16 - (now - lastTick));
@@ -551,7 +545,7 @@ int main(int argc, char *argv[]) {
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
               case SDL_QUIT:
-                running = 0;
+                app->running = false;
                 break;
 
               case SDL_KEYUP:
@@ -560,14 +554,14 @@ int main(int argc, char *argv[]) {
               case SDL_KEYDOWN:
                 app->keyDown(KeyEvent(event.key));
                 if (event.key.keysym.sym == SDLK_ESCAPE)
-                  running = 0;
+                  app->running = false;
                 if (event.key.keysym.sym == SDLK_q)
-                  running = 0;
+                  app->running = false;
                 break;
 
                 case SDL_WINDOWEVENT: {
                     if (event.window.event == SDL_WINDOWEVENT_CLOSE) {
-                        running = false;
+                      app->running = false;
                     }
                     break;
                 }
@@ -575,7 +569,7 @@ int main(int argc, char *argv[]) {
         }
 
         // Update the view
-        if (running) {
+        if (app->running) {
             app->update();
             app->draw();
         }
