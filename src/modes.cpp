@@ -94,6 +94,9 @@ bool GameOverMode::processKey(KeyEvent event) {
   case SDL_SCANCODE_R:
     app->modeManager.toNormal();
     app->hero->currentLocation->leave(app->hero);
+
+    app->bgRunning = false;
+    app->bgThread.join();
     app->startGame();
     return true;
     break;

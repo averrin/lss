@@ -27,7 +27,10 @@ std::string Fragment::render(State *state) {
 
   Template tpl(template_str);
 
-  tpl.setValue("alpha", alpha);
+  auto a = alpha;
+  if (a < 1) a = 1;
+  if (a > 100) a = 100;
+  tpl.setValue("alpha", a);
   tpl.setValue("green", state->currentPalette.green);
   tpl.setValue("red", state->currentPalette.red);
   tpl.setValue("blue", state->currentPalette.blue);

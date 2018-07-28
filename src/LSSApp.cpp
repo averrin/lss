@@ -117,6 +117,7 @@ void LSSApp::setup() {
   commands.push_back(std::make_shared<UpCommand>());
   commands.push_back(std::make_shared<DownCommand>());
   commands.push_back(std::make_shared<UseCommand>());
+
 }
 
 void LSSApp::initModes() {
@@ -155,6 +156,7 @@ void LSSApp::initStates() {
 void LSSApp::startGame() {
   initStates();
 
+  bgRunning = true;
   hero = std::make_shared<Player>();
   heroLine = std::make_shared<HeroLine>(heroState, hero);
   logPanel = std::make_shared<LogPanel>(logState, hero);
@@ -186,6 +188,36 @@ void LSSApp::startGame() {
 
   invalidate("init");
   gameFrame->setTextAlignment(pango::TextAlignment::LEFT);
+
+  bgThread = std::thread([&](){
+    while (bgRunning) {
+      std::map<std::shared_ptr<Cell>, int> ld;
+
+      auto d = R::N(0, 5);
+      for (auto c : hero->viewField) {
+        if (!c->illuminated) continue;
+        // auto d = 0;
+        // for (auto ls : c->lightSources) {
+        //   if (ld.find(ls) == ld.end()) {
+        //     ld[ls] = R::N(0, 5);
+        //   }
+        //   d += ld[ls];
+        // }
+        // d /= c->lightSources.size();
+
+        auto cd = R::N(0, 1);
+        auto f = state->fragments[c->y * (hero->currentLocation->cells.front().size() + 1) + c->x];
+        auto a = f->alpha + d + cd;
+        auto ml = 25 + 5 * c->lightSources.size();
+        if (a < ml) a = ml;
+        if (a > 100) a = 100;
+        f->setAlpha(a);
+      }
+
+      state->invalidate();
+      SDL_Delay(32);
+    }
+  });
 }
 
 void LSSApp::setListeners() { reactor = std::make_shared<EventReactor>(this); }
@@ -419,30 +451,6 @@ void LSSApp::update() {
   // auto cc = hero->currentCell;
   // state->fragments[cc->y * (hero->currentLocation->cells.front().size() + 1) +cc->x]->setAlpha(rand() % 101);
 
-  std::map<std::shared_ptr<Cell>, int> ld;
-
-  auto d = R::N(0, 5);
-  for (auto c : hero->viewField) {
-    if (!c->illuminated) continue;
-    // auto d = 0;
-    // for (auto ls : c->lightSources) {
-    //   if (ld.find(ls) == ld.end()) {
-    //     ld[ls] = R::N(0, 5);
-    //   }
-    //   d += ld[ls];
-    // }
-    // d /= c->lightSources.size();
-
-    auto cd = R::N(0, 1);
-    auto f = state->fragments[c->y * (hero->currentLocation->cells.front().size() + 1) + c->x];
-    auto a = f->alpha + d + cd;
-    auto ml = 25 + 5 * c->lightSources.size();
-    if (a < ml) a = ml;
-    if (a > 100) a = 100;
-    f->setAlpha(a);
-  }
-
-  state->invalidate();
 
   // gl::enableAlphaBlendingPremult();
   gameFrame->setSpacing(0);
@@ -568,6 +576,8 @@ LSSApp::~LSSApp() {
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   SDL_Quit();
+  bgRunning = false;
+  bgThread.join();
   for (auto t = 0; t < threads.size(); t++) {
     threads[t].join();
   }

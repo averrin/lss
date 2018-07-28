@@ -52,6 +52,7 @@ public:
   void keyUp(KeyEvent event);
   void draw();
   bool running = true;
+  bool bgRunning = true;
 
   SDL_Window* window = nullptr;
   SDL_Renderer *renderer = nullptr;
