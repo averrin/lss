@@ -407,7 +407,6 @@ bool Creature::hasLight() {
 }
 
 void Creature::applyEoT(EoT eot, int modifier) {
-  fmt::print("apply eot m: {}\n", modifier);
   switch (eot) {
   case EoT::HEAL: {
     hp += modifier;

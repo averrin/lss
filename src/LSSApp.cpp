@@ -458,16 +458,21 @@ void LSSApp::update() {
   needRedraw = true;
 }
 
+void LSSApp::drawFrame(pango::SurfaceRef frame, SDL_Rect dst) {
+    auto t = SDL_CreateTextureFromSurface(renderer, frame->getTexture());
+    SDL_RenderCopyEx(renderer, t, NULL, &dst, 0, NULL, SDL_FLIP_VERTICAL);
+    SDL_DestroyTexture(t);
+    // frame->free();
+}
+
 void LSSApp::draw() {
   SDL_RenderClear(renderer);
-  // // if (!needRedraw) return;
-  // // fmt::print(".");
 
   // gl::color(state->currentPalette.bgColor);
   // gl::drawSolidRect(
   //     Rectf(0, 0, getWindowWidth(), getWindowHeight() - StatusLine::HEIGHT));
   // gl::color(ColorA(1, 1, 1, 1));
-  SDL_Rect dst;
+  SDL_Rect dstG = {HOffset, VOffset, gameWidth, gameHeight};
   switch (modeManager.modeFlags->currentMode) {
   case Modes::INSPECT:
   case Modes::NORMAL:
@@ -479,43 +484,42 @@ void LSSApp::draw() {
   case Modes::OBJECTSELECT:
   case Modes::INVENTORY:
     gameFrame->setTextAlignment(pango::TextAlignment::LEFT);
-    dst = {HOffset, VOffset, gameWidth, gameHeight};
-    SDL_RenderCopyEx(renderer, gameFrame->getTexture(), NULL, &dst, 0, NULL, SDL_FLIP_VERTICAL);
+    drawFrame(gameFrame, dstG);
     break;
   case Modes::GAMEOVER:
     gameFrame->setTextAlignment(pango::TextAlignment::CENTER);
-    dst = {HOffset, VOffset, gameWidth, gameHeight};
-    SDL_RenderCopyEx(renderer, gameFrame->getTexture(), NULL, &dst, 0, NULL, SDL_FLIP_VERTICAL);
+    drawFrame(gameFrame, dstG);
     break;
   }
 
   if (statusFrame != nullptr) {
-    dst = {HOffset, getWindowHeight() - StatusLine::HEIGHT, getWindowWidth() - HOffset , StatusLine::HEIGHT};
-    SDL_RenderCopyEx(renderer, statusFrame->getTexture(), NULL, &dst, 0, NULL, SDL_FLIP_VERTICAL);
+    drawFrame(statusFrame, {HOffset, getWindowHeight() - StatusLine::HEIGHT, getWindowWidth() - HOffset , StatusLine::HEIGHT});
   }
 
   if (logFrame != nullptr &&
       modeManager.modeFlags->currentMode != Modes::INSPECT) {
-      dst = { HOffset + gameWidth, 0, getWindowWidth() / 4, getWindowHeight()};
-      SDL_RenderCopyEx(renderer, logFrame->getTexture(), NULL, &dst, 0, NULL, SDL_FLIP_VERTICAL);
+      drawFrame(logFrame, { HOffset + gameWidth, 0, getWindowWidth() / 4, getWindowHeight()});
   }
 
   if (inspectFrame != nullptr &&
       modeManager.modeFlags->currentMode == Modes::INSPECT) {
-      dst = { HOffset + gameWidth, 0, getWindowWidth() / 4, getWindowHeight()};
-      SDL_RenderCopyEx(renderer, inspectFrame->getTexture(), NULL, &dst, 0, NULL, SDL_FLIP_VERTICAL);
+      drawFrame(inspectFrame, { HOffset + gameWidth, 0, getWindowWidth() / 4, getWindowHeight()});
   }
 
   if (heroFrame != nullptr) {
-    dst = {HOffset, getWindowHeight() - StatusLine::HEIGHT - HeroLine::HEIGHT, getWindowWidth() - HOffset, HeroLine::HEIGHT};
-    SDL_RenderCopyEx(renderer, heroFrame->getTexture(), NULL, &dst, 0, NULL, SDL_FLIP_VERTICAL);
+    drawFrame(heroFrame, {HOffset, getWindowHeight() - StatusLine::HEIGHT - HeroLine::HEIGHT, getWindowWidth() - HOffset, HeroLine::HEIGHT});
   }
 
-  // gl::drawString(VERSION, vec2(getWindowWidth() - 120,
-                               // getWindowHeight() - StatusLine::HEIGHT + 12));
+
   needRedraw = false;
   SDL_RenderPresent(renderer);
   SDL_Delay(16);
+
+  // gameFrame->free();
+  statusFrame->free();
+  logFrame->free();
+  inspectFrame->free();
+  heroFrame->free();
 }
 
 LSSApp::~LSSApp() {
@@ -553,10 +557,6 @@ int main(int argc, char *argv[]) {
                 break;
               case SDL_KEYDOWN:
                 app->keyDown(KeyEvent(event.key));
-                if (event.key.keysym.sym == SDLK_ESCAPE)
-                  app->running = false;
-                if (event.key.keysym.sym == SDLK_q)
-                  app->running = false;
                 break;
 
                 case SDL_WINDOWEVENT: {

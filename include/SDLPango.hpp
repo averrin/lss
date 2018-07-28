@@ -44,9 +44,9 @@ enum class TextWeight : int {
 	SEMILIGHT = 350,
 	BOOK = 380,
 	NORMAL = 400,
-	MEDIUM = 500,
+	MEDIUM = 550,
 	SEMIBOLD = 600,
-	BOLD = 700,
+	BOLD = 800,
 	ULTRABOLD = 800,
 	HEAVY = 900,
 	ULTRAHEAVY = 1000
@@ -85,7 +85,8 @@ public:
 	void setText(std::string text);
 
 	// Text is rendered into this texture
-	SDL_Texture* getTexture();
+	SDL_Surface* getTexture();
+	void free();
 
 	// Text smaller than the min size will be clipped
 	ivec2 getMinSize();
@@ -146,6 +147,7 @@ protected:
 
 private:
 	SDL_Texture* mTexture;
+	SDL_Surface* mSurface;
 	std::string mText;
 	std::string mProcessedText; // stores text after newline filtering
 	bool mProbablyHasMarkup;

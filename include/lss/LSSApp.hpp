@@ -63,6 +63,8 @@ public:
   pango::SurfaceRef inspectFrame;
   pango::SurfaceRef logFrame;
 
+  void drawFrame(pango::SurfaceRef, SDL_Rect);
+
   void invalidate();
   void invalidate(std::string reason) {
     // fmt::print("Invalidate reason: {}\n", reason);

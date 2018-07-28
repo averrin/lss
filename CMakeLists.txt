@@ -24,9 +24,6 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules")
 find_package( HarfBuzz REQUIRED )
 find_package( Cairo REQUIRED )
 find_package( Pango REQUIRED )
-find_package( PkgConfig REQUIRED )
-pkg_check_modules( FreeType REQUIRED freetype2)
-pkg_check_modules( PangoFT REQUIRED pangoft2)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
@@ -49,7 +46,6 @@ set( SRC_FILES
 	${FMT_DIR}/src/format.cc
     ${MP_DIR}/micropather.cpp
     
-	# ${SRC_DIR}/pango.cpp
 	${SRC_DIR}/keyEvent.cpp
 
 	${SRC_DIR}/fragment.cpp
@@ -98,15 +94,13 @@ include_directories(
     PUBLIC ${BUS_DIR}
     PUBLIC ${FMT_DIR}/include
     ${PANGO_INCLUDE_DIRS}
-    ${FREETYPE_INCLUDE_DIRS}
-    ${PANGOFT_INCLUDE_DIRS}
     ${SDL2_INCLUDE_DIRS}
     ${SDL2main_INCLUDE_DIRS}
     ${OPENGL_INCLUDE_DIR}
     ${CMAKE_BINARY_DIR})
 add_executable(${EXE_NAME} ${SRC_FILES})
 add_backward(${PROJECT_NAME})
-target_link_libraries(${EXE_NAME} ${PANGO_LIBRARIES} ${SDL2_LIBS} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${PANGOFT_LIBRARIES} pangoft2-1.0 fontconfig freetype Threads::Threads)
+target_link_libraries(${EXE_NAME} ${PANGO_LIBRARIES} ${SDL2_LIBS} ${OPENGL_LIBRARIES} Threads::Threads)
 
 # Copy SDL2 DLLs to output folder on Windows
 if(WIN32)

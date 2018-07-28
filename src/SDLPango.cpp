@@ -46,7 +46,7 @@ Surface::Surface(SDL_Renderer* r)
 		, mMaxSize(ivec2(320, 240))
 		, mSpacing(0)
 		, mTextAlignment(TextAlignment::LEFT)
-		, mDefaultTextWeight(TextWeight::NORMAL)
+		, mDefaultTextWeight(TextWeight::MEDIUM)
 		, mTextAntialias(TextAntialias::DEFAULT)
 		, mPixelWidth(-1)
 		, mPixelHeight(-1) {
@@ -129,7 +129,8 @@ Surface::~Surface() {
 	// g_object_unref(pangoContext); // this one crashes Windows?
 	g_object_unref(fontMap);
 	g_object_unref(pangoLayout);
-	SDL_DestroyTexture(mTexture);
+	// SDL_DestroyTexture(mTexture);
+	free();
 }
 
 #pragma mark - Getters / Setters
@@ -147,9 +148,15 @@ void Surface::setText(std::string text) {
 	}
 }
 
-SDL_Texture* Surface::getTexture() {
+SDL_Surface* Surface::getTexture() {
 	// TODO nullptr check?
-	return mTexture;
+	return mSurface;
+}
+
+void Surface::free() {
+	if (mSurface == nullptr) return;
+	SDL_FreeSurface(mSurface);
+	mSurface = nullptr;
 }
 
 void Surface::setDefaultTextStyle(std::string font, float size, SDL_Color color, TextWeight weight, TextAlignment alignment) {
@@ -500,22 +507,31 @@ bool Surface::render(bool force) {
 #else
 			unsigned char *pixels = cairo_image_surface_get_data(cairoSurface);
 #endif
+			/**/
 
 			// if (mTexture != nullptr) {
-			// 	SDL_FreeSurface(mTexture);
+				// p_log("destroy old texture");
+				// SDL_DestroyTexture(mTexture);
 			// }
-			auto surf = SDL_CreateRGBSurfaceWithFormatFrom(pixels, mPixelWidth, mPixelHeight, 32, mPixelWidth*sizeof(Uint32), SDL_PIXELFORMAT_BGRA32);
+			// std::cout << ".";
+			if (mSurface != nullptr) {
+				// SDL_FreeSurface(mSurface);
+			}
+			mSurface = SDL_CreateRGBSurfaceWithFormatFrom(pixels,
+					mPixelWidth, mPixelHeight, 32, mPixelWidth*sizeof(Uint32), SDL_PIXELFORMAT_BGRA32);
 			// if (mTexture == nullptr) {
 				// mTexture = SDL_CreateTexture(renderer,
-											 // SDL_PIXELFORMAT_BGRA32, SDL_TEXTUREACCESS_STREAMING,
-											 // mPixelWidth, mPixelHeight);
+				// SDL_PIXELFORMAT_ARGB8888,
+				// 							 SDL_TEXTUREACCESS_STREAMING,
+				// 							 mPixelWidth, mPixelHeight);
+				// mTexture = SDL_CreateTextureFromSurface(renderer, surf);
 			// }
-			mTexture = SDL_CreateTextureFromSurface(renderer, surf);
-			SDL_FreeSurface(surf);
+			// SDL_FreeSurface(surf);
 
 			// SDL_Rect dst = {0,0, mPixelWidth, mPixelHeight};
 			// p_log("before update");
-			// SDL_UpdateTexture(mTexture, &dst, pixels, mPixelWidth*sizeof(Uint32));
+			// SDL_SetRenderTarget(renderer, mTexture);
+			// SDL_UpdateTexture(mTexture, NULL, pixels, mPixelWidth*sizeof(Uint32));
 			// p_log("after update");
 			// int pitch;
 			// void *pixels_old;
@@ -591,13 +607,13 @@ TextRenderer Surface::getTextRenderer() {
 
 void Surface::loadFont(const fs::path &path) {
 	const FcChar8 *fcPath = (const FcChar8 *)path.c_str();
-	FcBool fontAddStatus = FcConfigAppFontAddFile(FcConfigGetCurrent(), fcPath);
+	// FcBool fontAddStatus = FcConfigAppFontAddFile(FcConfigGetCurrent(), fcPath);
 
-	if (!fontAddStatus) {
+	// if (!fontAddStatus) {
 		// p_log("Pango failed to load font from file \"" << path << "\"");
-	} else {
+	// } else {
 		// p_log("Pango thinks it loaded font " << path << " with status " << fontAddStatus);
-	}
+	// }
 }
 
 std::vector<std::string> Surface::getFontList(bool verbose) {
