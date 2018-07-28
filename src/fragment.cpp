@@ -146,7 +146,7 @@ std::map<CellSpec, std::map<bool, std::string>> cellColors = {
     {CellType::VOID, {{false, "#555"}, {true, "#555"}}}};
 
 std::map<CellSpec, std::string> cellColorsIlluminated = {
-    {CellType::FLOOR, "#765"},      {CellType::WALL, "#cba"},
+    {CellType::FLOOR, "#875"},      {CellType::WALL, "#eca"},
     {CellType::DOWNSTAIRS, "#cba"}, {CellType::UPSTAIRS, "#cba"},
     {CellType::WATER, "#77f"},      {CellType::VOID, "#555"},
 };

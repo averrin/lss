@@ -20,7 +20,7 @@ int VOffset = 24;
 
 void LSSApp::setup() {
   srand(time(NULL));
-  // pango::Surface::setTextRenderer(pango::TextRenderer::FREETYPE);
+  pango::Surface::setTextRenderer(pango::TextRenderer::FREETYPE);
 
   int rc = SDL_Init(SDL_INIT_VIDEO);
   assert(rc >= 0);
@@ -37,17 +37,17 @@ void LSSApp::setup() {
   window = SDL_CreateWindow("Long Story Short", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                                   dm.w, dm.h, SDL_WINDOW_OPENGL);
   assert(window);
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+    // SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+    // SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+    // SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+    // SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
+    // SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
 
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
+    // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
 
-    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1); 
+    // SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1); 
     // glEnable(GL_MULTISAMPLE);
 
 
@@ -57,6 +57,7 @@ void LSSApp::setup() {
   SDL_ShowWindow(window);
 
   renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+  SDL_RenderSetLogicalSize(renderer, dm.w, dm.h);
 
   SDL_Log("Vendor     : %s\n", GL_NO_CHECK(GetString(GL_VENDOR)));
   SDL_Log("Renderer   : %s\n", GL_NO_CHECK(GetString(GL_RENDERER)));
