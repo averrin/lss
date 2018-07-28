@@ -46,7 +46,7 @@ Surface::Surface(SDL_Renderer* r)
 		, mMaxSize(ivec2(320, 240))
 		, mSpacing(0)
 		, mTextAlignment(TextAlignment::LEFT)
-		, mDefaultTextWeight(TextWeight::MEDIUM)
+		, mDefaultTextWeight(TextWeight::NORMAL)
 		, mTextAntialias(TextAntialias::DEFAULT)
 		, mPixelWidth(-1)
 		, mPixelHeight(-1) {

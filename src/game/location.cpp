@@ -268,6 +268,33 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
       c->illuminated = true;
     }
   }
+
+  for (auto r : cells) {
+    for (auto c : r) {
+      if (!c->illuminated) continue;
+      std::vector<std::shared_ptr<Cell>> lss;
+      for (auto ls : c->lightSources) {
+        if (ls == hero->currentCell && hasLight) {
+          lss.push_back(ls);
+        } else if (std::find(torches.begin(), torches.end(), ls) != torches.end()) {
+          lss.push_back(ls);
+        }
+      }
+      auto d = lss.size();
+      if (d == 0) continue;
+      for (auto ls : lss) {
+        d += sqrt(pow(c->x - ls->x, 2) + pow(c->y - ls->y, 2));
+      }
+      d /= lss.size();
+      c->illumination = ((TORCH_DISTANCE - d) / TORCH_DISTANCE * 110) + Cell::DEFAULT_LIGHT + 5;
+      if (c->illumination < 1) {
+        c->illumination = 1;
+      } else if (c->illumination > 100){
+          c->illumination = 100;
+      }
+    }
+  }
+
   auto t1 = std::chrono::system_clock::now();
   using milliseconds = std::chrono::duration<double, std::milli>;
   milliseconds ms = t1 - t0;

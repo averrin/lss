@@ -211,10 +211,12 @@ void LSSApp::invalidate() {
         break;
       case VisibilityState::SEEN:
         state->fragments[index] = std::make_shared<CellSign>(c);
+        state->fragments[index]->setAlpha(Cell::DEFAULT_LIGHT);
         break;
       case VisibilityState::VISIBLE:
         // if (!c->seeThrough) c->features = {CellFeature::MARK1};
         state->fragments[index] = std::make_shared<CellSign>(c);
+        state->fragments[index]->setAlpha(c->illumination);
         break;
       }
       column++;
@@ -264,16 +266,23 @@ void LSSApp::invalidate() {
         continue;
 
       state->fragments[index] = std::make_shared<EnemySign>(e->type);
+      state->fragments[index]->setAlpha(ec->illumination);
 
     } else if (auto d = std::dynamic_pointer_cast<Door>(o);
                d && hero->canSee(ec)) {
       state->fragments[index] = std::make_shared<DoorSign>(d->opened);
+      state->fragments[index]->setAlpha(ec->illumination);
     } else if (auto i = std::dynamic_pointer_cast<Item>(o);
                i && hero->canSee(ec)) {
       state->fragments[index] = std::make_shared<ItemSign>(i->type);
+      state->fragments[index]->setAlpha(ec->illumination);
     } else if (auto t = std::dynamic_pointer_cast<Terrain>(o);
                t && hero->canSee(ec)) {
       state->fragments[index] = std::make_shared<TerrainSign>(t->type);
+      state->fragments[index]->setAlpha(ec->illumination);
+      if (t->type == TerrainType::TORCH_STAND) {
+       state->fragments[index]->setAlpha(100);
+      }
     }
   }
 
@@ -286,7 +295,11 @@ void LSSApp::invalidate() {
 
   state->width = hero->currentLocation->cells.front().size();
   state->height = hero->currentLocation->cells.size();
-  state->invalidate();
+
+
+  // state->invalidate();
+  // state->render(gameFrame);
+  // update();
 }
 
 void LSSApp::repeatTimer() {
@@ -403,6 +416,33 @@ void LSSApp::update() {
 
   // gl::clear(state->currentPalette.bgColor);
   auto s = state;
+  // auto cc = hero->currentCell;
+  // state->fragments[cc->y * (hero->currentLocation->cells.front().size() + 1) +cc->x]->setAlpha(rand() % 101);
+
+  std::map<std::shared_ptr<Cell>, int> ld;
+
+  auto d = R::N(0, 5);
+  for (auto c : hero->viewField) {
+    if (!c->illuminated) continue;
+    // auto d = 0;
+    // for (auto ls : c->lightSources) {
+    //   if (ld.find(ls) == ld.end()) {
+    //     ld[ls] = R::N(0, 5);
+    //   }
+    //   d += ld[ls];
+    // }
+    // d /= c->lightSources.size();
+
+    auto cd = R::N(0, 1);
+    auto f = state->fragments[c->y * (hero->currentLocation->cells.front().size() + 1) + c->x];
+    auto a = f->alpha + d + cd;
+    auto ml = 25 + 5 * c->lightSources.size();
+    if (a < ml) a = ml;
+    if (a > 100) a = 100;
+    f->setAlpha(a);
+  }
+
+  state->invalidate();
 
   // gl::enableAlphaBlendingPremult();
   gameFrame->setSpacing(0);
@@ -467,6 +507,7 @@ void LSSApp::drawFrame(pango::SurfaceRef frame, SDL_Rect dst) {
 }
 
 void LSSApp::draw() {
+  SDL_SetRenderDrawColor(renderer, 0x0d, 0x0f, 0x12, 255);
   SDL_RenderClear(renderer);
 
   // gl::color(state->currentPalette.bgColor);

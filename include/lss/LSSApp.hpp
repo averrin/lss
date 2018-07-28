@@ -90,6 +90,7 @@ public:
   std::shared_ptr<Location> loadMap(std::string);
   std::map<int, std::shared_ptr<Location>> locations;
   std::vector<std::thread> threads;
+  std::thread bgThread;
   int currentLevel = 0;
   bool debug = false;
 

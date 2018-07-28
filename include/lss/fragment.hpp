@@ -10,6 +10,7 @@
 #include "lss/game/enemy.hpp"
 #include "lss/game/item.hpp"
 #include "lss/game/terrain.hpp"
+#include "lss/game/cell.hpp"
 
 typedef std::variant<int, float, bool, std::string> tpl_arg;
 
@@ -31,6 +32,12 @@ public:
   bool needRender = true;
   bool damaged = true;
   std::string cache;
+  int alpha = Cell::DEFAULT_LIGHT;
+
+  void setAlpha(int a) {
+    alpha = a;
+    damaged = true;
+  }
 
   friend bool operator==(Fragment &t1, const Fragment &t2) {
     return t1.template_str == t2.template_str;

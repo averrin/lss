@@ -168,6 +168,13 @@ void InspectMode::render() {
   app->inspectState->appendContent({F(fmt::format(
       "Illuminated: [<b>{}</b>]", cell->illuminated ? check : " "))});
   app->inspectState->appendContent(State::END_LINE);
+  app->inspectState->appendContent({F(fmt::format(
+      "Illumination: <b>{}</b>", cell->illumination))});
+  app->inspectState->appendContent(State::END_LINE);
+  auto f = app->state->fragments[cell->y * app->state->width + cell->x];
+  // app->inspectState->appendContent({F(fmt::format(
+  //     "Cell Illumination: <b>{}</b>", f->alpha))});
+  // app->inspectState->appendContent(State::END_LINE);
   app->inspectState->appendContent({F(
       fmt::format("Cell features count: <b>{}</b>", cell->features.size()))});
   app->inspectState->appendContent(State::END_LINE);
@@ -233,6 +240,10 @@ void InspectMode::render() {
 
   app->inspectState->appendContent(
       {F(fmt::format("Light sources: <b>{}</b>", cell->lightSources.size()))});
+
+      for (auto c : cell->lightSources) {
+        app->state->selection.push_back({{c->x, c->y}, "#1f1"});
+      }
   app->inspectState->appendContent(State::END_LINE);
   app->inspectState->appendContent(State::END_LINE);
   app->inspectState->appendContent({F(fmt::format(
@@ -339,6 +350,11 @@ bool NormalMode::processKey(KeyEvent event) {
           app->hero->equip(slot, *torch);
         }
       }
+      app->hero->commit("equip light", 0);
+      app->hero->calcViewField();
+      app->hero->currentLocation->updateView(app->hero);
+      app->hero->commit("equip light", 0);
+      app->invalidate();
       break;
     }
   case SDL_SCANCODE_K:

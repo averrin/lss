@@ -10,8 +10,6 @@
 #include <iostream>
 #include <map>
 
-const float TORCH_DISTANCE = 4.5f;
-
 enum LocationFeature {
   CAVE_PASSAGE,
   RIVER,

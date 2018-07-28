@@ -4,6 +4,9 @@
 #include <algorithm>
 #include <memory>
 #include <vector>
+#include <cmath>
+
+const float TORCH_DISTANCE = 4.5f;
 
 class Room;
 struct CellSpec {
@@ -62,6 +65,8 @@ public:
   bool passThrough = false;
   bool seeThrough = false;
 
+  void updateIllumination();
+
   bool canPass(std::vector<Trait> traits) {
     if (passThrough)
       return true;
@@ -79,6 +84,8 @@ public:
   bool hasFeature(CellFeature f) {
     return std::find(features.begin(), features.end(), f) != features.end();
   }
+  static const int DEFAULT_LIGHT = 60;
+  int illumination = DEFAULT_LIGHT;
 };
 
 typedef std::vector<std::shared_ptr<Cell>> CellRow;
