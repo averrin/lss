@@ -11,6 +11,7 @@
 #include "lss/eventReactor.hpp"
 #include "lss/game/terrain.hpp"
 #include "lss/utils.hpp"
+#include "lss/keyEvent.hpp"
 
 std::string VERSION = "0.1.0 by Averrin";
 
@@ -54,26 +55,26 @@ void LSSApp::setup() {
 #endif
 
   /* Frames */
-  gameFrame = pango::Surface::create();
+  gameFrame = pango::Surface::create(renderer);
   gameFrame->setMinSize(getWindowWidth(),
                         getWindowHeight() - StatusLine::HEIGHT);
   gameFrame->setMaxSize(getWindowWidth(),
                         getWindowHeight() - StatusLine::HEIGHT);
   gameFrame->disableWrap();
 
-  statusFrame = pango::Surface::create();
+  statusFrame = pango::Surface::create(renderer);
   statusFrame->setMinSize(getWindowWidth(), StatusLine::HEIGHT);
   statusFrame->setMaxSize(getWindowWidth(), StatusLine::HEIGHT);
 
-  heroFrame = pango::Surface::create();
+  heroFrame = pango::Surface::create(renderer);
   heroFrame->setMinSize(getWindowWidth(), HeroLine::HEIGHT);
   heroFrame->setMaxSize(getWindowWidth(), HeroLine::HEIGHT);
 
-  inspectFrame = pango::Surface::create();
+  inspectFrame = pango::Surface::create(renderer);
   inspectFrame->setMinSize(getWindowWidth() / 4.f - 12, getWindowHeight());
   inspectFrame->setMaxSize(getWindowWidth() / 4.f - 12, getWindowHeight());
 
-  logFrame = pango::Surface::create();
+  logFrame = pango::Surface::create(renderer);
   logFrame->setMinSize(getWindowWidth() / 4.f - 12, getWindowHeight());
   logFrame->setMaxSize(getWindowWidth() / 4.f - 12, getWindowHeight());
 
@@ -442,12 +443,11 @@ void LSSApp::update() {
 }
 
 void LSSApp::draw() {
-
-  std::cout << "draw" << std::endl;
-  background = SDL_CreateTextureFromSurface(renderer, gameFrame->getTexture());
   SDL_RenderClear(renderer);
-  SDL_RenderCopy(renderer, background, NULL, NULL);
+  auto flip = SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL;
+  SDL_RenderCopyEx(renderer, gameFrame->getTexture(), NULL, NULL, 0, NULL, SDL_FLIP_VERTICAL);
   SDL_RenderPresent(renderer);
+  SDL_Delay(16);
   // // if (!needRedraw) return;
   // // fmt::print(".");
 
@@ -550,22 +550,20 @@ int main(int argc, char *argv[]) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
-                // case SDL_MOUSEBUTTONDOWN:
-                // case SDL_MOUSEBUTTONUP: {
-                //     if (event.button.button == SDL_BUTTON_LEFT) {
-                //         view->m_rotationRateTarget = (event.type == SDL_MOUSEBUTTONDOWN) ? 0.f : 0.8f;
-                //     }
-                //     break;
-                // }
+              case SDL_QUIT:
+                running = 0;
+                break;
 
-                // case SDL_MOUSEMOTION: {
-                //     if ((event.motion.state & SDL_BUTTON_LMASK) != 0) {
-                //         view->m_yaw += event.motion.xrel * 0.01f;
-                //         view->m_pitch += event.motion.yrel * 0.01f;
-                //         view->m_pitch = std::max(std::min(view->m_pitch, Pi / 2), -Pi / 2);
-                //     }
-                //     break;
-                // }
+              case SDL_KEYUP:
+                app->keyUp(KeyEvent(event.key));
+                break;
+              case SDL_KEYDOWN:
+                app->keyDown(KeyEvent(event.key));
+                if (event.key.keysym.sym == SDLK_ESCAPE)
+                  running = 0;
+                if (event.key.keysym.sym == SDLK_q)
+                  running = 0;
+                break;
 
                 case SDL_WINDOWEVENT: {
                     if (event.window.event == SDL_WINDOWEVENT_CLOSE) {

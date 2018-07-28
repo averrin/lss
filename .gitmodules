@@ -13,3 +13,9 @@
 [submodule "include/fmt"]
 	path = include/fmt
 	url = git@github.com:fmtlib/fmt.git
+[submodule "include/glm"]
+	path = include/glm
+	url = git@github.com:g-truc/glm.git
+[submodule "backward-cpp"]
+	path = backward-cpp
+	url = git@github.com:bombela/backward-cpp.git

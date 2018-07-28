@@ -2,9 +2,9 @@
 #define __STATE_H_
 #include "lss/fragment.hpp"
 #include "lss/palette.hpp"
-#include "lss/pango.hpp"
 #include <string>
 #include <vector>
+#include <SDLPango.hpp>
 
 struct Position {
   int x;

@@ -1,5 +1,5 @@
 #include "lss/keyEvent.hpp"
 
-int KeyEvent::getCode() { return KEY_q; }
-char KeyEvent::getChar() { return 'q'; }
-bool KeyEvent::isShiftDown() { return false; }
+SDL_Scancode KeyEvent::getCode() { return event.keysym.scancode; }
+char KeyEvent::getChar() { return event.keysym.sym; }
+bool KeyEvent::isShiftDown() { return mods & KMOD_SHIFT; }

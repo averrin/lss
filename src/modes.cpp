@@ -12,21 +12,21 @@ auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 // TODO: to utils
 std::optional<std::string> getDir(int code) {
   switch (code) {
-  case KeyEvent::KEY_j:
+  case SDL_SCANCODE_J:
     return "s";
-  case KeyEvent::KEY_h:
+  case SDL_SCANCODE_H:
     return "w";
-  case KeyEvent::KEY_l:
+  case SDL_SCANCODE_L:
     return "e";
-  case KeyEvent::KEY_k:
+  case SDL_SCANCODE_K:
     return "n";
-  case KeyEvent::KEY_y:
+  case SDL_SCANCODE_Y:
     return "nw";
-  case KeyEvent::KEY_u:
+  case SDL_SCANCODE_U:
     return "ne";
-  case KeyEvent::KEY_b:
+  case SDL_SCANCODE_B:
     return "sw";
-  case KeyEvent::KEY_n:
+  case SDL_SCANCODE_N:
     return "se";
   }
   return std::nullopt;
@@ -87,11 +87,11 @@ bool ObjectSelectMode::processKey(KeyEvent event) {
 
 bool GameOverMode::processKey(KeyEvent event) {
   switch (event.getCode()) {
-  case KeyEvent::KEY_q:
+  case SDL_SCANCODE_Q:
     app->processCommand("quit");
     return true;
     break;
-  case KeyEvent::KEY_r:
+  case SDL_SCANCODE_R:
     app->modeManager.toNormal();
     app->hero->currentLocation->leave(app->hero);
     app->startGame();
@@ -103,14 +103,14 @@ bool GameOverMode::processKey(KeyEvent event) {
 
 bool InspectMode::processKey(KeyEvent event) {
   switch (event.getCode()) {
-  case KeyEvent::KEY_j:
-  case KeyEvent::KEY_h:
-  case KeyEvent::KEY_l:
-  case KeyEvent::KEY_k:
-  case KeyEvent::KEY_y:
-  case KeyEvent::KEY_u:
-  case KeyEvent::KEY_b:
-  case KeyEvent::KEY_n: {
+  case SDL_SCANCODE_J:
+  case SDL_SCANCODE_H:
+  case SDL_SCANCODE_L:
+  case SDL_SCANCODE_K:
+  case SDL_SCANCODE_Y:
+  case SDL_SCANCODE_U:
+  case SDL_SCANCODE_B:
+  case SDL_SCANCODE_N: {
     auto d = getDir(event.getCode());
     if (d == std::nullopt)
       break;
@@ -316,13 +316,13 @@ void InspectMode::render() {
 bool NormalMode::processKey(KeyEvent event) {
 
   switch (event.getCode()) {
-  case KeyEvent::KEY_F1:
+  case SDL_SCANCODE_F1:
     app->debug = !app->debug;
     app->hero->commit("toggle debug", 0);
     break;
-  case KeyEvent::KEY_j:
-  case KeyEvent::KEY_h:
-  case KeyEvent::KEY_l:
+  case SDL_SCANCODE_J:
+  case SDL_SCANCODE_H:
+  case SDL_SCANCODE_L:
     // TODO: create command
     if (event.isShiftDown()) {
       auto slot = app->hero->getSlot(WearableType::LIGHT);
@@ -341,15 +341,15 @@ bool NormalMode::processKey(KeyEvent event) {
       }
       break;
     }
-  case KeyEvent::KEY_k:
-  case KeyEvent::KEY_y:
-  case KeyEvent::KEY_u:
+  case SDL_SCANCODE_K:
+  case SDL_SCANCODE_Y:
+  case SDL_SCANCODE_U:
     if (event.isShiftDown()) {
       app->processCommand("use");
       break;
     }
-  case KeyEvent::KEY_b:
-  case KeyEvent::KEY_n: {
+  case SDL_SCANCODE_B:
+  case SDL_SCANCODE_N: {
     if (!app->hero->hasTrait(Traits::CONFUSED)) {
       auto d = getDir(event.getCode());
       if (d == std::nullopt)
@@ -362,7 +362,7 @@ bool NormalMode::processKey(KeyEvent event) {
       app->processCommand(d);
     }
   } break;
-  case KeyEvent::KEY_PERIOD:
+  case SDL_SCANCODE_PERIOD:
     if (event.isShiftDown()) {
       app->processCommand("down");
     } else {
@@ -370,20 +370,20 @@ bool NormalMode::processKey(KeyEvent event) {
       app->invalidate();
     }
     break;
-  case KeyEvent::KEY_q:
+  case SDL_SCANCODE_Q:
     app->processCommand("quit");
     break;
-  case KeyEvent::KEY_p:
+  case SDL_SCANCODE_P:
     app->processCommand("pick");
     break;
-  case KeyEvent::KEY_COMMA:
+  case SDL_SCANCODE_COMMA:
     if (event.isShiftDown()) {
       app->processCommand("up");
     } else {
       app->processCommand("pick");
     }
     break;
-  case KeyEvent::KEY_d:
+  case SDL_SCANCODE_D:
     if (!event.isShiftDown()) {
       app->modeManager.toDirection();
       app->pendingCommand = DigCommand().aliases.front();
@@ -392,21 +392,21 @@ bool NormalMode::processKey(KeyEvent event) {
       app->processCommand("drop");
     }
     break;
-  case KeyEvent::KEY_a:
+  case SDL_SCANCODE_A:
     app->modeManager.toDirection();
     app->pendingCommand = AttackCommand().aliases.front();
     app->statusLine->setContent({F("Attack: "), State::direction_mode.front()});
     break;
-  case KeyEvent::KEY_w:
+  case SDL_SCANCODE_W:
     app->modeManager.toDirection();
     app->pendingCommand = "walk";
     app->statusLine->setContent({F("Walk: "), State::direction_mode.front()});
     break;
-  case KeyEvent::KEY_e:
+  case SDL_SCANCODE_E:
     app->processCommand("equip");
     break;
     break;
-  case KeyEvent::KEY_i:
+  case SDL_SCANCODE_I:
     if (event.isShiftDown()) {
       app->modeManager.toInspect();
       app->statusLine->setContent(State::inspect_mode);
@@ -420,10 +420,10 @@ bool NormalMode::processKey(KeyEvent event) {
       app->processCommand("inventory");
     }
     break;
-  case KeyEvent::KEY_z:
+  case SDL_SCANCODE_Z:
     app->processCommand("zap");
     break;
-  case KeyEvent::KEY_r:
+  case SDL_SCANCODE_R:
     // app->hero->currentLocation->leave(app->hero);
     // app->hero->currentLocation =
     // app->generator->getRandomLocation(app->hero);
@@ -440,7 +440,7 @@ bool NormalMode::processKey(KeyEvent event) {
     // app->hero->commit("regen location", 0);
 
     break;
-  case KeyEvent::KEY_SLASH:
+  case SDL_SCANCODE_SLASH:
     if (event.isShiftDown()) {
       app->processCommand("help");
     }
@@ -464,11 +464,11 @@ bool DirectionMode::processKey(KeyEvent event) {
 }
 
 bool InsertMode::processKey(KeyEvent event) {
-  if (event.getCode() != KeyEvent::KEY_SLASH &&
-      event.getCode() != KeyEvent::KEY_RETURN &&
-      event.getCode() != KeyEvent::KEY_BACKSPACE) {
+  if (event.getCode() != SDL_SCANCODE_SLASH &&
+      event.getCode() != SDL_SCANCODE_RETURN &&
+      event.getCode() != SDL_SCANCODE_BACKSPACE) {
     app->typedCommand += event.getChar();
-  } else if (event.getCode() == KeyEvent::KEY_BACKSPACE) {
+  } else if (event.getCode() == SDL_SCANCODE_BACKSPACE) {
     if (app->typedCommand.length() > 0) {
       app->typedCommand.erase(app->typedCommand.length() - 1,
                               app->typedCommand.length());
@@ -478,7 +478,7 @@ bool InsertMode::processKey(KeyEvent event) {
       app->typedCommand = "";
       return true;
     }
-  } else if (event.getCode() == KeyEvent::KEY_RETURN) {
+  } else if (event.getCode() == SDL_SCANCODE_RETURN) {
     app->modeManager.toNormal();
     app->statusLine->setContent(State::normal_mode);
     app->processCommand(app->typedCommand);

@@ -19,21 +19,21 @@ struct modes {
     using namespace sml;
     auto is_hints = [](KeyPressedEvent e) {
       return false;
-      // return e.key.getCode() == KeyEvent::KEY_f;
+      // return e.key.getCode() == SDL_SCANCODE_f;
     };
     auto is_leader = [](KeyPressedEvent e) {
       return false;
-      // return e.key.getCode() == KeyEvent::KEY_SPACE;
+      // return e.key.getCode() == SDL_SCANCODE_SPACE;
     };
     auto is_esc = [](KeyPressedEvent e) {
-      return e.key.getCode() == KeyEvent::KEY_ESCAPE;
+      return e.key.getCode() == SDL_SCANCODE_ESCAPE;
     };
     auto is_esc_or_z = [](KeyPressedEvent e) {
-      return e.key.getCode() == KeyEvent::KEY_ESCAPE ||
-             e.key.getCode() == KeyEvent::KEY_z;
+      return e.key.getCode() == SDL_SCANCODE_ESCAPE ||
+             e.key.getCode() == SDL_SCANCODE_Z;
     };
     auto is_insert = [](KeyPressedEvent e) {
-      return e.key.getCode() == KeyEvent::KEY_SLASH && !e.key.isShiftDown();
+      return e.key.getCode() == SDL_SCANCODE_SLASH && !e.key.isShiftDown();
     };
     auto is_direction_event = [](EnableModeEvent e) {
       return e.mode == Modes::DIRECTION;

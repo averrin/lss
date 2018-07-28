@@ -14,14 +14,14 @@
 #include <utility>
 
 #include <SDL.h>
-#include <SDL_Pango.hpp>
+#include <SDLPango.hpp>
 #include "gl2/Context.h"
 #include <assert.h>
 
 #include "lss/commands.hpp"
 #include "lss/keyEvent.hpp"
 #include "lss/modes.hpp"
-#include "lss/pango.hpp"
+// #include "lss/pango.hpp"
 #include "lss/state.hpp"
 
 #include "lss/game/door.hpp"
@@ -63,8 +63,6 @@ public:
   pango::SurfaceRef heroFrame;
   pango::SurfaceRef inspectFrame;
   pango::SurfaceRef logFrame;
-
-
 
   void invalidate();
   void invalidate(std::string reason) {

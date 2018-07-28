@@ -11,6 +11,7 @@ get_filename_component( JNJ_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/Jinja2CppLi
 get_filename_component( BUS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/EventBus/src/event" ABSOLUTE )
 get_filename_component( FMT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/fmt" ABSOLUTE )
 get_filename_component( MP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/micropather" ABSOLUTE )
+get_filename_component( GLM_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/glm" ABSOLUTE )
 
 # Write demo-config.h
 message("Generating header file: ${CMAKE_BINARY_DIR}/config.hpp")
@@ -35,8 +36,10 @@ if(NOT WIN32)
     find_package(OpenGL REQUIRED)
 endif()
 
+add_subdirectory(backward-cpp)
+
 set( SRC_FILES
-    # ${BACKWARD_ENABLE}
+    ${BACKWARD_ENABLE}
     ${BUS_DIR}/EventBus.cpp
     ${BUS_DIR}/EventRegisttration.cpp
     
@@ -46,7 +49,7 @@ set( SRC_FILES
 	${FMT_DIR}/src/format.cc
     ${MP_DIR}/micropather.cpp
     
-	${SRC_DIR}/pango.cpp
+	# ${SRC_DIR}/pango.cpp
 	${SRC_DIR}/keyEvent.cpp
 
 	${SRC_DIR}/fragment.cpp
@@ -79,18 +82,16 @@ set( SRC_FILES
 	${SRC_DIR}/eventReactor.cpp
 	${SRC_DIR}/LSSApp.cpp
 
-	${SRC_DIR}/SDL_Pango.cpp
+	${SRC_DIR}/SDLPango.cpp
     ${INC_DIR}/gl2/Context.cpp
     # Main.cpp
 
     )
 
-# add_subdirectory(backward-cpp)
-# add_backward(LSS)
-
 # Define executable target
 include_directories(
     PUBLIC ${INC_DIR} 
+    PUBLIC ${GLM_DIR} 
     PUBLIC ${SMLINC_DIR}
     PUBLIC ${JNJ_DIR}
     PUBLIC ${FOV_DIR}
@@ -104,6 +105,7 @@ include_directories(
     ${OPENGL_INCLUDE_DIR}
     ${CMAKE_BINARY_DIR})
 add_executable(${EXE_NAME} ${SRC_FILES})
+add_backward(${PROJECT_NAME})
 target_link_libraries(${EXE_NAME} ${PANGO_LIBRARIES} ${SDL2_LIBS} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${PANGOFT_LIBRARIES} pangoft2-1.0 fontconfig freetype Threads::Threads)
 
 # Copy SDL2 DLLs to output folder on Windows
