@@ -351,28 +351,23 @@ bool Player::interact(std::shared_ptr<Object> actor) {
     }
   }
 
-  auto ptr = shared_from_this();
-  if (hp > 0) {
-    auto damage = enemy->getDamage(shared_from_this());
-    auto def = R::Z(0, DEF(this));
-    if (damage->damage - def < 0) {
-      damage->damage = 0;
-    } else {
-      damage->damage -= def;
-    }
-    damage->deflected = def;
-    hp -= damage->damage;
-    HeroTakeDamageEvent e(enemy, damage);
-    eb::EventBus::FireEvent(e);
-  }
-  if (hp <= 0) {
-    passThrough = true;
-    HeroDiedEvent e2(ptr);
-    eb::EventBus::FireEvent(e2);
-    commit("death", 0);
-  }
-  // commit("player interact", 0);
+  auto damage = enemy->getDamage(shared_from_this());
+  applyDamage(enemy, damage);
   return hp > 0;
+}
+
+void Player::onDamage(std::shared_ptr<Creature> attacker,
+                      std::shared_ptr<Damage> damage) {
+  HeroTakeDamageEvent e(attacker, damage);
+  eb::EventBus::FireEvent(e);
+}
+
+void Player::onDie() {
+  auto ptr = shared_from_this();
+  passThrough = true;
+  HeroDiedEvent e2(ptr);
+  eb::EventBus::FireEvent(e2);
+  commit("death", 0);
 }
 
 void Player::onEvent(EnemyDiedEvent &e) {

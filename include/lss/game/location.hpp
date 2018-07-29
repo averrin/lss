@@ -118,7 +118,6 @@ public:
     }
     return nbrs;
   }
-
   std::vector<std::shared_ptr<Cell>> getVisible(std::shared_ptr<Cell> start,
                                                 float distance);
 

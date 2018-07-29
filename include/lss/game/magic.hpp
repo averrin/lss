@@ -13,7 +13,7 @@ public:
   Magic(std::shared_ptr<Player>);
   ~Magic();
   std::shared_ptr<Player> hero;
-  void castSpell(std::shared_ptr<Spell> spell);
+  void castSpell(std::shared_ptr<Creature>, std::shared_ptr<Spell> spell);
 
   virtual void onEvent(ZapCommandEvent &e) override;
 };

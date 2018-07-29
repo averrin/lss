@@ -118,7 +118,8 @@ void EventReactor::onEvent(UseCommandEvent &e) {
     auto me = std::make_shared<MessageEvent>(
         nullptr, fmt::format("You use {}", e.item->getTitle()));
     eb::EventBus::FireEvent(*me);
-    return app->magic->castSpell(spell);
+    auto caster = std::dynamic_pointer_cast<Creature>(e.getSender());
+    return app->magic->castSpell(caster, spell);
   }
   app->objectSelectMode->setHeader(F("Items to use: "));
 
@@ -328,7 +329,7 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
     auto castable = spell->cost <= app->hero->MP(app->hero.get());
     if (!castable)
       return false;
-    auto e = std::make_shared<ZapCommandEvent>(spell);
+    auto e = std::make_shared<ZapCommandEvent>(app->hero, spell);
     eb::EventBus::FireEvent(*e);
     app->modeManager.toNormal();
     return true;

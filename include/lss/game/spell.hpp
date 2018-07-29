@@ -2,6 +2,7 @@
 #define __SPELL_H_
 #include "lss/game/damage.hpp"
 #include "lss/game/effect.hpp"
+#include "lss/game/location.hpp"
 #include "lss/game/object.hpp"
 
 class Spell : public Object {
@@ -34,10 +35,12 @@ public:
   std::shared_ptr<Effect> effect;
 };
 
+//TODO: damage type
 class DamageSpell : public Spell {
 public:
   DamageSpell(std::string n, DamageSpec dmg) : Spell(n), damage(dmg) {}
   DamageSpec damage;
+  void applySpell(std::shared_ptr<Location>, std::shared_ptr<Cell>);
 };
 
 class RadiusSpell : public Spell {

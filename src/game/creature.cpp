@@ -316,6 +316,22 @@ bool Creature::attack(Direction d) {
   return true;
 }
 
+void Creature::applyDamage(std::shared_ptr<Creature> attacker,
+                           std::shared_ptr<Damage> damage) {
+  auto def = R::Z(0, DEF(this));
+  if (damage->damage - def < 0) {
+    damage->damage = 0;
+  } else {
+    damage->damage -= def;
+  }
+  damage->deflected = def;
+  hp -= damage->damage;
+  onDamage(attacker, damage);
+  if (hp <= 0) {
+    onDie();
+  }
+}
+
 std::shared_ptr<Slot> Creature::getSlot(WearableType type) {
   return *std::find_if(equipment->slots.begin(), equipment->slots.end(),
                        [type](std::shared_ptr<Slot> s) {
@@ -425,4 +441,16 @@ void Creature::applyEoT(EoT eot, int modifier) {
     hp -= modifier;
     break;
   }
+}
+
+std::vector<std::shared_ptr<Cell>> Creature::getInRadius(float distance) {
+  std::vector<std::shared_ptr<Cell>> cells(viewField.size());
+  auto it = std::copy_if(
+      viewField.begin(), viewField.end(), cells.begin(), [&](auto c) {
+        auto d =
+            sqrt(pow(c->x - currentCell->x, 2) + pow(c->y - currentCell->y, 2));
+        return c != currentCell && d <= distance;
+      });
+  cells.resize(std::distance(cells.begin(), it));
+  return cells;
 }

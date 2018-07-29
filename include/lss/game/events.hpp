@@ -11,6 +11,7 @@ class Slot;
 class Cell;
 class Spell;
 class Damage;
+class Creature;
 class DoorOpenedEvent : public eb::Event {
 public:
   DoorOpenedEvent(eb::ObjectPtr);
@@ -181,7 +182,7 @@ public:
 
 class ZapCommandEvent : public CommandEvent {
 public:
-  ZapCommandEvent(std::shared_ptr<Spell>);
+  ZapCommandEvent(eb::ObjectPtr, std::shared_ptr<Spell>);
   ZapCommandEvent();
   std::shared_ptr<Spell> spell;
 };

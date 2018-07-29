@@ -34,6 +34,8 @@ public:
   void commit(std::string reason, int ap, bool s = false);
 
   std::string getDmgDesc();
+  void onDamage(std::shared_ptr<Creature>, std::shared_ptr<Damage>);
+  void onDie();
 
   virtual void onEvent(MoveCommandEvent &e) override;
   virtual void onEvent(PickCommandEvent &e) override;

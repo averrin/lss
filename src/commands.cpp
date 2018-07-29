@@ -146,8 +146,8 @@ DropCommand::getEvent(std::string s) {
 }
 
 ZapCommandEvent::ZapCommandEvent() : CommandEvent(nullptr) {}
-ZapCommandEvent::ZapCommandEvent(std::shared_ptr<Spell> i)
-    : CommandEvent(nullptr), spell(i) {}
+ZapCommandEvent::ZapCommandEvent(eb::ObjectPtr c, std::shared_ptr<Spell> i)
+    : CommandEvent(c), spell(i) {}
 std::optional<std::shared_ptr<CommandEvent>>
 ZapCommand::getEvent(std::string s) {
   return std::make_shared<ZapCommandEvent>();

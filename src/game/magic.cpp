@@ -25,7 +25,8 @@ std::shared_ptr<Enemy> mkEnemy(std::shared_ptr<Location> location,
 void Magic::onEvent(ZapCommandEvent &e) {
   if (e.spell == nullptr)
     return;
-  castSpell(e.spell);
+  auto caster = std::dynamic_pointer_cast<Creature>(e.getSender());
+  castSpell(caster, e.spell);
 }
 
 void toggleTrait(std::shared_ptr<Player> hero,
@@ -67,7 +68,8 @@ void heal(std::shared_ptr<Player> hero, int min, int max) {
   eb::EventBus::FireEvent(me);
 }
 
-void Magic::castSpell(std::shared_ptr<Spell> spell) {
+void Magic::castSpell(std::shared_ptr<Creature> caster,
+                      std::shared_ptr<Spell> spell) {
   if (*spell == *Spells::REVEAL) {
     hero->currentLocation->reveal();
     hero->monsterSense = true;
@@ -126,5 +128,21 @@ void Magic::castSpell(std::shared_ptr<Spell> spell) {
     toggleTrait(hero, tspell);
   } else if (auto espell = std::dynamic_pointer_cast<EffectSpell>(spell)) {
     applyEffect(hero, espell);
+  } else if (auto rspell = std::dynamic_pointer_cast<RadiusSpell>(spell)) {
+    auto cells = caster->getInRadius(rspell->radius);
+    if (auto ds = std::dynamic_pointer_cast<DamageSpell>(rspell->spell)) {
+      for (auto c : cells) {
+        ds->applySpell(hero->currentLocation, c);
+      }
+    }
+    hero->commit("Radius spell", 0);
+  }
+}
+
+void DamageSpell::applySpell(std::shared_ptr<Location> location,
+                             std::shared_ptr<Cell> c) {
+  auto creatures = utils::castObjects<Creature>(location->getObjects(c));
+  for (auto creature : creatures) {
+    creature->applyDamage(location->player, damage.getDamage());
   }
 }

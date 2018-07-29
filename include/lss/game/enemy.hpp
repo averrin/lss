@@ -200,6 +200,8 @@ public:
   int step;
   micropather::MicroPather *pather = nullptr;
   bool randomPath();
+  void onDamage(std::shared_ptr<Creature>, std::shared_ptr<Damage>);
+  void onDie();
 
   virtual void onEvent(CommitEvent &e) override;
 };

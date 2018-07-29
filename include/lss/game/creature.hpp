@@ -99,6 +99,13 @@ public:
   bool hasLight();
   std::shared_ptr<Damage> updateDamage(std::shared_ptr<Damage>, int m, int d,
                                        int e);
+  std::vector<std::shared_ptr<Cell>> getInRadius(float distance);
+
+  void applyDamage(std::shared_ptr<Creature> attacker, std::shared_ptr<Damage>);
+
+  virtual void onDamage(std::shared_ptr<Creature>, std::shared_ptr<Damage>) = 0;
+  virtual void onDie() = 0;
+
   int hitRoll(int m, int d, int e);
   std::shared_ptr<Slot> getSlot(WearableType type);
   std::optional<std::shared_ptr<Slot>> getSlot(WearableType type, bool);

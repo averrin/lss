@@ -4,6 +4,7 @@
 - migrate to SDL2
 - animated light flickering
 - refactor magic system
+- init radius damage spell
 
 ### 0.0.9
 - repeat key
