@@ -1,33 +1,73 @@
-An example cross-platform CMake-based project.
+# Long Story Short
 
-This project uses SDL2 and OpenGL to render a spinning 3D logo to a desktop window. You can build it on Windows, MacOS or Linux.
+Yet another unfinished roguelike game.
 
-![](http://preshing.com/images/cmakedemo-preview.png)
+![screenshot](https://raw.githubusercontent.com/averrin/lss/master/screenshot.png)
 
-## Requirements
+## Build
+* `git clone --recursive git@github.com:averrin/lss.git`
+* `cd ./lss; mkdir build; cd ./build`
+* `cmake ..; make -j4`
 
-### Windows (Visual Studio)
+Yeah, LSS migrate from cinder to SDL2. Now its more lightweight, but lost some
+rendering quality. And you may need install some deps.
 
-CMakeDemo expects to find the SDL2 headers and libraries in a subfolder named `extern\SDL-2.0.5`. You can download and extract them automatically by running the Python 3 script `setup-win32.py`. If you don't have Python installed, [download and extract them by hand](https://www.libsdl.org/release/SDL2-devel-2.0.5-VC.zip).
+## TODO
+- [ ] Achieve same text quality as in `cinder` branch
+- [X] Game over mode
+- [X] Fix attributes and effects
+- [X] Fields of view and torches
+- [X] Creature traits (for skills and enemy tricks)
+- [X] Armor
+- [X] Enemy with torches
+- [X] Map generator
+- [X] Cell & location features
+- [X] Light/shadow-related traits
+- [X] Better event log
+- [X] After death stats
+- [ ] Hero status page
+- [ ] Debug menus for summoning enemies/items & location creator
+- [ ] Refactor effects system
+- [ ] Weights
+- [ ] Passive, patrol and "hero search" AI, stealth
+- [ ] Chests and containers
+- [ ] Ranged selection and weapons
+- [X] Randomized monsters and loot
+- [ ] Leveling
+- [ ] Passthrough seed
+- [ ] Hundreds of other features...
 
-On Windows, CMakeDemo uses its own OpenGL headers and loads `opengl32.dll` dynamically at runtime. Nothing else is needed at build time.
+## Controls
+* / — insert mode
+* q — quit [`/quit`, `/q`]
+* ? — help [`/help`, `/h`]
+* yuhjklbn — move [`/m`, `/move`, `/n`, `/e`, `/s`, `/w`, `/nw`, `/ne`, `/se`, `/sw`]
+```
+      y k u
+       \|/ 
+      h-•-l
+       /|\ 
+      b j n
+```
+* d[yuhjklbn] — dig [`/dig`, `/d`]
+* a[yuhjklbn] — attack [`/attack`, `/a`]
+* w[yuhjklbn] — walk until obstacle [`/walk`]
+* p or , — pick [`/pick`, `/p`]
+* e — equip [`/equip`, `/eq`]
+* shift+d — drop [`/drop`, `/dr`]
+* shift+u — use [`/use`, `/u`]
+* shift+l — [un]equip light [`/light`, `/l`]
+* i — inventory [`/inventory`, `/i`]
+* . — wait [`/wait`]
+* z — cast spell [`/zap`, `/z`]
+* &lt; — go up [`/up`]
+* &gt; — go down [`/down`]
 
-### MacOS (Xcode)
+### Debug controls
+* F1 — debug mode (show enemy pathes, allow uber spells)
+* shift+i — inspect mode
 
-Install the SDL2 headers and libraries using [MacPorts](https://www.macports.org/).
+## More screenshots
+![screenshot_cavern](https://raw.githubusercontent.com/averrin/lss/master/screenshot_cavern.png)
+![screenshot_torches](https://raw.githubusercontent.com/averrin/lss/master/screenshot_torches.png)
 
-    sudo port install libsdl2
-    
-OpenGL headers and libraries are installed by Xcode. CMake will find them automatically.
-
-### Ubuntu
-
-Install the SDL2 headers and libraries.
-
-    sudo apt install libsdl2-dev
-    
-OpenGL headers and libraries are already present on the system. CMake will find them automatically.
-
-## Build Instructions
-
-For build instructions, see the blog post [How to Build a CMake-Based Project](http://preshing.com/20170511/how-to-build-a-cmake-based-project).
