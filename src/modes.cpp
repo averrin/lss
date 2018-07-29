@@ -370,6 +370,7 @@ bool NormalMode::processKey(KeyEvent event) {
           app->hero->equip(slot, *torch);
         }
       }
+      app->hero->currentLocation->invalidate();
       app->hero->commit("equip light", 0);
       app->hero->calcViewField();
       app->hero->currentLocation->updateView(app->hero);

@@ -149,6 +149,7 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
       }
     });
     eb::EventBus::FireEvent(me);
+    hero->currentLocation->invalidate();
   }
 }
 

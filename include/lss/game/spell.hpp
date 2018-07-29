@@ -66,8 +66,12 @@ const auto TELEPORT_RANDOM = std::make_shared<Spell>("Teleport", 20);
 
 const auto FIREBALL = std::make_shared<RadiusSpell>(
     "Fireball",
-    std::make_shared<DamageSpell>("Fire damage", DamageSpec(100, 1, 1)), 1.5,
+    std::make_shared<DamageSpell>("Fire damage", DamageSpec(0, 2, 6)), 1.5,
     20);
+const auto FIREBLAST = std::make_shared<RadiusSpell>(
+    "Fireblast",
+    std::make_shared<DamageSpell>("Fire damage", DamageSpec(0, 2, 6)), 3.5,
+    40);
 
 const auto TOGGLE_DUAL_WIELD = std::make_shared<ToggleTraitSpell>(
     "Toggle Dual Wield trait", Traits::DUAL_WIELD);
@@ -130,6 +134,7 @@ const std::vector<std::shared_ptr<Spell>> USABLE = {
     Spells::IDENTIFY,
     Spells::TELEPORT_RANDOM,
     Spells::FIREBALL,
+    Spells::FIREBLAST,
 
     Spells::SUMMON_THING,
     Spells::RESTORE_MANA,
