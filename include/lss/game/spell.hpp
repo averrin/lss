@@ -2,6 +2,7 @@
 #define __SPELL_H_
 #include "lss/game/effect.hpp"
 #include "lss/game/object.hpp"
+#include "lss/game/damage.hpp"
 
 class Spell : public Object {
 public:
@@ -33,18 +34,34 @@ public:
   std::shared_ptr<Effect> effect;
 };
 
+class DamageSpell : public Spell {
+public:
+  DamageSpell(std::string n, DamageSpec dmg) : Spell(n), damage(dmg) {}
+  DamageSpec damage;
+};
+
+class RadiusSpell : public Spell {
+public:
+  RadiusSpell(std::string n, std::shared_ptr<Spell> s, float r, int c) : Spell(n, c), spell(s), radius(r) {}
+  std::shared_ptr<Spell> spell;
+  float radius;
+};
+
 namespace Spells {
 const auto REVEAL = std::make_shared<Spell>("Reveal", 50, 2000);
 const auto MONSTER_SENSE = std::make_shared<Spell>("Monster Sense");
 // const auto MONSTER_FREEZE = std::make_shared<Spell>("Monster Freeze");
 const auto SUMMON_ORK = std::make_shared<Spell>("Summon Ork");
-const auto SUMMON_PLATE = std::make_shared<Spell>("Summon thing");
+const auto SUMMON_THING = std::make_shared<Spell>("Summon thing");
 
 const auto IDENTIFY = std::make_shared<Spell>("Identify", 30, 500);
 const auto HEAL_LESSER = std::make_shared<Spell>("Lesser heal", 5, 1000);
 const auto HEAL = std::make_shared<Spell>("Heal", 25, 2000);
 const auto HEAL_GREATER = std::make_shared<Spell>("Greater Heal", 45, 5000);
 const auto TELEPORT_RANDOM = std::make_shared<Spell>("Teleport", 20);
+
+const auto FIREBALL = std::make_shared<RadiusSpell>(
+  "Fireball", std::make_shared<DamageSpell>("Fire damage", DamageSpec(100, 1, 1)), 1.5, 20);
 
 const auto TOGGLE_DUAL_WIELD = std::make_shared<ToggleTraitSpell>(
     "Toggle Dual Wield trait", Traits::DUAL_WIELD);
@@ -106,8 +123,9 @@ const std::vector<std::shared_ptr<Spell>> USABLE = {
     Spells::HEAL_GREATER,
     Spells::IDENTIFY,
     Spells::TELEPORT_RANDOM,
+    Spells::FIREBALL,
 
-    Spells::SUMMON_PLATE,
+    Spells::SUMMON_THING,
     Spells::RESTORE_MANA,
 
     Spells::TOGGLE_DUAL_WIELD,

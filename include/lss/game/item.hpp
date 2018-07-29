@@ -217,6 +217,44 @@ const auto SCROLL_TELEPORT = std::make_shared<Consumable>(
     "scroll of teleport", ItemType::SCROLL, Spells::TELEPORT_RANDOM);
 
 const auto GOLD = std::make_shared<Item>(ItemType::GOLD_COINS, 1);
+
+const std::vector<std::shared_ptr<Item>> ALL = {
+  Prototype::TORCH,
+  Prototype::PLATE,
+  Prototype::GOD_PLATE,
+  Prototype::BASIC_LEATHER_ARMOR,
+  Prototype::LEATHER_ARMOR,
+  Prototype::HELMET,
+  Prototype::SHIELD,
+  Prototype::GREAVES,
+  Prototype::BOOTS,
+  Prototype::BOOTS_OF_FLY,
+  Prototype::GRASS,
+  Prototype::SPEED_RING,
+  Prototype::BASIC_SWORD,
+  Prototype::SWORD,
+  Prototype::ORK_SWORD,
+  Prototype::GREAT_AXE,
+  Prototype::DAGGER,
+  Prototype::GOBLIN_DAGGER,
+  Prototype::POISON_DAGGER,
+  // Prototype::POISON_FANG,
+  Prototype::SWORD_OF_DUALWIELD,
+  Prototype::POTION_HEAL_LESSER,
+  Prototype::POTION_HEAL,
+  Prototype::POTION_MANA,
+  Prototype::POTION_GOD_SPEED,
+  Prototype::POTION_HP_BOOST,
+  Prototype::POTION_VISIBILITY_BOOST,
+  Prototype::POTION_CRIT_BOOST,
+  Prototype::POTION_LEVITATION,
+  Prototype::POTION_REGENERATION,
+  Prototype::POTION_POISON,
+  Prototype::POTION_CONFUSION,
+  Prototype::SCROLL_IDENTIFICATION,
+  Prototype::SCROLL_REVEAL,
+  Prototype::SCROLL_TELEPORT,
+};
 } // namespace Prototype
 
 #endif // __ITEM_H_

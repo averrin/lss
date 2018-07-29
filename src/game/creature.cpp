@@ -186,6 +186,7 @@ Creature::getSecondaryDmg(std::shared_ptr<Slot> primarySlot) {
   return std::nullopt;
 }
 
+//TODO: move alldamage logic to damageSpec
 int criticalHit(int m, int d, int e) {
   auto damage = m + d * e;
   if (damage < 0) {

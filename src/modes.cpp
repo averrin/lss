@@ -75,8 +75,12 @@ Mode::Mode(LSSApp *a) : app(a){};
 bool HintsMode::processKey(KeyEvent event) { return false; }
 
 bool ObjectSelectMode::processKey(KeyEvent event) {
-  std::string letters = "abcdefghijklmnopqrstuvwxyz";
-  auto index = letters.find(event.getChar());
+  std::string letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  auto ch = event.getChar();
+  if (event.isShiftDown()) {
+    ch = toupper(ch);
+  }
+  auto index = letters.find(ch);
   if (objects.size() > index) {
     if (callback(objects[index])) {
       return true;
@@ -443,25 +447,38 @@ bool NormalMode::processKey(KeyEvent event) {
     app->processCommand("zap");
     break;
   case SDL_SCANCODE_R:
-    // app->hero->currentLocation->leave(app->hero);
-    // app->hero->currentLocation =
-    // app->generator->getRandomLocation(app->hero);
-    // app->hero->currentLocation->enter(app->hero,
-    //                                   app->hero->currentLocation->enterCell);
-    // app->state->fragments.assign(
-    //     app->hero->currentLocation->cells.size() *
-    //         (app->hero->currentLocation->cells.front().size() + 1),
-    //     std::make_shared<CellSign>(std::make_shared<Cell>(CellType::UNKNOWN)));
-
     app->hero->currentCell = app->hero->currentLocation->exitCell;
     app->processCommand("down");
-
-    // app->hero->commit("regen location", 0);
-
     break;
   case SDL_SCANCODE_SLASH:
     if (event.isShiftDown()) {
       app->processCommand("help");
+    }
+    break;
+  case SDL_SCANCODE_S:
+    if (app->debug) {
+      app->objectSelectMode->setHeader(F("Items to spawn: "));
+      app->objectSelectMode->setObjects(utils::castObjects<Object>(Prototype::ALL));
+
+      Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
+        if (auto item = std::dynamic_pointer_cast<Item>(o)) {
+          return fmt::format("<span weight='bold'>{}</span> - {}", letter,
+                            item->getTitle(true));
+        }
+        return "Unknown error"s;
+      };
+      app->objectSelectMode->setFormatter(formatter);
+
+      app->objectSelectMode->setCallback([&](std::shared_ptr<Object> o) {
+        auto item = std::dynamic_pointer_cast<Item>(o)->roll();
+        item->currentCell = app->hero->currentCell;
+        app->hero->currentLocation->objects.push_back(item);
+        app->modeManager.toNormal();
+        return true;
+      });
+
+      app->objectSelectMode->render(app->objectSelectState);
+      app->modeManager.toObjectSelect();
     }
     break;
   default:
@@ -610,6 +627,7 @@ void InventoryMode::render(std::shared_ptr<State> state) {
   }
 }
 
+//TODO: scroll
 void ObjectSelectMode::render(std::shared_ptr<State> state) {
   state->setContent({header});
   state->appendContent(State::END_LINE);
@@ -620,7 +638,7 @@ void ObjectSelectMode::render(std::shared_ptr<State> state) {
     return;
   }
 
-  std::string letters = "abcdefghijklmnopqrstuvwxyz";
+  std::string letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
   auto n = 0;
   for (auto o : objects) {
     state->appendContent(F(formatter(o, std::string{letters[n]})));
