@@ -2,9 +2,9 @@
 #define __CELL_H_
 #include "lss/game/trait.hpp"
 #include <algorithm>
+#include <cmath>
 #include <memory>
 #include <vector>
-#include <cmath>
 
 const float TORCH_DISTANCE = 4.5f;
 

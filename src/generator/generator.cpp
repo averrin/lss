@@ -559,7 +559,7 @@ void placeEnemies(std::shared_ptr<Location> location, int threat) {
                     [&](auto rec) { fullP += rec.second; });
       p *= fullP;
       float ap = 0;
-      for (auto[et, tp] : table) {
+      for (auto [et, tp] : table) {
         ap += tp;
         if (p <= ap) {
           type = et;
@@ -1194,7 +1194,7 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   timings["cellFeatures"] = end - start;
 
   std::vector<std::string> timeMarks;
-  for (auto[mark, ms] : timings) {
+  for (auto [mark, ms] : timings) {
     timeMarks.push_back(fmt::format("{}: {}", mark, ms.count()));
   }
 

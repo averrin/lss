@@ -13,9 +13,9 @@
 #include <thread>
 #include <utility>
 
+#include "gl2/Context.h"
 #include <SDL.h>
 #include <SDLPango.hpp>
-#include "gl2/Context.h"
 #include <assert.h>
 
 #include "lss/commands.hpp"
@@ -26,8 +26,8 @@
 
 #include "lss/game/door.hpp"
 #include "lss/game/enemy.hpp"
-#include "lss/game/player.hpp"
 #include "lss/game/magic.hpp"
+#include "lss/game/player.hpp"
 
 #include "lss/ui/heroLine.hpp"
 #include "lss/ui/logPanel.hpp"
@@ -56,7 +56,7 @@ public:
   bool bgRunning = true;
   void startBg();
 
-  SDL_Window* window = nullptr;
+  SDL_Window *window = nullptr;
   SDL_Renderer *renderer = nullptr;
   int gameWidth, gameHeight;
 

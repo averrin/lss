@@ -1,8 +1,8 @@
 #ifndef __SPELL_H_
 #define __SPELL_H_
+#include "lss/game/damage.hpp"
 #include "lss/game/effect.hpp"
 #include "lss/game/object.hpp"
-#include "lss/game/damage.hpp"
 
 class Spell : public Object {
 public:
@@ -42,7 +42,8 @@ public:
 
 class RadiusSpell : public Spell {
 public:
-  RadiusSpell(std::string n, std::shared_ptr<Spell> s, float r, int c) : Spell(n, c), spell(s), radius(r) {}
+  RadiusSpell(std::string n, std::shared_ptr<Spell> s, float r, int c)
+      : Spell(n, c), spell(s), radius(r) {}
   std::shared_ptr<Spell> spell;
   float radius;
 };
@@ -61,7 +62,9 @@ const auto HEAL_GREATER = std::make_shared<Spell>("Greater Heal", 45, 5000);
 const auto TELEPORT_RANDOM = std::make_shared<Spell>("Teleport", 20);
 
 const auto FIREBALL = std::make_shared<RadiusSpell>(
-  "Fireball", std::make_shared<DamageSpell>("Fire damage", DamageSpec(100, 1, 1)), 1.5, 20);
+    "Fireball",
+    std::make_shared<DamageSpell>("Fire damage", DamageSpec(100, 1, 1)), 1.5,
+    20);
 
 const auto TOGGLE_DUAL_WIELD = std::make_shared<ToggleTraitSpell>(
     "Toggle Dual Wield trait", Traits::DUAL_WIELD);

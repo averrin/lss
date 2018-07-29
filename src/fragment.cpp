@@ -28,15 +28,17 @@ std::string Fragment::render(State *state) {
   Template tpl(template_str);
 
   auto a = alpha;
-  if (a < 1) a = 1;
-  if (a > 100) a = 100;
+  if (a < 1)
+    a = 1;
+  if (a > 100)
+    a = 100;
   tpl.setValue("alpha", a);
   tpl.setValue("green", state->currentPalette.green);
   tpl.setValue("red", state->currentPalette.red);
   tpl.setValue("blue", state->currentPalette.blue);
   tpl.setValue("orange", state->currentPalette.orange);
 
-  for (auto[key, value] : args) {
+  for (auto [key, value] : args) {
     std::visit([&](auto const &val) { tpl.setValue(key, val); }, value);
   }
 
@@ -188,29 +190,32 @@ std::map<std::string, tpl_arg> getCellArgs(std::shared_ptr<Cell> cell) {
   return {
       {"sign", cellSigns[cell->type]},
       {"color", color},
-      // {"alpha", cell->visibilityState == VisibilityState::VISIBLE && cell->illuminated ? cell->illumination : 60 /*Cell::DEFAULT_LIGHT*/},
+      // {"alpha", cell->visibilityState == VisibilityState::VISIBLE &&
+      // cell->illuminated ? cell->illumination : 60 /*Cell::DEFAULT_LIGHT*/},
       {"weight",
        cellWeights[cell->type][cell->visibilityState == VisibilityState::SEEN]},
   };
 }
 
 CellSign::CellSign(std::shared_ptr<Cell> cell)
-    : Fragment(
-          cell->type == CellType::UNKNOWN ||
-                  cell->visibilityState == VisibilityState::UNKNOWN
-              ? cellSigns[cell->type]
-              : "<span color='{{color}}' alpha='{{alpha}}%' weight='{{weight}}'>{{sign}}</span>",
-          getCellArgs(cell),
-          !(cell->type == CellType::UNKNOWN ||
-            cell->visibilityState == VisibilityState::UNKNOWN)) {}
+    : Fragment(cell->type == CellType::UNKNOWN ||
+                       cell->visibilityState == VisibilityState::UNKNOWN
+                   ? cellSigns[cell->type]
+                   : "<span color='{{color}}' alpha='{{alpha}}%' "
+                     "weight='{{weight}}'>{{sign}}</span>",
+               getCellArgs(cell),
+               !(cell->type == CellType::UNKNOWN ||
+                 cell->visibilityState == VisibilityState::UNKNOWN)) {}
 HeroSign::HeroSign(std::string color)
     : Fragment("<span color='{{color}}' alpha='100%' weight='bold'>@</span>",
                {{"color", color}}) {}
 EnemySign::EnemySign(EnemySpec type)
-    : Fragment("<span color='{{color}}' alpha='{{alpha}}%' weight='bold'>{{sign}}</span>",
+    : Fragment("<span color='{{color}}' alpha='{{alpha}}%' "
+               "weight='bold'>{{sign}}</span>",
                {{"sign", enemySigns[type]}, {"color", enemyColors[type]}}) {}
 DoorSign::DoorSign(bool opened)
-    : Fragment("<span weight='bold' alpha='{{alpha}}%' color='#8B5F20'>{{sign}}</span>",
+    : Fragment("<span weight='bold' alpha='{{alpha}}%' "
+               "color='#8B5F20'>{{sign}}</span>",
                {{"sign", opened ? "/"s : "+"s}}) {}
 ItemSign::ItemSign(ItemSpec type)
     : Fragment("<span color='{{color}}' alpha='{{alpha}}%'>{{sign}}</span>",

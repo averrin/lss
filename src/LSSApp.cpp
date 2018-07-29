@@ -10,8 +10,8 @@
 #include "lss/LSSApp.hpp"
 #include "lss/eventReactor.hpp"
 #include "lss/game/terrain.hpp"
-#include "lss/utils.hpp"
 #include "lss/keyEvent.hpp"
+#include "lss/utils.hpp"
 
 std::string VERSION = "0.1.0 by Averrin";
 
@@ -24,34 +24,33 @@ void LSSApp::setup() {
 
   int rc = SDL_Init(SDL_INIT_VIDEO);
   assert(rc >= 0);
-  (void) rc;
+  (void)rc;
 
-  if (SDL_GetDesktopDisplayMode(0, &dm))
-  {
-      printf("Error getting desktop display mode\n");
-      return;
+  if (SDL_GetDesktopDisplayMode(0, &dm)) {
+    printf("Error getting desktop display mode\n");
+    return;
   }
   gameWidth = dm.w * 3 / 4 - VOffset;
   gameHeight = dm.h - StatusLine::HEIGHT - HeroLine::HEIGHT - HOffset;
 
-  window = SDL_CreateWindow("Long Story Short", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                                  dm.w, dm.h, SDL_WINDOW_OPENGL);
+  window =
+      SDL_CreateWindow("Long Story Short", SDL_WINDOWPOS_UNDEFINED,
+                       SDL_WINDOWPOS_UNDEFINED, dm.w, dm.h, SDL_WINDOW_OPENGL);
   assert(window);
-    // SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-    // SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-    // SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-    // SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+  // SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+  // SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+  // SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+  // SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 
-    // SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
+  // SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
 
-    // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
+  // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+  // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
 
-    // SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1); 
-    // glEnable(GL_MULTISAMPLE);
+  // SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+  // glEnable(GL_MULTISAMPLE);
 
-
-  SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" );
+  SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
   SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
   SDL_ShowCursor(false);
   SDL_ShowWindow(window);
@@ -67,10 +66,9 @@ void LSSApp::setup() {
   SDL_Log("Height     : %d\n", dm.h);
   // SDL_Log("\n");
 
-
 #ifdef _WIN32
-        // Initialize GLES2 function table
-        glFuncTable.initialize();
+  // Initialize GLES2 function table
+  glFuncTable.initialize();
 #endif
 
   /* Frames */
@@ -117,7 +115,6 @@ void LSSApp::setup() {
   commands.push_back(std::make_shared<UpCommand>());
   commands.push_back(std::make_shared<DownCommand>());
   commands.push_back(std::make_shared<UseCommand>());
-
 }
 
 void LSSApp::initModes() {
@@ -200,13 +197,14 @@ void LSSApp::startBg() {
   }
   bgRunning = true;
   fmt::print("bg restarted\n");
-  bgThread = std::thread([&](){
+  bgThread = std::thread([&]() {
     while (bgRunning) {
       std::map<std::shared_ptr<Cell>, int> ld;
 
       auto d = R::N(0, 3);
       for (auto c : hero->viewField) {
-        if (!c->illuminated) continue;
+        if (!c->illuminated)
+          continue;
         // auto d = 0;
         // for (auto ls : c->lightSources) {
         //   if (ld.find(ls) == ld.end()) {
@@ -217,11 +215,15 @@ void LSSApp::startBg() {
         // d /= c->lightSources.size();
 
         auto cd = R::N(0, 1);
-        auto f = state->fragments[c->y * (hero->currentLocation->cells.front().size() + 1) + c->x];
+        auto f = state->fragments
+                     [c->y * (hero->currentLocation->cells.front().size() + 1) +
+                      c->x];
         auto a = f->alpha + d + cd;
         auto ml = 25 + 5 * c->lightSources.size();
-        if (a < ml) a = ml;
-        if (a > 100) a = 100;
+        if (a < ml)
+          a = ml;
+        if (a > 100)
+          a = 100;
         f->setAlpha(a);
       }
 
@@ -229,7 +231,6 @@ void LSSApp::startBg() {
       SDL_Delay(32);
     }
   });
-  
 }
 
 void LSSApp::setListeners() { reactor = std::make_shared<EventReactor>(this); }
@@ -325,7 +326,7 @@ void LSSApp::invalidate() {
       state->fragments[index] = std::make_shared<TerrainSign>(t->type);
       state->fragments[index]->setAlpha(ec->illumination);
       if (t->type == TerrainType::TORCH_STAND) {
-       state->fragments[index]->setAlpha(100);
+        state->fragments[index]->setAlpha(100);
       }
     }
   }
@@ -351,7 +352,8 @@ void LSSApp::repeatTimer() {
         repeatKeyEvent = true;
         repeatTimer();
       }
-    }).detach();
+    })
+        .detach();
   }
 }
 
@@ -367,7 +369,8 @@ void LSSApp::keyDown(KeyEvent event) {
     if (lastKeyEvent != std::nullopt) {
       repeatTimer();
     }
-  }).detach();
+  })
+      .detach();
 
   auto prevMode = modeManager.modeFlags->currentMode;
   modeManager.processKey(event);
@@ -458,8 +461,8 @@ void LSSApp::update() {
   // gl::clear(state->currentPalette.bgColor);
   auto s = state;
   // auto cc = hero->currentCell;
-  // state->fragments[cc->y * (hero->currentLocation->cells.front().size() + 1) +cc->x]->setAlpha(rand() % 101);
-
+  // state->fragments[cc->y * (hero->currentLocation->cells.front().size() + 1)
+  // +cc->x]->setAlpha(rand() % 101);
 
   // gl::enableAlphaBlendingPremult();
   gameFrame->setSpacing(0);
@@ -517,10 +520,10 @@ void LSSApp::update() {
 }
 
 void LSSApp::drawFrame(pango::SurfaceRef frame, SDL_Rect dst) {
-    auto t = SDL_CreateTextureFromSurface(renderer, frame->getTexture());
-    SDL_RenderCopyEx(renderer, t, NULL, &dst, 0, NULL, SDL_FLIP_VERTICAL);
-    SDL_DestroyTexture(t);
-    // frame->free();
+  auto t = SDL_CreateTextureFromSurface(renderer, frame->getTexture());
+  SDL_RenderCopyEx(renderer, t, NULL, &dst, 0, NULL, SDL_FLIP_VERTICAL);
+  SDL_DestroyTexture(t);
+  // frame->free();
 }
 
 void LSSApp::draw() {
@@ -552,23 +555,28 @@ void LSSApp::draw() {
   }
 
   if (statusFrame != nullptr) {
-    drawFrame(statusFrame, {HOffset, getWindowHeight() - StatusLine::HEIGHT, getWindowWidth() - HOffset , StatusLine::HEIGHT});
+    drawFrame(statusFrame, {HOffset, getWindowHeight() - StatusLine::HEIGHT,
+                            getWindowWidth() - HOffset, StatusLine::HEIGHT});
   }
 
   if (logFrame != nullptr &&
       modeManager.modeFlags->currentMode != Modes::INSPECT) {
-      drawFrame(logFrame, { HOffset + gameWidth, 0, getWindowWidth() / 4, getWindowHeight()});
+    drawFrame(logFrame, {HOffset + gameWidth, 0, getWindowWidth() / 4,
+                         getWindowHeight()});
   }
 
   if (inspectFrame != nullptr &&
       modeManager.modeFlags->currentMode == Modes::INSPECT) {
-      drawFrame(inspectFrame, { HOffset + gameWidth, 0, getWindowWidth() / 4, getWindowHeight()});
+    drawFrame(inspectFrame, {HOffset + gameWidth, 0, getWindowWidth() / 4,
+                             getWindowHeight()});
   }
 
   if (heroFrame != nullptr) {
-    drawFrame(heroFrame, {HOffset, getWindowHeight() - StatusLine::HEIGHT - HeroLine::HEIGHT, getWindowWidth() - HOffset, HeroLine::HEIGHT});
+    drawFrame(heroFrame,
+              {HOffset,
+               getWindowHeight() - StatusLine::HEIGHT - HeroLine::HEIGHT,
+               getWindowWidth() - HOffset, HeroLine::HEIGHT});
   }
-
 
   needRedraw = false;
   SDL_RenderPresent(renderer);
@@ -592,49 +600,48 @@ LSSApp::~LSSApp() {
   }
 }
 
-
 int main(int argc, char *argv[]) {
   auto app = new LSSApp();
   app->setup();
-    Uint32 lastTick = SDL_GetTicks();
-    while (app->running) {
-        Uint32 now = SDL_GetTicks();
-        if (now - lastTick < 16) {
-            SDL_Delay(16 - (now - lastTick));
-            now = SDL_GetTicks();
-        }
-        lastTick = now;
-
-        // Handle SDL events
-        SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            switch (event.type) {
-              case SDL_QUIT:
-                app->running = false;
-                break;
-
-              case SDL_KEYUP:
-                app->keyUp(KeyEvent(event.key));
-                break;
-              case SDL_KEYDOWN:
-                app->keyDown(KeyEvent(event.key));
-                break;
-
-                case SDL_WINDOWEVENT: {
-                    if (event.window.event == SDL_WINDOWEVENT_CLOSE) {
-                      app->running = false;
-                    }
-                    break;
-                }
-            }
-        }
-
-        // Update the view
-        if (app->running) {
-            app->update();
-            app->draw();
-        }
+  Uint32 lastTick = SDL_GetTicks();
+  while (app->running) {
+    Uint32 now = SDL_GetTicks();
+    if (now - lastTick < 16) {
+      SDL_Delay(16 - (now - lastTick));
+      now = SDL_GetTicks();
     }
+    lastTick = now;
+
+    // Handle SDL events
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+      switch (event.type) {
+      case SDL_QUIT:
+        app->running = false;
+        break;
+
+      case SDL_KEYUP:
+        app->keyUp(KeyEvent(event.key));
+        break;
+      case SDL_KEYDOWN:
+        app->keyDown(KeyEvent(event.key));
+        break;
+
+      case SDL_WINDOWEVENT: {
+        if (event.window.event == SDL_WINDOWEVENT_CLOSE) {
+          app->running = false;
+        }
+        break;
+      }
+      }
+    }
+
+    // Update the view
+    if (app->running) {
+      app->update();
+      app->draw();
+    }
+  }
 
   delete app;
   return 0;

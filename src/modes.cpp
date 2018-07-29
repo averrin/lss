@@ -122,8 +122,8 @@ bool InspectMode::processKey(KeyEvent event) {
     if (d == std::nullopt)
       break;
     auto nc = app->hero->getCell(
-        app->hero->currentLocation->cells[app->state->cursor.y]
-                                         [app->state->cursor.x],
+        app->hero->currentLocation
+            ->cells[app->state->cursor.y][app->state->cursor.x],
         *utils::getDirectionByName(*d));
     app->state->cursor = {nc->x, nc->y};
     app->state->invalidate();
@@ -175,8 +175,8 @@ void InspectMode::render() {
   app->inspectState->appendContent({F(fmt::format(
       "Illuminated: [<b>{}</b>]", cell->illuminated ? check : " "))});
   app->inspectState->appendContent(State::END_LINE);
-  app->inspectState->appendContent({F(fmt::format(
-      "Illumination: <b>{}</b>", cell->illumination))});
+  app->inspectState->appendContent(
+      {F(fmt::format("Illumination: <b>{}</b>", cell->illumination))});
   app->inspectState->appendContent(State::END_LINE);
   auto f = app->state->fragments[cell->y * app->state->width + cell->x];
   // app->inspectState->appendContent({F(fmt::format(
@@ -248,9 +248,9 @@ void InspectMode::render() {
   app->inspectState->appendContent(
       {F(fmt::format("Light sources: <b>{}</b>", cell->lightSources.size()))});
 
-      for (auto c : cell->lightSources) {
-        app->state->selection.push_back({{c->x, c->y}, "#1f1"});
-      }
+  for (auto c : cell->lightSources) {
+    app->state->selection.push_back({{c->x, c->y}, "#1f1"});
+  }
   app->inspectState->appendContent(State::END_LINE);
   app->inspectState->appendContent(State::END_LINE);
   app->inspectState->appendContent({F(fmt::format(
@@ -458,12 +458,13 @@ bool NormalMode::processKey(KeyEvent event) {
   case SDL_SCANCODE_S:
     if (app->debug) {
       app->objectSelectMode->setHeader(F("Items to spawn: "));
-      app->objectSelectMode->setObjects(utils::castObjects<Object>(Prototype::ALL));
+      app->objectSelectMode->setObjects(
+          utils::castObjects<Object>(Prototype::ALL));
 
       Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
         if (auto item = std::dynamic_pointer_cast<Item>(o)) {
           return fmt::format("<span weight='bold'>{}</span> - {}", letter,
-                            item->getTitle(true));
+                             item->getTitle(true));
         }
         return "Unknown error"s;
       };
@@ -576,7 +577,7 @@ void GameOverMode::render(std::shared_ptr<State> state) {
 
   state->appendContent(F(fmt::format("<b>KILLS</b>:")));
   state->appendContent(State::END_LINE);
-  for (auto[name, kills] : hero->report.kills) {
+  for (auto [name, kills] : hero->report.kills) {
     state->appendContent(
         F(fmt::format("{:14}   <b>{}</b>", name + ":", kills)));
     state->appendContent(State::END_LINE);
@@ -627,7 +628,7 @@ void InventoryMode::render(std::shared_ptr<State> state) {
   }
 }
 
-//TODO: scroll
+// TODO: scroll
 void ObjectSelectMode::render(std::shared_ptr<State> state) {
   state->setContent({header});
   state->appendContent(State::END_LINE);

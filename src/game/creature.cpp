@@ -186,7 +186,7 @@ Creature::getSecondaryDmg(std::shared_ptr<Slot> primarySlot) {
   return std::nullopt;
 }
 
-//TODO: move alldamage logic to damageSpec
+// TODO: move alldamage logic to damageSpec
 int criticalHit(int m, int d, int e) {
   auto damage = m + d * e;
   if (damage < 0) {
@@ -229,7 +229,7 @@ std::shared_ptr<Damage> Creature::getDamage(std::shared_ptr<Object>) {
   auto damage = std::make_shared<Damage>();
   auto primaryDmg = getPrimaryDmg();
   if (primaryDmg != std::nullopt) {
-    auto[primarySlot, m, d, e] = *primaryDmg;
+    auto [primarySlot, m, d, e] = *primaryDmg;
     damage = updateDamage(damage, m, d, e);
   }
   auto haveLeft =
@@ -246,7 +246,7 @@ std::shared_ptr<Damage> Creature::getDamage(std::shared_ptr<Object>) {
           }) > 0;
   auto secondaryDmg = getSecondaryDmg(nullptr);
   if (secondaryDmg != std::nullopt && haveLeft) {
-    auto[secondarySlot, m, d, e] = *secondaryDmg;
+    auto [secondarySlot, m, d, e] = *secondaryDmg;
     if (hasTrait(Traits::DUAL_WIELD)) {
       damage = updateDamage(damage, m, d, e);
     } else {

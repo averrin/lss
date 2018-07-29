@@ -7,10 +7,10 @@
 #include <string>
 #include <variant>
 
+#include "lss/game/cell.hpp"
 #include "lss/game/enemy.hpp"
 #include "lss/game/item.hpp"
 #include "lss/game/terrain.hpp"
-#include "lss/game/cell.hpp"
 
 typedef std::variant<int, float, bool, std::string> tpl_arg;
 

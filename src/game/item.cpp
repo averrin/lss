@@ -27,8 +27,9 @@ std::string Item::getTitle(bool force) {
       effectNames.size() == 0 || (!identified && !force)
           ? ""
           : fmt::format(" {{{}}}", utils::join(effectNames, ", ")),
-      durability == -1 ? "" : fmt::format(" &lt;{}&gt;",
-                                          durability != 0
-                                              ? fmt::format("{}", durability)
-                                              : "broken"));
+      durability == -1
+          ? ""
+          : fmt::format(" &lt;{}&gt;", durability != 0
+                                           ? fmt::format("{}", durability)
+                                           : "broken"));
 }

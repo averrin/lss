@@ -6,9 +6,7 @@
 
 class KeyEvent {
 public:
-KeyEvent(SDL_KeyboardEvent e) : event(e) {
-    mods = SDL_GetModState();
-}
+  KeyEvent(SDL_KeyboardEvent e) : event(e) { mods = SDL_GetModState(); }
   SDL_KeyboardEvent event;
   SDL_Keymod mods;
 

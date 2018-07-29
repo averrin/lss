@@ -2,9 +2,9 @@
 #define __STATE_H_
 #include "lss/fragment.hpp"
 #include "lss/palette.hpp"
+#include <SDLPango.hpp>
 #include <string>
 #include <vector>
-#include <SDLPango.hpp>
 
 struct Position {
   int x;
@@ -58,7 +58,7 @@ public:
 
   bool damaged = true;
 
-// private:
+  // private:
   std::string cache;
 };
 

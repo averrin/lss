@@ -5,7 +5,7 @@
 #include "lss/utils.hpp"
 
 Magic::Magic(std::shared_ptr<Player> h) : hero(h) {
-    eb::EventBus::AddHandler<ZapCommandEvent>(*this);
+  eb::EventBus::AddHandler<ZapCommandEvent>(*this);
 }
 Magic::~Magic() {}
 
@@ -23,45 +23,48 @@ std::shared_ptr<Enemy> mkEnemy(std::shared_ptr<Location> location,
 }
 
 void Magic::onEvent(ZapCommandEvent &e) {
-  if (e.spell == nullptr) return;
+  if (e.spell == nullptr)
+    return;
   castSpell(e.spell);
 }
 
-void toggleTrait(std::shared_ptr<Player> hero, std::shared_ptr<ToggleTraitSpell> tspell) {
-    if (R::R() < tspell->probability) {
-      if (hero->hasTrait(tspell->trait)) {
-        hero->traits.erase(std::remove(
-            hero->traits.begin(), hero->traits.end(), tspell->trait));
-        MessageEvent me(nullptr, fmt::format("Undo {}", tspell->name));
-        eb::EventBus::FireEvent(me);
-      } else {
-        hero->traits.push_back(tspell->trait);
-        MessageEvent me(nullptr, fmt::format("Apply {}", tspell->name));
-        eb::EventBus::FireEvent(me);
-      }
+void toggleTrait(std::shared_ptr<Player> hero,
+                 std::shared_ptr<ToggleTraitSpell> tspell) {
+  if (R::R() < tspell->probability) {
+    if (hero->hasTrait(tspell->trait)) {
+      hero->traits.erase(
+          std::remove(hero->traits.begin(), hero->traits.end(), tspell->trait));
+      MessageEvent me(nullptr, fmt::format("Undo {}", tspell->name));
+      eb::EventBus::FireEvent(me);
     } else {
-      MessageEvent me(nullptr, fmt::format("Nothing happens"));
+      hero->traits.push_back(tspell->trait);
+      MessageEvent me(nullptr, fmt::format("Apply {}", tspell->name));
       eb::EventBus::FireEvent(me);
     }
-    hero->commit("toggle trait", 0);
+  } else {
+    MessageEvent me(nullptr, fmt::format("Nothing happens"));
+    eb::EventBus::FireEvent(me);
+  }
+  hero->commit("toggle trait", 0);
 }
 
-void applyEffect(std::shared_ptr<Player> hero, std::shared_ptr<EffectSpell> espell) {
-    MessageEvent me(nullptr, fmt::format("Apply {} effect", espell->name));
-    eb::EventBus::FireEvent(me);
-    hero->activeEffects.push_back(espell->effect);
-    hero->commit("apply effect", 0);
+void applyEffect(std::shared_ptr<Player> hero,
+                 std::shared_ptr<EffectSpell> espell) {
+  MessageEvent me(nullptr, fmt::format("Apply {} effect", espell->name));
+  eb::EventBus::FireEvent(me);
+  hero->activeEffects.push_back(espell->effect);
+  hero->commit("apply effect", 0);
 }
 void heal(std::shared_ptr<Player> hero, int min, int max) {
-    auto heal = R::Z(hero->HP_MAX(hero.get()) / 100 * min,
-                     hero->HP_MAX(hero.get()) / 100 * max);
-    hero->hp += heal;
-    if (hero->HP(hero.get()) > hero->HP_MAX(hero.get())) {
-      hero->hp = hero->HP_MAX(hero.get());
-    }
-    hero->commit("heal", 0);
-    MessageEvent me(nullptr, fmt::format("You healed {} hp", heal));
-    eb::EventBus::FireEvent(me);
+  auto heal = R::Z(hero->HP_MAX(hero.get()) / 100 * min,
+                   hero->HP_MAX(hero.get()) / 100 * max);
+  hero->hp += heal;
+  if (hero->HP(hero.get()) > hero->HP_MAX(hero.get())) {
+    hero->hp = hero->HP_MAX(hero.get());
+  }
+  hero->commit("heal", 0);
+  MessageEvent me(nullptr, fmt::format("You healed {} hp", heal));
+  eb::EventBus::FireEvent(me);
 }
 
 void Magic::castSpell(std::shared_ptr<Spell> spell) {
@@ -70,12 +73,12 @@ void Magic::castSpell(std::shared_ptr<Spell> spell) {
     hero->monsterSense = true;
     hero->commit("reveal", 0);
     hero->monsterSense = false;
-    //TODO: move monster sense to toggle trait
+    // TODO: move monster sense to toggle trait
   } else if (*spell == *Spells::MONSTER_SENSE) {
     hero->monsterSense = !hero->monsterSense;
   } else if (*spell == *Spells::SUMMON_ORK) {
-    auto c = hero->currentLocation->cells[hero->currentCell->y + 1]
-                                              [hero->currentCell->x];
+    auto c = hero->currentLocation
+                 ->cells[hero->currentCell->y + 1][hero->currentCell->x];
     hero->currentLocation->objects.push_back(
         mkEnemy(hero->currentLocation, c, hero, EnemyType::ORK));
     hero->commit("summon ork", 0);
@@ -87,8 +90,8 @@ void Magic::castSpell(std::shared_ptr<Spell> spell) {
     MessageEvent me(nullptr, "Your inventory was identified");
     eb::EventBus::FireEvent(me);
   } else if (*spell == *Spells::SUMMON_THING) {
-    auto c = hero->currentLocation->cells[hero->currentCell->y + 1]
-                                              [hero->currentCell->x];
+    auto c = hero->currentLocation
+                 ->cells[hero->currentCell->y + 1][hero->currentCell->x];
     // auto item = Prototype::GOD_PLATE->roll();
     auto lt = LootBox{1, {Prototype::POTION_MANA}};
     auto items = lt.open();
@@ -96,11 +99,11 @@ void Magic::castSpell(std::shared_ptr<Spell> spell) {
     hero->currentLocation->objects.push_back(items.front());
     hero->commit("summon thing", 0);
   } else if (*spell == *Spells::HEAL_LESSER) {
-      heal(hero, 10, 25);
+    heal(hero, 10, 25);
   } else if (*spell == *Spells::HEAL) {
-      heal(hero, 25, 50);
+    heal(hero, 25, 50);
   } else if (*spell == *Spells::HEAL_GREATER) {
-      heal(hero, 50, 100);
+    heal(hero, 50, 100);
   } else if (*spell == *Spells::RESTORE_MANA) {
     auto heal = R::Z(hero->MP_MAX(hero.get()) / 100 * 25,
                      hero->MP_MAX(hero.get()) / 100 * 50);
@@ -120,9 +123,8 @@ void Magic::castSpell(std::shared_ptr<Spell> spell) {
     MessageEvent me(nullptr, fmt::format("You were teleported."));
     eb::EventBus::FireEvent(me);
   } else if (auto tspell = std::dynamic_pointer_cast<ToggleTraitSpell>(spell)) {
-      toggleTrait(hero, tspell);
+    toggleTrait(hero, tspell);
   } else if (auto espell = std::dynamic_pointer_cast<EffectSpell>(spell)) {
-      applyEffect(hero, espell);
+    applyEffect(hero, espell);
   }
 }
-
