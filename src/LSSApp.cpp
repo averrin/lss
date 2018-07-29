@@ -126,6 +126,7 @@ void LSSApp::initModes() {
   gameOverMode = std::make_shared<GameOverMode>(this);
   inspectMode = std::make_shared<InspectMode>(this);
   inventoryMode = std::make_shared<InventoryMode>(this);
+  pauseMode = std::make_shared<PauseMode>(this);
 }
 
 void LSSApp::initStates() {
@@ -325,7 +326,7 @@ void LSSApp::invalidate() {
                t && hero->canSee(ec)) {
       state->fragments[index] = std::make_shared<TerrainSign>(t->type);
       state->fragments[index]->setAlpha(ec->illumination);
-      if (t->type == TerrainType::TORCH_STAND) {
+      if (t->emitsLight) {
         state->fragments[index]->setAlpha(100);
       }
     }
@@ -402,6 +403,9 @@ void LSSApp::keyDown(KeyEvent event) {
   case Modes::INSPECT:
     inspectMode->processKey(event);
     break;
+  case Modes::PAUSE:
+    pauseMode->processKey(event);
+    break;
   }
 }
 
@@ -471,6 +475,7 @@ void LSSApp::update() {
   case Modes::NORMAL:
     state->setSelect(false);
   case Modes::INSPECT:
+  case Modes::PAUSE:
   case Modes::INSERT:
   case Modes::DIRECTION:
   case Modes::HINTS:
@@ -537,6 +542,7 @@ void LSSApp::draw() {
   SDL_Rect dstG = {HOffset, VOffset, gameWidth, gameHeight};
   switch (modeManager.modeFlags->currentMode) {
   case Modes::INSPECT:
+  case Modes::PAUSE:
   case Modes::NORMAL:
   case Modes::INSERT:
   case Modes::DIRECTION:

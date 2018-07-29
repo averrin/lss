@@ -1,6 +1,7 @@
 #include "lss/game/magic.hpp"
 #include "lss/game/enemy.hpp"
 #include "lss/game/lootBox.hpp"
+#include "lss/game/terrain.hpp"
 #include "lss/generator/room.hpp"
 #include "lss/utils.hpp"
 
@@ -131,18 +132,39 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
   } else if (auto rspell = std::dynamic_pointer_cast<RadiusSpell>(spell)) {
     auto cells = caster->getInRadius(rspell->radius);
     if (auto ds = std::dynamic_pointer_cast<DamageSpell>(rspell->spell)) {
+      // TODO: log spell text
       for (auto c : cells) {
         ds->applySpell(hero->currentLocation, c);
       }
     }
     hero->commit("Radius spell", 0);
+    PauseEvent me([&]() {
+      auto objects = hero->currentLocation->objects;
+      auto ts = utils::castObjects<Terrain>(objects);
+      for (auto t : ts) {
+        if (t->type == TerrainType::FIREBALL) {
+          hero->currentLocation->objects.erase(
+              std::remove(objects.begin(), objects.end(), t), objects.end());
+        }
+      }
+    });
+    eb::EventBus::FireEvent(me);
   }
 }
 
 void DamageSpell::applySpell(std::shared_ptr<Location> location,
                              std::shared_ptr<Cell> c) {
-  auto creatures = utils::castObjects<Creature>(location->getObjects(c));
-  for (auto creature : creatures) {
-    creature->applyDamage(location->player, damage.getDamage());
+  auto objects = location->getObjects(c);
+  for (auto o : objects) {
+    if (auto creature = std::dynamic_pointer_cast<Creature>(o)) {
+      creature->applyDamage(location->player, damage.getDamage());
+    } else {
+      location->objects.erase(
+          std::remove(location->objects.begin(), location->objects.end(), o),
+          location->objects.end());
+    }
   }
+  auto fb = std::make_shared<Terrain>(TerrainType::FIREBALL, 8);
+  fb->currentCell = c;
+  location->objects.push_back(fb);
 }

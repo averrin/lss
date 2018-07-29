@@ -38,6 +38,9 @@ void StatusLine::setModeLine(Modes::ModeName mode) {
   case Modes::OBJECTSELECT:
     setContent(State::object_select_mode);
     break;
+  case Modes::PAUSE:
+    setContent(State::pause_mode);
+    break;
   }
 }
 

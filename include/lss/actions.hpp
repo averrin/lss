@@ -17,6 +17,7 @@ struct Modes {
     HELP,
     GAMEOVER,
     INSPECT,
+    PAUSE,
   };
   ModeName currentMode = ModeName::NORMAL;
 };

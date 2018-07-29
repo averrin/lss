@@ -293,6 +293,12 @@ void EventReactor::onEvent(EquipCommandEvent &e) {
   app->statusLine->setContent(State::object_select_mode);
 }
 
+void EventReactor::onEvent(PauseEvent &e) {
+  app->pauseMode->setCallback(e.callback);
+  app->statusLine->setContent(State::pause_mode);
+  app->modeManager.toPause();
+}
+
 void EventReactor::onEvent(ZapCommandEvent &e) {
   if (e.spell != nullptr)
     return;
@@ -331,7 +337,9 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
       return false;
     auto e = std::make_shared<ZapCommandEvent>(app->hero, spell);
     eb::EventBus::FireEvent(*e);
-    app->modeManager.toNormal();
+    if (app->modeManager.modeFlags->currentMode == Modes::OBJECTSELECT) {
+      app->modeManager.toNormal();
+    }
     return true;
   });
 

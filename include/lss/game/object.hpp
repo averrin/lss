@@ -7,6 +7,8 @@
 
 #include "lss/game/cell.hpp"
 
+enum class LightType { FIRE, MAGIC };
+
 class Object : public eb::Object, public std::enable_shared_from_this<Object> {
 public:
   Object() {}
@@ -23,7 +25,11 @@ public:
   bool seeThrough = true;
   std::string name;
   int zIndex = 0;
+
+  // TODO: move to other class
   bool emitsLight = false;
+  float lightStrength = 0;
+  LightType lightType;
 
   std::vector<eb::HandlerRegistrationPtr> handlers;
   std::shared_ptr<Cell> currentCell;

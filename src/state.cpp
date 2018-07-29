@@ -111,6 +111,7 @@ const Fragments State::unknown_command = {
 const Fragments State::object_select_mode = {
     F("<span color='{{blue}}'>Select item</span> [a-y] or [Zz, Esc] for exit")};
 const Fragments State::text_mode = {F("[Zz, Esc] for exit")};
+const Fragments State::pause_mode = {F("Paused. Press any key for continue")};
 const Fragments State::inspect_mode = {
     F("<span color='{{blue}}'>Select cell</span> [<b>yuhjklbn</b>] or [Zz, "
       "Esc] for exit")};

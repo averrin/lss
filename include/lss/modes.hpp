@@ -53,6 +53,9 @@ struct modes {
     auto is_inspect_event = [](EnableModeEvent e) {
       return e.mode == Modes::INSPECT;
     };
+    auto is_pause_event = [](EnableModeEvent e) {
+      return e.mode == Modes::PAUSE;
+    };
 
     auto set_hints = [](std::shared_ptr<Modes> m) {
       std::cout << "Set HINTS mode" << std::endl;
@@ -94,6 +97,10 @@ struct modes {
       std::cout << "Set INSPECT mode" << std::endl;
       m->currentMode = Modes::INSPECT;
     };
+    auto set_pause = [](std::shared_ptr<Modes> m) {
+      std::cout << "Set PAUSE mode" << std::endl;
+      m->currentMode = Modes::PAUSE;
+    };
 
     // clang-format off
         return make_transition_table(
@@ -106,6 +113,8 @@ struct modes {
             , "normal"_s + event<EnableModeEvent> [is_help_event] / set_help  = "inventory"_s
             , "normal"_s + event<EnableModeEvent> [is_go_event] / set_go  = "game_over"_s
             , "normal"_s + event<EnableModeEvent> [is_inspect_event] / set_inspect  = "inspect"_s
+            , "normal"_s + event<EnableModeEvent> [is_pause_event] / set_pause  = "pause"_s
+            , "object_select"_s + event<EnableModeEvent> [is_pause_event] / set_pause  = "pause"_s
 
             , "hints"_s + event<KeyPressedEvent> [is_esc] / set_normal = "normal"_s
             , "leader"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
@@ -127,6 +136,7 @@ struct modes {
             , "help"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
             , "inspect"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
             , "game_over"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
+            , "pause"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
         );
     // clang-format on
   }
@@ -144,6 +154,7 @@ public:
   void toGameOver();
   void toObjectSelect();
   void toInspect();
+  void toPause();
   std::shared_ptr<Modes> modeFlags = std::make_shared<Modes>();
 
 private:
@@ -208,6 +219,14 @@ public:
   std::shared_ptr<Fragment> header;
   bool processKey(KeyEvent e);
   virtual void render(std::shared_ptr<State>) = 0;
+};
+
+class PauseMode : public Mode {
+public:
+  PauseMode(LSSApp *app) : Mode(app){};
+  bool processKey(KeyEvent e);
+  void setCallback(PauseCallback c) { callback = c; };
+  PauseCallback callback;
 };
 
 class ObjectSelectMode : public TextMode {

@@ -229,7 +229,7 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
   auto enemies = utils::castObjects<Enemy>(objects);
   std::vector<std::shared_ptr<Cell>> torches;
   for (auto ts : utils::castObjects<Terrain>(objects)) {
-    if (ts->type == TerrainType::TORCH_STAND) {
+    if (ts->emitsLight) {
       torches.push_back(ts->currentCell);
     }
   }
@@ -270,6 +270,7 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
     }
   }
   for (auto t : torches) {
+    // TODO: use lightStrength
     for (auto c : getVisible(t, TORCH_DISTANCE)) {
       c->lightSources.push_back(t);
       c->illuminated = true;
@@ -356,9 +357,12 @@ void Location::PrintStateInfo(void *state){};
 
 Objects Location::getObjects(std::shared_ptr<Cell> cell) {
   Objects cellObjects(objects.size());
-  auto it = std::copy_if(
-      objects.begin(), objects.end(), cellObjects.begin(),
-      [cell](std::shared_ptr<Object> o) { return o->currentCell == cell; });
+  auto it = std::copy_if(objects.begin(), objects.end(), cellObjects.begin(),
+                         [cell](std::shared_ptr<Object> o) {
+                           // return o->currentCell == cell;
+                           return o->currentCell->x == cell->x &&
+                                  o->currentCell->y == cell->y;
+                         });
 
   cellObjects.resize(std::distance(cellObjects.begin(), it));
   return cellObjects;
@@ -374,6 +378,7 @@ Location::getVisible(std::shared_ptr<Cell> start, float distance) {
   std::vector<std::shared_ptr<Cell>> result;
   fov::Vec creaturePoint{start->x, start->y};
   fov::Vec bounds{(int)cells.front().size(), (int)cells.size()};
+  auto os = start->seeThrough;
   start->seeThrough = true;
   auto field = fov::refresh(creaturePoint, bounds, cells);
   // fmt::print("{}.{} : {}\n", start->x, start->y, field.size());
@@ -384,7 +389,7 @@ Location::getVisible(std::shared_ptr<Cell> start, float distance) {
       result.push_back(c);
     }
   }
-  start->seeThrough = false;
+  start->seeThrough = os;
   visibilityCache[{start, distance}] = result;
   return result;
 }

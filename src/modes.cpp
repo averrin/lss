@@ -68,6 +68,10 @@ void ModeManager::toInspect() {
   state_machine.process_event(EnableModeEvent{Modes::INSPECT});
 }
 
+void ModeManager::toPause() {
+  state_machine.process_event(EnableModeEvent{Modes::PAUSE});
+}
+
 void HintsMode::processEvent(std::shared_ptr<LssEvent> event) {}
 
 Mode::Mode(LSSApp *a) : app(a){};
@@ -87,6 +91,15 @@ bool ObjectSelectMode::processKey(KeyEvent event) {
     }
   }
   return false;
+}
+
+bool PauseMode::processKey(KeyEvent event) {
+  if (callback != nullptr) {
+    callback();
+  }
+  app->modeManager.toNormal();
+  app->invalidate("unpause");
+  return true;
 }
 
 bool GameOverMode::processKey(KeyEvent event) {

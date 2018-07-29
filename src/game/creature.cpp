@@ -449,7 +449,7 @@ std::vector<std::shared_ptr<Cell>> Creature::getInRadius(float distance) {
       viewField.begin(), viewField.end(), cells.begin(), [&](auto c) {
         auto d =
             sqrt(pow(c->x - currentCell->x, 2) + pow(c->y - currentCell->y, 2));
-        return c != currentCell && d <= distance;
+        return c != currentCell && d <= distance && c->type.passThrough;
       });
   cells.resize(std::distance(cells.begin(), it));
   return cells;

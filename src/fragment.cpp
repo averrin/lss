@@ -53,6 +53,7 @@ std::string Fragment::render(State *state) {
 
 std::map<TerrainSpec, std::string> terrainSigns = {
     {TerrainType::TORCH_STAND, "*"},
+    {TerrainType::FIREBALL, "*"},
     {TerrainType::STATUE, "&amp;"},
     {TerrainType::ALTAR, "_"},
     // {TerrainType::BUSH, "⇞"},
@@ -60,9 +61,8 @@ std::map<TerrainSpec, std::string> terrainSigns = {
 };
 
 std::map<TerrainSpec, std::string> terrainColors = {
-    {TerrainType::TORCH_STAND, "orange"},
-    {TerrainType::STATUE, "white"},
-    {TerrainType::ALTAR, "gray"},
+    {TerrainType::TORCH_STAND, "orange"}, {TerrainType::FIREBALL, "red"},
+    {TerrainType::STATUE, "white"},       {TerrainType::ALTAR, "gray"},
     {TerrainType::BUSH, "forestgreen"},
 };
 

@@ -35,7 +35,7 @@ public:
   std::shared_ptr<Effect> effect;
 };
 
-//TODO: damage type
+// TODO: damage type
 class DamageSpell : public Spell {
 public:
   DamageSpell(std::string n, DamageSpec dmg) : Spell(n), damage(dmg) {}

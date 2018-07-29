@@ -5,6 +5,7 @@
 - animated light flickering
 - refactor magic system
 - init radius damage spell
+- pause mode and fireball visualization
 
 ### 0.0.9
 - repeat key

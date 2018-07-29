@@ -1,6 +1,7 @@
 #ifndef __EVENTS_H_
 #define __EVENTS_H_
 
+#include <functional>
 #include <lss/game/direction.hpp>
 
 #include "Event.hpp"
@@ -86,6 +87,13 @@ public:
       : eb::Event(s), actionPoints(ap), silent(q) {}
   int actionPoints;
   bool silent;
+};
+
+typedef std::function<void()> PauseCallback;
+class PauseEvent : public eb::Event {
+public:
+  PauseEvent(PauseCallback c) : eb::Event(nullptr), callback(c) {}
+  PauseCallback callback;
 };
 
 /**********/
