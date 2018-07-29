@@ -37,13 +37,14 @@ public:
 
 class SpeedModifier : public Effect {
 public:
-  SpeedModifier(R::rndInt m) : Effect(AttributeType::SPEED, m){};
+  SpeedModifier(float m) : Effect(AttributeType::SPEED), smodifier(m){};
   std::string getTitle();
   std::string getSign();
+  float smodifier;
   std::shared_ptr<Effect> clone() {
-    return std::make_shared<SpeedModifier>(modifier);
+    return std::make_shared<SpeedModifier>(smodifier);
   };
-  std::variant<float, int> getModifier() { return R::get(modifier); };
+  std::variant<float, int> getModifier() { return smodifier; };
 };
 
 class HPModifier : public Effect {
@@ -73,13 +74,14 @@ public:
 
 class CritModifier : public Effect {
 public:
-  CritModifier(R::rndInt m) : Effect(AttributeType::CRIT_CHANCE, m){};
+  CritModifier(float m) : Effect(AttributeType::CRIT_CHANCE), cmodifier(m){};
   std::string getTitle();
   std::string getSign();
+    float cmodifier;
   std::shared_ptr<Effect> clone() {
-    return std::make_shared<CritModifier>(modifier);
+    return std::make_shared<CritModifier>(cmodifier);
   };
-  std::variant<float, int> getModifier() { return R::get(modifier); };
+  std::variant<float, int> getModifier() { return cmodifier; };
 };
 
 class ArmorValue : public Effect {
@@ -177,8 +179,9 @@ typedef std::function<void(std::shared_ptr<Creature>)> EffectApplier;
 
 class OverTimeEffect : public Effect {
 public:
-  OverTimeEffect(R::rndInt m, int ti, EoT t)
-      : Effect(AttributeType::NONE, m), tick(ti), type(t){};
+  OverTimeEffect(std::string n, R::rndInt m, int ti, EoT t)
+      : Effect(AttributeType::NONE, m), name(n), tick(ti), type(t){};
+  std::string name;
   int tick;
   int accomulator = 0;
   // EffectApplier applier;
@@ -186,7 +189,7 @@ public:
   std::string getTitle();
   std::string getSign();
   std::shared_ptr<Effect> clone() {
-    return std::make_shared<OverTimeEffect>(modifier, tick, type);
+    return std::make_shared<OverTimeEffect>(name, modifier, tick, type);
   };
 
   std::variant<float, int> getModifier() { return R::get(modifier); };
@@ -204,10 +207,10 @@ public:
 };
 
 namespace OverTimeEffects {
-const auto HEAL = std::make_shared<OverTimeEffect>(5, 500, EoT::HEAL);
+const auto HEAL = std::make_shared<OverTimeEffect>("Heal", 5, 500, EoT::HEAL);
 const auto MANA_RESTORE =
-    std::make_shared<OverTimeEffect>(1, 15000, EoT::MANA_RESTORE);
-const auto POISON = std::make_shared<OverTimeEffect>(3, 500, EoT::POISON);
+    std::make_shared<OverTimeEffect>("Mana restore", 1, 15000, EoT::MANA_RESTORE);
+const auto POISON = std::make_shared<OverTimeEffect>("Poison", 3, 500, EoT::POISON);
 } // namespace OverTimeEffects
 
 typedef std::vector<std::shared_ptr<Effect>> Effects;

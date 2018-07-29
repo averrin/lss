@@ -26,7 +26,7 @@ std::string Item::getTitle(bool force) {
           : fmt::format(" {}", utils::join(specialPostfix, " ")),
       effectNames.size() == 0 || (!identified && !force)
           ? ""
-          : fmt::format(" {{{}}}", utils::join(effectNames, " ,")),
+          : fmt::format(" {{{}}}", utils::join(effectNames, ", ")),
       durability == -1 ? "" : fmt::format(" &lt;{}&gt;",
                                           durability != 0
                                               ? fmt::format("{}", durability)

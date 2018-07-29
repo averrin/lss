@@ -4,17 +4,17 @@
 #include <fmt/format.h>
 
 std::string SpeedModifier::getTitle() {
-  return fmt::format("speed {:+d}", R::get(modifier));
+  return fmt::format("speed {:+g}", std::get<float>(getModifier()));
 }
 std::string SpeedModifier::getSign() { return "\u1f5f2"s; }
 
 std::string HPModifier::getTitle() {
-  return fmt::format("hp {:+d}", R::get(modifier));
+  return fmt::format("hp {:+d}", std::get<int>(getModifier()));
 }
 std::string HPModifier::getSign() { return "\u1f5f2"s; }
 
 std::string MeleeDamage::getTitle() {
-  return fmt::format("({:+d}, {}d{})", R::get(modifier), R::get(dices),
+  return fmt::format("({:+d}, {}d{})", std::get<int>(getModifier()), R::get(dices),
                      R::get(edges));
 }
 std::string MeleeDamage::getSign() { return ""s; }
@@ -25,7 +25,7 @@ std::string VisibilityModifier::getTitle() {
 std::string VisibilityModifier::getSign() { return "V"s; }
 
 std::string CritModifier::getTitle() {
-  return fmt::format("crit chance {:+d}", R::get(modifier));
+  return fmt::format("crit chance {:+g}", std::get<float>(getModifier()));
 }
 std::string CritModifier::getSign() { return "⚔"s; }
 
@@ -35,13 +35,12 @@ std::string LastingEffect::getTitle() {
 std::string LastingEffect::getSign() { return effect->getSign(); }
 
 std::string ArmorValue::getTitle() {
-  return fmt::format("[{:+d}]", R::get(modifier));
+  return fmt::format("[{:+d}]", std::get<int>(getModifier()));
 }
 std::string ArmorValue::getSign() { return ""s; }
 
-// TODO: get name in constructor
 std::string OverTimeEffect::getTitle() {
-  return fmt::format("not implemented");
+  return fmt::format("{}", name);
 }
 std::string OverTimeEffect::getSign() {
   switch (type) {
