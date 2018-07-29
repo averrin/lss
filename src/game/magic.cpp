@@ -79,12 +79,6 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
     // TODO: move monster sense to toggle trait
   } else if (*spell == *Spells::MONSTER_SENSE) {
     hero->monsterSense = !hero->monsterSense;
-  } else if (*spell == *Spells::SUMMON_ORK) {
-    auto c = hero->currentLocation
-                 ->cells[hero->currentCell->y + 1][hero->currentCell->x];
-    hero->currentLocation->objects.push_back(
-        mkEnemy(hero->currentLocation, c, hero, EnemyType::ORK));
-    hero->commit("summon ork", 0);
   } else if (*spell == *Spells::IDENTIFY) {
     for (auto i : hero->inventory) {
       hero->identify(i);
@@ -151,6 +145,7 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
     eb::EventBus::FireEvent(me);
     hero->currentLocation->invalidate();
   }
+  // TODO: line spell with direction choosing
 }
 
 void DamageSpell::applySpell(std::shared_ptr<Location> location,

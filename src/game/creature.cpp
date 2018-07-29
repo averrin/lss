@@ -443,6 +443,7 @@ void Creature::applyEoT(EoT eot, int modifier) {
   }
 }
 
+// TODO: get not vissible, but reachable
 std::vector<std::shared_ptr<Cell>> Creature::getInRadius(float distance) {
   std::vector<std::shared_ptr<Cell>> cells(viewField.size());
   auto it = std::copy_if(

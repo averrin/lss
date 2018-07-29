@@ -182,6 +182,16 @@ EnemySpec const OGRE = {
     {Traits::NIGHT_VISION},
     Items{Prototype::GREAT_AXE},
 };
+
+  const std::vector<EnemySpec> ALL = {
+    RAT,
+    SNAKE, VIPER,
+    BAT, BAT_LARGE,
+    GOBLIN, GOBLIN_ROGUE, GOBLIN_LIEUTENANT,
+    ORK, ORK_BLACK,
+    PIXI,
+    OGRE,
+  };
 } // namespace EnemyType
 // clang-format on
 
@@ -189,7 +199,6 @@ class Enemy : public Creature, public eb::EventHandler<CommitEvent> {
 public:
   Enemy(EnemySpec);
   ~Enemy();
-  bool interact(std::shared_ptr<Object>) override;
   std::optional<Items> drop();
 
   Direction cd = Direction::W;
@@ -202,8 +211,15 @@ public:
   bool randomPath();
   void onDamage(std::shared_ptr<Creature>, std::shared_ptr<Damage>);
   void onDie();
+  bool interact(std::shared_ptr<Object> actor);
 
   virtual void onEvent(CommitEvent &e) override;
+};
+
+class EnemySpecHolder : public Object {
+public:
+  EnemySpecHolder(EnemySpec s) : Object(), spec(s) {}
+  EnemySpec spec;
 };
 
 #endif // __ENEMY_H_

@@ -30,8 +30,8 @@ public:
   bool equip(std::shared_ptr<Slot>, std::shared_ptr<Item>);
   bool equip(std::shared_ptr<Item>);
   bool unequip(std::shared_ptr<Slot>);
-  bool interact(std::shared_ptr<Object>) override;
   void commit(std::string reason, int ap, bool s = false);
+  bool interact(std::shared_ptr<Object> actor);
 
   std::string getDmgDesc();
   void onDamage(std::shared_ptr<Creature>, std::shared_ptr<Damage>);

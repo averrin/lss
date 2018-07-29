@@ -141,9 +141,7 @@ public:
     }
   }
 
-    void invalidate() {
-      needUpdateLight = true;
-    }
+  void invalidate() { needUpdateLight = true; }
 
 private:
   bool needUpdateLight = true;

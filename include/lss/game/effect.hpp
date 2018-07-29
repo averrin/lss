@@ -13,6 +13,8 @@
 // maybe create variant with int, float, rndInt and rndFloat
 // and write one function for baase modification (see lss/creature.cpp)
 // and maybe make it Objects for castObjects filtering;
+
+// TODO: area effects. With visualization
 class Effect {
 public:
   Effect(AttributeType at) : type(at){};

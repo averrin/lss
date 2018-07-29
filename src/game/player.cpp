@@ -211,12 +211,6 @@ void Player::onEvent(AttackCommandEvent &e) {
     auto d = ds[rand() % ds.size()];
     e.direction = *utils::getDirectionByName(d);
   }
-  if (hasTrait(Traits::CONFUSED)) {
-    auto ds =
-        std::vector<std::string>{"e", "s", "w", "n", "nw", "ne", "sw", "se"};
-    auto d = ds[rand() % ds.size()];
-    e.direction = *utils::getDirectionByName(d);
-  }
 
   if (attack(e.direction)) {
     fmt::print("attack [{}]\n", ap_cost::ATTACK / SPEED(this));

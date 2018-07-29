@@ -471,29 +471,66 @@ bool NormalMode::processKey(KeyEvent event) {
     break;
   case SDL_SCANCODE_S:
     if (app->debug) {
-      app->objectSelectMode->setHeader(F("Items to spawn: "));
-      app->objectSelectMode->setObjects(
-          utils::castObjects<Object>(Prototype::ALL));
-
-      Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
-        if (auto item = std::dynamic_pointer_cast<Item>(o)) {
-          return fmt::format("<span weight='bold'>{}</span> - {}", letter,
-                             item->getTitle(true));
+      if (event.isShiftDown()) {
+        app->objectSelectMode->setHeader(F("Enemies to spawn: "));
+        std::vector<std::shared_ptr<EnemySpecHolder>> holders;
+        for (auto s : EnemyType::ALL) {
+          holders.push_back(std::make_shared<EnemySpecHolder>(s));
         }
-        return "Unknown error"s;
-      };
-      app->objectSelectMode->setFormatter(formatter);
+        app->objectSelectMode->setObjects(utils::castObjects<Object>(holders));
 
-      app->objectSelectMode->setCallback([&](std::shared_ptr<Object> o) {
-        auto item = std::dynamic_pointer_cast<Item>(o)->roll();
-        item->currentCell = app->hero->currentCell;
-        app->hero->currentLocation->objects.push_back(item);
-        app->modeManager.toNormal();
-        return true;
-      });
+        Formatter formatter = [](std::shared_ptr<Object> o,
+                                 std::string letter) {
+          if (auto sh = std::dynamic_pointer_cast<EnemySpecHolder>(o)) {
+            return fmt::format("<span weight='bold'>{}</span> - {}", letter,
+                               sh->spec.name);
+          }
+          return "Unknown error"s;
+        };
+        app->objectSelectMode->setFormatter(formatter);
 
-      app->objectSelectMode->render(app->objectSelectState);
-      app->modeManager.toObjectSelect();
+        app->objectSelectMode->setCallback([&](std::shared_ptr<Object> o) {
+          auto sh = std::dynamic_pointer_cast<EnemySpecHolder>(o);
+          auto enemy = std::make_shared<Enemy>(sh->spec);
+          enemy->currentCell = app->hero->currentCell;
+          enemy->currentLocation = app->hero->currentLocation;
+
+          enemy->handlers.push_back(
+              eb::EventBus::AddHandler<CommitEvent>(*enemy, app->hero));
+          enemy->calcViewField();
+          app->hero->currentLocation->objects.push_back(enemy);
+          app->modeManager.toNormal();
+          return true;
+        });
+
+        app->objectSelectMode->render(app->objectSelectState);
+        app->modeManager.toObjectSelect();
+      } else {
+        app->objectSelectMode->setHeader(F("Items to spawn: "));
+        app->objectSelectMode->setObjects(
+            utils::castObjects<Object>(Prototype::ALL));
+
+        Formatter formatter = [](std::shared_ptr<Object> o,
+                                 std::string letter) {
+          if (auto item = std::dynamic_pointer_cast<Item>(o)) {
+            return fmt::format("<span weight='bold'>{}</span> - {}", letter,
+                               item->getTitle(true));
+          }
+          return "Unknown error"s;
+        };
+        app->objectSelectMode->setFormatter(formatter);
+
+        app->objectSelectMode->setCallback([&](std::shared_ptr<Object> o) {
+          auto item = std::dynamic_pointer_cast<Item>(o)->roll();
+          item->currentCell = app->hero->currentCell;
+          app->hero->currentLocation->objects.push_back(item);
+          app->modeManager.toNormal();
+          return true;
+        });
+
+        app->objectSelectMode->render(app->objectSelectState);
+        app->modeManager.toObjectSelect();
+      }
     }
     break;
   default:
@@ -503,6 +540,7 @@ bool NormalMode::processKey(KeyEvent event) {
   return true;
 }
 
+// TODO: migrate to callback
 bool DirectionMode::processKey(KeyEvent event) {
   std::optional<std::string> dirName = getDir(event.getCode());
   if (dirName != std::nullopt) {
@@ -567,7 +605,6 @@ void GameOverMode::render(std::shared_ptr<State> state) {
     }
   }
 
-  // TODO: addstandalon end game report
   state->appendContent(
       F(fmt::format("<b>{}</b> [{}]", hero->name, hero->level)));
   state->appendContent(State::END_LINE);

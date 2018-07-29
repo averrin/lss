@@ -26,7 +26,7 @@ rendering quality. And you may need install some deps.
 - [X] Better event log
 - [X] After death stats
 - [ ] Hero status page
-- [ ] Debug menus for summoning enemies/items & location creator
+- [X] Debug menus for summoning enemies/items & location creator
 - [ ] Refactor effects system
 - [ ] Weights
 - [ ] Passive, patrol and "hero search" AI, stealth
