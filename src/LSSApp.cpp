@@ -158,6 +158,7 @@ void LSSApp::startGame() {
 
   bgRunning = true;
   hero = std::make_shared<Player>();
+  magic = std::make_shared<Magic>(hero);
   heroLine = std::make_shared<HeroLine>(heroState, hero);
   logPanel = std::make_shared<LogPanel>(logState, hero);
   statusLine = std::make_shared<StatusLine>(statusState);
@@ -189,11 +190,21 @@ void LSSApp::startGame() {
   invalidate("init");
   gameFrame->setTextAlignment(pango::TextAlignment::LEFT);
 
+  startBg();
+}
+
+void LSSApp::startBg() {
+  bgRunning = false;
+  if (bgThread.joinable()) {
+    bgThread.join();
+  }
+  bgRunning = true;
+  fmt::print("bg restarted\n");
   bgThread = std::thread([&](){
     while (bgRunning) {
       std::map<std::shared_ptr<Cell>, int> ld;
 
-      auto d = R::N(0, 5);
+      auto d = R::N(0, 3);
       for (auto c : hero->viewField) {
         if (!c->illuminated) continue;
         // auto d = 0;
@@ -218,6 +229,7 @@ void LSSApp::startGame() {
       SDL_Delay(32);
     }
   });
+  
 }
 
 void LSSApp::setListeners() { reactor = std::make_shared<EventReactor>(this); }
@@ -327,11 +339,8 @@ void LSSApp::invalidate() {
 
   state->width = hero->currentLocation->cells.front().size();
   state->height = hero->currentLocation->cells.size();
-
-
+  startBg();
   // state->invalidate();
-  // state->render(gameFrame);
-  // update();
 }
 
 void LSSApp::repeatTimer() {

@@ -133,16 +133,11 @@ void Enemy::onEvent(CommitEvent &e) {
   auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
   if (HP(this) <= 0 || HP(hero.get()) <= 0)
     return;
+
   auto t0 = std::chrono::system_clock::now();
   calcViewField();
   if (e.actionPoints == 0 ||
       (!canSee(hero->currentCell) && !hero->canSee(currentCell))) {
-    // auto t1 = std::chrono::system_clock::now();
-    // using milliseconds = std::chrono::duration<double, std::milli>;
-    // milliseconds ms = t1 - t0;
-    // std::cout << "onCommit ZERO: " << rang::fg::red << "enemy"
-    //           << rang::style::reset << ": " << rang::fg::green << ms.count()
-    //           << rang::style::reset << '\n';
     return;
   }
 

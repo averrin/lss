@@ -23,6 +23,7 @@ public:
   bool seeThrough = true;
   std::string name;
   int zIndex = 0;
+  bool emitsLight = false;
 
   std::vector<eb::HandlerRegistrationPtr> handlers;
   std::shared_ptr<Cell> currentCell;

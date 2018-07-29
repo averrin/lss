@@ -27,6 +27,7 @@
 #include "lss/game/door.hpp"
 #include "lss/game/enemy.hpp"
 #include "lss/game/player.hpp"
+#include "lss/game/magic.hpp"
 
 #include "lss/ui/heroLine.hpp"
 #include "lss/ui/logPanel.hpp"
@@ -53,6 +54,7 @@ public:
   void draw();
   bool running = true;
   bool bgRunning = true;
+  void startBg();
 
   SDL_Window* window = nullptr;
   SDL_Renderer *renderer = nullptr;
@@ -126,6 +128,7 @@ public:
   std::shared_ptr<State> logState;
 
   std::shared_ptr<Player> hero;
+  std::shared_ptr<Magic> magic;
 
   std::vector<std::shared_ptr<Command>> commands;
 

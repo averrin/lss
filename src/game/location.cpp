@@ -84,6 +84,13 @@ void Location::onEvent(CommitEvent &e) {
     eb::EventBus::FireEvent(e2);
   }
 
+  auto creatures = utils::castObjects<Creature>(objects);
+  for (auto c : creatures) {
+    if (c->bgThread.joinable()) {
+      c->bgThread.join();
+    }
+  }
+
   LocationChangeEvent ec(nullptr);
   eb::EventBus::FireEvent(ec);
 }
@@ -280,15 +287,18 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
           lss.push_back(ls);
         }
       }
-      auto d = lss.size();
-      if (d == 0) continue;
+      auto d = 0;
+      if (lss.size() == 0) {
+        c->illumination = Cell::MINIMUM_LIGHT;
+        continue;
+      }
       for (auto ls : lss) {
         d += sqrt(pow(c->x - ls->x, 2) + pow(c->y - ls->y, 2));
       }
       d /= lss.size();
       c->illumination = ((TORCH_DISTANCE - d) / TORCH_DISTANCE * 110) + Cell::DEFAULT_LIGHT + 5;
-      if (c->illumination < 1) {
-        c->illumination = 1;
+      if (c->illumination < Cell::MINIMUM_LIGHT) {
+        c->illumination = Cell::MINIMUM_LIGHT;
       } else if (c->illumination > 100){
           c->illumination = 100;
       }

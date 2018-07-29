@@ -118,7 +118,7 @@ void EventReactor::onEvent(UseCommandEvent &e) {
     auto me = std::make_shared<MessageEvent>(
         nullptr, fmt::format("You use {}", e.item->getTitle()));
     eb::EventBus::FireEvent(*me);
-    return castSpell(spell);
+    return app->magic->castSpell(spell);
   }
   app->objectSelectMode->setHeader(F("Items to use: "));
 
@@ -294,7 +294,7 @@ void EventReactor::onEvent(EquipCommandEvent &e) {
 
 void EventReactor::onEvent(ZapCommandEvent &e) {
   if (e.spell != nullptr)
-    return castSpell(e.spell);
+    return;
 
   app->objectSelectMode->setHeader(F("Spells for zap: "));
 
@@ -337,129 +337,6 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
   app->objectSelectMode->render(app->objectSelectState);
   app->modeManager.toObjectSelect();
   app->statusLine->setContent(State::text_mode);
-}
-
-std::shared_ptr<Enemy> mkEnemy(std::shared_ptr<Location> location,
-                               std::shared_ptr<Cell> c,
-                               std::shared_ptr<Player> hero, EnemySpec type) {
-  auto enemy = std::make_shared<Enemy>(type);
-  enemy->currentCell = c;
-  enemy->currentLocation = location;
-
-  enemy->handlers.push_back(
-      eb::EventBus::AddHandler<CommitEvent>(*enemy, hero));
-  enemy->calcViewField();
-  return enemy;
-}
-
-void EventReactor::castSpell(std::shared_ptr<Spell> spell) {
-  if (*spell == *Spells::REVEAL) {
-    app->hero->currentLocation->reveal();
-    app->hero->monsterSense = true;
-    app->hero->commit("reveal", 0);
-    app->invalidate("reveal");
-    app->hero->monsterSense = false;
-  } else if (*spell == *Spells::MONSTER_SENSE) {
-    app->hero->monsterSense = !app->hero->monsterSense;
-    // } else if (*spell == *Spells::MONSTER_FREEZE) {
-    //   for (auto o : app->hero->currentLocation->objects) {
-    //     if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
-    //       e->type.aiType = AIType::NO_AI;
-    //     }
-    //   }
-    //   app->statusLine->setContent({F("Enemy freezed!")});
-  } else if (*spell == *Spells::SUMMON_ORK) {
-    auto c = app->hero->currentLocation->cells[app->hero->currentCell->y + 1]
-                                              [app->hero->currentCell->x];
-    app->hero->currentLocation->objects.push_back(
-        mkEnemy(app->hero->currentLocation, c, app->hero, EnemyType::ORK));
-    app->hero->commit("summon ork", 0);
-  } else if (*spell == *Spells::IDENTIFY) {
-    for (auto i : app->hero->inventory) {
-      app->hero->identify(i);
-    }
-
-    MessageEvent me(nullptr, "Your inventory was identified");
-    eb::EventBus::FireEvent(me);
-  } else if (*spell == *Spells::SUMMON_PLATE) {
-    auto c = app->hero->currentLocation->cells[app->hero->currentCell->y + 1]
-                                              [app->hero->currentCell->x];
-    // auto item = Prototype::GOD_PLATE->roll();
-    auto lt = LootBox{1, {Prototype::POTION_MANA}};
-    auto items = lt.open();
-    items.front()->currentCell = c;
-    app->hero->currentLocation->objects.push_back(items.front());
-    app->hero->commit("summon plate", 0);
-  } else if (*spell == *Spells::HEAL_LESSER) {
-    auto heal = R::Z(app->hero->HP_MAX(app->hero.get()) / 100 * 10,
-                     app->hero->HP_MAX(app->hero.get()) / 100 * 25);
-    app->hero->hp += heal;
-    if (app->hero->HP(app->hero.get()) > app->hero->HP_MAX(app->hero.get())) {
-      app->hero->hp = app->hero->HP_MAX(app->hero.get());
-    }
-    app->hero->commit("heal", 0);
-    MessageEvent me(nullptr, fmt::format("You healed {} hp", heal));
-    eb::EventBus::FireEvent(me);
-  } else if (*spell == *Spells::HEAL) {
-    auto heal = R::Z(app->hero->HP_MAX(app->hero.get()) / 100 * 25,
-                     app->hero->HP_MAX(app->hero.get()) / 100 * 50);
-    app->hero->hp += heal;
-    if (app->hero->HP(app->hero.get()) > app->hero->HP_MAX(app->hero.get())) {
-      app->hero->hp = app->hero->HP_MAX(app->hero.get());
-    }
-    app->hero->commit("heal", 0);
-    MessageEvent me(nullptr, fmt::format("You healed {} hp", heal));
-  } else if (*spell == *Spells::HEAL_GREATER) {
-    auto heal = R::Z(app->hero->HP_MAX(app->hero.get()) / 100 * 50,
-                     app->hero->HP_MAX(app->hero.get()) / 100 * 100);
-    app->hero->hp += heal;
-    if (app->hero->HP(app->hero.get()) > app->hero->HP_MAX(app->hero.get())) {
-      app->hero->hp = app->hero->HP_MAX(app->hero.get());
-    }
-    app->hero->commit("heal", 0);
-    MessageEvent me(nullptr, fmt::format("You healed {} hp", heal));
-  } else if (*spell == *Spells::RESTORE_MANA) {
-    auto heal = R::Z(app->hero->MP_MAX(app->hero.get()) / 100 * 25,
-                     app->hero->MP_MAX(app->hero.get()) / 100 * 50);
-    app->hero->mp += heal;
-    if (app->hero->MP(app->hero.get()) > app->hero->MP_MAX(app->hero.get())) {
-      app->hero->mp = app->hero->MP_MAX(app->hero.get());
-    }
-    app->hero->commit("mana", 0);
-    MessageEvent me(nullptr, fmt::format("Your {} mp restored", heal));
-    eb::EventBus::FireEvent(me);
-  } else if (*spell == *Spells::TELEPORT_RANDOM) {
-    auto room = app->hero->currentLocation
-                    ->rooms[rand() % app->hero->currentLocation->rooms.size()];
-    auto cell = room->cells[rand() % room->cells.size()];
-    app->hero->currentCell = cell;
-    app->hero->commit("Teleport", 0);
-    MessageEvent me(nullptr, fmt::format("You were teleported."));
-    eb::EventBus::FireEvent(me);
-  } else if (auto tspell = std::dynamic_pointer_cast<ToggleTraitSpell>(spell)) {
-    if (R::R() < tspell->probability) {
-      if (app->hero->hasTrait(tspell->trait)) {
-        app->hero->traits.erase(std::remove(
-            app->hero->traits.begin(), app->hero->traits.end(), tspell->trait));
-        MessageEvent me(nullptr, fmt::format("Undo {}", tspell->name));
-        eb::EventBus::FireEvent(me);
-      } else {
-        app->hero->traits.push_back(tspell->trait);
-        MessageEvent me(nullptr, fmt::format("Apply {}", tspell->name));
-        eb::EventBus::FireEvent(me);
-      }
-    } else {
-      MessageEvent me(nullptr, fmt::format("Nothing happens"));
-      eb::EventBus::FireEvent(me);
-    }
-    app->hero->commit("toggle trait", 0);
-  } else if (auto espell = std::dynamic_pointer_cast<EffectSpell>(spell)) {
-
-    MessageEvent me(nullptr, fmt::format("Apply {} effect", espell->name));
-    eb::EventBus::FireEvent(me);
-    app->hero->activeEffects.push_back(espell->effect);
-    app->hero->commit("apply effect", 0);
-  }
 }
 
 void EventReactor::onEvent(HeroDiedEvent &e) {

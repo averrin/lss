@@ -50,8 +50,6 @@ public:
 
   bool slotCallback(std::shared_ptr<Object>);
   bool itemCallback(std::shared_ptr<Slot>, std::shared_ptr<Object>);
-
-  void castSpell(std::shared_ptr<Spell>);
 };
 
 #endif // __EVENTREACTOR_H_

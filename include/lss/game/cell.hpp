@@ -85,6 +85,7 @@ public:
     return std::find(features.begin(), features.end(), f) != features.end();
   }
   static const int DEFAULT_LIGHT = 60;
+  static const int MINIMUM_LIGHT = 5;
   int illumination = DEFAULT_LIGHT;
 };
 

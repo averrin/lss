@@ -1,6 +1,7 @@
 #ifndef __CREATURE_H_
 #define __CREATURE_H_
 #include <algorithm>
+#include <thread>
 
 #include "lss/game/damage.hpp"
 #include "lss/game/effect.hpp"
@@ -18,6 +19,7 @@ public:
   std::vector<Trait> traits;
   Effects activeEffects;
 
+  std::thread bgThread;
   bool move(Direction, bool autoAction = false);
   bool attack(Direction);
   bool canSee(std::shared_ptr<Cell> c) {
