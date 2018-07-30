@@ -44,6 +44,7 @@ public:
   static const Fragments object_select_mode;
   static const Fragments text_mode;
   static const Fragments pause_mode;
+  static const Fragments target_mode;
   static const Fragments inspect_mode;
 
   static const Fragments unknown_command;

@@ -127,6 +127,7 @@ void LSSApp::initModes() {
   inspectMode = std::make_shared<InspectMode>(this);
   inventoryMode = std::make_shared<InventoryMode>(this);
   pauseMode = std::make_shared<PauseMode>(this);
+  targetMode = std::make_shared<TargetMode>(this);
 }
 
 void LSSApp::initStates() {
@@ -405,6 +406,9 @@ void LSSApp::keyDown(KeyEvent event) {
   case Modes::PAUSE:
     pauseMode->processKey(event);
     break;
+  case Modes::TARGET:
+    targetMode->processKey(event);
+    break;
   }
 }
 
@@ -475,6 +479,7 @@ void LSSApp::update() {
     state->setSelect(false);
   case Modes::INSPECT:
   case Modes::PAUSE:
+  case Modes::TARGET:
   case Modes::INSERT:
   case Modes::DIRECTION:
   case Modes::HINTS:
@@ -542,6 +547,7 @@ void LSSApp::draw() {
   switch (modeManager.modeFlags->currentMode) {
   case Modes::INSPECT:
   case Modes::PAUSE:
+  case Modes::TARGET:
   case Modes::NORMAL:
   case Modes::INSERT:
   case Modes::DIRECTION:

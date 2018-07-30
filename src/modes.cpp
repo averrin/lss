@@ -72,11 +72,48 @@ void ModeManager::toPause() {
   state_machine.process_event(EnableModeEvent{Modes::PAUSE});
 }
 
+void ModeManager::toTarget() {
+  state_machine.process_event(EnableModeEvent{Modes::TARGET});
+}
+
 void HintsMode::processEvent(std::shared_ptr<LssEvent> event) {}
 
 Mode::Mode(LSSApp *a) : app(a){};
 
 bool HintsMode::processKey(KeyEvent event) { return false; }
+
+bool TargetMode::processKey(KeyEvent event) {
+  switch (event.getCode()) {
+  case SDL_SCANCODE_J:
+  case SDL_SCANCODE_H:
+  case SDL_SCANCODE_L:
+  case SDL_SCANCODE_K:
+  case SDL_SCANCODE_Y:
+  case SDL_SCANCODE_U:
+  case SDL_SCANCODE_B:
+  case SDL_SCANCODE_N: {
+    app->state->selection.clear();
+    auto d = getDir(event.getCode());
+    if (d == std::nullopt)
+      break;
+    auto nc = app->hero->currentLocation->getCell(
+        app->hero->currentLocation
+            ->cells[app->state->cursor.y][app->state->cursor.x],
+        *utils::getDirectionByName(*d));
+    app->state->cursor = {nc->x, nc->y};
+    auto location = app->hero->currentLocation;
+    auto cell = location->cells[app->state->cursor.y][app->state->cursor.x];
+    auto line = location->getLine(app->hero->currentCell, cell);
+    for (auto c : line) {
+      app->state->selection.push_back({{c->x, c->y}, "#11f"});
+    }
+    app->state->invalidate();
+    // render();
+    return true;
+  } break;
+  }
+  return false;
+}
 
 bool ObjectSelectMode::processKey(KeyEvent event) {
   std::string letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -352,6 +389,15 @@ void InspectMode::render() {
 bool NormalMode::processKey(KeyEvent event) {
 
   switch (event.getCode()) {
+  case SDL_SCANCODE_T:
+    app->state->selection.clear();
+    app->modeManager.toTarget();
+    app->statusLine->setContent(State::target_mode);
+    app->state->cursor = {app->hero->currentCell->x,
+                          app->hero->currentCell->y};
+    app->state->setSelect(true);
+    app->state->invalidate();
+    break;
   case SDL_SCANCODE_F1:
     app->debug = !app->debug;
     app->hero->commit("toggle debug", 0);

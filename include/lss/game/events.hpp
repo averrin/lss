@@ -103,6 +103,12 @@ public:
   DirectionCallback callback;
 };
 
+typedef std::function<void(std::shared_ptr<Cell>)> TargetCallback;
+class TargetEvent : public eb::Event {
+public:
+  TargetEvent(TargetCallback c) : eb::Event(nullptr), callback(c) {}
+  TargetCallback callback;
+};
 /**********/
 class MessageEvent : public eb::Event {
 public:

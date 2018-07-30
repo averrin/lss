@@ -115,6 +115,9 @@ const Fragments State::pause_mode = {F("Paused. Press any key for continue")};
 const Fragments State::inspect_mode = {
     F("<span color='{{blue}}'>Select cell</span> [<b>yuhjklbn</b>] or [Zz, "
       "Esc] for exit")};
+const Fragments State::target_mode = {
+    F("<span color='{{blue}}'>Select cell</span> [<b>yuhjklbn</b>] or [Zz, "
+      "Esc] for exit")};
 
 const Fragments State::HELP_HEADER = {F("<span weight='bold'>Help</span>")};
 const Fragments State::INVENTORY_HEADER = {

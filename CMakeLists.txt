@@ -99,7 +99,8 @@ target_link_libraries(${EXE_NAME}
   ${OPENGL_LIBRARIES}
   ${CONAN_LIBS}
   Threads::Threads
-  sndio)
+  sndio
+  )
 
 # Copy SDL2 DLLs to output folder on Windows
 if(WIN32)

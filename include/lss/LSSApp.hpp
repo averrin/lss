@@ -110,6 +110,7 @@ public:
   std::shared_ptr<GameOverMode> gameOverMode;
   std::shared_ptr<InspectMode> inspectMode;
   std::shared_ptr<PauseMode> pauseMode;
+  std::shared_ptr<TargetMode> targetMode;
 
   std::shared_ptr<StatusLine> statusLine;
   std::shared_ptr<HeroLine> heroLine;

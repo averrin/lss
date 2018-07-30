@@ -56,6 +56,9 @@ struct modes {
     auto is_pause_event = [](EnableModeEvent e) {
       return e.mode == Modes::PAUSE;
     };
+    auto is_target_event = [](EnableModeEvent e) {
+      return e.mode == Modes::TARGET;
+    };
 
     auto set_hints = [](std::shared_ptr<Modes> m) {
       std::cout << "Set HINTS mode" << std::endl;
@@ -101,6 +104,10 @@ struct modes {
       std::cout << "Set PAUSE mode" << std::endl;
       m->currentMode = Modes::PAUSE;
     };
+    auto set_target = [](std::shared_ptr<Modes> m) {
+      std::cout << "Set TARGET mode" << std::endl;
+      m->currentMode = Modes::TARGET;
+    };
 
     // clang-format off
         return make_transition_table(
@@ -117,6 +124,8 @@ struct modes {
             , "object_select"_s + event<EnableModeEvent> [is_pause_event] / set_pause  = "pause"_s
             , "object_select"_s + event<EnableModeEvent> [is_direction_event] / set_direction  = "direction"_s
             , "direction"_s + event<EnableModeEvent> [is_pause_event] / set_pause  = "pause"_s
+            , "normal"_s + event<EnableModeEvent> [is_target_event] / set_target  = "target"_s
+            , "object_select"_s + event<EnableModeEvent> [is_target_event] / set_target  = "target"_s
 
             , "hints"_s + event<KeyPressedEvent> [is_esc] / set_normal = "normal"_s
             , "leader"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
@@ -126,6 +135,7 @@ struct modes {
             , "inventory"_s + event<KeyPressedEvent> [is_esc_or_z] / set_normal  = "normal"_s
             , "help"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
             , "inspect"_s + event<KeyPressedEvent> [is_esc_or_z] / set_normal  = "normal"_s
+            , "target"_s + event<KeyPressedEvent> [is_esc_or_z] / set_normal  = "normal"_s
 
             , "insert"_s + event<KeyPressedEvent> [is_insert] / set_normal  = "normal"_s
 
@@ -157,6 +167,7 @@ public:
   void toObjectSelect();
   void toInspect();
   void toPause();
+  void toTarget();
   std::shared_ptr<Modes> modeFlags = std::make_shared<Modes>();
 
 private:
@@ -270,4 +281,13 @@ public:
   void render(std::shared_ptr<State>);
   bool processKey(KeyEvent e);
 };
+
+class TargetMode : public Mode {
+public:
+  TargetMode(LSSApp *app) : Mode(app){};
+  bool processKey(KeyEvent e);
+  void setCallback(TargetCallback c) { callback = c; };
+  TargetCallback callback;
+};
+
 #endif // __MODES_H_
