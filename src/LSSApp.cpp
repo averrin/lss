@@ -197,7 +197,6 @@ void LSSApp::startBg() {
     bgThread.join();
   }
   bgRunning = true;
-  fmt::print("bg restarted\n");
   bgThread = std::thread([&]() {
     while (bgRunning) {
       std::map<std::shared_ptr<Cell>, int> ld;

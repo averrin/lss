@@ -29,11 +29,11 @@ Surface::Surface(SDL_Renderer *r)
       mNeedsFontUpdate(false), mNeedsMeasuring(false), mNeedsTextRender(false),
       mNeedsFontOptionUpdate(false), mProbablyHasMarkup(false),
       mDefaultTextColor({0, 0, 0, 255}), mBackgroundColor(ZERO_COLOR),
-      mDefaultTextFont("Sans"), mDefaultTextSize(12.0),
+      mDefaultTextFont("Sans"), mDefaultTextSize(14.0),
       mDefaultTextItalicsEnabled(false), mDefaultTextSmallCapsEnabled(false),
       mMinSize(ivec2(0, 0)), mMaxSize(ivec2(320, 240)), mSpacing(0),
       mTextAlignment(TextAlignment::LEFT),
-      mDefaultTextWeight(TextWeight::NORMAL),
+      mDefaultTextWeight(TextWeight::MEDIUM),
       mTextAntialias(TextAntialias::DEFAULT), mPixelWidth(-1),
       mPixelHeight(-1) {
 

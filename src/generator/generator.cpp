@@ -2,6 +2,7 @@
 #include <fmt/format.h>
 #include <iostream>
 #include <set>
+#include <rang.hpp>
 
 #include "lss/game/door.hpp"
 #include "lss/game/enemy.hpp"
@@ -12,7 +13,6 @@
 #include "lss/generator/room.hpp"
 #include "lss/generator/spawnTable.hpp"
 #include "lss/utils.hpp"
-#include "rang.hpp"
 
 Generator::Generator() {}
 

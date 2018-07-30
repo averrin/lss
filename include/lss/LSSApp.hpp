@@ -17,11 +17,12 @@
 #include <SDL.h>
 #include <SDLPango.hpp>
 #include <assert.h>
+#include <rang.hpp>
+#include <fmt/format.h>
 
 #include "lss/commands.hpp"
 #include "lss/keyEvent.hpp"
 #include "lss/modes.hpp"
-// #include "lss/pango.hpp"
 #include "lss/state.hpp"
 
 #include "lss/game/door.hpp"
@@ -32,13 +33,11 @@
 #include "lss/ui/heroLine.hpp"
 #include "lss/ui/logPanel.hpp"
 #include "lss/ui/statusLine.hpp"
-#include <fmt/format.h>
 
 #include "lss/generator/generator.hpp"
 
 #include "EventBus.hpp"
 #include "EventHandler.hpp"
-#include "rang.hpp"
 
 class EventReactor;
 class LSSApp {

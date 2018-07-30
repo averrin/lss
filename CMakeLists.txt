@@ -3,15 +3,15 @@ set(CMAKE_CXX_STANDARD 17)
 
 project(LSS)
 set( EXE_NAME ${PROJECT_NAME} )
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
 
 get_filename_component( SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src" ABSOLUTE )
 get_filename_component( INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" ABSOLUTE )
 get_filename_component( SMLINC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/sml/include" ABSOLUTE )
 get_filename_component( JNJ_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/Jinja2CppLight/src" ABSOLUTE )
 get_filename_component( BUS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/EventBus/src/event" ABSOLUTE )
-get_filename_component( FMT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/fmt" ABSOLUTE )
 get_filename_component( MP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/micropather" ABSOLUTE )
-get_filename_component( GLM_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/glm" ABSOLUTE )
 
 # Write demo-config.h
 message("Generating header file: ${CMAKE_BINARY_DIR}/config.hpp")
@@ -28,7 +28,6 @@ find_package( Pango REQUIRED )
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-find_package(SDL2 REQUIRED COMPONENTS main)
 if(NOT WIN32)
     find_package(OpenGL REQUIRED)
 endif()
@@ -43,7 +42,6 @@ set( SRC_FILES
     "${JNJ_DIR}/stringhelper.cpp"
     "${JNJ_DIR}/Jinja2CppLight.cpp"
 
-	${FMT_DIR}/src/format.cc
     ${MP_DIR}/micropather.cpp
     
 	${SRC_DIR}/keyEvent.cpp
@@ -81,27 +79,27 @@ set( SRC_FILES
 
 	${SRC_DIR}/SDLPango.cpp
     ${INC_DIR}/gl2/Context.cpp
-    # Main.cpp
 
     )
 
 # Define executable target
 include_directories(
     PUBLIC ${INC_DIR} 
-    PUBLIC ${GLM_DIR} 
     PUBLIC ${SMLINC_DIR}
     PUBLIC ${JNJ_DIR}
     PUBLIC ${FOV_DIR}
     PUBLIC ${BUS_DIR}
-    PUBLIC ${FMT_DIR}/include
     ${PANGO_INCLUDE_DIRS}
-    ${SDL2_INCLUDE_DIRS}
-    ${SDL2main_INCLUDE_DIRS}
     ${OPENGL_INCLUDE_DIR}
     ${CMAKE_BINARY_DIR})
 add_executable(${EXE_NAME} ${SRC_FILES})
 add_backward(${PROJECT_NAME})
-target_link_libraries(${EXE_NAME} ${PANGO_LIBRARIES} ${SDL2_LIBS} ${OPENGL_LIBRARIES} Threads::Threads)
+target_link_libraries(${EXE_NAME}
+  ${PANGO_LIBRARIES}
+  ${OPENGL_LIBRARIES}
+  ${CONAN_LIBS}
+  Threads::Threads
+  sndio)
 
 # Copy SDL2 DLLs to output folder on Windows
 if(WIN32)

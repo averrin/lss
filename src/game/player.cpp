@@ -1,3 +1,4 @@
+#include <rang.hpp>
 #include <chrono>
 #include <memory>
 
@@ -12,7 +13,6 @@
 #include "lss/game/spell.hpp"
 #include "lss/game/terrain.hpp"
 #include "lss/utils.hpp"
-#include "rang.hpp"
 
 DigEvent::DigEvent(eb::ObjectPtr s, std::shared_ptr<Cell> c)
     : eb::Event(s), cell(c) {}
