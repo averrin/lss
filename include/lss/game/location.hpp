@@ -143,6 +143,38 @@ public:
 
   void invalidate() { needUpdateLight = true; }
 
+std::shared_ptr<Cell> getCell(std::shared_ptr<Cell> cc, Direction d) {
+  std::shared_ptr<Cell> cell;
+  switch (d) {
+  case N:
+    cell = cells[cc->y - 1][cc->x];
+    break;
+  case E:
+    cell = cells[cc->y][cc->x + 1];
+    break;
+  case S:
+    cell = cells[cc->y + 1][cc->x];
+    break;
+  case W:
+    cell = cells[cc->y][cc->x - 1];
+    break;
+  case NW:
+    cell = cells[cc->y - 1][cc->x - 1];
+    break;
+  case NE:
+    cell = cells[cc->y - 1][cc->x + 1];
+    break;
+  case SW:
+    cell = cells[cc->y + 1][cc->x - 1];
+    break;
+  case SE:
+    cell = cells[cc->y + 1][cc->x + 1];
+    break;
+  }
+  return cell;
+}
+
+
 private:
   bool needUpdateLight = true;
 

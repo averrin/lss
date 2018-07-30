@@ -91,38 +91,6 @@ DropEvent::DropEvent(eb::ObjectPtr s, std::shared_ptr<Item> i)
 ItemTakenEvent::ItemTakenEvent(eb::ObjectPtr s, std::shared_ptr<Item> i)
     : eb::Event(s), item(i) {}
 
-std::shared_ptr<Cell> Creature::getCell(std::shared_ptr<Cell> cc, Direction d) {
-  auto cells = currentLocation->cells;
-  std::shared_ptr<Cell> cell;
-  switch (d) {
-  case N:
-    cell = cells[cc->y - 1][cc->x];
-    break;
-  case E:
-    cell = cells[cc->y][cc->x + 1];
-    break;
-  case S:
-    cell = cells[cc->y + 1][cc->x];
-    break;
-  case W:
-    cell = cells[cc->y][cc->x - 1];
-    break;
-  case NW:
-    cell = cells[cc->y - 1][cc->x - 1];
-    break;
-  case NE:
-    cell = cells[cc->y - 1][cc->x + 1];
-    break;
-  case SW:
-    cell = cells[cc->y + 1][cc->x - 1];
-    break;
-  case SE:
-    cell = cells[cc->y + 1][cc->x + 1];
-    break;
-  }
-  return cell;
-}
-
 std::optional<std::tuple<std::shared_ptr<Slot>, int, int, int>>
 Creature::getPrimaryDmg() {
 
@@ -298,7 +266,7 @@ bool Creature::pick(std::shared_ptr<Item> item) {
 }
 
 bool Creature::attack(Direction d) {
-  auto nc = getCell(currentCell, d);
+  auto nc = currentLocation->getCell(currentCell, d);
   auto opit = std::find_if(
       currentLocation->objects.begin(), currentLocation->objects.end(),
       [&](std::shared_ptr<Object> o) {
@@ -358,7 +326,7 @@ std::optional<std::shared_ptr<Slot>> Creature::getSlot(WearableType type,
 
 bool Creature::move(Direction d, bool autoAction) {
   auto cc = currentCell;
-  auto nc = getCell(currentCell, d);
+  auto nc = currentLocation->getCell(currentCell, d);
 
   if (hasTrait(Traits::JUMPY) && R::R() < 0.01) {
     auto room = currentLocation->rooms[rand() % currentLocation->rooms.size()];
@@ -411,7 +379,7 @@ void Creature::calcViewField(bool force) {
 
   // cachedCell = currentCell;
   for (auto c : viewField) {
-    c->lightSources.push_back(currentCell);
+    c->lightSources.insert(currentCell);
   }
 }
 

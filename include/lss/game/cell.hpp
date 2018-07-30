@@ -5,6 +5,7 @@
 #include <cmath>
 #include <memory>
 #include <vector>
+#include <set>
 
 const float TORCH_DISTANCE = 4.5f;
 
@@ -56,7 +57,7 @@ public:
   bool illuminated = false;
   std::vector<CellFeature> features;
 
-  std::vector<std::shared_ptr<Cell>> lightSources;
+  std::set<std::shared_ptr<Cell>> lightSources;
   std::shared_ptr<Room> room;
 
   int x;

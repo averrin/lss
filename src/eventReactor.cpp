@@ -299,6 +299,12 @@ void EventReactor::onEvent(PauseEvent &e) {
   app->modeManager.toPause();
 }
 
+void EventReactor::onEvent(DirectionEvent &e) {
+  app->directionMode->setCallback(e.callback);
+  app->statusLine->setContent(State::direction_mode);
+  app->modeManager.toDirection();
+}
+
 void EventReactor::onEvent(ZapCommandEvent &e) {
   if (e.spell != nullptr)
     return;

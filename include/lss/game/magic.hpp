@@ -14,6 +14,8 @@ public:
   ~Magic();
   std::shared_ptr<Player> hero;
   void castSpell(std::shared_ptr<Creature>, std::shared_ptr<Spell> spell);
+  void pauseAndEraseFireballs();
+  void applySpellOnCells(std::shared_ptr<Spell> spell, std::vector<std::shared_ptr<Cell>> cells);
 
   virtual void onEvent(ZapCommandEvent &e) override;
 };

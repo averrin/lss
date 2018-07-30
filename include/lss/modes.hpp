@@ -115,6 +115,8 @@ struct modes {
             , "normal"_s + event<EnableModeEvent> [is_inspect_event] / set_inspect  = "inspect"_s
             , "normal"_s + event<EnableModeEvent> [is_pause_event] / set_pause  = "pause"_s
             , "object_select"_s + event<EnableModeEvent> [is_pause_event] / set_pause  = "pause"_s
+            , "object_select"_s + event<EnableModeEvent> [is_direction_event] / set_direction  = "direction"_s
+            , "direction"_s + event<EnableModeEvent> [is_pause_event] / set_pause  = "pause"_s
 
             , "hints"_s + event<KeyPressedEvent> [is_esc] / set_normal = "normal"_s
             , "leader"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
@@ -193,6 +195,8 @@ class DirectionMode : public Mode {
 public:
   DirectionMode(LSSApp *app) : Mode(app){};
   bool processKey(KeyEvent e);
+  void setCallback(DirectionCallback c) { callback = c; };
+  DirectionCallback callback;
 };
 
 class InsertMode : public Mode {

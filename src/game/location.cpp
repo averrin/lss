@@ -264,7 +264,7 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
       // FIXME: not in distance, but only visible
       if (hasLight && getDistance(c, hero->currentCell) <= heroVD) {
         c->illuminated = true;
-        c->lightSources.push_back(hero->currentCell);
+        c->lightSources.insert(hero->currentCell);
         continue;
       }
     }
@@ -272,15 +272,17 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
   for (auto t : torches) {
     // TODO: use lightStrength
     for (auto c : getVisible(t, TORCH_DISTANCE)) {
-      c->lightSources.push_back(t);
+      c->lightSources.insert(t);
       c->illuminated = true;
     }
   }
 
   for (auto r : cells) {
     for (auto c : r) {
-      if (!c->illuminated)
+      if (!c->illuminated) {
+        c->illumination = Cell::DEFAULT_LIGHT;
         continue;
+      }
       std::vector<std::shared_ptr<Cell>> lss;
       for (auto ls : c->lightSources) {
         if (ls == hero->currentCell && hasLight) {
@@ -292,7 +294,7 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
       }
       auto d = std::numeric_limits<int>::max();
       if (lss.size() == 0) {
-        c->illumination = Cell::MINIMUM_LIGHT;
+        c->illumination = Cell::DEFAULT_LIGHT;
         continue;
       }
       for (auto ls : lss) {

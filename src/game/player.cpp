@@ -235,7 +235,7 @@ void Player::onEvent(DigCommandEvent &e) {
     return;
   }
 
-  auto cell = getCell(currentCell, e.direction);
+  auto cell = currentLocation->getCell(currentCell, e.direction);
 
   DigEvent de(shared_from_this(), cell);
   eb::EventBus::FireEvent(de);
@@ -263,7 +263,7 @@ void Player::onEvent(WalkCommandEvent &e) {
                                  [&](std::shared_ptr<Enemy> e) {
                                    return canSee(e->currentCell);
                                  }) != enemies.end();
-    auto nc = getCell(currentCell, e.direction);
+    auto nc = currentLocation->getCell(currentCell, e.direction);
     if (item != currentLocation->objects.end() || seeEnemy ||
         currentCell->type != CellType::FLOOR || nc->room != currentCell->room) {
       break;

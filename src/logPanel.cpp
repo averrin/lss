@@ -3,6 +3,8 @@
 #include "lss/game/player.hpp"
 #include "lss/utils.hpp"
 
+//TODO: add logging of casted spells
+
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 
 LogPanel::~LogPanel() {

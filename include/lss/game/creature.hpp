@@ -121,7 +121,6 @@ public:
   Attribute DEF = Attribute(AttributeType::DEFENSE);
   Attribute CRIT = Attribute(AttributeType::CRIT_CHANCE);
 
-  std::shared_ptr<Cell> getCell(std::shared_ptr<Cell>, Direction);
   void applyEoT(EoT, int);
 
 private:

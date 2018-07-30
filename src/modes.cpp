@@ -134,7 +134,7 @@ bool InspectMode::processKey(KeyEvent event) {
     auto d = getDir(event.getCode());
     if (d == std::nullopt)
       break;
-    auto nc = app->hero->getCell(
+    auto nc = app->hero->currentLocation->getCell(
         app->hero->currentLocation
             ->cells[app->state->cursor.y][app->state->cursor.x],
         *utils::getDirectionByName(*d));
@@ -422,21 +422,30 @@ bool NormalMode::processKey(KeyEvent event) {
     break;
   case SDL_SCANCODE_D:
     if (!event.isShiftDown()) {
+      app->directionMode->setCallback([](auto dir) {
+        auto e = std::make_shared<DigCommandEvent>(dir);
+        eb::EventBus::FireEvent(*e);
+      });
       app->modeManager.toDirection();
-      app->pendingCommand = DigCommand().aliases.front();
       app->statusLine->setContent({F("Dig: "), State::direction_mode.front()});
     } else {
       app->processCommand("drop");
     }
     break;
   case SDL_SCANCODE_A:
+    app->directionMode->setCallback([](auto dir) {
+      auto e = std::make_shared<AttackCommandEvent>(dir);
+      eb::EventBus::FireEvent(*e);
+    });
     app->modeManager.toDirection();
-    app->pendingCommand = AttackCommand().aliases.front();
     app->statusLine->setContent({F("Attack: "), State::direction_mode.front()});
     break;
   case SDL_SCANCODE_W:
+    app->directionMode->setCallback([](auto dir) {
+      auto e = std::make_shared<WalkCommandEvent>(dir);
+      eb::EventBus::FireEvent(*e);
+    });
     app->modeManager.toDirection();
-    app->pendingCommand = "walk";
     app->statusLine->setContent({F("Walk: "), State::direction_mode.front()});
     break;
   case SDL_SCANCODE_E:
@@ -546,7 +555,7 @@ bool DirectionMode::processKey(KeyEvent event) {
   if (dirName != std::nullopt) {
     app->modeManager.toNormal();
     app->statusLine->setContent(State::normal_mode);
-    app->processCommand(app->pendingCommand + " " + *dirName);
+    callback(*utils::getDirectionByName(*dirName));
     return true;
   }
   return false;

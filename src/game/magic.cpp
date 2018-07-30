@@ -36,24 +36,15 @@ void toggleTrait(std::shared_ptr<Player> hero,
     if (hero->hasTrait(tspell->trait)) {
       hero->traits.erase(
           std::remove(hero->traits.begin(), hero->traits.end(), tspell->trait));
-      MessageEvent me(nullptr, fmt::format("Undo {}", tspell->name));
-      eb::EventBus::FireEvent(me);
     } else {
       hero->traits.push_back(tspell->trait);
-      MessageEvent me(nullptr, fmt::format("Apply {}", tspell->name));
-      eb::EventBus::FireEvent(me);
     }
-  } else {
-    MessageEvent me(nullptr, fmt::format("Nothing happens"));
-    eb::EventBus::FireEvent(me);
   }
   hero->commit("toggle trait", 0);
 }
 
 void applyEffect(std::shared_ptr<Player> hero,
                  std::shared_ptr<EffectSpell> espell) {
-  MessageEvent me(nullptr, fmt::format("Apply {} effect", espell->name));
-  eb::EventBus::FireEvent(me);
   hero->activeEffects.push_back(espell->effect);
   hero->commit("apply effect", 0);
 }
@@ -65,8 +56,6 @@ void heal(std::shared_ptr<Player> hero, int min, int max) {
     hero->hp = hero->HP_MAX(hero.get());
   }
   hero->commit("heal", 0);
-  MessageEvent me(nullptr, fmt::format("You healed {} hp", heal));
-  eb::EventBus::FireEvent(me);
 }
 
 void Magic::castSpell(std::shared_ptr<Creature> caster,
@@ -84,8 +73,6 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
       hero->identify(i);
     }
 
-    MessageEvent me(nullptr, "Your inventory was identified");
-    eb::EventBus::FireEvent(me);
   } else if (*spell == *Spells::SUMMON_THING) {
     auto c = hero->currentLocation
                  ->cells[hero->currentCell->y + 1][hero->currentCell->x];
@@ -109,43 +96,66 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
       hero->mp = hero->MP_MAX(hero.get());
     }
     hero->commit("mana", 0);
-    MessageEvent me(nullptr, fmt::format("Your {} mp restored", heal));
-    eb::EventBus::FireEvent(me);
   } else if (*spell == *Spells::TELEPORT_RANDOM) {
     auto room = hero->currentLocation
                     ->rooms[rand() % hero->currentLocation->rooms.size()];
     auto cell = room->cells[rand() % room->cells.size()];
     hero->currentCell = cell;
     hero->commit("Teleport", 0);
-    MessageEvent me(nullptr, fmt::format("You were teleported."));
-    eb::EventBus::FireEvent(me);
   } else if (auto tspell = std::dynamic_pointer_cast<ToggleTraitSpell>(spell)) {
     toggleTrait(hero, tspell);
   } else if (auto espell = std::dynamic_pointer_cast<EffectSpell>(spell)) {
     applyEffect(hero, espell);
   } else if (auto rspell = std::dynamic_pointer_cast<RadiusSpell>(spell)) {
     auto cells = caster->getInRadius(rspell->radius);
-    if (auto ds = std::dynamic_pointer_cast<DamageSpell>(rspell->spell)) {
-      // TODO: log spell text
-      for (auto c : cells) {
-        ds->applySpell(hero->currentLocation, c);
+    applySpellOnCells(rspell->spell, cells);
+  } else if (auto lspell = std::dynamic_pointer_cast<LineSpell>(spell)) {
+    //TODO: create event ChooseDirection with callback
+    DirectionEvent de([=](auto dir) {
+      auto cell = hero->currentLocation->getCell(caster->currentCell, dir);
+      auto cells = std::vector<std::shared_ptr<Cell>>{cell};
+      for (auto n=0; n < lspell->length-1; n++) {
+        cell = hero->currentLocation->getCell(cell, dir);
+        if (!cell->passThrough) break;
+        cells.push_back(cell);
       }
-    }
-    hero->commit("Radius spell", 0);
-    PauseEvent me([&]() {
+      applySpellOnCells(lspell->spell, cells);
+
+    });
+    eb::EventBus::FireEvent(de);
+  }
+}
+
+void Magic::applySpellOnCells(std::shared_ptr<Spell> spell, std::vector<std::shared_ptr<Cell>> cells) {
+      if (auto ds = std::dynamic_pointer_cast<DamageSpell>(spell)) {
+        for (auto c : cells) {
+          ds->applySpell(hero->currentLocation, c);
+        }
+      }
+      hero->currentLocation->invalidateVisibilityCache(hero->currentCell);
+      hero->calcViewField();
+      hero->commit("cast spell", 0);
+      pauseAndEraseFireballs();
+}
+
+void Magic::pauseAndEraseFireballs() {
+    PauseEvent me([=]() {
       auto objects = hero->currentLocation->objects;
       auto ts = utils::castObjects<Terrain>(objects);
       for (auto t : ts) {
         if (t->type == TerrainType::FIREBALL) {
           hero->currentLocation->objects.erase(
               std::remove(objects.begin(), objects.end(), t), objects.end());
+          hero->currentLocation->invalidateVisibilityCache(t->currentCell);
         }
       }
+
+      hero->currentLocation->invalidateVisibilityCache(hero->currentCell);
+      hero->currentLocation->invalidate();
+      hero->calcViewField();
+      hero->commit("cast spell", 0);
     });
     eb::EventBus::FireEvent(me);
-    hero->currentLocation->invalidate();
-  }
-  // TODO: line spell with direction choosing
 }
 
 void DamageSpell::applySpell(std::shared_ptr<Location> location,
@@ -163,4 +173,5 @@ void DamageSpell::applySpell(std::shared_ptr<Location> location,
   auto fb = std::make_shared<Terrain>(TerrainType::FIREBALL, 8);
   fb->currentCell = c;
   location->objects.push_back(fb);
+  location->invalidate();
 }

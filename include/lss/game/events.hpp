@@ -96,6 +96,13 @@ public:
   PauseCallback callback;
 };
 
+typedef std::function<void(Direction)> DirectionCallback;
+class DirectionEvent : public eb::Event {
+public:
+  DirectionEvent(DirectionCallback c) : eb::Event(nullptr), callback(c) {}
+  DirectionCallback callback;
+};
+
 /**********/
 class MessageEvent : public eb::Event {
 public:

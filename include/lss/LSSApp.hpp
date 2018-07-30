@@ -133,8 +133,6 @@ public:
   std::vector<std::shared_ptr<Command>> commands;
 
   std::string typedCommand;
-  // TODO: migrate to callback
-  std::string pendingCommand;
   bool needRedraw = true;
 };
 
