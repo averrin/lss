@@ -155,6 +155,11 @@ void InspectMode::render() {
   auto check = "<span color='green'>✔</span>";
   app->state->selection.clear();
 
+  auto line = location->getLine(app->hero->currentCell, cell);
+  for (auto c : line) {
+    app->state->selection.push_back({{c->x, c->y}, "#11f"});
+  }
+
   app->inspectState->setContent(
       {F(fmt::format("Selected cell: <b>{}.{}</b>", cell->x, cell->y))});
   app->inspectState->appendContent(State::END_LINE);

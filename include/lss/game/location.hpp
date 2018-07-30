@@ -143,6 +143,8 @@ public:
 
   void invalidate() { needUpdateLight = true; }
 
+  std::vector<std::shared_ptr<Cell>> getLine(std::shared_ptr<Cell> c1, std::shared_ptr<Cell> c2);
+
 std::shared_ptr<Cell> getCell(std::shared_ptr<Cell> cc, Direction d) {
   std::shared_ptr<Cell> cell;
   switch (d) {

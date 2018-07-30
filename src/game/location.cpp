@@ -397,3 +397,38 @@ Location::getVisible(std::shared_ptr<Cell> start, float distance) {
   visibilityCache[{start, distance}] = result;
   return result;
 }
+
+  std::vector<std::shared_ptr<Cell>> Location::getLine(std::shared_ptr<Cell> c1, std::shared_ptr<Cell> c2) {
+    std::vector<std::shared_ptr<Cell>> result;
+    auto xn = c1->x;
+    auto xk = c2->x;
+    auto yn = c1->y;
+    auto yk = c2->y;
+int  dx, dy, s, sx, sy, kl, swap, incr1, incr2;
+
+/* Вычисление приращений и шагов */
+   sx= 0;
+   if ((dx= xk-xn) < 0) {dx= -dx; --sx;} else if (dx>0) ++sx;
+   sy= 0;
+   if ((dy= yk-yn) < 0) {dy= -dy; --sy;} else if (dy>0) ++sy;
+/* Учет наклона */
+   swap= 0;
+   if ((kl= dx) < (s= dy)) {
+      dx= s;  dy= kl;  kl= s; ++swap;
+   }
+   s= (incr1= 2*dy)-dx; /* incr1 - констан. перевычисления */
+                        /* разности если текущее s < 0  и  */
+                        /* s - начальное значение разности */
+   incr2= 2*dx;         /* Константа для перевычисления    */
+                        /* разности если текущее s >= 0    */
+  result.push_back(cells[yn][xn]);
+   while (--kl >= 0) {
+      if (s >= 0) {
+         if (swap) xn+= sx; else yn+= sy;
+         s-= incr2;
+      }
+      if (swap) yn+= sy; else xn+= sx;
+      s+=  incr1;
+      result.push_back(cells[yn][xn]);
+   }    return result;
+}
