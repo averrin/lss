@@ -290,15 +290,17 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
           lss.push_back(ls);
         }
       }
-      auto d = 0;
+      auto d = std::numeric_limits<int>::max();
       if (lss.size() == 0) {
         c->illumination = Cell::MINIMUM_LIGHT;
         continue;
       }
       for (auto ls : lss) {
-        d += sqrt(pow(c->x - ls->x, 2) + pow(c->y - ls->y, 2));
+        auto td = sqrt(pow(c->x - ls->x, 2) + pow(c->y - ls->y, 2));
+        if (td < d) {
+          d = td;
+        }
       }
-      d /= lss.size();
       c->illumination = ((TORCH_DISTANCE - d) / TORCH_DISTANCE * 110) +
                         Cell::DEFAULT_LIGHT + 5;
       if (c->illumination < Cell::MINIMUM_LIGHT) {
