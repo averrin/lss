@@ -143,7 +143,7 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
     }
 
     TargetEvent de(target, [=](auto cell) {
-      std::dynamic_pointer_cast<DamageSpell>(tspell->spell)->applySpell(hero->currentLocation, cell);
+      std::dynamic_pointer_cast<CellSpell>(tspell->spell)->applySpell(hero->currentLocation, cell);
       hero->currentLocation->invalidateVisibilityCache(hero->currentCell);
       hero->calcViewField();
       hero->commit("cast spell", 0);
@@ -162,7 +162,7 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
 }
 
 void Magic::applySpellOnCells(std::shared_ptr<Spell> spell, std::vector<std::shared_ptr<Cell>> cells) {
-      if (auto ds = std::dynamic_pointer_cast<DamageSpell>(spell)) {
+      if (auto ds = std::dynamic_pointer_cast<CellSpell>(spell)) {
         for (auto c : cells) {
           ds->applySpell(hero->currentLocation, c);
         }
@@ -197,8 +197,5 @@ void DamageSpell::applySpell(std::shared_ptr<Location> location,
           location->objects.end());
     }
   }
-  auto fb = std::make_shared<Terrain>(TerrainType::FIREBALL, 8);
-  fb->currentCell = c;
-  location->objects.push_back(fb);
-  location->invalidate();
+  applyEffect(location, c);
 }

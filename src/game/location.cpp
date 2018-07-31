@@ -238,18 +238,12 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
   auto heroVD = hero->VISIBILITY_DISTANCE(hero.get());
   auto hasLight = hero->hasLight();
   auto enemies = utils::castObjects<Enemy>(objects);
-  std::vector<std::shared_ptr<Cell>> torches;
+  std::vector<std::shared_ptr<Object>> torches;
   for (auto ts : utils::castObjects<Terrain>(objects)) {
     if (ts->emitsLight) {
-      torches.push_back(ts->currentCell);
+      torches.push_back(ts);
     }
   }
-  for (auto e : enemies) {
-    if (e->hasLight()) {
-      torches.push_back(e->currentCell);
-    }
-  }
-
   for (auto r : cells) {
     for (auto c : r) {
       if (c->type == CellType::UNKNOWN)
@@ -280,13 +274,23 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
       }
     }
   }
+  std::vector<std::shared_ptr<Cell>> ts;
   for (auto t : torches) {
-    // TODO: use lightStrength
-    for (auto c : getVisible(t, TORCH_DISTANCE)) {
-      c->lightSources.insert(t);
+    ts.push_back(t->currentCell);
+    for (auto c : getVisible(t->currentCell, t->lightStrength)) {
+      c->lightSources.insert(t->currentCell);
       c->illuminated = true;
     }
   }
+  for (auto e : enemies) {
+    if (e->hasLight()) {
+      for (auto c : getVisible(e->currentCell, TORCH_DISTANCE)) {
+        c->lightSources.insert(e->currentCell);
+        c->illuminated = true;
+      }
+    }
+  }
+
 
   for (auto r : cells) {
     for (auto c : r) {
@@ -298,8 +302,8 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
       for (auto ls : c->lightSources) {
         if (ls == hero->currentCell && hasLight) {
           lss.push_back(ls);
-        } else if (std::find(torches.begin(), torches.end(), ls) !=
-                   torches.end()) {
+        } else if (std::find(ts.begin(), ts.end(), ls) !=
+                   ts.end()) {
           lss.push_back(ls);
         }
       }

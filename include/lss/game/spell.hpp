@@ -4,6 +4,7 @@
 #include "lss/game/effect.hpp"
 #include "lss/game/location.hpp"
 #include "lss/game/object.hpp"
+#include "lss/game/terrain.hpp"
 
 class Spell : public Object {
 public:
@@ -35,10 +36,25 @@ public:
   std::shared_ptr<Effect> effect;
 };
 
-// TODO: damage type
-class DamageSpell : public Spell {
+class CellSpell : public Spell {
 public:
-  DamageSpell(std::string n, DamageSpec dmg) : Spell(n), damage(dmg) {}
+    CellSpell(std::string n, TerrainSpec ts): Spell(n), spec(ts) {}
+    TerrainSpec spec;
+    void applyEffect(std::shared_ptr<Location> location, std::shared_ptr<Cell> c) {
+      auto fb = std::make_shared<Terrain>(spec, 8);
+      fb->currentCell = c;
+      location->objects.push_back(fb);
+      location->invalidate();
+    }
+    virtual void applySpell(std::shared_ptr<Location> location, std::shared_ptr<Cell> c) {
+      applyEffect(location, c);
+    }
+};
+
+// TODO: damage type
+class DamageSpell : public CellSpell {
+public:
+  DamageSpell(std::string n, DamageSpec dmg, TerrainSpec ts) : CellSpell(n, ts), damage(dmg) {}
   DamageSpec damage;
   void applySpell(std::shared_ptr<Location>, std::shared_ptr<Cell>);
 };
@@ -82,18 +98,25 @@ const auto TELEPORT_RANDOM = std::make_shared<Spell>("Teleport", 20);
 
 const auto FIREBALL = std::make_shared<RadiusSpell>(
     "Fireball",
-    std::make_shared<DamageSpell>("Fire damage", DamageSpec(0, 2, 6)), 1.5, 20);
+    std::make_shared<DamageSpell>("Fire damage", DamageSpec(0, 2, 6), TerrainType::FIREBALL), 1.5, 20);
 const auto FIREBLAST = std::make_shared<RadiusSpell>(
     "Fireblast",
-    std::make_shared<DamageSpell>("Fire damage", DamageSpec(0, 2, 6)), 3.5, 40);
+    std::make_shared<DamageSpell>("Fire damage", DamageSpec(0, 2, 6), TerrainType::FIREBALL), 3.5, 40);
 
 const auto FIRESTREAM = std::make_shared<LineSpell>(
     "Firestream",
-    std::make_shared<DamageSpell>("Fire damage", DamageSpec(0, 2, 6)), 4, 20);
+    std::make_shared<DamageSpell>("Fire damage", DamageSpec(0, 2, 6), TerrainType::FIREBALL), 4, 20);
 
 const auto FIRESTRIKE = std::make_shared<TargetSpell>(
     "Firestrike",
-    std::make_shared<DamageSpell>("Fire damage", DamageSpec(0, 2, 6)), 4, 10);
+    std::make_shared<DamageSpell>("Fire damage", DamageSpec(0, 2, 6), TerrainType::FIREBALL), 4, 10);
+
+const auto FLASH = std::make_shared<RadiusSpell>(
+    "Flash",
+    std::make_shared<CellSpell>("Light", TerrainType::MAGIC_LIGHT), 1.5, 10);
+const auto SPARK = std::make_shared<TargetSpell>(
+    "Spark",
+    std::make_shared<CellSpell>("Light", TerrainType::MAGIC_LIGHT), 6, 10);
 
 const auto TOGGLE_DUAL_WIELD = std::make_shared<ToggleTraitSpell>(
     "Toggle Dual Wield trait", Traits::DUAL_WIELD);
@@ -159,6 +182,9 @@ const std::vector<std::shared_ptr<Spell>> USABLE = {
     Spells::FIREBLAST,
     Spells::FIRESTREAM,
     Spells::FIRESTRIKE,
+
+    Spells::FLASH,
+    Spells::SPARK,
 
     Spells::SUMMON_THING,
     Spells::RESTORE_MANA,
