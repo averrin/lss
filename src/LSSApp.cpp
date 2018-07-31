@@ -200,34 +200,38 @@ void LSSApp::startBg() {
   bgRunning = true;
   bgThread = std::thread([&]() {
     while (bgRunning) {
-      std::map<std::shared_ptr<Cell>, int> ld;
-
-      auto d = R::N(0, 3);
+      std::map<std::shared_ptr<Cell>, std::set<std::shared_ptr<Cell>>> lightMap;
       for (auto c : hero->viewField) {
         if (!c->illuminated)
           continue;
-        // auto d = 0;
-        // for (auto ls : c->lightSources) {
-        //   if (ld.find(ls) == ld.end()) {
-        //     ld[ls] = R::N(0, 5);
-        //   }
-        //   d += ld[ls];
-        // }
-        // d /= c->lightSources.size();
-
-        auto cd = R::N(0, 1);
-        auto f = state->fragments
-                     [c->y * (hero->currentLocation->cells.front().size() + 1) +
-                      c->x];
-        auto a = f->alpha + d + cd;
-        auto ml = 25 + 5 * c->lightSources.size();
-        if (a < ml)
-          a = ml;
-        if (a > 100)
-          a = 100;
-        f->setAlpha(a);
+        for (auto ls : c->lightSources) {
+          if (lightMap.find(ls) == lightMap.end()) {
+            lightMap[ls] = {};
+          }
+          lightMap[ls].insert(c);
+        }
       }
 
+      std::map<std::shared_ptr<Cell>, int> ld;
+      for (auto [ls, cells] : lightMap) {
+        if (ld.find(ls) == ld.end()) {
+          ld[ls] = R::N(0, 2);
+        }
+        auto d = ld[ls];
+        for (auto c : cells) {
+          auto cd = R::N(0, 1);
+          auto f = state->fragments
+                      [c->y * (hero->currentLocation->cells.front().size() + 1) +
+                        c->x];
+          auto a = f->alpha + d + cd;
+          auto ml = 25 + 5 * c->lightSources.size();
+          if (a < ml)
+            a = ml;
+          if (a > 100)
+            a = 100;
+          f->setAlpha(a);
+        }
+  }
       state->invalidate();
       SDL_Delay(32);
     }
