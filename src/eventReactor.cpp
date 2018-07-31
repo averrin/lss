@@ -305,6 +305,30 @@ void EventReactor::onEvent(DirectionEvent &e) {
   app->modeManager.toDirection();
 }
 
+void EventReactor::onEvent(TargetEvent &e) {
+  app->state->selection.clear();
+  app->targetMode->setCallback(e.callback);
+  app->targetMode->setCheckTarget(e.checkTarget);
+  app->statusLine->setContent(State::target_mode);
+
+  if (e.startTarget == nullptr) {
+    app->state->cursor = {app->hero->currentCell->x,
+                        app->hero->currentCell->y};
+  } else {
+    app->state->cursor = {e.startTarget->x,
+                        e.startTarget->y};
+
+    auto location = app->hero->currentLocation;
+    auto line = location->getLine(app->hero->currentCell, e.startTarget);
+    for (auto c : line) {
+      app->state->selection.push_back({{c->x, c->y}, "#6c6d79"});
+    }
+  }
+  app->state->setSelect(true);
+  app->state->invalidate();
+  app->modeManager.toTarget();
+}
+
 void EventReactor::onEvent(ZapCommandEvent &e) {
   if (e.spell != nullptr)
     return;

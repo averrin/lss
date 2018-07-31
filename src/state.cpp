@@ -57,7 +57,7 @@ void State::render(pango::SurfaceRef surface) {
       fContent = f->render(this);
     }
     if (select && n == cursor.y * (width + 1) + cursor.x) {
-      fContent = "<span background='#9B870C'>" + fContent + "</span>";
+      fContent = "<span background='#5b4650'>" + fContent + "</span>";
     }
     if (select) {
       auto it =

@@ -7,6 +7,8 @@ struct TerrainSpec {
   bool seeThrough;
   bool passThrough;
 
+  int apLeft = -1;
+
   bool emitsLight = false;
   float lightStrength = 0;
   LightType lightType;
@@ -31,6 +33,7 @@ public:
     emitsLight = t.emitsLight;
     lightStrength = t.lightStrength;
     lightType = t.lightType;
+    apLeft = t.apLeft;
   }
   Terrain(TerrainSpec t, int z) : Object(), type(t) {
     seeThrough = t.seeThrough;
@@ -39,19 +42,20 @@ public:
     emitsLight = t.emitsLight;
     lightStrength = t.lightStrength;
     lightType = t.lightType;
+    apLeft = t.apLeft;
   }
   TerrainSpec type;
 };
 
 namespace TerrainType {
-const auto TORCH_STAND = TerrainSpec{"torch stand",  false,          true, true,
+const auto TORCH_STAND = TerrainSpec{"torch stand",  false,          true, -1, true,
                                      TORCH_DISTANCE, LightType::FIRE};
 const auto STATUE =
-    TerrainSpec{"statue", false, false, true, 1, LightType::MAGIC};
+    TerrainSpec{"statue", false, false, -1, true, 1, LightType::MAGIC};
 const auto ALTAR = TerrainSpec{"altar", true, true};
 const auto BUSH = TerrainSpec{"bush", false, true};
 const auto FIREBALL =
-    TerrainSpec{"fireball", true, true, true, TORCH_DISTANCE, LightType::FIRE};
+    TerrainSpec{"fireball", true, true, 1, true, TORCH_DISTANCE, LightType::FIRE};
 }; // namespace TerrainType
 
 #endif // __TERRAIN_H_

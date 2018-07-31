@@ -110,7 +110,6 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
     auto cells = caster->getInRadius(rspell->radius);
     applySpellOnCells(rspell->spell, cells);
   } else if (auto lspell = std::dynamic_pointer_cast<LineSpell>(spell)) {
-    //TODO: create event ChooseDirection with callback
     DirectionEvent de([=](auto dir) {
       auto cell = hero->currentLocation->getCell(caster->currentCell, dir);
       auto cells = std::vector<std::shared_ptr<Cell>>{cell};
@@ -121,6 +120,42 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
       }
       applySpellOnCells(lspell->spell, cells);
 
+    });
+    eb::EventBus::FireEvent(de);
+  } else if (auto tspell = std::dynamic_pointer_cast<TargetSpell>(spell)) {
+
+    auto cells = caster->getInRadius(tspell->length);
+    std::vector<std::shared_ptr<Enemy>> targets;
+    for (auto c : cells) {
+      auto enemies = utils::castObjects<Enemy>(hero->currentLocation->getObjects(c));
+      if (enemies.size() != 0) {
+        targets.push_back(enemies.front());
+      }
+    }
+    auto d = tspell->length;
+    std::shared_ptr<Cell> target;
+    auto cc = hero->currentCell;
+    for (auto e : targets) {
+      auto td = sqrt(pow(cc->x - e->currentCell->x, 2) + pow(cc->y - e->currentCell->y, 2));
+      if (td <= d) {
+        target = e->currentCell;
+      }
+    }
+
+    TargetEvent de(target, [=](auto cell) {
+      std::dynamic_pointer_cast<DamageSpell>(tspell->spell)->applySpell(hero->currentLocation, cell);
+      hero->currentLocation->invalidateVisibilityCache(hero->currentCell);
+      hero->calcViewField();
+      hero->commit("cast spell", 0);
+      pauseAndEraseFireballs();
+    }, [=](auto line){
+      auto cell = line.back();
+      if (!cell->type.passThrough) return false;
+      if (line.size() > tspell->length + 1) return false;
+      if (std::find_if(line.begin(), line.end(), [](auto c){
+        return !c->type.passThrough;
+      }) != line.end()) return false;
+      return true;
     });
     eb::EventBus::FireEvent(de);
   }
@@ -140,15 +175,7 @@ void Magic::applySpellOnCells(std::shared_ptr<Spell> spell, std::vector<std::sha
 
 void Magic::pauseAndEraseFireballs() {
     PauseEvent me([=]() {
-      auto objects = hero->currentLocation->objects;
-      auto ts = utils::castObjects<Terrain>(objects);
-      for (auto t : ts) {
-        if (t->type == TerrainType::FIREBALL) {
-          hero->currentLocation->objects.erase(
-              std::remove(objects.begin(), objects.end(), t), objects.end());
-          hero->currentLocation->invalidateVisibilityCache(t->currentCell);
-        }
-      }
+      hero->commit("cast spell", 1);
 
       hero->currentLocation->invalidateVisibilityCache(hero->currentCell);
       hero->currentLocation->invalidate();

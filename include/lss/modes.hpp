@@ -123,6 +123,7 @@ struct modes {
             , "normal"_s + event<EnableModeEvent> [is_pause_event] / set_pause  = "pause"_s
             , "object_select"_s + event<EnableModeEvent> [is_pause_event] / set_pause  = "pause"_s
             , "object_select"_s + event<EnableModeEvent> [is_direction_event] / set_direction  = "direction"_s
+            , "target"_s + event<EnableModeEvent> [is_pause_event] / set_pause  = "pause"_s
             , "direction"_s + event<EnableModeEvent> [is_pause_event] / set_pause  = "pause"_s
             , "normal"_s + event<EnableModeEvent> [is_target_event] / set_target  = "target"_s
             , "object_select"_s + event<EnableModeEvent> [is_target_event] / set_target  = "target"_s
@@ -149,6 +150,7 @@ struct modes {
             , "inspect"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
             , "game_over"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
             , "pause"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
+            , "target"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
         );
     // clang-format on
   }
@@ -288,6 +290,8 @@ public:
   bool processKey(KeyEvent e);
   void setCallback(TargetCallback c) { callback = c; };
   TargetCallback callback;
+  void setCheckTarget(CheckTargetCallback c) { checkTarget = c; };
+  CheckTargetCallback checkTarget;
 };
 
 #endif // __MODES_H_

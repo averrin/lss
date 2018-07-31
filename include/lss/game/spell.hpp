@@ -60,6 +60,14 @@ public:
   int length;
 };
 
+class TargetSpell : public Spell {
+public:
+  TargetSpell(std::string n, std::shared_ptr<Spell> s, int l, int c)
+      : Spell(n, c), spell(s), length(l) {}
+  std::shared_ptr<Spell> spell;
+  int length;
+};
+
 namespace Spells {
 const auto REVEAL = std::make_shared<Spell>("Reveal", 50, 2000);
 const auto MONSTER_SENSE = std::make_shared<Spell>("Monster Sense");
@@ -82,6 +90,10 @@ const auto FIREBLAST = std::make_shared<RadiusSpell>(
 const auto FIRESTREAM = std::make_shared<LineSpell>(
     "Firestream",
     std::make_shared<DamageSpell>("Fire damage", DamageSpec(0, 2, 6)), 4, 20);
+
+const auto FIRESTRIKE = std::make_shared<TargetSpell>(
+    "Firestrike",
+    std::make_shared<DamageSpell>("Fire damage", DamageSpec(0, 2, 6)), 4, 10);
 
 const auto TOGGLE_DUAL_WIELD = std::make_shared<ToggleTraitSpell>(
     "Toggle Dual Wield trait", Traits::DUAL_WIELD);
@@ -146,6 +158,7 @@ const std::vector<std::shared_ptr<Spell>> USABLE = {
     Spells::FIREBALL,
     Spells::FIREBLAST,
     Spells::FIRESTREAM,
+    Spells::FIRESTRIKE,
 
     Spells::SUMMON_THING,
     Spells::RESTORE_MANA,

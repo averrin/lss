@@ -92,7 +92,6 @@ bool TargetMode::processKey(KeyEvent event) {
   case SDL_SCANCODE_U:
   case SDL_SCANCODE_B:
   case SDL_SCANCODE_N: {
-    app->state->selection.clear();
     auto d = getDir(event.getCode());
     if (d == std::nullopt)
       break;
@@ -100,17 +99,25 @@ bool TargetMode::processKey(KeyEvent event) {
         app->hero->currentLocation
             ->cells[app->state->cursor.y][app->state->cursor.x],
         *utils::getDirectionByName(*d));
-    app->state->cursor = {nc->x, nc->y};
     auto location = app->hero->currentLocation;
+    auto line = location->getLine(app->hero->currentCell, nc);
+    if (!checkTarget(line)) break;
+
+    app->state->selection.clear();
+    app->state->cursor = {nc->x, nc->y};
     auto cell = location->cells[app->state->cursor.y][app->state->cursor.x];
-    auto line = location->getLine(app->hero->currentCell, cell);
     for (auto c : line) {
-      app->state->selection.push_back({{c->x, c->y}, "#11f"});
+      app->state->selection.push_back({{c->x, c->y}, "#6c6d79"});
     }
     app->state->invalidate();
     // render();
     return true;
   } break;
+  case SDL_SCANCODE_T:
+  case SDL_SCANCODE_RETURN:
+    callback(app->hero->currentLocation->cells[app->state->cursor.y][app->state->cursor.x]);
+    return true;
+    break;
   }
   return false;
 }
@@ -391,6 +398,19 @@ bool NormalMode::processKey(KeyEvent event) {
   switch (event.getCode()) {
   case SDL_SCANCODE_T:
     app->state->selection.clear();
+    app->targetMode->setCallback([&](auto cell) {
+      fmt::print("{}.{}\n", cell->x, cell->y);
+      app->modeManager.toNormal();
+    });
+    app->targetMode->setCheckTarget([](auto line) {
+      auto cell = line.back();
+      if (!cell->type.passThrough) return false;
+      if (line.size() > 5) return false;
+      if (std::find_if(line.begin(), line.end(), [](auto c){
+        return !c->type.passThrough;
+      }) != line.end()) return false;
+      return true;
+    });
     app->modeManager.toTarget();
     app->statusLine->setContent(State::target_mode);
     app->state->cursor = {app->hero->currentCell->x,

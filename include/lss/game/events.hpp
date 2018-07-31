@@ -104,10 +104,15 @@ public:
 };
 
 typedef std::function<void(std::shared_ptr<Cell>)> TargetCallback;
+typedef std::function<bool(std::vector<std::shared_ptr<Cell>>)> CheckTargetCallback;
 class TargetEvent : public eb::Event {
 public:
-  TargetEvent(TargetCallback c) : eb::Event(nullptr), callback(c) {}
+  TargetEvent(TargetCallback c, CheckTargetCallback ct) : eb::Event(nullptr), callback(c), checkTarget(ct) {}
+  TargetEvent(std::shared_ptr<Cell> st, TargetCallback c, CheckTargetCallback ct)
+    : eb::Event(nullptr), startTarget(st), callback(c), checkTarget(ct) {}
   TargetCallback callback;
+  CheckTargetCallback checkTarget;
+  std::shared_ptr<Cell> startTarget;
 };
 /**********/
 class MessageEvent : public eb::Event {

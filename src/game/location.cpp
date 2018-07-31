@@ -91,6 +91,17 @@ void Location::onEvent(CommitEvent &e) {
     }
   }
 
+  auto _objects = objects;
+  for (auto o : _objects) {
+    if (o->apLeft > 0) {
+      o->apLeft -= e.actionPoints;
+      if (o->apLeft <= 0) {
+        objects.erase(std::remove(objects.begin(), objects.end(), o),
+                  objects.end());
+      }
+    }
+  }
+
   LocationChangeEvent ec(nullptr);
   eb::EventBus::FireEvent(ec);
 }

@@ -31,6 +31,8 @@ public:
   float lightStrength = 0;
   LightType lightType;
 
+  int apLeft = -1;
+
   std::vector<eb::HandlerRegistrationPtr> handlers;
   std::shared_ptr<Cell> currentCell;
 
