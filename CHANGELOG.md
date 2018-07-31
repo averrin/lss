@@ -6,6 +6,8 @@
 - refactor magic system
 - init radius damage spell
 - pause mode and fireball visualization
+- direction mode and line spell
+- target mode and target spell
 
 ### 0.0.9
 - repeat key

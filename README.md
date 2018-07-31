@@ -32,7 +32,8 @@ rendering quality. And you may need install some deps.
 - [ ] Weights
 - [ ] Passive, patrol and "hero search" AI, stealth
 - [ ] Chests and containers
-- [ ] Ranged selection and weapons
+- [X] Ranged selection
+- [ ] Throwing
 - [X] Randomized monsters and loot
 - [ ] Leveling
 - [ ] Passthrough seed
