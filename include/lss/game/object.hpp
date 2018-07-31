@@ -30,6 +30,7 @@ public:
   bool emitsLight = false;
   float lightStrength = 0;
   LightType lightType;
+  bool lightStable = false;
 
   int apLeft = -1;
 

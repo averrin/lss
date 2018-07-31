@@ -77,7 +77,15 @@ void LogPanel::onEvent(EnemyTakeDamageEvent &e) {
 void LogPanel::onEvent(HeroTakeDamageEvent &e) {
   hero->report.damageTaken += e.damage->damage;
   hero->report.damageDeflected += e.damage->deflected;
-  auto enemy = std::dynamic_pointer_cast<Enemy>(e.getSender());
+  std::string attacker_name;
+  if (auto enemy = std::dynamic_pointer_cast<Enemy>(e.getSender())) {
+    attacker_name = enemy->type.name;
+  } else if (std::dynamic_pointer_cast<Player>(e.getSender())) {
+    //FIXME: crash
+    attacker_name = "You";
+  } else {
+    attacker_name = "something";
+  }
   if (e.damage->damage > 0) {
     std::string tags = "";
     if (e.damage->traits.size() > 0) {
@@ -90,15 +98,14 @@ void LogPanel::onEvent(HeroTakeDamageEvent &e) {
     appendLine({F(fmt::format(
         "You take <span color='{}'><b>{}{}</b></span> dmg from {}{}{}",
         e.damage->isCritical ? "red" : "{{orange}}",
-        e.damage->isCritical ? "!" : "", e.damage->damage, enemy->type.name,
+        e.damage->isCritical ? "!" : "", e.damage->damage, attacker_name,
         tags,
         e.damage->deflected > 0
             ? fmt::format(" [{} deflected]", e.damage->deflected)
             : ""))});
   } else {
-    auto name = enemy->type.name;
-    name[0] = toupper(name[0]);
-    appendLine({F(fmt::format("{} failed to hurt you", name))});
+    attacker_name[0] = toupper(attacker_name[0]);
+    appendLine({F(fmt::format("{} failed to hurt you", attacker_name))});
   }
 }
 void LogPanel::onEvent(EnemyDiedEvent &e) {

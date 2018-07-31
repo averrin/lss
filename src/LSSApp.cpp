@@ -214,6 +214,14 @@ void LSSApp::startBg() {
 
       std::map<std::shared_ptr<Cell>, int> ld;
       for (auto [ls, cells] : lightMap) {
+        auto objects = utils::castObjects<Terrain>(hero->currentLocation->getObjects(ls));
+        auto stable_emitter = std::find_if(objects.begin(), objects.end(), [](auto o){
+          return o->emitsLight && o->lightStable;
+        });
+        auto emitter = std::find_if(objects.begin(), objects.end(), [](auto o){
+          return o->emitsLight;
+        });
+        if (stable_emitter != objects.end() || emitter == objects.end()) continue;
         if (ld.find(ls) == ld.end()) {
           ld[ls] = R::N(0, 2);
         }

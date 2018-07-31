@@ -134,11 +134,13 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
     }
     auto d = tspell->length;
     std::shared_ptr<Cell> target;
-    auto cc = hero->currentCell;
-    for (auto e : targets) {
-      auto td = sqrt(pow(cc->x - e->currentCell->x, 2) + pow(cc->y - e->currentCell->y, 2));
-      if (td <= d) {
-        target = e->currentCell;
+    if (std::dynamic_pointer_cast<DamageSpell>(tspell->spell)) {
+      auto cc = hero->currentCell;
+      for (auto e : targets) {
+        auto td = sqrt(pow(cc->x - e->currentCell->x, 2) + pow(cc->y - e->currentCell->y, 2));
+        if (td <= d) {
+          target = e->currentCell;
+        }
       }
     }
 
@@ -196,6 +198,9 @@ void DamageSpell::applySpell(std::shared_ptr<Location> location,
           std::remove(location->objects.begin(), location->objects.end(), o),
           location->objects.end());
     }
+  }
+  if (c == location->player->currentCell) {
+      location->player->applyDamage(location->player, damage.getDamage());
   }
   applyEffect(location, c);
 }
