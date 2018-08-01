@@ -1,45 +1,45 @@
 ## Changelog
 
 ### 0.1.0
-- migrate to SDL2
-- animated light flickering
-- refactor magic system
-- init radius damage spell
-- pause mode and fireball visualization
-- direction mode and line spell
+- init animations (eg. flying for target spell)
 - target mode and target spell
+- direction mode and line spell
+- pause mode and fireball visualization
+- init radius damage spell
+- refactor magic system
+- animated light flickering
+- migrate to SDL2
 
 ### 0.0.9
 - repeat key
 
 ### 0.0.8
-- scrolls & potions with random names
-- location loot
-- statues & altars
-- bushes
-- teleport spell
-- lakes && void
-- permanent trait effect (for items)
-- background location generation
-- more info in game over screen
-- lasting effects with duration
-- over time effects
-- confusion & jumpy
-- on hit effect
 - mana points
-
+- on hit effect
+- confusion & jumpy
+- over time effects
+- lasting effects with duration
+- more info in game over screen
+- background location generation
+- permanent trait effect (for items)
+- lakes && void
+- teleport spell
+- bushes
+- statues & altars
+- location loot
+- scrolls & potions with random names
 
 ### 0.0.7
-- init dungeon generator
-- river generator
-- place random enemies
-- cavern location type
-- init inspect mode
-- init passive ai
-- randomized effects
-- unidentified items
-- spawn probability table
 - log panel
+- spawn probability table
+- unidentified items
+- randomized effects
+- init passive ai
+- init inspect mode
+- cavern location type
+- place random enemies
+- river generator
+- init dungeon generator
 
 ### 0.0.0 - 0.0.6
 - durability for torches

@@ -26,15 +26,15 @@ rendering quality. And you may need install some deps.
 - [X] Light/shadow-related traits
 - [X] Better event log
 - [X] After death stats
-- [ ] Hero status page
 - [X] Debug menus for summoning enemies/items & location creator
+- [X] Ranged selection
+- [X] Randomized monsters and loot
+- [ ] Hero status page
 - [ ] Refactor effects system
 - [ ] Weights
 - [ ] Passive, patrol and "hero search" AI, stealth
 - [ ] Chests and containers
-- [X] Ranged selection
 - [ ] Throwing
-- [X] Randomized monsters and loot
 - [ ] Leveling
 - [ ] Passthrough seed
 - [ ] Hundreds of other features...
@@ -68,6 +68,8 @@ rendering quality. And you may need install some deps.
 ### Debug controls
 * F1 — debug mode (show enemy pathes, allow uber spells)
 * shift+i — inspect mode
+* s — spawn item
+* shift+s — spawn enemy
 
 ## More screenshots
 ![screenshot_cavern](https://raw.githubusercontent.com/averrin/lss/master/screenshot_cavern.png)
