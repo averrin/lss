@@ -379,7 +379,7 @@ void Creature::calcViewField(bool force) {
 
   // cachedCell = currentCell;
   for (auto c : viewField) {
-    c->lightSources.insert(currentCell);
+    c->lightSources.insert(shared_from_this());
   }
 }
 

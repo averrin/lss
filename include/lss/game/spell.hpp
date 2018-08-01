@@ -114,9 +114,9 @@ const auto FIRESTRIKE = std::make_shared<TargetSpell>(
 const auto FLASH = std::make_shared<RadiusSpell>(
     "Flash",
     std::make_shared<CellSpell>("Light", TerrainType::MAGIC_LIGHT), 1.5, 10);
-const auto SPARK = std::make_shared<TargetSpell>(
-    "Spark",
-    std::make_shared<CellSpell>("Light", TerrainType::MAGIC_LIGHT), 6, 10);
+const auto LIGHT = std::make_shared<TargetSpell>(
+    "Light",
+    std::make_shared<CellSpell>("Light", TerrainType::MAGIC_LIGHT_LONG), 6, 10);
 
 const auto TOGGLE_DUAL_WIELD = std::make_shared<ToggleTraitSpell>(
     "Toggle Dual Wield trait", Traits::DUAL_WIELD);
@@ -184,7 +184,7 @@ const std::vector<std::shared_ptr<Spell>> USABLE = {
     Spells::FIRESTRIKE,
 
     Spells::FLASH,
-    Spells::SPARK,
+    Spells::LIGHT,
 
     Spells::SUMMON_THING,
     Spells::RESTORE_MANA,

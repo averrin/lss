@@ -10,6 +10,7 @@
 const float TORCH_DISTANCE = 4.5f;
 
 class Room;
+class Object;
 struct CellSpec {
   std::string name;
 
@@ -57,7 +58,7 @@ public:
   bool illuminated = false;
   std::vector<CellFeature> features;
 
-  std::set<std::shared_ptr<Cell>> lightSources;
+  std::set<std::shared_ptr<Object>> lightSources;
   std::shared_ptr<Room> room;
 
   int x;
@@ -65,8 +66,6 @@ public:
 
   bool passThrough = false;
   bool seeThrough = false;
-
-  void updateIllumination();
 
   bool canPass(std::vector<Trait> traits) {
     if (passThrough)

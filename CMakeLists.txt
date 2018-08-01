@@ -49,6 +49,7 @@ set( SRC_FILES
 	${SRC_DIR}/fragment.cpp
 	${SRC_DIR}/palette.cpp
 	${SRC_DIR}/state.cpp
+	${SRC_DIR}/animation.cpp
 
 	${SRC_DIR}/modes.cpp
 	${SRC_DIR}/commands.cpp

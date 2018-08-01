@@ -2,6 +2,7 @@
 #define __EVENTS_H_
 
 #include <functional>
+#include <lss/animation.hpp>
 #include <lss/game/direction.hpp>
 
 #include "Event.hpp"
@@ -114,11 +115,18 @@ public:
   CheckTargetCallback checkTarget;
   std::shared_ptr<Cell> startTarget;
 };
+
 /**********/
 class MessageEvent : public eb::Event {
 public:
   MessageEvent(eb::ObjectPtr, std::string);
   std::string message;
+};
+
+class AnimationEvent : public eb::Event {
+public:
+  AnimationEvent(std::shared_ptr<Animation>);
+  std::shared_ptr<Animation> animation;
 };
 
 /**********/

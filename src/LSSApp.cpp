@@ -189,7 +189,7 @@ void LSSApp::startGame() {
   invalidate("init");
   gameFrame->setTextAlignment(pango::TextAlignment::LEFT);
 
-  startBg();
+  updateMap();
 }
 
 void LSSApp::startBg() {
@@ -200,7 +200,7 @@ void LSSApp::startBg() {
   bgRunning = true;
   bgThread = std::thread([&]() {
     while (bgRunning) {
-      std::map<std::shared_ptr<Cell>, std::set<std::shared_ptr<Cell>>> lightMap;
+      std::map<std::shared_ptr<Object>, std::set<std::shared_ptr<Cell>>> lightMap;
       for (auto c : hero->viewField) {
         if (!c->illuminated)
           continue;
@@ -212,15 +212,10 @@ void LSSApp::startBg() {
         }
       }
 
-      std::map<std::shared_ptr<Cell>, int> ld;
+      std::map<std::shared_ptr<Object>, int> ld;
       for (auto [ls, cells] : lightMap) {
-        if (ls != hero->currentCell) {
-          auto objects = utils::castObjects<Terrain>(hero->currentLocation->getObjects(ls));
-          auto emitter = std::find_if(objects.begin(), objects.end(), [](auto o){
-            return o->emitsLight;
-          });
-          if (emitter == objects.end()) continue;
-          if ((*emitter)->lightStable) continue;
+        if (ls != hero) {
+          if (!ls->emitsLight || ls->lightStable) continue;
         } else if (!hero->hasLight()) {
           continue;
         }
@@ -241,7 +236,19 @@ void LSSApp::startBg() {
             a = 100;
           f->setAlpha(a);
         }
-  }
+      }
+
+      damaged = false;
+      auto _anims = animations;
+      for (auto a : _anims) {
+        if (a->stopped) {
+          animations.erase(std::remove(animations.begin(), animations.end(), a));
+          continue;
+        }
+        a->tick();
+        damaged = true;
+      }
+
       state->invalidate();
       SDL_Delay(32);
     }
@@ -250,31 +257,29 @@ void LSSApp::startBg() {
 
 void LSSApp::setListeners() { reactor = std::make_shared<EventReactor>(this); }
 
-void LSSApp::invalidate() {
+void LSSApp::updateMap() {
   auto row = 0;
   auto index = 0;
   auto cc = hero->currentCell;
+  auto uc = std::make_shared<Cell>(CellType::UNKNOWN);
+  auto us = std::make_shared<CellSign>(uc);
   for (auto r : hero->currentLocation->cells) {
     auto column = 0;
     for (auto c : r) {
-      // if (debug) {
-      //   c->features.clear();
-      // }
       auto f = state->fragments[index];
-      // fmt::print("{}", c->type);
       switch (c->visibilityState) {
       case VisibilityState::UNKNOWN:
         if (hero->monsterSense &&
             !std::dynamic_pointer_cast<CellSign>(state->fragments[index])) {
           state->fragments[index] = std::make_shared<CellSign>(c);
         }
+        state->fragments[index] = us;
         break;
       case VisibilityState::SEEN:
         state->fragments[index] = std::make_shared<CellSign>(c);
         state->fragments[index]->setAlpha(Cell::DEFAULT_LIGHT);
         break;
       case VisibilityState::VISIBLE:
-        // if (!c->seeThrough) c->features = {CellFeature::MARK1};
         state->fragments[index] = std::make_shared<CellSign>(c);
         state->fragments[index]->setAlpha(c->illumination);
         break;
@@ -283,12 +288,11 @@ void LSSApp::invalidate() {
       index++;
     }
     auto f = state->fragments[index];
-    if (f != State::END_LINE[0]) {
-      state->fragments[index] = State::END_LINE[0];
+    if (f != State::END_LINE.front()) {
+      state->fragments[index] = State::END_LINE.front();
     }
     index++;
     row++;
-    // fmt::print("\n");
   }
 
   auto objects = hero->currentLocation->objects;
@@ -355,6 +359,7 @@ void LSSApp::invalidate() {
 
   state->width = hero->currentLocation->cells.front().size();
   state->height = hero->currentLocation->cells.size();
+  damaged = false;
   startBg();
   // state->invalidate();
 }
@@ -478,6 +483,16 @@ bool LSSApp::processCommand(std::string cmd) {
 }
 
 void LSSApp::update() {
+  //TODO: make invalidate only damaged setter
+  if (damaged) {
+    bgRunning = false;
+    bgThread.join();
+    hero->currentLocation->invalidateVisibilityCache(hero->currentCell);
+    hero->currentLocation->invalidate();
+    hero->calcViewField();
+    hero->currentLocation->updateView(hero);
+    updateMap();
+  }
 
   // gl::clear(state->currentPalette.bgColor);
   auto s = state;

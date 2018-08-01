@@ -24,6 +24,7 @@
 #include "lss/keyEvent.hpp"
 #include "lss/modes.hpp"
 #include "lss/state.hpp"
+#include "lss/animation.hpp"
 
 #include "lss/game/door.hpp"
 #include "lss/game/enemy.hpp"
@@ -67,7 +68,10 @@ public:
 
   void drawFrame(pango::SurfaceRef, SDL_Rect);
 
-  void invalidate();
+    void updateMap();
+    void invalidate() {
+      damaged = true;
+    }
   void invalidate(std::string reason) {
     // fmt::print("Invalidate reason: {}\n", reason);
     auto t0 = std::chrono::system_clock::now();
@@ -132,9 +136,11 @@ public:
   std::shared_ptr<Magic> magic;
 
   std::vector<std::shared_ptr<Command>> commands;
+  std::vector<std::shared_ptr<Animation>> animations;
 
   std::string typedCommand;
   bool needRedraw = true;
+  bool damaged = false;
 };
 
 #endif // __LSSAPP_H_

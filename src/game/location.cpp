@@ -23,7 +23,7 @@ void Location::invalidateVisibilityCache(std::shared_ptr<Cell> cell) {
   std::vector<std::pair<std::shared_ptr<Cell>, float>> hits;
   for (auto ls : cell->lightSources) {
     for (auto [lsk, _] : visibilityCache) {
-      if (lsk.first != ls && lsk.first != player->currentCell)
+      if (lsk.first != ls->currentCell && lsk.first != player->currentCell)
         continue;
       // fmt::print("cache hit: {}.{} - {}\n", lsk.first->x, lsk.first->y,
       // lsk.second);
@@ -269,23 +269,23 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
       // FIXME: not in distance, but only visible
       if (hasLight && getDistance(c, hero->currentCell) <= heroVD) {
         c->illuminated = true;
-        c->lightSources.insert(hero->currentCell);
+        c->lightSources.insert(hero);
         continue;
       }
     }
   }
-  std::vector<std::shared_ptr<Cell>> ts;
+  std::vector<std::shared_ptr<Object>> ts;
   for (auto t : torches) {
-    ts.push_back(t->currentCell);
+    ts.push_back(t);
     for (auto c : getVisible(t->currentCell, t->lightStrength)) {
-      c->lightSources.insert(t->currentCell);
+      c->lightSources.insert(t);
       c->illuminated = true;
     }
   }
   for (auto e : enemies) {
     if (e->hasLight()) {
       for (auto c : getVisible(e->currentCell, TORCH_DISTANCE)) {
-        c->lightSources.insert(e->currentCell);
+        c->lightSources.insert(e);
         c->illuminated = true;
       }
     }
@@ -298,9 +298,9 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
         c->illumination = Cell::DEFAULT_LIGHT;
         continue;
       }
-      std::vector<std::shared_ptr<Cell>> lss;
+      std::vector<std::shared_ptr<Object>> lss;
       for (auto ls : c->lightSources) {
-        if (ls == hero->currentCell && hasLight) {
+        if (ls == hero && hasLight) {
           lss.push_back(ls);
         } else if (std::find(ts.begin(), ts.end(), ls) !=
                    ts.end()) {
@@ -313,7 +313,7 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
         continue;
       }
       for (auto ls : lss) {
-        auto td = sqrt(pow(c->x - ls->x, 2) + pow(c->y - ls->y, 2));
+        auto td = sqrt(pow(c->x - ls->currentCell->x, 2) + pow(c->y - ls->currentCell->y, 2));
         if (td < d) {
           d = td;
         }

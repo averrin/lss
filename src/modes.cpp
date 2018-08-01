@@ -310,7 +310,8 @@ void InspectMode::render() {
   app->inspectState->appendContent(
       {F(fmt::format("Light sources: <b>{}</b>", cell->lightSources.size()))});
 
-  for (auto c : cell->lightSources) {
+  for (auto ls : cell->lightSources) {
+    auto c = ls->currentCell;
     app->state->selection.push_back({{c->x, c->y}, "#1f1"});
   }
   app->inspectState->appendContent(State::END_LINE);
@@ -396,6 +397,15 @@ void InspectMode::render() {
 bool NormalMode::processKey(KeyEvent event) {
 
   switch (event.getCode()) {
+  case SDL_SCANCODE_V:{
+    auto cells = app->hero->currentLocation->getNeighbors(app->hero->currentCell);
+
+    auto fb = std::make_shared<Terrain>(TerrainType::MAGIC_LIGHT_LONG, 8);
+    app->hero->currentLocation->objects.push_back(fb);
+    auto a = std::make_shared<MoveAnimation>(fb, cells, cells.size() * 2);
+    a->endless = true;
+    app->animations.push_back(a);
+    }break;
   case SDL_SCANCODE_T:
     app->state->selection.clear();
     app->targetMode->setCallback([&](auto cell) {

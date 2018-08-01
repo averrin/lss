@@ -294,6 +294,7 @@ void EventReactor::onEvent(EquipCommandEvent &e) {
 }
 
 void EventReactor::onEvent(PauseEvent &e) {
+  app->damaged = true;
   app->pauseMode->setCallback(e.callback);
   app->statusLine->setContent(State::pause_mode);
   app->modeManager.toPause();
@@ -381,4 +382,8 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
 void EventReactor::onEvent(HeroDiedEvent &e) {
   app->modeManager.toGameOver();
   app->gameOverMode->render(app->gameOverState);
+}
+
+void EventReactor::onEvent(AnimationEvent &e) {
+  app->animations.push_back(e.animation);
 }
