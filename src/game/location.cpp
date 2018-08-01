@@ -235,11 +235,11 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
   if (!needUpdateLight)
     return;
   auto t0 = std::chrono::system_clock::now();
-  auto heroVD = hero->VISIBILITY_DISTANCE(hero.get());
+  auto heroVD = hero->lightStrength;
   auto hasLight = hero->hasLight();
   auto enemies = utils::castObjects<Enemy>(objects);
   std::vector<std::shared_ptr<Object>> torches;
-  for (auto ts : utils::castObjects<Terrain>(objects)) {
+  for (auto ts : objects) {
     if (ts->emitsLight) {
       torches.push_back(ts);
     }
@@ -267,7 +267,7 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
       }
       c->illuminated = false;
       // FIXME: not in distance, but only visible
-      if (hasLight && getDistance(c, hero->currentCell) <= heroVD) {
+      if (hero->emitsLight && getDistance(c, hero->currentCell) <= heroVD) {
         c->illuminated = true;
         c->lightSources.insert(hero);
         continue;
@@ -278,8 +278,11 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
   for (auto t : torches) {
     ts.push_back(t);
     for (auto c : getVisible(t->currentCell, t->lightStrength)) {
-      c->lightSources.insert(t);
-      c->illuminated = true;
+      auto d = sqrt(pow(t->currentCell->x - c->x, 2) + pow(t->currentCell->y - c->y, 2));
+      if (d <= t->lightStrength) {
+        c->lightSources.insert(t);
+        c->illuminated = true;
+      }
     }
   }
   for (auto e : enemies) {
@@ -300,10 +303,7 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
       }
       std::vector<std::shared_ptr<Object>> lss;
       for (auto ls : c->lightSources) {
-        if (ls == hero && hasLight) {
-          lss.push_back(ls);
-        } else if (std::find(ts.begin(), ts.end(), ls) !=
-                   ts.end()) {
+        if (ls->emitsLight) {
           lss.push_back(ls);
         }
       }
@@ -318,9 +318,13 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
           d = td;
           c->nearestLightEmitter = ls;
         }
+        auto strength = ls->lightStrength;
+        if (ls == player) {
+          strength = TORCH_DISTANCE;
+        }
+        c->illumination = ((strength - td) / strength * 80) +
+                        Cell::DEFAULT_LIGHT;
       }
-      c->illumination = ((TORCH_DISTANCE - d) / TORCH_DISTANCE * 110) +
-                        Cell::DEFAULT_LIGHT + 5;
       if (c->illumination < Cell::MINIMUM_LIGHT) {
         c->illumination = Cell::MINIMUM_LIGHT;
       } else if (c->illumination > 100) {

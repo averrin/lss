@@ -53,7 +53,7 @@ void HeroLine::update() {
                     hero->MP(hero.get()), hero->MP_MAX(hero.get()),
                     hero->SPEED(hero.get()), hero->getDmgDesc(),
                     hero->DEF(hero.get()), hero->exp)),
-      F(fmt::format("{}", hero->hasLight()
+      F(fmt::format("{}", hero->emitsLight
                               ? fmt::format("   L&lt;{}&gt;", lightDurability)
                               : "")),
       F(fmt::format("   <b>P</b>:{}.{} D:{} [{} {}].{}", hero->currentCell->x,

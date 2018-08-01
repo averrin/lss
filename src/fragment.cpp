@@ -4,6 +4,7 @@
 #include "lss/fragment.hpp"
 #include "lss/game/terrain.hpp"
 #include "lss/state.hpp"
+#include "lss/color.hpp"
 
 using namespace Jinja2CppLight;
 using namespace std::string_literals;
@@ -63,11 +64,11 @@ std::map<TerrainSpec, std::string> terrainSigns = {
 };
 
 std::map<TerrainSpec, std::string> terrainColors = {
-    {TerrainType::TORCH_STAND, "orange"}, {TerrainType::FIREBALL, "red"},
-    {TerrainType::MAGIC_LIGHT, "lightblue"},
-    {TerrainType::MAGIC_LIGHT_LONG, "lightblue"},
-    {TerrainType::STATUE, "white"},       {TerrainType::ALTAR, "gray"},
-    {TerrainType::BUSH, "forestgreen"},
+    {TerrainType::TORCH_STAND, "#ffa500"}, {TerrainType::FIREBALL, "#ee1111"},
+    {TerrainType::MAGIC_LIGHT, "#add8e6"},
+    {TerrainType::MAGIC_LIGHT_LONG, "#add8e6"},
+    {TerrainType::STATUE, "#fafafa"},       {TerrainType::ALTAR, "#808080"},
+    {TerrainType::BUSH, "#228b22"},
 };
 
 std::map<ItemSpec, std::string> itemSigns = {
@@ -87,17 +88,17 @@ std::map<ItemSpec, std::string> itemSigns = {
 std::map<ItemSpec, std::string> itemColors = {
     {ItemType::BONES, "#aaa"},
 
-    {ItemType::CORPSE, "red"},          {ItemType::ROCK, "gray"},
-    {ItemType::PICK_AXE, "white"},      {ItemType::SWORD, "#F7CA88"},
-    {ItemType::GOLD_RING, "gold"},      {ItemType::GOLD_COINS, "gold"},
-    {ItemType::DAGGER, "gray"},         {ItemType::TORCH, "orange"},
-    {ItemType::GRASS, "darkgreen"},
+    {ItemType::CORPSE, "#ee1111"},          {ItemType::ROCK, "#808080"},
+    {ItemType::PICK_AXE, "#fafafa"},      {ItemType::SWORD, "#F7CA88"},
+    {ItemType::GOLD_RING, "#ffd700"},      {ItemType::GOLD_COINS, "#ffd700"},
+    {ItemType::DAGGER, "#808080"},         {ItemType::TORCH, "#ffa500"},
+    {ItemType::GRASS, "#006400"},
 
-    {ItemType::GREAT_AXE, "white"},     {ItemType::HELMET, "white"},
-    {ItemType::SHIELD, "white"},        {ItemType::GREAVES, "white"},
-    {ItemType::BOOTS, "white"},         {ItemType::PLATE, "white"},
-    {ItemType::LEATHER_ARMOR, "white"}, {ItemType::POTION, "lightblue"},
-    {ItemType::SCROLL, "white"},
+    {ItemType::GREAT_AXE, "#fafafa"},     {ItemType::HELMET, "#fafafa"},
+    {ItemType::SHIELD, "#fafafa"},        {ItemType::GREAVES, "#fafafa"},
+    {ItemType::BOOTS, "#fafafa"},         {ItemType::PLATE, "#fafafa"},
+    {ItemType::LEATHER_ARMOR, "#fafafa"}, {ItemType::POTION, "#add8e6"},
+    {ItemType::SCROLL, "#fafafa"},
 };
 
 std::map<EnemySpec, std::string> enemySigns = {
@@ -116,18 +117,18 @@ std::map<EnemySpec, std::string> enemySigns = {
 };
 
 std::map<EnemySpec, std::string> enemyColors = {
-    {EnemyType::RAT, "gray"},
-    {EnemyType::BAT, "gray"},
-    {EnemyType::SNAKE, "gray"},
-    {EnemyType::VIPER, "darkgreen"},
-    {EnemyType::BAT_LARGE, "darkgray"},
-    {EnemyType::GOBLIN, "green"},
+    {EnemyType::RAT, "#808080"},
+    {EnemyType::BAT, "#808080"},
+    {EnemyType::SNAKE, "#808080"},
+    {EnemyType::VIPER, "#006400"},
+    {EnemyType::BAT_LARGE, "#a9a9a9"},
+    {EnemyType::GOBLIN, "#00f000"},
     {EnemyType::ORK, "#22aa22"},
     {EnemyType::ORK_BLACK, "#555"},
-    {EnemyType::OGRE, "darkgreen"},
-    {EnemyType::PIXI, "pink"},
+    {EnemyType::OGRE, "#006400"},
+    {EnemyType::PIXI, "#ff1493"},
     {EnemyType::GOBLIN_LIEUTENANT, "#008b8b"},
-    {EnemyType::GOBLIN_ROGUE, "darkslategray"},
+    {EnemyType::GOBLIN_ROGUE, "#2f4f4f"},
 };
 
 std::map<CellSpec, std::string> cellSigns = {
@@ -149,21 +150,9 @@ std::map<CellSpec, std::map<bool, std::string>> cellColors = {
     {CellType::WATER, {{false, "#5e589e"}, {true, "#557"}}},
     {CellType::VOID, {{false, "#555"}, {true, "#555"}}}};
 
-std::map<CellSpec, std::string> cellColorsIlluminatedFire = {
-    {CellType::FLOOR, "#875"},      {CellType::WALL, "#eca"},
-    {CellType::DOWNSTAIRS, "#cba"}, {CellType::UPSTAIRS, "#cba"},
-    {CellType::WATER, "#77f"},      {CellType::VOID, "#555"},
-};
-
-std::map<CellSpec, std::string> cellColorsIlluminatedMagic = {
-    {CellType::FLOOR, "#578"},      {CellType::WALL, "#ace"},
-    {CellType::DOWNSTAIRS, "#cba"}, {CellType::UPSTAIRS, "#cba"},
-    {CellType::WATER, "#77f"},      {CellType::VOID, "#555"},
-};
-
-std::map<LightType, std::map<CellSpec, std::string>> lightColors = {
-  {LightType::FIRE, cellColorsIlluminatedFire},
-  {LightType::MAGIC, cellColorsIlluminatedMagic},
+std::map<LightType, std::string> lightColors = {
+  {LightType::FIRE, "#993311"},
+  {LightType::MAGIC, "#3333ff"},
 };
 
 std::map<CellSpec, std::string> cellWeights = {
@@ -177,21 +166,35 @@ std::map<CellSpec, std::string> cellWeights = {
 
 std::map<CellFeature, std::string> featureColors = {
   {CellFeature::CAVE, "#897546"},
-  {CellFeature::BLOOD, "darkred"},
-  {CellFeature::MARK1, "blue"},
-  {CellFeature::MARK2, "green"},
+  {CellFeature::BLOOD, "#8b0000"},
+  {CellFeature::MARK1, "#0000ff"},
+  {CellFeature::MARK2, "#00ff00"},
 };
 
-//TODO: add color blending with light type
+//FIXME: i thinl multiple blending doesnt work =(
 std::map<std::string, tpl_arg> getCellArgs(std::shared_ptr<Cell> cell) {
   std::string color;
   if (cell->visibilityState == VisibilityState::SEEN) {
     color = cellColors[cell->type][true];
   } else {
+    color = cellColors[cell->type][false];
     if (cell->illuminated) {
-      color = lightColors[cell->nearestLightEmitter->lightType][cell->type];
-    } else {
-      color = cellColors[cell->type][false];
+      auto fg = Color(color);
+      float n = 0;
+      for (auto ls : cell->lightSources) {
+        if (!ls->emitsLight) continue;
+        n++;
+      }
+      // fmt::print("{}\n", n);
+        fmt::print("{} -> ", color);
+      for (auto ls : cell->lightSources) {
+        if (!ls->emitsLight) continue;
+        auto lc = Color(lightColors[ls->lightType]);
+        fg.blend(lc, 1/n);
+        fmt::print("{} -> ", fg.getString());
+      }
+      fmt::print("{}\n", fg.getString());
+      color = fg.getString();
     }
 
     if (cell->type != CellType::VOID) {

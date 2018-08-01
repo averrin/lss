@@ -73,6 +73,10 @@ Player::Player() : Creature() {
   damage_modifier = 0;
   visibility_distance = 3.2f;
 
+  emitsLight = false;
+  lightType = LightType::FIRE;
+  lightStrength = VISIBILITY_DISTANCE(this);
+
   activeEffects.push_back(OverTimeEffects::MANA_RESTORE);
 
   name = "Unnamed hero";
@@ -156,6 +160,8 @@ void Player::commit(std::string reason, int ap, bool s) {
       }
     }
   }
+  emitsLight = hasLight();
+  lightStrength = VISIBILITY_DISTANCE(this);
 
   auto t0 = std::chrono::system_clock::now();
   auto ptr = shared_from_this();

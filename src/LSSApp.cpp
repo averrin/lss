@@ -214,11 +214,7 @@ void LSSApp::startBg() {
 
       std::map<std::shared_ptr<Object>, int> ld;
       for (auto [ls, cells] : lightMap) {
-        if (ls != hero) {
-          if (!ls->emitsLight || ls->lightStable) continue;
-        } else if (!hero->hasLight()) {
-          continue;
-        }
+        if (!ls->emitsLight || ls->lightStable) continue;
         if (ld.find(ls) == ld.end()) {
           ld[ls] = R::N(0, 2);
         }
