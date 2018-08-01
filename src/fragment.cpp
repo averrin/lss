@@ -149,28 +149,47 @@ std::map<CellSpec, std::map<bool, std::string>> cellColors = {
     {CellType::WATER, {{false, "#5e589e"}, {true, "#557"}}},
     {CellType::VOID, {{false, "#555"}, {true, "#555"}}}};
 
-std::map<CellSpec, std::string> cellColorsIlluminated = {
+std::map<CellSpec, std::string> cellColorsIlluminatedFire = {
     {CellType::FLOOR, "#875"},      {CellType::WALL, "#eca"},
     {CellType::DOWNSTAIRS, "#cba"}, {CellType::UPSTAIRS, "#cba"},
     {CellType::WATER, "#77f"},      {CellType::VOID, "#555"},
 };
 
-std::map<CellSpec, std::map<bool, std::string>> cellWeights = {
-    {CellType::FLOOR, {{false, "normal"}, {true, "normal"}}},
-    {CellType::WALL, {{false, "bold"}, {true, "bold"}}},
-    {CellType::DOWNSTAIRS, {{false, "bold"}, {true, "bold"}}},
-    {CellType::UPSTAIRS, {{false, "bold"}, {true, "bold"}}},
-    {CellType::WATER, {{false, "normal"}, {true, "normal"}}},
-    {CellType::VOID, {{false, "normal"}, {true, "normal"}}},
+std::map<CellSpec, std::string> cellColorsIlluminatedMagic = {
+    {CellType::FLOOR, "#578"},      {CellType::WALL, "#ace"},
+    {CellType::DOWNSTAIRS, "#cba"}, {CellType::UPSTAIRS, "#cba"},
+    {CellType::WATER, "#77f"},      {CellType::VOID, "#555"},
 };
 
+std::map<LightType, std::map<CellSpec, std::string>> lightColors = {
+  {LightType::FIRE, cellColorsIlluminatedFire},
+  {LightType::MAGIC, cellColorsIlluminatedMagic},
+};
+
+std::map<CellSpec, std::string> cellWeights = {
+    {CellType::FLOOR, "normal"},
+    {CellType::WALL, "bold"},
+    {CellType::DOWNSTAIRS, "bold"},
+    {CellType::UPSTAIRS, "bold"},
+    {CellType::WATER, "normal"},
+    {CellType::VOID, "normal"},
+};
+
+std::map<CellFeature, std::string> featureColors = {
+  {CellFeature::CAVE, "#897546"},
+  {CellFeature::BLOOD, "darkred"},
+  {CellFeature::MARK1, "blue"},
+  {CellFeature::MARK2, "green"},
+};
+
+//TODO: add color blending with light type
 std::map<std::string, tpl_arg> getCellArgs(std::shared_ptr<Cell> cell) {
   std::string color;
   if (cell->visibilityState == VisibilityState::SEEN) {
     color = cellColors[cell->type][true];
   } else {
     if (cell->illuminated) {
-      color = cellColorsIlluminated[cell->type];
+      color = lightColors[cell->nearestLightEmitter->lightType][cell->type];
     } else {
       color = cellColors[cell->type][false];
     }
@@ -178,16 +197,16 @@ std::map<std::string, tpl_arg> getCellArgs(std::shared_ptr<Cell> cell) {
     if (cell->type != CellType::VOID) {
       if (cell->hasFeature(CellFeature::CAVE) &&
           cell->type != CellType::WATER) {
-        color = "#897546";
+        color = featureColors[CellFeature::CAVE];
       }
       if (cell->hasFeature(CellFeature::BLOOD)) {
-        color = "darkred";
+        color = featureColors[CellFeature::BLOOD];
       }
       if (cell->hasFeature(CellFeature::MARK1)) {
-        color = "blue";
+        color = featureColors[CellFeature::MARK1];
       }
       if (cell->hasFeature(CellFeature::MARK2)) {
-        color = "green";
+        color = featureColors[CellFeature::MARK2];
       }
     }
   }
@@ -197,7 +216,7 @@ std::map<std::string, tpl_arg> getCellArgs(std::shared_ptr<Cell> cell) {
       // {"alpha", cell->visibilityState == VisibilityState::VISIBLE &&
       // cell->illuminated ? cell->illumination : 60 /*Cell::DEFAULT_LIGHT*/},
       {"weight",
-       cellWeights[cell->type][cell->visibilityState == VisibilityState::SEEN]},
+       cellWeights[cell->type]},
   };
 }
 

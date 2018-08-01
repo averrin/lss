@@ -59,6 +59,7 @@ public:
   std::vector<CellFeature> features;
 
   std::set<std::shared_ptr<Object>> lightSources;
+  std::shared_ptr<Object> nearestLightEmitter;
   std::shared_ptr<Room> room;
 
   int x;

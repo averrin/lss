@@ -316,6 +316,7 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
         auto td = sqrt(pow(c->x - ls->currentCell->x, 2) + pow(c->y - ls->currentCell->y, 2));
         if (td < d) {
           d = td;
+          c->nearestLightEmitter = ls;
         }
       }
       c->illumination = ((TORCH_DISTANCE - d) / TORCH_DISTANCE * 110) +

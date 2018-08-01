@@ -294,7 +294,7 @@ void EventReactor::onEvent(EquipCommandEvent &e) {
 }
 
 void EventReactor::onEvent(PauseEvent &e) {
-  app->damaged = true;
+  app->invalidate();
   app->pauseMode->setCallback(e.callback);
   app->statusLine->setContent(State::pause_mode);
   app->modeManager.toPause();

@@ -383,6 +383,7 @@ void Creature::calcViewField(bool force) {
   }
 }
 
+//TODO: migrate to emit
 bool Creature::hasLight() {
   return std::find_if(inventory.begin(), inventory.end(),
                       [](std::shared_ptr<Item> item) {

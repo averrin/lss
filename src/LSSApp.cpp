@@ -246,7 +246,7 @@ void LSSApp::startBg() {
           continue;
         }
         a->tick();
-        damaged = true;
+        invalidate();
       }
 
       state->invalidate();
@@ -359,9 +359,8 @@ void LSSApp::updateMap() {
 
   state->width = hero->currentLocation->cells.front().size();
   state->height = hero->currentLocation->cells.size();
-  damaged = false;
+  invalidate();
   startBg();
-  // state->invalidate();
 }
 
 void LSSApp::repeatTimer() {
