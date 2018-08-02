@@ -2,6 +2,7 @@
 #include "lss/game/enemy.hpp"
 #include "lss/game/lootBox.hpp"
 #include "lss/game/terrain.hpp"
+#include "lss/game/door.hpp"
 #include "lss/generator/room.hpp"
 #include "lss/utils.hpp"
 
@@ -160,8 +161,9 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
       auto cell = line.back();
       if (!cell->type.passThrough) return false;
       if (line.size() > tspell->length + 1) return false;
-      if (std::find_if(line.begin(), line.end(), [](auto c){
-        return !c->type.passThrough;
+      if (std::find_if(line.begin(), line.end(), [&](auto c){
+        return !c->type.passThrough
+          || utils::castObjects<Door>(hero->currentLocation->getObjects(c)).size() != 0;
       }) != line.end()) return false;
       return true;
     });
