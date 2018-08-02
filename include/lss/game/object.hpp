@@ -33,6 +33,7 @@ public:
   bool lightStable = false;
 
   int apLeft = -1;
+  bool destructable = true;
 
   std::vector<eb::HandlerRegistrationPtr> handlers;
   std::shared_ptr<Cell> currentCell;

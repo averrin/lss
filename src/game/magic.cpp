@@ -199,7 +199,7 @@ void DamageSpell::applySpell(std::shared_ptr<Location> location,
   for (auto o : objects) {
     if (auto creature = std::dynamic_pointer_cast<Creature>(o)) {
       creature->applyDamage(location->player, damage.getDamage());
-    } else {
+    } else if (o->destructable) {
       location->objects.erase(
           std::remove(location->objects.begin(), location->objects.end(), o),
           location->objects.end());
