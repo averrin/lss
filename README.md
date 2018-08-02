@@ -7,7 +7,8 @@ Yet another unfinished roguelike game.
 ## Build
 * `git clone --recursive git@github.com:averrin/lss.git`
 * `cd ./lss; mkdir build; cd ./build`
-* `conan instal .. --build=missing`
+* `conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan`
+* `conan install .. --build=missing`
 * `cmake ..; make -j4`
 
 Yeah, LSS migrate from cinder to SDL2. Now its more lightweight, but lost some
