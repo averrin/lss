@@ -63,6 +63,10 @@ const auto MAGIC_LIGHT =
     TerrainSpec{"light", true, true, 1, true, 2.5, LightType::MAGIC, true};
 const auto MAGIC_LIGHT_LONG =
     TerrainSpec{"light", true, true, 2500, true, 2.5, LightType::MAGIC, true};
+const auto MAGIC_LIGHT_FOREVER =
+    TerrainSpec{"light", true, true, -1, true, 2.5, LightType::MAGIC, true};
+const auto ACID_LIGHT_FOREVER =
+    TerrainSpec{"light", true, true, -1, true, 2.5, LightType::ACID, true};
 }; // namespace TerrainType
 
 #endif // __TERRAIN_H_

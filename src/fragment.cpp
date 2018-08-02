@@ -151,8 +151,9 @@ std::map<CellSpec, std::map<bool, std::string>> cellColors = {
     {CellType::VOID, {{false, "#555"}, {true, "#555"}}}};
 
 std::map<LightType, std::string> lightColors = {
-  {LightType::FIRE, "#993311"},
-  {LightType::MAGIC, "#3333ff"},
+  {LightType::FIRE, "#cc5511"},
+  {LightType::MAGIC, "#1133cc"},
+  {LightType::ACID, "#11cc11"},
 };
 
 std::map<CellSpec, std::string> cellWeights = {
@@ -186,14 +187,14 @@ std::map<std::string, tpl_arg> getCellArgs(std::shared_ptr<Cell> cell) {
         n++;
       }
       // fmt::print("{}\n", n);
-        fmt::print("{} -> ", color);
+        // fmt::print("{} -> ", color);
       for (auto ls : cell->lightSources) {
         if (!ls->emitsLight) continue;
         auto lc = Color(lightColors[ls->lightType]);
-        fg.blend(lc, 1/n);
-        fmt::print("{} -> ", fg.getString());
+        fg.blend(lc, 1/(n+1));
+        // fmt::print("{} -> ", fg.getString());
       }
-      fmt::print("{}\n", fg.getString());
+      // fmt::print("{}\n", fg.getString());
       color = fg.getString();
     }
 

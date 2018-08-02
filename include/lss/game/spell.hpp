@@ -117,6 +117,12 @@ const auto FLASH = std::make_shared<RadiusSpell>(
 const auto LIGHT = std::make_shared<TargetSpell>(
     "Light",
     std::make_shared<CellSpell>("Light", TerrainType::MAGIC_LIGHT_LONG), 6, 10);
+const auto LIGHT_FOREVER = std::make_shared<TargetSpell>(
+    "Eternal Light",
+    std::make_shared<CellSpell>("Light", TerrainType::MAGIC_LIGHT_FOREVER), 6, 10);
+const auto ACID_LIGHT_FOREVER = std::make_shared<TargetSpell>(
+    "Eternal green Light",
+    std::make_shared<CellSpell>("Light", TerrainType::ACID_LIGHT_FOREVER), 6, 10);
 
 const auto TOGGLE_DUAL_WIELD = std::make_shared<ToggleTraitSpell>(
     "Toggle Dual Wield trait", Traits::DUAL_WIELD);
@@ -185,6 +191,8 @@ const std::vector<std::shared_ptr<Spell>> USABLE = {
 
     Spells::FLASH,
     Spells::LIGHT,
+    Spells::LIGHT_FOREVER,
+    Spells::ACID_LIGHT_FOREVER,
 
     Spells::SUMMON_THING,
     Spells::RESTORE_MANA,

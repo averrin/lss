@@ -76,6 +76,7 @@ Player::Player() : Creature() {
   emitsLight = false;
   lightType = LightType::FIRE;
   lightStrength = VISIBILITY_DISTANCE(this);
+  // lightStable = true;
 
   activeEffects.push_back(OverTimeEffects::MANA_RESTORE);
 

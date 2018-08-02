@@ -7,7 +7,7 @@
 
 #include "lss/game/cell.hpp"
 
-enum class LightType { FIRE, MAGIC };
+enum class LightType { FIRE, MAGIC, ACID };
 
 class Object : public eb::Object, public std::enable_shared_from_this<Object> {
 public:
