@@ -6,8 +6,7 @@
 #include "lss/LSSApp.hpp"
 #include "lss/game/events.hpp"
 
-class EventReactor : public eb::EventHandler<eb::Event>,
-                     public eb::EventHandler<EquipCommandEvent>,
+class EventReactor : public eb::EventHandler<EquipCommandEvent>,
                      public eb::EventHandler<DropCommandEvent>,
                      public eb::EventHandler<UseCommandEvent>,
                      public eb::EventHandler<HelpCommandEvent>,
@@ -24,7 +23,6 @@ class EventReactor : public eb::EventHandler<eb::Event>,
                      public eb::EventHandler<QuitCommandEvent> {
 public:
   EventReactor(LSSApp *a) : app(a) {
-    eb::EventBus::AddHandler<eb::Event>(*this);
     eb::EventBus::AddHandler<QuitCommandEvent>(*this);
     eb::EventBus::AddHandler<EquipCommandEvent>(*this);
     eb::EventBus::AddHandler<DropCommandEvent>(*this);
@@ -43,7 +41,6 @@ public:
   }
   LSSApp *app;
 
-  virtual void onEvent(eb::Event &e) override;
   virtual void onEvent(QuitCommandEvent &e) override;
   virtual void onEvent(EquipCommandEvent &e) override;
   virtual void onEvent(HelpCommandEvent &e) override;

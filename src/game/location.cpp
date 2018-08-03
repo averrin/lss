@@ -384,9 +384,17 @@ Objects Location::getObjects(std::shared_ptr<Cell> cell) {
   auto it = std::copy_if(objects.begin(), objects.end(), cellObjects.begin(),
                          [cell](std::shared_ptr<Object> o) {
                            // return o->currentCell == cell;
-                           return o->currentCell->x == cell->x &&
-                                  o->currentCell->y == cell->y;
+                           try {
+                            return o->currentCell->x == cell->x &&
+                                    o->currentCell->y == cell->y;
+                           } catch (std::exception& e) {
+                             fmt::print("BUG: ghost cell!!!\n");
+                             return false;
+                           }
                          });
+  if (it == objects.end()) {
+    return {};
+  }
 
   cellObjects.resize(std::distance(cellObjects.begin(), it));
   return cellObjects;

@@ -395,17 +395,7 @@ void InspectMode::render() {
 }
 
 bool NormalMode::processKey(KeyEvent event) {
-
   switch (event.getCode()) {
-  case SDL_SCANCODE_V:{
-    auto cells = app->hero->currentLocation->getNeighbors(app->hero->currentCell);
-
-    auto fb = std::make_shared<Terrain>(TerrainType::MAGIC_LIGHT_LONG, 8);
-    app->hero->currentLocation->objects.push_back(fb);
-    auto a = std::make_shared<MoveAnimation>(fb, cells, cells.size() * 2);
-    a->endless = true;
-    app->animations.push_back(a);
-    }break;
   case SDL_SCANCODE_T:
     app->state->selection.clear();
     app->targetMode->setCallback([&](auto cell) {

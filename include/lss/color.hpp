@@ -47,5 +47,12 @@ public:
     }
 };
 
+namespace COLORS {
+    const std::string BG = "#1d1f22";
+    const std::string WHITE = "#fafafa";
+    const std::string GRAY = "#808080";
+    const std::string LIGHT_BLUE = "#add8e6";
+}
+
 
 #endif // __COLOR_H_

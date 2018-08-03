@@ -63,8 +63,6 @@ void EventReactor::onEvent(StairEvent &e) {
   }
 }
 
-void EventReactor::onEvent(eb::Event &e) { app->invalidate("eb::event"); }
-
 void EventReactor::onEvent(CommitEvent &e) {
   if (e.silent) {
     return;

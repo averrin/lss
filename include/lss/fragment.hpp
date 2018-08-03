@@ -11,6 +11,7 @@
 #include "lss/game/enemy.hpp"
 #include "lss/game/item.hpp"
 #include "lss/game/terrain.hpp"
+#include "lss/color.hpp"
 
 typedef std::variant<int, float, bool, std::string> tpl_arg;
 
@@ -33,9 +34,19 @@ public:
   bool damaged = true;
   std::string cache;
   int alpha = Cell::DEFAULT_LIGHT;
+  int bgAlpha = 100;
+  std::string bgColor = COLORS::BG;
 
   void setAlpha(int a) {
     alpha = a;
+    damaged = true;
+  }
+  void setBgAlpha(int a) {
+    bgAlpha = a;
+    damaged = true;
+  }
+  void setBgColor(std::string c) {
+    bgColor = c;
     damaged = true;
   }
 

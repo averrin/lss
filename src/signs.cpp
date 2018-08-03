@@ -16,11 +16,11 @@ const std::map<TerrainSpec, std::string> terrainSigns = {
 
 const std::map<TerrainSpec, std::string> terrainColors = {
     {TerrainType::TORCH_STAND, "#ffa500"}, {TerrainType::FIREBALL, "#ee1111"},
-    {TerrainType::MAGIC_LIGHT, "#add8e6"},
-    {TerrainType::MAGIC_LIGHT_LONG, "#add8e6"},
-    {TerrainType::MAGIC_LIGHT_FOREVER, "#add8e6"},
+    {TerrainType::MAGIC_LIGHT, COLORS::LIGHT_BLUE},
+    {TerrainType::MAGIC_LIGHT_LONG, COLORS::LIGHT_BLUE},
+    {TerrainType::MAGIC_LIGHT_FOREVER, COLORS::LIGHT_BLUE},
     {TerrainType::ACID_LIGHT_FOREVER, "#11cc11"},
-    {TerrainType::STATUE, "#fafafa"},       {TerrainType::ALTAR, "#808080"},
+    {TerrainType::STATUE, "#f0f0ff"},       {TerrainType::ALTAR, COLORS::GRAY},
     {TerrainType::BUSH, "#228b22"},
 };
 
@@ -41,17 +41,17 @@ const std::map<ItemSpec, std::string> itemSigns = {
 const std::map<ItemSpec, std::string> itemColors = {
     {ItemType::BONES, "#aaa"},
 
-    {ItemType::CORPSE, "#ee1111"},          {ItemType::ROCK, "#808080"},
-    {ItemType::PICK_AXE, "#fafafa"},      {ItemType::SWORD, "#F7CA88"},
+    {ItemType::CORPSE, "#ee1111"},          {ItemType::ROCK, COLORS::GRAY},
+    {ItemType::PICK_AXE, COLORS::WHITE},      {ItemType::SWORD, "#F7CA88"},
     {ItemType::GOLD_RING, "#ffd700"},      {ItemType::GOLD_COINS, "#ffd700"},
-    {ItemType::DAGGER, "#808080"},         {ItemType::TORCH, "#ffa500"},
+    {ItemType::DAGGER, COLORS::GRAY},         {ItemType::TORCH, "#ffa500"},
     {ItemType::GRASS, "#006400"},
 
-    {ItemType::GREAT_AXE, "#fafafa"},     {ItemType::HELMET, "#fafafa"},
-    {ItemType::SHIELD, "#fafafa"},        {ItemType::GREAVES, "#fafafa"},
-    {ItemType::BOOTS, "#fafafa"},         {ItemType::PLATE, "#fafafa"},
-    {ItemType::LEATHER_ARMOR, "#fafafa"}, {ItemType::POTION, "#add8e6"},
-    {ItemType::SCROLL, "#fafafa"},
+    {ItemType::GREAT_AXE, COLORS::WHITE},     {ItemType::HELMET, COLORS::WHITE},
+    {ItemType::SHIELD, COLORS::WHITE},        {ItemType::GREAVES, COLORS::WHITE},
+    {ItemType::BOOTS, COLORS::WHITE},         {ItemType::PLATE, COLORS::WHITE},
+    {ItemType::LEATHER_ARMOR, COLORS::WHITE}, {ItemType::POTION, COLORS::LIGHT_BLUE},
+    {ItemType::SCROLL, COLORS::WHITE},
 };
 
 const std::map<EnemySpec, std::string> enemySigns = {
@@ -70,9 +70,9 @@ const std::map<EnemySpec, std::string> enemySigns = {
 };
 
 const std::map<EnemySpec, std::string> enemyColors = {
-    {EnemyType::RAT, "#808080"},
-    {EnemyType::BAT, "#808080"},
-    {EnemyType::SNAKE, "#808080"},
+    {EnemyType::RAT, COLORS::GRAY},
+    {EnemyType::BAT, COLORS::GRAY},
+    {EnemyType::SNAKE, COLORS::GRAY},
     {EnemyType::VIPER, "#006400"},
     {EnemyType::BAT_LARGE, "#a9a9a9"},
     {EnemyType::GOBLIN, "#00f000"},

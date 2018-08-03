@@ -34,7 +34,13 @@ std::string Fragment::render(State *state) {
     a = 1;
   if (a > 100)
     a = 100;
+  auto ba = bgAlpha;
+  if (ba < 1)
+    ba = 1;
+  if (ba > 100)
+    ba = 100;
   tpl.setValue("alpha", a);
+  tpl.setValue("bgAlpha", ba);
   tpl.setValue("green", state->currentPalette.green);
   tpl.setValue("red", state->currentPalette.red);
   tpl.setValue("blue", state->currentPalette.blue);
@@ -59,22 +65,6 @@ std::string getColor(std::shared_ptr<Cell> cell) {
     color = cellColors.at(cell->type).at(true);
   } else {
     color = cellColors.at(cell->type).at(false);
-    // fmt::print("base color: {}\n", color);
-    if (cell->illuminated) {
-      auto fg = Color(color);
-      float n = 0;
-      for (auto ls : cell->lightSources) {
-        if (!ls->emitsLight) continue;
-        n++;
-      }
-      for (auto ls : cell->lightSources) {
-        if (!ls->emitsLight) continue;
-        auto lc = Color(lightColors.at(ls->lightType));
-        fg.blend(lc, 1/(n+1));
-      }
-      color = fg.getString();
-    }
-
     if (cell->type != CellType::VOID) {
       if (cell->hasFeature(CellFeature::CAVE) &&
           cell->type != CellType::WATER) {
@@ -89,6 +79,22 @@ std::string getColor(std::shared_ptr<Cell> cell) {
       if (cell->hasFeature(CellFeature::MARK2)) {
         color = featureColors.at(CellFeature::MARK2);
       }
+    }
+
+    // fmt::print("base color: {}\n", color);
+    if (cell->illuminated) {
+      auto fg = Color(color);
+      float n = 0;
+      for (auto ls : cell->lightSources) {
+        if (!ls->emitsLight) continue;
+        n++;
+      }
+      for (auto ls : cell->lightSources) {
+        if (!ls->emitsLight) continue;
+        auto lc = Color(lightColors.at(ls->lightType));
+        fg.blend(lc, 1/(n+1));
+      }
+      color = fg.getString();
     }
     // fmt::print("result color: {}\n", color);
   }
@@ -111,26 +117,26 @@ CellSign::CellSign(std::shared_ptr<Cell> cell)
     : Fragment(cell->type == CellType::UNKNOWN ||
                        cell->visibilityState == VisibilityState::UNKNOWN
                    ? cellSigns.at(cell->type)
-                   : "<span color='{{color}}' alpha='{{alpha}}%' "
+                   : "<span color='{{color}}' alpha='{{alpha}}%' bgalpha='{{bgAlpha}}%' "
                      "weight='{{weight}}'>{{sign}}</span>",
                getCellArgs(cell),
                !(cell->type == CellType::UNKNOWN ||
                  cell->visibilityState == VisibilityState::UNKNOWN)) {}
 HeroSign::HeroSign(std::string color)
-    : Fragment("<span color='{{color}}' alpha='100%' weight='bold'>@</span>",
+    : Fragment("<span color='{{color}}' alpha='100%' bgalpha='{{bgAlpha}}%' weight='bold'>@</span>",
                {{"color", color}}) {}
 EnemySign::EnemySign(EnemySpec type)
-    : Fragment("<span color='{{color}}' alpha='{{alpha}}%' "
+    : Fragment("<span color='{{color}}' alpha='{{alpha}}%' bgalpha='{{bgAlpha}}%' "
                "weight='bold'>{{sign}}</span>",
                {{"sign", enemySigns.at(type)}, {"color", enemyColors.at(type)}}) {}
 DoorSign::DoorSign(bool opened)
-    : Fragment("<span weight='bold' alpha='{{alpha}}%' "
+    : Fragment("<span weight='bold' alpha='{{alpha}}%' bgalpha='{{bgAlpha}}%' "
                "color='#8B5F20'>{{sign}}</span>",
                {{"sign", opened ? "/"s : "+"s}}) {}
 ItemSign::ItemSign(ItemSpec type)
-    : Fragment("<span color='{{color}}' alpha='{{alpha}}%'>{{sign}}</span>",
+    : Fragment("<span color='{{color}}' alpha='{{alpha}}%' bgalpha='{{bgAlpha}}%'>{{sign}}</span>",
                {{"sign", itemSigns.at(type)}, {"color", itemColors.at(type)}}) {}
 TerrainSign::TerrainSign(TerrainSpec type)
-    : Fragment("<span color='{{color}}' alpha='{{alpha}}%'>{{sign}}</span>",
+    : Fragment("<span color='{{color}}' alpha='{{alpha}}%' bgalpha='{{bgAlpha}}%'>{{sign}}</span>",
                {{"sign", terrainSigns.at(type)}, {"color", terrainColors.at(type)}}) {
 }

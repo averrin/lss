@@ -57,7 +57,7 @@ namespace TerrainType {
 const auto TORCH_STAND = TerrainSpec{"torch stand",  false,          true, -1, true, true,
                                      TORCH_DISTANCE, LightType::FIRE};
 const auto STATUE =
-    TerrainSpec{"statue", false, false, -1, true, true, 1, LightType::MAGIC};
+    TerrainSpec{"statue", false, false, -1, true, true, 1.5, LightType::MAGIC};
 const auto ALTAR = TerrainSpec{"altar", true, true, -1, false};
 const auto BUSH = TerrainSpec{"bush", false, true};
 const auto FIREBALL =
