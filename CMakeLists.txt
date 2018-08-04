@@ -69,6 +69,7 @@ set( SRC_FILES
 	${SRC_DIR}/game/player.cpp
 	${SRC_DIR}/game/magic.cpp
 	${SRC_DIR}/game/door.cpp
+	${SRC_DIR}/game/damageSpec.cpp
 
 	${SRC_DIR}/generator/generator.cpp
 

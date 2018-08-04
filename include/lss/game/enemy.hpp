@@ -7,6 +7,7 @@
 #include "lss/game/creature.hpp"
 #include "lss/game/item.hpp"
 #include "lss/game/lootBox.hpp"
+#include "lss/game/damageSpec.hpp"
 #include "micropather/micropather.h"
 
 enum AIType {
@@ -23,9 +24,7 @@ public:
   int baseHP;
   int baseMP;
   int defense;
-  int baseDamage_dices;
-  int baseDamage_edges;
-  int baseDamage_modifier;
+  DamageSpec dmgSpec;
   LootBox loot;
   std::vector<Trait> traits;
   Items equipped;
@@ -37,12 +36,14 @@ public:
   }
 };
 
+const auto ds_1d3 = DamageSpec(0, 1, 3, DamageType::BASIC);
+
 // clang-format off
 namespace EnemyType {
 EnemySpec const RAT = {
     "rat", 0,
     2, 3, 0, 1,
-    1, 3, 0,
+    ds_1d3,
     LootBox{1, {}},
     {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB},
     Items{}
@@ -51,7 +52,7 @@ EnemySpec const RAT = {
 EnemySpec const SNAKE = {
     "snake", 0,
     1.5, 3, 0, 1,
-    2, 3, 1,
+    ds_1d3,
     LootBox{1, {}},
     {},
     Items{}
@@ -60,7 +61,7 @@ EnemySpec const SNAKE = {
 EnemySpec const VIPER = {
     "viper", 0,
     2, 3, 0, 1,
-    1, 3, 0,
+    ds_1d3,
     LootBox{1, {}},
     {},
     Items{Prototype::POISON_FANG}
@@ -68,7 +69,7 @@ EnemySpec const VIPER = {
 EnemySpec const BAT = {
     "bat", 0,
     1.5, 3, 0, 1,
-    1, 3, 0,
+    ds_1d3,
     LootBox{1, {}},
     {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB, Traits::FLY},
     Items{}, {} //vampire
@@ -76,7 +77,7 @@ EnemySpec const BAT = {
 EnemySpec const BAT_LARGE = {
     "large bat", 0,
     1.5, 10, 0, 1,
-    2, 3, 0,
+    DamageSpec(0, 2, 3, DamageType::BASIC),
     LootBox{100, {}},
     {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB, Traits::FLY},
     Items{}, {} //vampire
@@ -84,7 +85,7 @@ EnemySpec const BAT_LARGE = {
 EnemySpec const GOBLIN = {
     "goblin", 1,
     1, 15, 0, 1,
-    1, 3, 0,
+    DamageSpec(0, 1, 3, DamageType::WEAPON),
     LootBox{1, {}, {
         {0.40, {}, LootBoxes::POTIONS, true},
         {0.60, {}, {
@@ -101,7 +102,7 @@ EnemySpec const GOBLIN = {
 EnemySpec const GOBLIN_LIEUTENANT = {
     "goblin lieutenant", 1,
     1, 25, 0, 1,
-    1, 5, 1,
+    DamageSpec(1, 1, 5, DamageType::WEAPON),
     LootBox{1, {}, {
         {0.40, {Prototype::POTION_HEAL}},
         {0.20, {}, LootBoxes::POTIONS, true},
@@ -120,7 +121,7 @@ EnemySpec const GOBLIN_LIEUTENANT = {
 EnemySpec const GOBLIN_ROGUE = {
     "goblin rogue", 1,
     1.5, 15, 0, 1,
-    1, 3, 0,
+    DamageSpec(1, 1, 3, DamageType::WEAPON),
     LootBox{1, {}, {
         {0.60, {}, {
           {0.25, {Prototype::DAGGER}},
@@ -134,7 +135,8 @@ EnemySpec const GOBLIN_ROGUE = {
 };
 EnemySpec const ORK = {
     "ork", 2,
-    1, 55, 0, 2, 1, 6, 1,
+    1, 55, 0, 2,
+    DamageSpec(1, 1, 6, DamageType::WEAPON),
     LootBox{1, {Prototype::TORCH}, {
         {0.40, {Prototype::POTION_HEAL}},
         {0.40, {}, LootBoxes::SCROLLS, true},
@@ -153,7 +155,7 @@ EnemySpec const ORK = {
 EnemySpec const ORK_BLACK = {
     "black ork", 2,
     1.1, 75, 0, 2,
-    1, 6, 1,
+    DamageSpec(1, 1, 6, DamageType::WEAPON),
     LootBox{1, {Prototype::TORCH}, {
         {0.50, {Prototype::POTION_HEAL}},
         {0.20, {}, LootBoxes::POTIONS, true},
@@ -170,14 +172,16 @@ EnemySpec const ORK_BLACK = {
 };
 EnemySpec const PIXI = {
     "pixi", 3,
-    3, 25, 30, 0, 3, 4, 0,
+    3, 25, 30, 0,
+    DamageSpec(0, 3, 4, DamageType::WEAPON),
     {0.90, {Prototype::GOLD->setCount(200)}, {
         {0.40, {}, LootBoxes::SCROLLS, true},
         {10, {Prototype::SPEED_RING}}}},
     {Traits::FLY, Traits::MOB}};
 EnemySpec const OGRE = {
     "ogre", 4,
-    1, 100, 0, 2, 1, 6, 1,
+    1, 100, 0, 2,
+    DamageSpec(1, 1, 6, DamageType::WEAPON),
     LootBox{0.80, {Prototype::GREAT_AXE}},
     {Traits::NIGHT_VISION},
     Items{Prototype::GREAT_AXE},

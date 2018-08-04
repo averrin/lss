@@ -98,18 +98,18 @@ const auto TELEPORT_RANDOM = std::make_shared<Spell>("Teleport", 20);
 
 const auto FIREBALL = std::make_shared<RadiusSpell>(
     "Fireball",
-    std::make_shared<DamageSpell>("Fire damage", DamageSpec(0, 2, 6), TerrainType::FIREBALL), 1.5, 20);
+    std::make_shared<DamageSpell>("Fire damage", DamageSpec(0, 2, 6, DamageType::FIRE), TerrainType::FIREBALL), 1.5, 20);
 const auto FIREBLAST = std::make_shared<RadiusSpell>(
     "Fireblast",
-    std::make_shared<DamageSpell>("Fire damage", DamageSpec(0, 2, 6), TerrainType::FIREBALL), 3.5, 40);
+    std::make_shared<DamageSpell>("Fire damage", DamageSpec(0, 2, 6, DamageType::FIRE), TerrainType::FIREBALL), 3.5, 40);
 
 const auto FIRESTREAM = std::make_shared<LineSpell>(
     "Firestream",
-    std::make_shared<DamageSpell>("Fire damage", DamageSpec(0, 2, 6), TerrainType::FIREBALL), 4, 20);
+    std::make_shared<DamageSpell>("Fire damage", DamageSpec(0, 2, 6, DamageType::FIRE), TerrainType::FIREBALL), 4, 20);
 
 const auto FIRESTRIKE = std::make_shared<TargetSpell>(
     "Firestrike",
-    std::make_shared<DamageSpell>("Fire damage", DamageSpec(0, 2, 6), TerrainType::FIREBALL), 4, 10);
+    std::make_shared<DamageSpell>("Fire damage", DamageSpec(0, 2, 6, DamageType::FIRE), TerrainType::FIREBALL), 4, 10);
 
 const auto FLASH = std::make_shared<RadiusSpell>(
     "Flash",
@@ -168,6 +168,33 @@ const auto LEVITATION = std::make_shared<EffectSpell>(
 const auto CONFUSION = std::make_shared<EffectSpell>(
     "Confusion", std::make_shared<LastingEffect>(
                      std::make_shared<TraitEffect>(Traits::CONFUSED), 50000));
+
+
+const auto WEAPON_RESIST = std::make_shared<EffectSpell>(
+    "Weapon resist", std::make_shared<LastingEffect>(
+                      std::make_shared<TraitEffect>(Traits::WEAPON_RESIST), 10000));
+const auto WEAPON_IMMUNE = std::make_shared<EffectSpell>(
+    "Weapon immune", std::make_shared<LastingEffect>(
+                      std::make_shared<TraitEffect>(Traits::WEAPON_IMMUNE), 10000));
+const auto MAGIC_RESIST = std::make_shared<EffectSpell>(
+    "Magic resist", std::make_shared<LastingEffect>(
+                      std::make_shared<TraitEffect>(Traits::MAGIC_RESIST), 10000));
+const auto MAGIC_IMMUNE = std::make_shared<EffectSpell>(
+    "Magic immune", std::make_shared<LastingEffect>(
+                      std::make_shared<TraitEffect>(Traits::MAGIC_IMMUNE), 10000));
+
+const auto FIRE_RESIST = std::make_shared<EffectSpell>(
+    "Fire resist", std::make_shared<LastingEffect>(
+                      std::make_shared<TraitEffect>(Traits::FIRE_RESIST), 10000));
+const auto FIRE_IMMUNE = std::make_shared<EffectSpell>(
+    "Fire immune", std::make_shared<LastingEffect>(
+                      std::make_shared<TraitEffect>(Traits::FIRE_IMMUNE), 10000));
+const auto ACID_RESIST = std::make_shared<EffectSpell>(
+    "Acid resist", std::make_shared<LastingEffect>(
+                      std::make_shared<TraitEffect>(Traits::ACID_RESIST), 10000));
+const auto ACID_IMMUNE = std::make_shared<EffectSpell>(
+    "Acid immune", std::make_shared<LastingEffect>(
+                      std::make_shared<TraitEffect>(Traits::ACID_IMMUNE), 10000));
 
 const auto EOT_HEAL = std::make_shared<EffectSpell>(
     "Regeneration",

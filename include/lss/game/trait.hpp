@@ -25,9 +25,18 @@ const Trait MOB = {"Mob"};
 const Trait CONFUSED = {"Confused"};
 const Trait JUMPY = {"Jumpy"};
 
-// TODO: make it works for hero
 const Trait DEADLY_SHADOWS = {"Deadly shadows"};
 const Trait SHADOW_RUNNER = {"Shadow runner"};
+
+const Trait WEAPON_RESIST = {"Weapon resist"};
+const Trait WEAPON_IMMUNE = {"Weapon immune"};
+const Trait MAGIC_RESIST = {"Magic resist"};
+const Trait MAGIC_IMMUNE = {"Magic immune"};
+
+const Trait FIRE_RESIST = {"Fire resist"};
+const Trait FIRE_IMMUNE = {"Fire immune"};
+const Trait ACID_RESIST = {"Acid resist"};
+const Trait ACID_IMMUNE = {"Acid immune"};
 } // namespace Traits
 
 #endif // __TRAIT_H_

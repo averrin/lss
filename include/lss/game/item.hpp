@@ -216,6 +216,32 @@ const auto SCROLL_TELEPORT = std::make_shared<Consumable>(
     fmt::format("scroll labled '{}'", utils::getScrollName()),
     "scroll of teleport", ItemType::SCROLL, Spells::TELEPORT_RANDOM);
 
+const auto SCROLL_WEAPON_RESIST = std::make_shared<Consumable>(
+    fmt::format("scroll labled '{}'", utils::getScrollName()),
+    "scroll of weapon resistance", ItemType::SCROLL, Spells::WEAPON_RESIST);
+const auto SCROLL_WEAPON_IMMUNE = std::make_shared<Consumable>(
+    fmt::format("scroll labled '{}'", utils::getScrollName()),
+    "scroll of weapon immunity", ItemType::SCROLL, Spells::WEAPON_IMMUNE);
+const auto SCROLL_MAGIC_RESIST = std::make_shared<Consumable>(
+    fmt::format("scroll labled '{}'", utils::getScrollName()),
+    "scroll of magic resistance", ItemType::SCROLL, Spells::MAGIC_RESIST);
+const auto SCROLL_MAGIC_IMMUNE = std::make_shared<Consumable>(
+    fmt::format("scroll labled '{}'", utils::getScrollName()),
+    "scroll of magic immunity", ItemType::SCROLL, Spells::MAGIC_IMMUNE);
+
+const auto SCROLL_FIRE_RESIST = std::make_shared<Consumable>(
+    fmt::format("scroll labled '{}'", utils::getScrollName()),
+    "scroll of fire resistance", ItemType::SCROLL, Spells::FIRE_RESIST);
+const auto SCROLL_FIRE_IMMUNE = std::make_shared<Consumable>(
+    fmt::format("scroll labled '{}'", utils::getScrollName()),
+    "scroll of fire immunity", ItemType::SCROLL, Spells::FIRE_IMMUNE);
+const auto SCROLL_ACID_RESIST = std::make_shared<Consumable>(
+    fmt::format("scroll labled '{}'", utils::getScrollName()),
+    "scroll of acid resistance", ItemType::SCROLL, Spells::ACID_RESIST);
+const auto SCROLL_ACID_IMMUNE = std::make_shared<Consumable>(
+    fmt::format("scroll labled '{}'", utils::getScrollName()),
+    "scroll of acid immunity", ItemType::SCROLL, Spells::ACID_IMMUNE);
+
 const auto GOLD = std::make_shared<Item>(ItemType::GOLD_COINS, 1);
 
 const std::vector<std::shared_ptr<Item>> ALL = {
@@ -240,6 +266,7 @@ const std::vector<std::shared_ptr<Item>> ALL = {
     Prototype::POISON_DAGGER,
     // Prototype::POISON_FANG,
     Prototype::SWORD_OF_DUALWIELD,
+
     Prototype::POTION_HEAL_LESSER,
     Prototype::POTION_HEAL,
     Prototype::POTION_MANA,
@@ -251,9 +278,19 @@ const std::vector<std::shared_ptr<Item>> ALL = {
     Prototype::POTION_REGENERATION,
     Prototype::POTION_POISON,
     Prototype::POTION_CONFUSION,
+
     Prototype::SCROLL_IDENTIFICATION,
     Prototype::SCROLL_REVEAL,
     Prototype::SCROLL_TELEPORT,
+
+    Prototype::SCROLL_WEAPON_IMMUNE,
+    Prototype::SCROLL_WEAPON_RESIST,
+    Prototype::SCROLL_MAGIC_IMMUNE,
+    Prototype::SCROLL_MAGIC_RESIST,
+    Prototype::SCROLL_FIRE_IMMUNE,
+    Prototype::SCROLL_FIRE_RESIST,
+    Prototype::SCROLL_ACID_IMMUNE,
+    Prototype::SCROLL_ACID_RESIST,
 };
 } // namespace Prototype
 

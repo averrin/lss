@@ -124,13 +124,15 @@ public:
 class MeleeDamage : public Effect {
 public:
   MeleeDamage(R::rndInt m, R::rndInt d, R::rndInt e)
-      : Effect(AttributeType::NONE, true, m), dices(R::I(d)), edges(R::I(e)){};
+      : Effect(AttributeType::NONE, true, m), dices(R::I(d)), edges(R::I(e)), dmgSpec(DamageSpec(m, R::I(d), R::I(e))){};
   std::string getTitle();
   std::string getSign();
-  R::rndInt dices;
-  R::rndInt edges;
+
+  R::randInt dices;
+  R::randInt edges;
+  DamageSpec dmgSpec;
   std::shared_ptr<Effect> clone() {
-    return std::make_shared<MeleeDamage>(modifier, dices, edges);
+    return std::make_shared<MeleeDamage>(modifier, dmgSpec.dices, dmgSpec.edges);
   };
   std::variant<float, int> getModifier() { return R::get(modifier); };
 };
