@@ -13,21 +13,21 @@ auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 std::optional<std::string> getDir(int code) {
   switch (code) {
   case SDL_SCANCODE_J:
-    return "s";
+    return "s"s;
   case SDL_SCANCODE_H:
-    return "w";
+    return "w"s;
   case SDL_SCANCODE_L:
-    return "e";
+    return "e"s;
   case SDL_SCANCODE_K:
-    return "n";
+    return "n"s;
   case SDL_SCANCODE_Y:
-    return "nw";
+    return "nw"s;
   case SDL_SCANCODE_U:
-    return "ne";
+    return "ne"s;
   case SDL_SCANCODE_B:
-    return "sw";
+    return "sw"s;
   case SDL_SCANCODE_N:
-    return "se";
+    return "se"s;
   }
   return std::nullopt;
 }
@@ -414,10 +414,22 @@ bool NormalMode::processKey(KeyEvent event) {
     };
     app->objectSelectMode->setFormatter(formatter);
 
-    app->objectSelectMode->setCallback([&](std::shared_ptr<Object> o) {
+    //TODO: apply effect on throw
+    app->objectSelectMode->setCallback([=](std::shared_ptr<Object> o) {
+      auto item = std::dynamic_pointer_cast<Item>(o);
       app->state->selection.clear();
-      app->targetMode->setCallback([&](auto cell) {
-        app->modeManager.toNormal();
+      app->targetMode->setCallback([=](auto cell) {
+        app->hero->inventory.erase(std::remove(app->hero->inventory.begin(), app->hero->inventory.end(), item),
+                  app->hero->inventory.end());
+        app->hero->currentLocation->objects.push_back(item);
+        auto cells = app->hero->currentLocation->getLine(app->hero->currentCell, cell);
+        auto a = std::make_shared<MoveAnimation>(item, cells, cells.size());
+        a->animationCallback = [=]() {
+          app->modeManager.toNormal();
+        };
+        AnimationEvent ae(a);
+        eb::EventBus::FireEvent(ae);
+
         return true;
       });
       app->targetMode->setCheckTarget([&](auto line) {
@@ -425,9 +437,8 @@ bool NormalMode::processKey(KeyEvent event) {
         if (line.size() > 5)
           return false;
         auto pti = std::find_if(line.begin(), line.end(),
-                                [](auto c) { return !c->passThrough; });
-        if (pti != line.end() && *pti != line.back() &&
-            *pti != app->hero->currentCell)
+                                [&](auto c) { return !c->passThrough && c != line.back() && c != app->hero->currentCell; });
+        if (pti != line.end())
           return false;
         return true;
       });
