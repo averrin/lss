@@ -141,6 +141,7 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
         auto td = sqrt(pow(cc->x - e->currentCell->x, 2) + pow(cc->y - e->currentCell->y, 2));
         if (td <= d) {
           target = e->currentCell;
+          d = td;
         }
       }
     }

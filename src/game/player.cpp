@@ -258,6 +258,7 @@ void Player::onEvent(WalkCommandEvent &e) {
   }
 
   auto enemies = utils::castObjects<Enemy>(currentLocation->objects);
+  auto step = 0;
   while (move(e.direction)) {
     commit("walk move", ap_cost::STEP / SPEED(this), true);
     auto item = std::find_if(currentLocation->objects.begin(),
@@ -272,17 +273,18 @@ void Player::onEvent(WalkCommandEvent &e) {
                                  }) != enemies.end();
     auto nc = currentLocation->getCell(currentCell, e.direction);
     if (item != currentLocation->objects.end() || seeEnemy ||
-        currentCell->type != CellType::FLOOR || nc->room != currentCell->room) {
+        currentCell->type != CellType::FLOOR || (nc->room != currentCell->room && step > 1)) {
       break;
     }
     auto nbrs = currentLocation->getNeighbors(currentCell);
-    if (std::find_if(nbrs.begin(), nbrs.end(), [&](std::shared_ptr<Cell> c) {
+    if (step > 1 && std::find_if(nbrs.begin(), nbrs.end(), [&](std::shared_ptr<Cell> c) {
           return /*utils::castObjects<Door>(currentLocation->getObjects(c))
                      .size() > 0 || */
               (c->type == CellType::FLOOR && c->room != currentCell->room);
         }) != nbrs.end()) {
       break;
     }
+    step++;
   }
   commit("walk end", 0);
 }

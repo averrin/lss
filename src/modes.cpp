@@ -396,28 +396,31 @@ void InspectMode::render() {
 
 bool NormalMode::processKey(KeyEvent event) {
   switch (event.getCode()) {
-  case SDL_SCANCODE_T:
+  case SDL_SCANCODE_T: {
     app->state->selection.clear();
     app->targetMode->setCallback([&](auto cell) {
-      fmt::print("{}.{}\n", cell->x, cell->y);
       app->modeManager.toNormal();
     });
-    app->targetMode->setCheckTarget([](auto line) {
+    app->targetMode->setCheckTarget([&](auto line) {
       auto cell = line.back();
-      if (!cell->type.passThrough) return false;
       if (line.size() > 5) return false;
-      if (std::find_if(line.begin(), line.end(), [](auto c){
-        return !c->type.passThrough;
-      }) != line.end()) return false;
+      auto pti = std::find_if(line.begin(), line.end(), [](auto c){
+        return !c->passThrough;
+      });
+      if (pti != line.end() && *pti != line.back() && *pti != app->hero->currentCell) return false;
       return true;
     });
     app->modeManager.toTarget();
     app->statusLine->setContent(State::target_mode);
-    app->state->cursor = {app->hero->currentCell->x,
-                          app->hero->currentCell->y};
+    auto n = app->hero->currentLocation->getNeighbors(app->hero->currentCell);
+    auto s = std::find_if(n.begin(), n.end(), [](auto c){
+      return c->type.passThrough;
+    });
+    app->state->cursor = {(*s)->x,
+                          (*s)->y};
     app->state->setSelect(true);
     app->state->invalidate();
-    break;
+    }break;
   case SDL_SCANCODE_F1:
     app->debug = !app->debug;
     app->hero->commit("toggle debug", 0);
