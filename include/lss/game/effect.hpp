@@ -8,6 +8,7 @@
 #include "lss/game/attribute.hpp"
 #include "lss/game/overtime.hpp"
 #include "lss/game/randomTools.hpp"
+#include "lss/game/damageSpec.hpp"
 
 // TODO: refactor.
 // maybe create variant with int, float, rndInt and rndFloat
@@ -124,12 +125,12 @@ public:
 class MeleeDamage : public Effect {
 public:
   MeleeDamage(DamageSpec spec)
-      : Effect(AttributeType::NONE, true), dmgSpec(DamageSpec(m, R::I(d), R::I(e))){};
+      : Effect(AttributeType::NONE, true), dmgSpec(spec){};
   std::string getTitle();
   std::string getSign();
   DamageSpec dmgSpec;
   std::shared_ptr<Effect> clone() {
-    return std::make_shared<MeleeDamage>(dmgSpec);
+    return std::make_shared<MeleeDamage>(dmgSpec.roll());
   };
   std::variant<float, int> getModifier() { return R::get(modifier); };
 };

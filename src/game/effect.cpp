@@ -14,8 +14,8 @@ std::string HPModifier::getTitle() {
 std::string HPModifier::getSign() { return "\u1f5f2"s; }
 
 std::string MeleeDamage::getTitle() {
-  return fmt::format("({:+d}, {}d{})", std::get<int>(getModifier()),
-                     R::get(dices), R::get(edges));
+  return fmt::format("({:+d}, {}d{})", dmgSpec.modifier,
+                     dmgSpec.dices, dmgSpec.edges);
 }
 std::string MeleeDamage::getSign() { return ""s; }
 

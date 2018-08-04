@@ -117,29 +117,28 @@ std::string Player::getDmgDesc() {
           }) > 0;
 
   if (primaryDmg != std::nullopt && haveLeft) {
-    auto [primarySlot, m, d, e] = *primaryDmg;
+    auto [primarySlot, spec] = *primaryDmg;
     auto secondaryDmg = getSecondaryDmg(primarySlot);
     if (secondaryDmg != std::nullopt) {
-      auto [secondarySlot, m2, d2, e2] = *secondaryDmg;
-      return fmt::format("{:+d} {}d{}{}", m, d, e,
+      auto [secondarySlot, spec2] = *secondaryDmg;
+      return fmt::format("{:+d} {}d{}{}", spec.modifier, spec.dices, spec.edges,
                          hasTrait(Traits::DUAL_WIELD)
-                             ? fmt::format(" ({:+d} {}d{})", m2, d2, e2)
-                             : fmt::format(" ({:+d})", m2));
+                             ? fmt::format(" ({:+d} {}d{})", spec2.modifier, spec2.dices, spec2.edges)
+                             : fmt::format(" ({:+d})", spec2.modifier));
     }
   } else if (haveLeft) {
     auto secondaryDmg = getSecondaryDmg(nullptr);
     if (secondaryDmg != std::nullopt) {
-      auto [secondarySlot, m2, d2, e2] = *secondaryDmg;
+      auto [secondarySlot, spec2] = *secondaryDmg;
       return hasTrait(Traits::DUAL_WIELD)
-                 ? fmt::format("~ {:+d} {}d{}", m2, d2, e2)
-                 : fmt::format("~ {:+d}", m2);
+                 ? fmt::format("~ {:+d} {}d{}", spec2.modifier, spec2.dices, spec2.edges)
+                 : fmt::format("~ {:+d}", spec2.modifier);
     }
   } else if (primaryDmg != std::nullopt) {
-    auto [primarySlot, m, d, e] = *primaryDmg;
-    return fmt::format("{:+d} {}d{}", m, d, e);
+    auto [primarySlot, spec] = *primaryDmg;
+    return fmt::format("{:+d} {}d{}", spec.modifier, spec.dices, spec.edges);
   }
-  return fmt::format("{:+d} {}d{}", damage_modifier, damage_dices,
-                     damage_edges);
+  return fmt::format("{:+d} {}d{}", dmgSpec.modifier, dmgSpec.dices, dmgSpec.edges);
 }
 
 void Player::commit(std::string reason, int ap, bool s) {

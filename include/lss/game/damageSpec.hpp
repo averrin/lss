@@ -22,13 +22,24 @@ enum class DamageType {
 class Damage;
 class DamageSpec : public Object {
 public:
-  DamageSpec(R::randInt m, R::randInt d, R::randInt e, DamageType dt)
-      : Object(), dices(d), edges(e), modifier(m), type(dt) {}
+  DamageSpec(R::rndInt m, R::rndInt d, R::rndInt e, DamageType dt)
+      : Object(), _dices(R::I(d)), _edges(R::I(e)), _modifier(R::I(m)), type(dt) {
+    modifier = R::get(_modifier);
+    dices    = R::get(_dices);
+    edges    = R::get(_edges);
+  }
 
-  R::randInt modifier;
-  R::randInt dices;
-  R::randInt edges;
+  int modifier;
+  int dices;
+  int edges;
   DamageType type;
+
+  DamageSpec roll();
+  std::shared_ptr<Damage> getDamage(bool critical = false);
+
+    int hitRoll() {
+        return hitRoll(modifier, dices, edges);
+    }
 
   static int hitRoll(int m, int d, int e) {
     auto damage = 0;
@@ -42,6 +53,10 @@ public:
     return damage;
   }
 
+    int criticalHit() {
+        return criticalHit(modifier, dices, edges);
+    }
+
   static int criticalHit(int m, int d, int e) {
     auto damage = m + d * e;
     if (damage < 0) {
@@ -49,6 +64,11 @@ public:
     }
     return damage;
   }
+
+private:
+  R::rndInt _modifier;
+  R::rndInt _dices;
+  R::rndInt _edges;
 };
 
 

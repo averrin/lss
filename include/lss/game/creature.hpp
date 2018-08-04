@@ -57,7 +57,7 @@ public:
 
   int hp;
   int hp_max;
-  DamageSpec dmgSpec;
+  DamageSpec dmgSpec = DamageSpec(0,0,0,DamageType::BASIC);
   float speed = 1.f;
   float visibility_distance = 5.5f;
   float crit_chance = 0.1;

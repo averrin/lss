@@ -24,7 +24,7 @@ public:
   int baseHP;
   int baseMP;
   int defense;
-  DamageSpec dmgSpec;
+  DamageSpec dmgSpec = DamageSpec(0,0,0,DamageType::BASIC);
   LootBox loot;
   std::vector<Trait> traits;
   Items equipped;

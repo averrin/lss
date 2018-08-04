@@ -179,20 +179,20 @@ std::shared_ptr<Damage> Creature::updateDamage(std::shared_ptr<Damage> damage,
   float r = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
   if (inShadow && hasTrait(Traits::DEADLY_SHADOWS)) {
     damage->traits.push_back(Traits::DEADLY_SHADOWS);
-    damage->damage += criticalHit(m, d, e);
+    damage->damage += spec.criticalHit();
     damage->isCritical = true;
     return damage;
   } else if (r < CRIT(this)) {
-    damage->damage += criticalHit(m, d, e);
+    damage->damage += spec.criticalHit();
     damage->isCritical = true;
     return damage;
   }
-  damage->damage += hitRoll(m, d, e);
+  damage->damage += spec.hitRoll();
   return damage;
 }
 
 std::shared_ptr<Damage> Creature::getDamage(std::shared_ptr<Object>) {
-  auto damage = std::make_shared<Damage>(DamageSpec(DamageType::WEAPON));
+  auto damage = std::make_shared<Damage>(DamageSpec(0,0,0,DamageType::WEAPON));
   auto primaryDmg = getPrimaryDmg();
   if (primaryDmg != std::nullopt) {
     auto [primarySlot, spec] = *primaryDmg;
@@ -216,7 +216,7 @@ std::shared_ptr<Damage> Creature::getDamage(std::shared_ptr<Object>) {
     if (hasTrait(Traits::DUAL_WIELD)) {
       damage = updateDamage(damage, spec);
     } else {
-      damage->damage += m;
+      damage->damage += spec.modifier;
     }
   }
   if (damage->damage == 0) {
