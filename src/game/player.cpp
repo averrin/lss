@@ -68,9 +68,7 @@ Player::Player() : Creature() {
   hp = hp_max;
   mp_max = 50;
   mp = mp_max;
-  damage_dices = 1;
-  damage_edges = 1;
-  damage_modifier = 0;
+  dmgSpec = DamageSpec(0, 1, 3, DamageType::WEAPON);
   visibility_distance = 3.2f;
 
   emitsLight = false;

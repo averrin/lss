@@ -1,5 +1,6 @@
 #ifndef __DAMAGESPEC_H_
 #define __DAMAGESPEC_H_
+#include "lss/game/randomTools.hpp"
 
 enum class DamageType {
   BASIC,
@@ -21,11 +22,12 @@ enum class DamageType {
 class Damage;
 class DamageSpec : public Object {
 public:
-  DamageSpec(int m, int d, int e, DamageType dt) : Object(), dices(d), edges(e), modifier(m), type(dt) {}
+  DamageSpec(R::randInt m, R::randInt d, R::randInt e, DamageType dt)
+      : Object(), dices(d), edges(e), modifier(m), type(dt) {}
 
-  int modifier;
-  int dices;
-  int edges;
+  R::randInt modifier;
+  R::randInt dices;
+  R::randInt edges;
   DamageType type;
 
   static int hitRoll(int m, int d, int e) {

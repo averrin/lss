@@ -14,9 +14,7 @@ Enemy::Enemy(EnemySpec t) : Creature(), type(t) {
   mp = type.baseMP;
   mp_max = type.baseMP;
   speed = type.baseSpeed;
-  damage_dices = type.baseDamage_dices;
-  damage_edges = type.baseDamage_edges;
-  damage_modifier = type.baseDamage_modifier;
+  dmgSpec = type.dmgSpec;
 
   name = type.name;
   traits = type.traits;

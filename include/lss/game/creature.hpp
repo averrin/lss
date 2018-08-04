@@ -10,6 +10,7 @@
 #include "lss/game/object.hpp"
 #include "lss/game/trait.hpp"
 #include <lss/game/location.hpp>
+#include <lss/game/damageSpec.hpp>
 
 class Creature : public Object {
 public:
@@ -56,9 +57,7 @@ public:
 
   int hp;
   int hp_max;
-  int damage_dices;
-  int damage_edges;
-  int damage_modifier;
+  DamageSpec dmgSpec;
   float speed = 1.f;
   float visibility_distance = 5.5f;
   float crit_chance = 0.1;
@@ -68,9 +67,9 @@ public:
   int mp = 0;
   int mp_max = 0;
 
-  std::optional<std::tuple<std::shared_ptr<Slot>, int, int, int>>
+  std::optional<std::tuple<std::shared_ptr<Slot>, DamageSpec>>
   getPrimaryDmg();
-  std::optional<std::tuple<std::shared_ptr<Slot>, int, int, int>>
+  std::optional<std::tuple<std::shared_ptr<Slot>, DamageSpec>>
       getSecondaryDmg(std::shared_ptr<Slot>);
   bool hasTrait(Trait t) {
     auto allTraits = traits;
@@ -97,8 +96,7 @@ public:
     return std::find(allTraits.begin(), allTraits.end(), t) != allTraits.end();
   }
   bool hasLight();
-  std::shared_ptr<Damage> updateDamage(std::shared_ptr<Damage>, int m, int d,
-                                       int e);
+  std::shared_ptr<Damage> updateDamage(std::shared_ptr<Damage>, DamageSpec);
   std::vector<std::shared_ptr<Cell>> getInRadius(float distance);
 
   void applyDamage(std::shared_ptr<Creature> attacker, std::shared_ptr<Damage>);

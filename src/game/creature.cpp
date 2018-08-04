@@ -91,7 +91,7 @@ DropEvent::DropEvent(eb::ObjectPtr s, std::shared_ptr<Item> i)
 ItemTakenEvent::ItemTakenEvent(eb::ObjectPtr s, std::shared_ptr<Item> i)
     : eb::Event(s), item(i) {}
 
-std::optional<std::tuple<std::shared_ptr<Slot>, int, int, int>>
+std::optional<std::tuple<std::shared_ptr<Slot>, DamageSpec>>
 Creature::getPrimaryDmg() {
 
   auto primarySlot = std::find_if(
@@ -110,15 +110,14 @@ Creature::getPrimaryDmg() {
         });
     if (meleeDmg != primaryWeapon->effects.end()) {
       auto dmg = std::dynamic_pointer_cast<MeleeDamage>(*meleeDmg);
-      return std::make_tuple(*primarySlot, R::get(dmg->modifier),
-                             R::get(dmg->dices), R::get(dmg->edges));
+      return std::make_tuple(*primarySlot, dmg->dmgSpec);
     }
   }
 
   return std::nullopt;
 }
 
-std::optional<std::tuple<std::shared_ptr<Slot>, int, int, int>>
+std::optional<std::tuple<std::shared_ptr<Slot>, DamageSpec>>
 Creature::getSecondaryDmg(std::shared_ptr<Slot> primarySlot) {
   if (primarySlot == nullptr) {
     primarySlot = *std::find_if(
@@ -147,8 +146,7 @@ Creature::getSecondaryDmg(std::shared_ptr<Slot> primarySlot) {
       });
   if (secondaryMeleeDmg != secondaryWeapon->effects.end()) {
     auto dmg = std::dynamic_pointer_cast<MeleeDamage>(*secondaryMeleeDmg);
-    return std::make_tuple(*secondarySlot, R::get(dmg->modifier),
-                           R::get(dmg->dices), R::get(dmg->edges));
+    return std::make_tuple(*secondarySlot, dmg->dmgSpec);
   }
 
   return std::nullopt;
@@ -176,7 +174,7 @@ int Creature::hitRoll(int m, int d, int e) {
 }
 
 std::shared_ptr<Damage> Creature::updateDamage(std::shared_ptr<Damage> damage,
-                                               int m, int d, int e) {
+                                               DamageSpec spec) {
   auto inShadow = !currentCell->illuminated;
   float r = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
   if (inShadow && hasTrait(Traits::DEADLY_SHADOWS)) {
@@ -194,11 +192,11 @@ std::shared_ptr<Damage> Creature::updateDamage(std::shared_ptr<Damage> damage,
 }
 
 std::shared_ptr<Damage> Creature::getDamage(std::shared_ptr<Object>) {
-  auto damage = std::make_shared<Damage>();
+  auto damage = std::make_shared<Damage>(DamageSpec(DamageType::WEAPON));
   auto primaryDmg = getPrimaryDmg();
   if (primaryDmg != std::nullopt) {
-    auto [primarySlot, m, d, e] = *primaryDmg;
-    damage = updateDamage(damage, m, d, e);
+    auto [primarySlot, spec] = *primaryDmg;
+    damage = updateDamage(damage, spec);
   }
   auto haveLeft =
       std::count_if(
@@ -214,15 +212,15 @@ std::shared_ptr<Damage> Creature::getDamage(std::shared_ptr<Object>) {
           }) > 0;
   auto secondaryDmg = getSecondaryDmg(nullptr);
   if (secondaryDmg != std::nullopt && haveLeft) {
-    auto [secondarySlot, m, d, e] = *secondaryDmg;
+    auto [secondarySlot, spec] = *secondaryDmg;
     if (hasTrait(Traits::DUAL_WIELD)) {
-      damage = updateDamage(damage, m, d, e);
+      damage = updateDamage(damage, spec);
     } else {
       damage->damage += m;
     }
   }
   if (damage->damage == 0) {
-    damage = updateDamage(damage, damage_modifier, damage_dices, damage_edges);
+    damage = updateDamage(damage, dmgSpec);
   }
   if (hasTrait(Traits::MOB)) {
     auto nbrs = currentLocation->getNeighbors(currentCell);
