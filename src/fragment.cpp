@@ -1,10 +1,10 @@
 #include <variant>
 
 #include "Jinja2CppLight.h"
+#include "lss/color.hpp"
 #include "lss/fragment.hpp"
 #include "lss/game/terrain.hpp"
 #include "lss/state.hpp"
-#include "lss/color.hpp"
 #include "signs.cpp"
 
 using namespace Jinja2CppLight;
@@ -86,13 +86,15 @@ std::string getColor(std::shared_ptr<Cell> cell) {
       auto fg = Color(color);
       float n = 0;
       for (auto ls : cell->lightSources) {
-        if (!ls->emitsLight) continue;
+        if (!ls->emitsLight)
+          continue;
         n++;
       }
       for (auto ls : cell->lightSources) {
-        if (!ls->emitsLight) continue;
+        if (!ls->emitsLight)
+          continue;
         auto lc = Color(lightColors.at(ls->lightType));
-        fg.blend(lc, 1/(n+1));
+        fg.blend(lc, 1 / (n + 1));
       }
       color = fg.getString();
     }
@@ -108,8 +110,7 @@ std::map<std::string, tpl_arg> getCellArgs(std::shared_ptr<Cell> cell) {
   return {
       {"sign", cellSigns.at(cell->type)},
       {"color", getColor(cell)},
-      {"weight",
-       cellWeights.at(cell->type)},
+      {"weight", cellWeights.at(cell->type)},
   };
 }
 
@@ -117,26 +118,32 @@ CellSign::CellSign(std::shared_ptr<Cell> cell)
     : Fragment(cell->type == CellType::UNKNOWN ||
                        cell->visibilityState == VisibilityState::UNKNOWN
                    ? cellSigns.at(cell->type)
-                   : "<span color='{{color}}' alpha='{{alpha}}%' bgalpha='{{bgAlpha}}%' "
+                   : "<span color='{{color}}' alpha='{{alpha}}%' "
+                     "bgalpha='{{bgAlpha}}%' "
                      "weight='{{weight}}'>{{sign}}</span>",
                getCellArgs(cell),
                !(cell->type == CellType::UNKNOWN ||
                  cell->visibilityState == VisibilityState::UNKNOWN)) {}
 HeroSign::HeroSign(std::string color)
-    : Fragment("<span color='{{color}}' alpha='100%' bgalpha='{{bgAlpha}}%' weight='bold'>@</span>",
+    : Fragment("<span color='{{color}}' alpha='100%' bgalpha='{{bgAlpha}}%' "
+               "weight='bold'>@</span>",
                {{"color", color}}) {}
 EnemySign::EnemySign(EnemySpec type)
-    : Fragment("<span color='{{color}}' alpha='{{alpha}}%' bgalpha='{{bgAlpha}}%' "
-               "weight='bold'>{{sign}}</span>",
-               {{"sign", enemySigns.at(type)}, {"color", enemyColors.at(type)}}) {}
+    : Fragment(
+          "<span color='{{color}}' alpha='{{alpha}}%' bgalpha='{{bgAlpha}}%' "
+          "weight='bold'>{{sign}}</span>",
+          {{"sign", enemySigns.at(type)}, {"color", enemyColors.at(type)}}) {}
 DoorSign::DoorSign(bool opened)
     : Fragment("<span weight='bold' alpha='{{alpha}}%' bgalpha='{{bgAlpha}}%' "
                "color='#8B5F20'>{{sign}}</span>",
                {{"sign", opened ? "/"s : "+"s}}) {}
 ItemSign::ItemSign(ItemSpec type)
-    : Fragment("<span color='{{color}}' alpha='{{alpha}}%' bgalpha='{{bgAlpha}}%'>{{sign}}</span>",
-               {{"sign", itemSigns.at(type)}, {"color", itemColors.at(type)}}) {}
-TerrainSign::TerrainSign(TerrainSpec type)
-    : Fragment("<span color='{{color}}' alpha='{{alpha}}%' bgalpha='{{bgAlpha}}%'>{{sign}}</span>",
-               {{"sign", terrainSigns.at(type)}, {"color", terrainColors.at(type)}}) {
+    : Fragment("<span color='{{color}}' alpha='{{alpha}}%' "
+               "bgalpha='{{bgAlpha}}%'>{{sign}}</span>",
+               {{"sign", itemSigns.at(type)}, {"color", itemColors.at(type)}}) {
 }
+TerrainSign::TerrainSign(TerrainSpec type)
+    : Fragment("<span color='{{color}}' alpha='{{alpha}}%' "
+               "bgalpha='{{bgAlpha}}%'>{{sign}}</span>",
+               {{"sign", terrainSigns.at(type)},
+                {"color", terrainColors.at(type)}}) {}

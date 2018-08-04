@@ -101,7 +101,8 @@ bool TargetMode::processKey(KeyEvent event) {
         *utils::getDirectionByName(*d));
     auto location = app->hero->currentLocation;
     auto line = location->getLine(app->hero->currentCell, nc);
-    if (!checkTarget(line)) break;
+    if (!checkTarget(line))
+      break;
 
     app->state->selection.clear();
     app->state->cursor = {nc->x, nc->y};
@@ -115,7 +116,8 @@ bool TargetMode::processKey(KeyEvent event) {
   } break;
   case SDL_SCANCODE_T:
   case SDL_SCANCODE_RETURN:
-    callback(app->hero->currentLocation->cells[app->state->cursor.y][app->state->cursor.x]);
+    callback(app->hero->currentLocation
+                 ->cells[app->state->cursor.y][app->state->cursor.x]);
     return true;
     break;
   }
@@ -397,30 +399,53 @@ void InspectMode::render() {
 bool NormalMode::processKey(KeyEvent event) {
   switch (event.getCode()) {
   case SDL_SCANCODE_T: {
-    app->state->selection.clear();
-    app->targetMode->setCallback([&](auto cell) {
-      app->modeManager.toNormal();
-    });
-    app->targetMode->setCheckTarget([&](auto line) {
-      auto cell = line.back();
-      if (line.size() > 5) return false;
-      auto pti = std::find_if(line.begin(), line.end(), [](auto c){
-        return !c->passThrough;
+
+    app->objectSelectMode->setHeader(F("Items to throw: "));
+
+    auto usable = utils::castObjects<Item>(app->hero->inventory);
+    app->objectSelectMode->setObjects(utils::castObjects<Object>(usable));
+
+    Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
+      if (auto item = std::dynamic_pointer_cast<Item>(o)) {
+        return fmt::format("<span weight='bold'>{}</span> - {}", letter,
+                           item->getFullTitle());
+      }
+      return "Unknown error"s;
+    };
+    app->objectSelectMode->setFormatter(formatter);
+
+    app->objectSelectMode->setCallback([&](std::shared_ptr<Object> o) {
+      app->state->selection.clear();
+      app->targetMode->setCallback([&](auto cell) {
+        app->modeManager.toNormal();
+        return true;
       });
-      if (pti != line.end() && *pti != line.back() && *pti != app->hero->currentCell) return false;
+      app->targetMode->setCheckTarget([&](auto line) {
+        auto cell = line.back();
+        if (line.size() > 5)
+          return false;
+        auto pti = std::find_if(line.begin(), line.end(),
+                                [](auto c) { return !c->passThrough; });
+        if (pti != line.end() && *pti != line.back() &&
+            *pti != app->hero->currentCell)
+          return false;
+        return true;
+      });
+      app->modeManager.toTarget();
+      app->statusLine->setContent(State::target_mode);
+      auto n = app->hero->currentLocation->getNeighbors(app->hero->currentCell);
+      auto s = std::find_if(n.begin(), n.end(),
+                            [](auto c) { return c->type.passThrough; });
+      app->state->cursor = {(*s)->x, (*s)->y};
+      app->state->setSelect(true);
+      app->state->invalidate();
       return true;
     });
-    app->modeManager.toTarget();
-    app->statusLine->setContent(State::target_mode);
-    auto n = app->hero->currentLocation->getNeighbors(app->hero->currentCell);
-    auto s = std::find_if(n.begin(), n.end(), [](auto c){
-      return c->type.passThrough;
-    });
-    app->state->cursor = {(*s)->x,
-                          (*s)->y};
-    app->state->setSelect(true);
-    app->state->invalidate();
-    }break;
+
+    app->objectSelectMode->render(app->objectSelectState);
+    app->modeManager.toObjectSelect();
+
+  } break;
   case SDL_SCANCODE_F1:
     app->debug = !app->debug;
     app->hero->commit("toggle debug", 0);
@@ -443,7 +468,7 @@ bool NormalMode::processKey(KeyEvent event) {
                 });
             torch != app->hero->inventory.end()) {
           app->hero->equip(slot, *torch);
-        app->hero->emitsLight = true;
+          app->hero->emitsLight = true;
         }
       }
       app->hero->currentLocation->invalidate();

@@ -1,8 +1,8 @@
 #include <chrono>
 #include <fmt/format.h>
 #include <iostream>
-#include <set>
 #include <rang.hpp>
+#include <set>
 
 #include "lss/game/door.hpp"
 #include "lss/game/enemy.hpp"
@@ -413,7 +413,7 @@ void fixOverlapped(std::shared_ptr<Location> location) {
   }
   auto rooms = location->rooms;
   for (auto room : rooms) {
-    //FIXME: remove orphaned objects
+    // FIXME: remove orphaned objects
     room->cells = cache[room];
     if (room->cells.size() == 0) {
       location->rooms.erase(
@@ -496,7 +496,7 @@ void placeLoot(std::shared_ptr<Location> location, int threat) {
     else
       continue;
     auto n = 0;
-    //TODO: fix crash in getObjects
+    // TODO: fix crash in getObjects
     while (location->getObjects(c).size() != 0 && n < 20) {
       rc = getRandomCell(room, CellType::FLOOR);
       if (rc)

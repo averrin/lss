@@ -5,9 +5,9 @@
 #include "Event.hpp"
 #include "EventBus.hpp"
 #include "lss/game/creature.hpp"
+#include "lss/game/damageSpec.hpp"
 #include "lss/game/item.hpp"
 #include "lss/game/lootBox.hpp"
-#include "lss/game/damageSpec.hpp"
 #include "micropather/micropather.h"
 
 enum AIType {
@@ -24,7 +24,7 @@ public:
   int baseHP;
   int baseMP;
   int defense;
-  DamageSpec dmgSpec = DamageSpec(0,0,0,DamageType::BASIC);
+  DamageSpec dmgSpec = DamageSpec(0, 0, 0, DamageType::BASIC);
   LootBox loot;
   std::vector<Trait> traits;
   Items equipped;

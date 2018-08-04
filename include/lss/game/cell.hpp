@@ -4,8 +4,8 @@
 #include <algorithm>
 #include <cmath>
 #include <memory>
-#include <vector>
 #include <set>
+#include <vector>
 
 const float TORCH_DISTANCE = 4.5f;
 

@@ -200,7 +200,8 @@ void LSSApp::startBg() {
   bgRunning = true;
   bgThread = std::thread([&]() {
     while (bgRunning) {
-      std::map<std::shared_ptr<Object>, std::set<std::shared_ptr<Cell>>> lightMap;
+      std::map<std::shared_ptr<Object>, std::set<std::shared_ptr<Cell>>>
+          lightMap;
       for (auto c : hero->viewField) {
         if (!c->illuminated)
           continue;
@@ -214,16 +215,18 @@ void LSSApp::startBg() {
 
       std::map<std::shared_ptr<Object>, int> ld;
       for (auto [ls, cells] : lightMap) {
-        if (!ls->emitsLight || ls->lightStable) continue;
+        if (!ls->emitsLight || ls->lightStable)
+          continue;
         if (ld.find(ls) == ld.end()) {
           ld[ls] = R::N(0, 2);
         }
         auto d = ld[ls];
         for (auto c : cells) {
           auto cd = R::N(0, 1);
-          auto f = state->fragments
-                      [c->y * (hero->currentLocation->cells.front().size() + 1) +
-                        c->x];
+          auto f =
+              state->fragments
+                  [c->y * (hero->currentLocation->cells.front().size() + 1) +
+                   c->x];
           auto a = f->alpha + d + cd;
           auto ml = 25 + 5 * c->lightSources.size();
           if (a < ml)
@@ -238,7 +241,8 @@ void LSSApp::startBg() {
       auto _anims = animations;
       for (auto a : _anims) {
         if (a->stopped) {
-          animations.erase(std::remove(animations.begin(), animations.end(), a));
+          animations.erase(
+              std::remove(animations.begin(), animations.end(), a));
           continue;
         }
         a->tick();
@@ -478,7 +482,7 @@ bool LSSApp::processCommand(std::string cmd) {
 }
 
 void LSSApp::update() {
-  //TODO: make invalidate only damaged setter
+  // TODO: make invalidate only damaged setter
   if (damaged) {
     bgRunning = false;
     bgThread.join();

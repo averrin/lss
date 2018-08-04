@@ -1,5 +1,6 @@
 #ifndef __DAMAGESPEC_H_
 #define __DAMAGESPEC_H_
+#include "lss/game/object.hpp"
 #include "lss/game/randomTools.hpp"
 
 enum class DamageType {
@@ -23,10 +24,11 @@ class Damage;
 class DamageSpec : public Object {
 public:
   DamageSpec(R::rndInt m, R::rndInt d, R::rndInt e, DamageType dt)
-      : Object(), _dices(R::I(d)), _edges(R::I(e)), _modifier(R::I(m)), type(dt) {
+      : Object(), _dices(R::I(d)), _edges(R::I(e)), _modifier(R::I(m)),
+        type(dt) {
     modifier = R::get(_modifier);
-    dices    = R::get(_dices);
-    edges    = R::get(_edges);
+    dices = R::get(_dices);
+    edges = R::get(_edges);
   }
 
   int modifier;
@@ -37,9 +39,7 @@ public:
   DamageSpec roll();
   std::shared_ptr<Damage> getDamage(bool critical = false);
 
-    int hitRoll() {
-        return hitRoll(modifier, dices, edges);
-    }
+  int hitRoll() { return hitRoll(modifier, dices, edges); }
 
   static int hitRoll(int m, int d, int e) {
     auto damage = 0;
@@ -53,9 +53,7 @@ public:
     return damage;
   }
 
-    int criticalHit() {
-        return criticalHit(modifier, dices, edges);
-    }
+  int criticalHit() { return criticalHit(modifier, dices, edges); }
 
   static int criticalHit(int m, int d, int e) {
     auto damage = m + d * e;
@@ -70,7 +68,5 @@ private:
   R::rndInt _dices;
   R::rndInt _edges;
 };
-
-
 
 #endif // __DAMAGESPEC_H_

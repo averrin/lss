@@ -15,12 +15,14 @@ const std::map<TerrainSpec, std::string> terrainSigns = {
 };
 
 const std::map<TerrainSpec, std::string> terrainColors = {
-    {TerrainType::TORCH_STAND, "#ffa500"}, {TerrainType::FIREBALL, "#ee1111"},
+    {TerrainType::TORCH_STAND, "#ffa500"},
+    {TerrainType::FIREBALL, "#ee1111"},
     {TerrainType::MAGIC_LIGHT, COLORS::LIGHT_BLUE},
     {TerrainType::MAGIC_LIGHT_LONG, COLORS::LIGHT_BLUE},
     {TerrainType::MAGIC_LIGHT_FOREVER, COLORS::LIGHT_BLUE},
     {TerrainType::ACID_LIGHT_FOREVER, "#11cc11"},
-    {TerrainType::STATUE, "#f0f0ff"},       {TerrainType::ALTAR, COLORS::GRAY},
+    {TerrainType::STATUE, "#f0f0ff"},
+    {TerrainType::ALTAR, COLORS::GRAY},
     {TerrainType::BUSH, "#228b22"},
 };
 
@@ -41,16 +43,24 @@ const std::map<ItemSpec, std::string> itemSigns = {
 const std::map<ItemSpec, std::string> itemColors = {
     {ItemType::BONES, "#aaa"},
 
-    {ItemType::CORPSE, "#ee1111"},          {ItemType::ROCK, COLORS::GRAY},
-    {ItemType::PICK_AXE, COLORS::WHITE},      {ItemType::SWORD, "#F7CA88"},
-    {ItemType::GOLD_RING, "#ffd700"},      {ItemType::GOLD_COINS, "#ffd700"},
-    {ItemType::DAGGER, COLORS::GRAY},         {ItemType::TORCH, "#ffa500"},
+    {ItemType::CORPSE, "#ee1111"},
+    {ItemType::ROCK, COLORS::GRAY},
+    {ItemType::PICK_AXE, COLORS::WHITE},
+    {ItemType::SWORD, "#F7CA88"},
+    {ItemType::GOLD_RING, "#ffd700"},
+    {ItemType::GOLD_COINS, "#ffd700"},
+    {ItemType::DAGGER, COLORS::GRAY},
+    {ItemType::TORCH, "#ffa500"},
     {ItemType::GRASS, "#006400"},
 
-    {ItemType::GREAT_AXE, COLORS::WHITE},     {ItemType::HELMET, COLORS::WHITE},
-    {ItemType::SHIELD, COLORS::WHITE},        {ItemType::GREAVES, COLORS::WHITE},
-    {ItemType::BOOTS, COLORS::WHITE},         {ItemType::PLATE, COLORS::WHITE},
-    {ItemType::LEATHER_ARMOR, COLORS::WHITE}, {ItemType::POTION, COLORS::LIGHT_BLUE},
+    {ItemType::GREAT_AXE, COLORS::WHITE},
+    {ItemType::HELMET, COLORS::WHITE},
+    {ItemType::SHIELD, COLORS::WHITE},
+    {ItemType::GREAVES, COLORS::WHITE},
+    {ItemType::BOOTS, COLORS::WHITE},
+    {ItemType::PLATE, COLORS::WHITE},
+    {ItemType::LEATHER_ARMOR, COLORS::WHITE},
+    {ItemType::POTION, COLORS::LIGHT_BLUE},
     {ItemType::SCROLL, COLORS::WHITE},
 };
 
@@ -85,12 +95,9 @@ const std::map<EnemySpec, std::string> enemyColors = {
 };
 
 const std::map<CellSpec, std::string> cellSigns = {
-    {CellType::FLOOR, "⋅"s},
-    {CellType::WALL, "#"s},
-    {CellType::UNKNOWN, " "s},
-    {CellType::DOWNSTAIRS, "&gt;"s},
-    {CellType::UPSTAIRS, "&lt;"s},
-    {CellType::WATER, "="s},
+    {CellType::FLOOR, "⋅"s},       {CellType::WALL, "#"s},
+    {CellType::UNKNOWN, " "s},     {CellType::DOWNSTAIRS, "&gt;"s},
+    {CellType::UPSTAIRS, "&lt;"s}, {CellType::WATER, "="s},
     {CellType::VOID, "⌄"s},
 };
 
@@ -103,24 +110,20 @@ const std::map<CellSpec, std::map<bool, std::string>> cellColors = {
     {CellType::VOID, {{false, "#555"}, {true, "#555"}}}};
 
 const std::map<LightType, std::string> lightColors = {
-  {LightType::FIRE, "#cc5511"},
-  {LightType::MAGIC, "#1133cc"},
-  {LightType::ACID, "#11cc11"},
+    {LightType::FIRE, "#cc5511"},
+    {LightType::MAGIC, "#1133cc"},
+    {LightType::ACID, "#11cc11"},
 };
 
 const std::map<CellSpec, std::string> cellWeights = {
-    {CellType::FLOOR, "normal"},
-    {CellType::WALL, "bold"},
-    {CellType::DOWNSTAIRS, "bold"},
-    {CellType::UPSTAIRS, "bold"},
-    {CellType::WATER, "normal"},
-    {CellType::VOID, "normal"},
+    {CellType::FLOOR, "normal"},    {CellType::WALL, "bold"},
+    {CellType::DOWNSTAIRS, "bold"}, {CellType::UPSTAIRS, "bold"},
+    {CellType::WATER, "normal"},    {CellType::VOID, "normal"},
 };
 
 const std::map<CellFeature, std::string> featureColors = {
-  {CellFeature::CAVE, "#897546"},
-  {CellFeature::BLOOD, "#8b0000"},
-  {CellFeature::MARK1, "#0000ff"},
-  {CellFeature::MARK2, "#00ff00"},
+    {CellFeature::CAVE, "#897546"},
+    {CellFeature::BLOOD, "#8b0000"},
+    {CellFeature::MARK1, "#0000ff"},
+    {CellFeature::MARK2, "#00ff00"},
 };
-

@@ -1,7 +1,7 @@
-#include <rang.hpp>
 #include <algorithm>
 #include <chrono>
 #include <memory>
+#include <rang.hpp>
 
 #include "EventBus.hpp"
 #include "lss/game/enemy.hpp"
@@ -97,7 +97,7 @@ void Location::onEvent(CommitEvent &e) {
       o->apLeft -= e.actionPoints;
       if (o->apLeft <= 0) {
         objects.erase(std::remove(objects.begin(), objects.end(), o),
-                  objects.end());
+                      objects.end());
       }
     }
   }
@@ -278,7 +278,8 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
   for (auto t : torches) {
     ts.push_back(t);
     for (auto c : getVisible(t->currentCell, t->lightStrength)) {
-      auto d = sqrt(pow(t->currentCell->x - c->x, 2) + pow(t->currentCell->y - c->y, 2));
+      auto d = sqrt(pow(t->currentCell->x - c->x, 2) +
+                    pow(t->currentCell->y - c->y, 2));
       if (d <= t->lightStrength) {
         c->lightSources.insert(t);
         c->illuminated = true;
@@ -293,7 +294,6 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
       }
     }
   }
-
 
   for (auto r : cells) {
     for (auto c : r) {
@@ -313,7 +313,8 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
         continue;
       }
       for (auto ls : lss) {
-        auto td = sqrt(pow(c->x - ls->currentCell->x, 2) + pow(c->y - ls->currentCell->y, 2));
+        auto td = sqrt(pow(c->x - ls->currentCell->x, 2) +
+                       pow(c->y - ls->currentCell->y, 2));
         if (td < d) {
           d = td;
           c->nearestLightEmitter = ls;
@@ -322,8 +323,8 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
         if (ls == player) {
           strength = TORCH_DISTANCE;
         }
-        c->illumination = ((strength - td) / strength * 80) +
-                        Cell::DEFAULT_LIGHT;
+        c->illumination =
+            ((strength - td) / strength * 80) + Cell::DEFAULT_LIGHT;
       }
       if (c->illumination < Cell::MINIMUM_LIGHT) {
         c->illumination = Cell::MINIMUM_LIGHT;
@@ -385,9 +386,9 @@ Objects Location::getObjects(std::shared_ptr<Cell> cell) {
                          [cell](std::shared_ptr<Object> o) {
                            // return o->currentCell == cell;
                            try {
-                            return o->currentCell->x == cell->x &&
+                             return o->currentCell->x == cell->x &&
                                     o->currentCell->y == cell->y;
-                           } catch (std::exception& e) {
+                           } catch (std::exception &e) {
                              fmt::print("BUG: ghost cell!!!\n");
                              return false;
                            }
@@ -426,37 +427,56 @@ Location::getVisible(std::shared_ptr<Cell> start, float distance) {
   return result;
 }
 
-  std::vector<std::shared_ptr<Cell>> Location::getLine(std::shared_ptr<Cell> c1, std::shared_ptr<Cell> c2) {
-    std::vector<std::shared_ptr<Cell>> result;
-    auto xn = c1->x;
-    auto xk = c2->x;
-    auto yn = c1->y;
-    auto yk = c2->y;
-int  dx, dy, s, sx, sy, kl, swap, incr1, incr2;
+std::vector<std::shared_ptr<Cell>> Location::getLine(std::shared_ptr<Cell> c1,
+                                                     std::shared_ptr<Cell> c2) {
+  std::vector<std::shared_ptr<Cell>> result;
+  auto xn = c1->x;
+  auto xk = c2->x;
+  auto yn = c1->y;
+  auto yk = c2->y;
+  int dx, dy, s, sx, sy, kl, swap, incr1, incr2;
 
-/* Вычисление приращений и шагов */
-   sx= 0;
-   if ((dx= xk-xn) < 0) {dx= -dx; --sx;} else if (dx>0) ++sx;
-   sy= 0;
-   if ((dy= yk-yn) < 0) {dy= -dy; --sy;} else if (dy>0) ++sy;
-/* Учет наклона */
-   swap= 0;
-   if ((kl= dx) < (s= dy)) {
-      dx= s;  dy= kl;  kl= s; ++swap;
-   }
-   s= (incr1= 2*dy)-dx; /* incr1 - констан. перевычисления */
-                        /* разности если текущее s < 0  и  */
-                        /* s - начальное значение разности */
-   incr2= 2*dx;         /* Константа для перевычисления    */
-                        /* разности если текущее s >= 0    */
+  /* Вычисление приращений и шагов */
+  sx = 0;
+  if ((dx = xk - xn) < 0) {
+    dx = -dx;
+    --sx;
+  } else if (dx > 0)
+    ++sx;
+  sy = 0;
+  if ((dy = yk - yn) < 0) {
+    dy = -dy;
+    --sy;
+  } else if (dy > 0)
+    ++sy;
+  /* Учет наклона */
+  swap = 0;
+  if ((kl = dx) < (s = dy)) {
+    dx = s;
+    dy = kl;
+    kl = s;
+    ++swap;
+  }
+  s = (incr1 = 2 * dy) - dx; /* incr1 - констан. перевычисления */
+  /* разности если текущее s < 0  и  */
+  /* s - начальное значение разности */
+  incr2 = 2 * dx; /* Константа для перевычисления    */
+                  /* разности если текущее s >= 0    */
   result.push_back(cells[yn][xn]);
-   while (--kl >= 0) {
-      if (s >= 0) {
-         if (swap) xn+= sx; else yn+= sy;
-         s-= incr2;
-      }
-      if (swap) yn+= sy; else xn+= sx;
-      s+=  incr1;
-      result.push_back(cells[yn][xn]);
-   }    return result;
+  while (--kl >= 0) {
+    if (s >= 0) {
+      if (swap)
+        xn += sx;
+      else
+        yn += sy;
+      s -= incr2;
+    }
+    if (swap)
+      yn += sy;
+    else
+      xn += sx;
+    s += incr1;
+    result.push_back(cells[yn][xn]);
+  }
+  return result;
 }

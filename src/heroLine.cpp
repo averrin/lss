@@ -38,7 +38,8 @@ void HeroLine::update() {
                  std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
                            LIGHT) != s->acceptTypes.end();
         });
-    lightDurability = float(lightSlot->item->durability) / lightSlot->item->type.durability;
+    lightDurability =
+        float(lightSlot->item->durability) / lightSlot->item->type.durability;
   }
   auto locationFeatures = hero->currentLocation->getFeaturesTag();
   std::string effects = "";
@@ -63,13 +64,15 @@ void HeroLine::update() {
                     "   <b>MP:[<span color='{{{{blue}}}}'>{}</span>]</b>    "
                     "<b>DMG</b>:{}   "
                     "<b>DEF</b>:{}   <b>EXP</b>:{}",
-                    healthLine,
-                    manaLine,
-                    hero->getDmgDesc(),
+                    healthLine, manaLine, hero->getDmgDesc(),
                     hero->DEF(hero.get()), hero->exp)),
-      F(fmt::format("{}", hero->emitsLight
-                              ? fmt::format("   <b>L:[<span color='{{{{orange}}}}'>{}</span>]</b>", ldLine)
-                              : "")),
+      F(fmt::format(
+          "{}",
+          hero->emitsLight
+              ? fmt::format(
+                    "   <b>L:[<span color='{{{{orange}}}}'>{}</span>]</b>",
+                    ldLine)
+              : "")),
       F(fmt::format("   <b>P</b>:{}.{} D:{} [{} {}].{}", hero->currentCell->x,
                     hero->currentCell->y, hero->currentLocation->depth,
                     hero->currentLocation->type.name, locationFeatures,

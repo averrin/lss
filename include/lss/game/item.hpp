@@ -125,41 +125,49 @@ const auto SPEED_RING =
                            Effects{std::make_shared<SpeedModifier>(0.3)});
 
 const auto BASIC_SWORD = std::make_shared<Item>(
-    ItemType::SWORD, Effects{std::make_shared<MeleeDamage>(DamageSpec(0, 3, 3, DamageType::WEAPON))});
+    ItemType::SWORD, Effects{std::make_shared<MeleeDamage>(
+                         DamageSpec(0, 3, 3, DamageType::WEAPON))});
 const auto SWORD = std::make_shared<Item>(
-    ItemType::SWORD, Effects{std::make_shared<MeleeDamage>(DamageSpec(
-                         R::I(-2, 2), R::I(2, 4), R::I(2, 4), DamageType::WEAPON))});
+    ItemType::SWORD,
+    Effects{std::make_shared<MeleeDamage>(
+        DamageSpec(R::I(-2, 2), R::I(2, 4), R::I(2, 4), DamageType::WEAPON))});
 const auto ORK_SWORD = std::make_shared<Item>(
-    ItemType::SWORD, Effects{std::make_shared<MeleeDamage>(DamageSpec(5, 4, 6, DamageType::WEAPON)),
+    ItemType::SWORD, Effects{std::make_shared<MeleeDamage>(
+                                 DamageSpec(5, 4, 6, DamageType::WEAPON)),
                              std::make_shared<CritModifier>(0.4)});
 const auto GREAT_AXE = std::make_shared<Item>(
-    ItemType::GREAT_AXE, Effects{std::make_shared<MeleeDamage>(DamageSpec(-1, 6, 7, DamageType::WEAPON)),
+    ItemType::GREAT_AXE, Effects{std::make_shared<MeleeDamage>(
+                                     DamageSpec(-1, 6, 7, DamageType::WEAPON)),
                                  std::make_shared<SpeedModifier>(-0.3f)});
 const auto DAGGER = std::make_shared<Item>(
-    ItemType::DAGGER,
-    Effects{std::make_shared<MeleeDamage>(DamageSpec(R::I(-2, 2), 1, R::I(1, 3), DamageType::WEAPON))});
+    ItemType::DAGGER, Effects{std::make_shared<MeleeDamage>(DamageSpec(
+                          R::I(-2, 2), 1, R::I(1, 3), DamageType::WEAPON))});
 const auto GOBLIN_DAGGER = std::make_shared<Item>(
-    ItemType::DAGGER, Effects{std::make_shared<MeleeDamage>(DamageSpec(2, 3, 3, DamageType::WEAPON)),
+    ItemType::DAGGER, Effects{std::make_shared<MeleeDamage>(
+                                  DamageSpec(2, 3, 3, DamageType::WEAPON)),
                               std::make_shared<CritModifier>(0.2)});
 const auto POISON_DAGGER = std::make_shared<Item>(
     ItemType::DAGGER,
-    Effects{std::make_shared<MeleeDamage>(DamageSpec(2, 3, 3, DamageType::WEAPON)),
-            std::make_shared<CritModifier>(0.2),
-            std::make_shared<OnHitEffect>(
-                std::make_shared<LastingEffect>(OverTimeEffects::POISON, 5000),
-                0.3)});
+    Effects{
+        std::make_shared<MeleeDamage>(DamageSpec(2, 3, 3, DamageType::WEAPON)),
+        std::make_shared<CritModifier>(0.2),
+        std::make_shared<OnHitEffect>(
+            std::make_shared<LastingEffect>(OverTimeEffects::POISON, 5000),
+            0.3)});
 
 const auto POISON_FANG = std::make_shared<Item>(
     ItemType::ENEMY,
-    Effects{std::make_shared<MeleeDamage>(DamageSpec(2, 3, 3, DamageType::WEAPON)),
-            std::make_shared<CritModifier>(0.2),
-            std::make_shared<OnHitEffect>(
-                std::make_shared<LastingEffect>(OverTimeEffects::POISON, 5000),
-                0.3)});
+    Effects{
+        std::make_shared<MeleeDamage>(DamageSpec(2, 3, 3, DamageType::WEAPON)),
+        std::make_shared<CritModifier>(0.2),
+        std::make_shared<OnHitEffect>(
+            std::make_shared<LastingEffect>(OverTimeEffects::POISON, 5000),
+            0.3)});
 
 const auto SWORD_OF_DUALWIELD = std::make_shared<Item>(
     "sword of dualwield", ItemType::SWORD,
-    Effects{std::make_shared<MeleeDamage>(DamageSpec(R::I(-2, 2), R::I(2, 4), R::I(2, 4), DamageType::WEAPON)),
+    Effects{std::make_shared<MeleeDamage>(DamageSpec(
+                R::I(-2, 2), R::I(2, 4), R::I(2, 4), DamageType::WEAPON)),
             std::make_shared<TraitEffect>(Traits::DUAL_WIELD)});
 
 // TODO: make colors unique

@@ -1,5 +1,5 @@
-#include <rang.hpp>
 #include <cmath>
+#include <rang.hpp>
 #include <variant>
 // #include <fmt/format.h>
 
@@ -171,7 +171,9 @@ std::shared_ptr<Damage> Creature::updateDamage(std::shared_ptr<Damage> damage,
 }
 
 std::shared_ptr<Damage> Creature::getDamage(std::shared_ptr<Object>) {
-  auto damage = std::make_shared<Damage>(DamageSpec(0,0,0,DamageType::WEAPON));
+  // TODO: get damageType from creature
+  auto damage =
+      std::make_shared<Damage>(DamageSpec(0, 0, 0, DamageType::WEAPON));
   auto primaryDmg = getPrimaryDmg();
   if (primaryDmg != std::nullopt) {
     auto [primarySlot, spec] = *primaryDmg;
@@ -261,6 +263,7 @@ bool Creature::attack(Direction d) {
   return true;
 }
 
+// TODO: apply durning effect with non-zero fire damage
 void Creature::applyDamage(std::shared_ptr<Creature> attacker,
                            std::shared_ptr<Damage> damage) {
   auto def = R::Z(0, DEF(this));
@@ -274,6 +277,7 @@ void Creature::applyDamage(std::shared_ptr<Creature> attacker,
   }
   damage->deflected = def;
 
+  // TODO: declarative
   if (damage->spec.type == DamageType::ACID && hasTrait(Traits::ACID_IMMUNE)) {
     damage->damage = 0;
   }
@@ -287,16 +291,20 @@ void Creature::applyDamage(std::shared_ptr<Creature> attacker,
     damage->damage /= 2;
   }
 
-  if (damage->spec.type == DamageType::WEAPON && hasTrait(Traits::WEAPON_IMMUNE)) {
+  if (damage->spec.type == DamageType::WEAPON &&
+      hasTrait(Traits::WEAPON_IMMUNE)) {
     damage->damage = 0;
   }
-  if (damage->spec.type == DamageType::MAGIC && hasTrait(Traits::MAGIC_IMMUNE)) {
+  if (damage->spec.type == DamageType::MAGIC &&
+      hasTrait(Traits::MAGIC_IMMUNE)) {
     damage->damage = 0;
   }
-  if (damage->spec.type == DamageType::WEAPON && hasTrait(Traits::WEAPON_RESIST)) {
+  if (damage->spec.type == DamageType::WEAPON &&
+      hasTrait(Traits::WEAPON_RESIST)) {
     damage->damage /= 2;
   }
-  if (damage->spec.type == DamageType::MAGIC && hasTrait(Traits::MAGIC_RESIST)) {
+  if (damage->spec.type == DamageType::MAGIC &&
+      hasTrait(Traits::MAGIC_RESIST)) {
     damage->damage /= 2;
   }
 
@@ -390,7 +398,7 @@ void Creature::calcViewField(bool force) {
   }
 }
 
-//TODO: migrate to emit
+// TODO: migrate to emit
 bool Creature::hasLight() {
   return std::find_if(inventory.begin(), inventory.end(),
                       [](std::shared_ptr<Item> item) {

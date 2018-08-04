@@ -1,8 +1,8 @@
 #include "lss/game/magic.hpp"
+#include "lss/game/door.hpp"
 #include "lss/game/enemy.hpp"
 #include "lss/game/lootBox.hpp"
 #include "lss/game/terrain.hpp"
-#include "lss/game/door.hpp"
 #include "lss/generator/room.hpp"
 #include "lss/utils.hpp"
 
@@ -114,13 +114,13 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
     DirectionEvent de([=](auto dir) {
       auto cell = hero->currentLocation->getCell(caster->currentCell, dir);
       auto cells = std::vector<std::shared_ptr<Cell>>{cell};
-      for (auto n=0; n < lspell->length-1; n++) {
+      for (auto n = 0; n < lspell->length - 1; n++) {
         cell = hero->currentLocation->getCell(cell, dir);
-        if (!cell->passThrough) break;
+        if (!cell->passThrough)
+          break;
         cells.push_back(cell);
       }
       applySpellOnCells(lspell->spell, cells);
-
     });
     eb::EventBus::FireEvent(de);
   } else if (auto tspell = std::dynamic_pointer_cast<TargetSpell>(spell)) {
@@ -128,7 +128,8 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
     auto cells = caster->getInRadius(tspell->length);
     std::vector<std::shared_ptr<Enemy>> targets;
     for (auto c : cells) {
-      auto enemies = utils::castObjects<Enemy>(hero->currentLocation->getObjects(c));
+      auto enemies =
+          utils::castObjects<Enemy>(hero->currentLocation->getObjects(c));
       if (enemies.size() != 0) {
         targets.push_back(enemies.front());
       }
@@ -138,7 +139,8 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
     if (std::dynamic_pointer_cast<DamageSpell>(tspell->spell)) {
       auto cc = hero->currentCell;
       for (auto e : targets) {
-        auto td = sqrt(pow(cc->x - e->currentCell->x, 2) + pow(cc->y - e->currentCell->y, 2));
+        auto td = sqrt(pow(cc->x - e->currentCell->x, 2) +
+                       pow(cc->y - e->currentCell->y, 2));
         if (td <= d) {
           target = e->currentCell;
           d = td;
@@ -146,54 +148,63 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
       }
     }
 
-    TargetEvent de(target, [=](auto cell) {
-      auto spell = std::dynamic_pointer_cast<CellSpell>(tspell->spell);
-      auto fb = std::make_shared<Terrain>(spell->spec, 8);
-      hero->currentLocation->objects.push_back(fb);
-      auto cells = hero->currentLocation->getLine(hero->currentCell, cell);
-      auto a = std::make_shared<MoveAnimation>(fb, cells, cells.size());
-      a->animationCallback = [=](){
-        spell->applySpell(hero->currentLocation, cell);
-        pauseAndEraseFireballs();
-      };
-      AnimationEvent ae(a);
-      eb::EventBus::FireEvent(ae);
-    }, [=](auto line){
-      auto cell = line.back();
-      if (!cell->type.passThrough) return false;
-      if (line.size() > tspell->length + 1) return false;
-      if (std::find_if(line.begin(), line.end(), [&](auto c){
-        return !c->type.passThrough
-          || utils::castObjects<Door>(hero->currentLocation->getObjects(c)).size() != 0;
-      }) != line.end()) return false;
-      return true;
-    });
+    TargetEvent de(
+        target,
+        [=](auto cell) {
+          auto spell = std::dynamic_pointer_cast<CellSpell>(tspell->spell);
+          auto fb = std::make_shared<Terrain>(spell->spec, 8);
+          hero->currentLocation->objects.push_back(fb);
+          auto cells = hero->currentLocation->getLine(hero->currentCell, cell);
+          auto a = std::make_shared<MoveAnimation>(fb, cells, cells.size());
+          a->animationCallback = [=]() {
+            spell->applySpell(hero->currentLocation, cell);
+            pauseAndEraseFireballs();
+          };
+          AnimationEvent ae(a);
+          eb::EventBus::FireEvent(ae);
+        },
+        [=](auto line) {
+          auto cell = line.back();
+          if (!cell->type.passThrough)
+            return false;
+          if (line.size() > tspell->length + 1)
+            return false;
+          if (std::find_if(line.begin(), line.end(), [&](auto c) {
+                return !c->type.passThrough ||
+                       utils::castObjects<Door>(
+                           hero->currentLocation->getObjects(c))
+                               .size() != 0;
+              }) != line.end())
+            return false;
+          return true;
+        });
     eb::EventBus::FireEvent(de);
   }
 }
 
-void Magic::applySpellOnCells(std::shared_ptr<Spell> spell, std::vector<std::shared_ptr<Cell>> cells) {
-      if (auto ds = std::dynamic_pointer_cast<CellSpell>(spell)) {
-        for (auto c : cells) {
-          ds->applySpell(hero->currentLocation, c);
-        }
-      }
-      hero->currentLocation->invalidateVisibilityCache(hero->currentCell);
-      hero->calcViewField();
-      hero->commit("cast spell", 0);
-      pauseAndEraseFireballs();
+void Magic::applySpellOnCells(std::shared_ptr<Spell> spell,
+                              std::vector<std::shared_ptr<Cell>> cells) {
+  if (auto ds = std::dynamic_pointer_cast<CellSpell>(spell)) {
+    for (auto c : cells) {
+      ds->applySpell(hero->currentLocation, c);
+    }
+  }
+  hero->currentLocation->invalidateVisibilityCache(hero->currentCell);
+  hero->calcViewField();
+  hero->commit("cast spell", 0);
+  pauseAndEraseFireballs();
 }
 
 void Magic::pauseAndEraseFireballs() {
-    PauseEvent me([=]() {
-      hero->commit("cast spell", 1);
+  PauseEvent me([=]() {
+    hero->commit("cast spell", 1);
 
-      hero->currentLocation->invalidateVisibilityCache(hero->currentCell);
-      hero->currentLocation->invalidate();
-      hero->calcViewField();
-      hero->commit("cast spell", 0);
-    });
-    eb::EventBus::FireEvent(me);
+    hero->currentLocation->invalidateVisibilityCache(hero->currentCell);
+    hero->currentLocation->invalidate();
+    hero->calcViewField();
+    hero->commit("cast spell", 0);
+  });
+  eb::EventBus::FireEvent(me);
 }
 
 void DamageSpell::applySpell(std::shared_ptr<Location> location,
@@ -209,7 +220,7 @@ void DamageSpell::applySpell(std::shared_ptr<Location> location,
     }
   }
   if (c == location->player->currentCell) {
-      location->player->applyDamage(location->player, damage.getDamage());
+    location->player->applyDamage(location->player, damage.getDamage());
   }
   applyEffect(location, c);
 }

@@ -1,5 +1,5 @@
-#include <rang.hpp>
 #include <chrono>
+#include <rang.hpp>
 
 #include "Jinja2CppLight.h"
 #include "lss/state.hpp"

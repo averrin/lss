@@ -3,7 +3,7 @@
 #include "lss/game/player.hpp"
 #include "lss/utils.hpp"
 
-//TODO: add logging of casted spells
+// TODO: add logging of casted spells
 
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 
@@ -81,7 +81,7 @@ void LogPanel::onEvent(HeroTakeDamageEvent &e) {
   if (auto enemy = std::dynamic_pointer_cast<Enemy>(e.getSender())) {
     attacker_name = enemy->type.name;
   } else if (std::dynamic_pointer_cast<Player>(e.getSender())) {
-    //FIXME: crash
+    // FIXME: crash
     attacker_name = "You";
   } else {
     attacker_name = "something";
@@ -98,8 +98,7 @@ void LogPanel::onEvent(HeroTakeDamageEvent &e) {
     appendLine({F(fmt::format(
         "You take <span color='{}'><b>{}{}</b></span> dmg from {}{}{}",
         e.damage->isCritical ? "red" : "{{orange}}",
-        e.damage->isCritical ? "!" : "", e.damage->damage, attacker_name,
-        tags,
+        e.damage->isCritical ? "!" : "", e.damage->damage, attacker_name, tags,
         e.damage->deflected > 0
             ? fmt::format(" [{} deflected]", e.damage->deflected)
             : ""))});

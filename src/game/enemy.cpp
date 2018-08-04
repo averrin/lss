@@ -1,5 +1,5 @@
-#include <rang.hpp>
 #include <chrono>
+#include <rang.hpp>
 
 #include "EventBus.hpp"
 #include "lss/game/costs.hpp"

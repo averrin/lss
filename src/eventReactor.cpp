@@ -126,9 +126,8 @@ void EventReactor::onEvent(UseCommandEvent &e) {
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
     if (auto item = std::dynamic_pointer_cast<Consumable>(o)) {
-      return fmt::format("<span weight='bold'>{}</span> - {}{}", letter,
-                         item->getFullTitle(),
-                         item->spell == nullptr ? "*" : "");
+      return fmt::format("<span weight='bold'>{}</span> - {}", letter,
+                         item->getFullTitle());
     }
     return "Unknown error"s;
   };
@@ -311,11 +310,9 @@ void EventReactor::onEvent(TargetEvent &e) {
   app->statusLine->setContent(State::target_mode);
 
   if (e.startTarget == nullptr) {
-    app->state->cursor = {app->hero->currentCell->x,
-                        app->hero->currentCell->y};
+    app->state->cursor = {app->hero->currentCell->x, app->hero->currentCell->y};
   } else {
-    app->state->cursor = {e.startTarget->x,
-                        e.startTarget->y};
+    app->state->cursor = {e.startTarget->x, e.startTarget->y};
 
     auto location = app->hero->currentLocation;
     auto line = location->getLine(app->hero->currentCell, e.startTarget);
@@ -351,12 +348,14 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
   Formatter formatter = [&](std::shared_ptr<Object> o, std::string letter) {
     if (auto spell = std::dynamic_pointer_cast<Spell>(o)) {
       auto castable = spell->cost <= app->hero->MP(app->hero.get());
-      
+
       std::string manaLine = "        ";
-      int m = spell->cost / app->hero->MP_MAX(app->hero.get()) * manaLine.size();
+      int m =
+          spell->cost / app->hero->MP_MAX(app->hero.get()) * manaLine.size();
       std::fill_n(manaLine.begin(), m, '|');
       return fmt::format(
-          "<span{}><span weight='bold'>{}</span> - {:32} <b>MP:[<span color='{{{{blue}}}}'>{}</span>]</b></span>",
+          "<span{}><span weight='bold'>{}</span> - {:32} <b>MP:[<span "
+          "color='{{{{blue}}}}'>{}</span>]</b></span>",
           castable ? "" : " color='gray'", letter, spell->name, manaLine);
     }
     return "Unknown error"s;

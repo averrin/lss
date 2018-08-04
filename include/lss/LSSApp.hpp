@@ -17,14 +17,14 @@
 #include <SDL.h>
 #include <SDLPango.hpp>
 #include <assert.h>
-#include <rang.hpp>
 #include <fmt/format.h>
+#include <rang.hpp>
 
+#include "lss/animation.hpp"
 #include "lss/commands.hpp"
 #include "lss/keyEvent.hpp"
 #include "lss/modes.hpp"
 #include "lss/state.hpp"
-#include "lss/animation.hpp"
 
 #include "lss/game/door.hpp"
 #include "lss/game/enemy.hpp"
@@ -68,10 +68,8 @@ public:
 
   void drawFrame(pango::SurfaceRef, SDL_Rect);
 
-    void updateMap();
-    void invalidate() {
-      damaged = true;
-    }
+  void updateMap();
+  void invalidate() { damaged = true; }
   void invalidate(std::string reason) {
     // fmt::print("Invalidate reason: {}\n", reason);
     auto t0 = std::chrono::system_clock::now();

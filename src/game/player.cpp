@@ -1,6 +1,6 @@
-#include <rang.hpp>
 #include <chrono>
 #include <memory>
+#include <rang.hpp>
 
 #include "EventBus.hpp"
 #include "lss/commands.hpp"
@@ -123,7 +123,8 @@ std::string Player::getDmgDesc() {
       auto [secondarySlot, spec2] = *secondaryDmg;
       return fmt::format("{:+d} {}d{}{}", spec.modifier, spec.dices, spec.edges,
                          hasTrait(Traits::DUAL_WIELD)
-                             ? fmt::format(" ({:+d} {}d{})", spec2.modifier, spec2.dices, spec2.edges)
+                             ? fmt::format(" ({:+d} {}d{})", spec2.modifier,
+                                           spec2.dices, spec2.edges)
                              : fmt::format(" ({:+d})", spec2.modifier));
     }
   } else if (haveLeft) {
@@ -131,14 +132,16 @@ std::string Player::getDmgDesc() {
     if (secondaryDmg != std::nullopt) {
       auto [secondarySlot, spec2] = *secondaryDmg;
       return hasTrait(Traits::DUAL_WIELD)
-                 ? fmt::format("~ {:+d} {}d{}", spec2.modifier, spec2.dices, spec2.edges)
+                 ? fmt::format("~ {:+d} {}d{}", spec2.modifier, spec2.dices,
+                               spec2.edges)
                  : fmt::format("~ {:+d}", spec2.modifier);
     }
   } else if (primaryDmg != std::nullopt) {
     auto [primarySlot, spec] = *primaryDmg;
     return fmt::format("{:+d} {}d{}", spec.modifier, spec.dices, spec.edges);
   }
-  return fmt::format("{:+d} {}d{}", dmgSpec.modifier, dmgSpec.dices, dmgSpec.edges);
+  return fmt::format("{:+d} {}d{}", dmgSpec.modifier, dmgSpec.dices,
+                     dmgSpec.edges);
 }
 
 void Player::commit(std::string reason, int ap, bool s) {
@@ -270,11 +273,13 @@ void Player::onEvent(WalkCommandEvent &e) {
                                  }) != enemies.end();
     auto nc = currentLocation->getCell(currentCell, e.direction);
     if (item != currentLocation->objects.end() || seeEnemy ||
-        currentCell->type != CellType::FLOOR || (nc->room != currentCell->room && step > 1)) {
+        currentCell->type != CellType::FLOOR ||
+        (nc->room != currentCell->room && step > 1)) {
       break;
     }
     auto nbrs = currentLocation->getNeighbors(currentCell);
-    if (step > 1 && std::find_if(nbrs.begin(), nbrs.end(), [&](std::shared_ptr<Cell> c) {
+    if (step > 1 &&
+        std::find_if(nbrs.begin(), nbrs.end(), [&](std::shared_ptr<Cell> c) {
           return /*utils::castObjects<Door>(currentLocation->getObjects(c))
                      .size() > 0 || */
               (c->type == CellType::FLOOR && c->room != currentCell->room);

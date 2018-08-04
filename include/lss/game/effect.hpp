@@ -6,9 +6,9 @@
 #include <vector>
 
 #include "lss/game/attribute.hpp"
+#include "lss/game/damageSpec.hpp"
 #include "lss/game/overtime.hpp"
 #include "lss/game/randomTools.hpp"
-#include "lss/game/damageSpec.hpp"
 
 // TODO: refactor.
 // maybe create variant with int, float, rndInt and rndFloat
