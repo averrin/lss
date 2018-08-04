@@ -152,27 +152,6 @@ Creature::getSecondaryDmg(std::shared_ptr<Slot> primarySlot) {
   return std::nullopt;
 }
 
-// TODO: move alldamage logic to damageSpec
-int criticalHit(int m, int d, int e) {
-  auto damage = m + d * e;
-  if (damage < 0) {
-    damage = 0;
-  }
-  return damage;
-}
-
-int Creature::hitRoll(int m, int d, int e) {
-  auto damage = 0;
-  for (auto n = 0; n < d; n++) {
-    damage += rand() % e + 1;
-  }
-  damage += m;
-  if (damage < 0) {
-    damage = 0;
-  }
-  return damage;
-}
-
 std::shared_ptr<Damage> Creature::updateDamage(std::shared_ptr<Damage> damage,
                                                DamageSpec spec) {
   auto inShadow = !currentCell->illuminated;
@@ -285,12 +264,42 @@ bool Creature::attack(Direction d) {
 void Creature::applyDamage(std::shared_ptr<Creature> attacker,
                            std::shared_ptr<Damage> damage) {
   auto def = R::Z(0, DEF(this));
+  if (damage->spec.type == DamageType::ACID && !hasTrait(Traits::ACID_IMMUNE)) {
+    def /= 2;
+  }
   if (damage->damage - def < 0) {
     damage->damage = 0;
   } else {
     damage->damage -= def;
   }
   damage->deflected = def;
+
+  if (damage->spec.type == DamageType::ACID && hasTrait(Traits::ACID_IMMUNE)) {
+    damage->damage = 0;
+  }
+  if (damage->spec.type == DamageType::FIRE && hasTrait(Traits::FIRE_IMMUNE)) {
+    damage->damage = 0;
+  }
+  if (damage->spec.type == DamageType::ACID && hasTrait(Traits::ACID_RESIST)) {
+    damage->damage /= 2;
+  }
+  if (damage->spec.type == DamageType::FIRE && hasTrait(Traits::FIRE_RESIST)) {
+    damage->damage /= 2;
+  }
+
+  if (damage->spec.type == DamageType::WEAPON && hasTrait(Traits::WEAPON_IMMUNE)) {
+    damage->damage = 0;
+  }
+  if (damage->spec.type == DamageType::MAGIC && hasTrait(Traits::MAGIC_IMMUNE)) {
+    damage->damage = 0;
+  }
+  if (damage->spec.type == DamageType::WEAPON && hasTrait(Traits::WEAPON_RESIST)) {
+    damage->damage /= 2;
+  }
+  if (damage->spec.type == DamageType::MAGIC && hasTrait(Traits::MAGIC_RESIST)) {
+    damage->damage /= 2;
+  }
+
   hp -= damage->damage;
   onDamage(attacker, damage);
   if (hp <= 0) {
