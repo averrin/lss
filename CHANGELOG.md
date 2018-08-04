@@ -1,6 +1,9 @@
 ## Changelog
 
 ### 0.1.0
+- init damage type & resist/immunity
+- analog inficators in ui
+- better colored lightning
 - init animations (eg. flying for target spell)
 - target mode and target spell
 - direction mode and line spell
