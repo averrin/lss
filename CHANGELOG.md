@@ -1,6 +1,7 @@
 ## Changelog
 
 ### 0.1.0
+- init throwing
 - init damage type & resist/immunity
 - analog inficators in ui
 - better colored lightning

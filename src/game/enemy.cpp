@@ -165,7 +165,6 @@ void Enemy::onEvent(CommitEvent &e) {
       int result = pather->Solve(currentCell.get(), hero->currentCell.get(),
                                  &path, &totalCost);
       if (result != micropather::MicroPather::SOLVED) {
-        // TODO: who print this? fix it.
         fmt::print("cannot find path to hero [{}.{} -> {}.{}]\n",
                    currentCell->x, currentCell->y, hero->currentCell->x,
                    hero->currentCell->y);

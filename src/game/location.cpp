@@ -58,7 +58,7 @@ void Location::onEvent(CommitEvent &e) {
   //           << rang::style::reset << ": " << rang::fg::green << ms.count()
   //           << rang::style::reset << '\n';
 
-  // TODO: and all enemies on loction (not only this maybe)
+  // TODO: and all enemies on location (not only this maybe)
   auto effects = player->activeEffects;
   for (auto ef : effects) {
     if (auto le = std::dynamic_pointer_cast<LastingEffect>(ef)) {

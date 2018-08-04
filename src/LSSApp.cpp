@@ -482,7 +482,6 @@ bool LSSApp::processCommand(std::string cmd) {
 }
 
 void LSSApp::update() {
-  // TODO: make invalidate only damaged setter
   if (damaged) {
     bgRunning = false;
     bgThread.join();

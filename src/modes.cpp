@@ -661,7 +661,6 @@ bool NormalMode::processKey(KeyEvent event) {
   return true;
 }
 
-// TODO: migrate to callback
 bool DirectionMode::processKey(KeyEvent event) {
   std::optional<std::string> dirName = getDir(event.getCode());
   if (dirName != std::nullopt) {
