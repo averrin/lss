@@ -351,9 +351,13 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
   Formatter formatter = [&](std::shared_ptr<Object> o, std::string letter) {
     if (auto spell = std::dynamic_pointer_cast<Spell>(o)) {
       auto castable = spell->cost <= app->hero->MP(app->hero.get());
+      
+      std::string manaLine = "        ";
+      int m = spell->cost / app->hero->MP_MAX(app->hero.get()) * manaLine.size();
+      std::fill_n(manaLine.begin(), m, '|');
       return fmt::format(
-          "<span{}><span weight='bold'>{}</span> - {:32} {}</span>",
-          castable ? "" : " color='gray'", letter, spell->name, spell->cost);
+          "<span{}><span weight='bold'>{}</span> - {:32} <b>MP:[<span color='{{{{blue}}}}'>{}</span>]</b></span>",
+          castable ? "" : " color='gray'", letter, spell->name, manaLine);
     }
     return "Unknown error"s;
   };
