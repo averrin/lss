@@ -29,7 +29,7 @@ void HeroLine::onEvent(CommitEvent &e) { update(); }
 void HeroLine::onEvent(HeroTakeDamageEvent &e) { update(); }
 
 void HeroLine::update() {
-  auto lightDurability = 0;
+  float lightDurability = 0;
   if (hero->hasLight()) {
     auto lightSlot = *std::find_if(
         hero->equipment->slots.begin(), hero->equipment->slots.end(),
@@ -38,23 +38,37 @@ void HeroLine::update() {
                  std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
                            LIGHT) != s->acceptTypes.end();
         });
-    lightDurability = lightSlot->item->durability;
+    lightDurability = float(lightSlot->item->durability) / lightSlot->item->type.durability;
   }
   auto locationFeatures = hero->currentLocation->getFeaturesTag();
   std::string effects = "";
   for_each(hero->activeEffects.begin(), hero->activeEffects.end(),
            [&](auto e) { effects.append(e->getSign()); });
+
+  std::string healthLine = "        ";
+  int h = hero->HP(hero.get()) / hero->HP_MAX(hero.get()) * healthLine.size();
+  std::fill_n(healthLine.begin(), h, '|');
+
+  std::string manaLine = "        ";
+  int m = hero->MP(hero.get()) / hero->MP_MAX(hero.get()) * manaLine.size();
+  std::fill_n(manaLine.begin(), m, '|');
+
+  std::string ldLine = "        ";
+  int l = lightDurability * ldLine.size();
+  std::fill_n(ldLine.begin(), l, '|');
+
   setContent({
       F(fmt::format("<b>{}</b> [{}]   {}", hero->name, hero->level, effects)),
-      F(fmt::format("   <b>HP</b>:{}/{}   <b>MP</b>:{}/{}   <b>SPD</b>:{}   "
+      F(fmt::format("   <b>HP:[<span color='{{{{green}}}}'>{}</span>]</b>"
+                    "   <b>MP:[<span color='{{{{blue}}}}'>{}</span>]</b>    "
                     "<b>DMG</b>:{}   "
                     "<b>DEF</b>:{}   <b>EXP</b>:{}",
-                    hero->HP(hero.get()), hero->HP_MAX(hero.get()),
-                    hero->MP(hero.get()), hero->MP_MAX(hero.get()),
-                    hero->SPEED(hero.get()), hero->getDmgDesc(),
+                    healthLine,
+                    manaLine,
+                    hero->getDmgDesc(),
                     hero->DEF(hero.get()), hero->exp)),
       F(fmt::format("{}", hero->emitsLight
-                              ? fmt::format("   L&lt;{}&gt;", lightDurability)
+                              ? fmt::format("   <b>L:[<span color='{{{{orange}}}}'>{}</span>]</b>", ldLine)
                               : "")),
       F(fmt::format("   <b>P</b>:{}.{} D:{} [{} {}].{}", hero->currentCell->x,
                     hero->currentCell->y, hero->currentLocation->depth,
