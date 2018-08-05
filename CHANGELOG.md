@@ -1,6 +1,7 @@
 ## Changelog
 
 ### 0.1.0
+- init hero status page
 - Intelligence & Strength attributes
 - init throwing
 - init damage type & resist/immunity
