@@ -1,6 +1,7 @@
 ## Changelog
 
 ### 0.1.0
+- Intelligence & Strength attributes
 - init throwing
 - init damage type & resist/immunity
 - analog inficators in ui

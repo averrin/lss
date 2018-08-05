@@ -47,11 +47,11 @@ void HeroLine::update() {
            [&](auto e) { effects.append(e->getSign()); });
 
   std::string healthLine = "        ";
-  int h = hero->HP(hero.get()) / hero->HP_MAX(hero.get()) * healthLine.size();
+  int h = hero->HP(hero.get()) / int(hero->HP_MAX(hero.get())) * healthLine.size();
   std::fill_n(healthLine.begin(), h, '|');
 
   std::string manaLine = "        ";
-  int m = hero->MP(hero.get()) / hero->MP_MAX(hero.get()) * manaLine.size();
+  int m = hero->MP(hero.get()) / int(hero->MP_MAX(hero.get())) * manaLine.size();
   std::fill_n(manaLine.begin(), m, '|');
 
   std::string ldLine = "        ";

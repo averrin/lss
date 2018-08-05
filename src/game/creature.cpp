@@ -221,6 +221,7 @@ std::shared_ptr<Damage> Creature::getDamage(std::shared_ptr<Object>) {
       damage->traits.push_back(Traits::MOB);
     }
   }
+  damage->damage *= STRENGTH(this);
   return damage;
 }
 
