@@ -193,6 +193,16 @@ public:
   HelpCommandEvent();
 };
 
+class HeroCommandEvent : public CommandEvent {
+public:
+  HeroCommandEvent();
+};
+
+class LightCommandEvent : public CommandEvent {
+public:
+  LightCommandEvent();
+};
+
 class InventoryCommandEvent : public CommandEvent {
 public:
   InventoryCommandEvent();
@@ -203,6 +213,14 @@ public:
   DropCommandEvent(std::shared_ptr<Item>);
   DropCommandEvent();
   std::shared_ptr<Item> item;
+};
+
+class ThrowCommandEvent : public CommandEvent {
+public:
+  ThrowCommandEvent(std::shared_ptr<Item>, std::shared_ptr<Cell>);
+  ThrowCommandEvent();
+  std::shared_ptr<Item> item;
+  std::shared_ptr<Cell> cell;
 };
 
 class UseCommandEvent : public CommandEvent {

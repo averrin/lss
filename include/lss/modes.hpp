@@ -59,6 +59,9 @@ struct modes {
     auto is_target_event = [](EnableModeEvent e) {
       return e.mode == Modes::TARGET;
     };
+    auto is_hero_event = [](EnableModeEvent e) {
+      return e.mode == Modes::HERO;
+    };
 
     auto set_hints = [](std::shared_ptr<Modes> m) {
       std::cout << "Set HINTS mode" << std::endl;
@@ -108,6 +111,10 @@ struct modes {
       std::cout << "Set TARGET mode" << std::endl;
       m->currentMode = Modes::TARGET;
     };
+    auto set_hero = [](std::shared_ptr<Modes> m) {
+      std::cout << "Set HERO mode" << std::endl;
+      m->currentMode = Modes::HERO;
+    };
 
     // clang-format off
         return make_transition_table(
@@ -127,6 +134,7 @@ struct modes {
             , "direction"_s + event<EnableModeEvent> [is_pause_event] / set_pause  = "pause"_s
             , "normal"_s + event<EnableModeEvent> [is_target_event] / set_target  = "target"_s
             , "object_select"_s + event<EnableModeEvent> [is_target_event] / set_target  = "target"_s
+            , "normal"_s + event<EnableModeEvent> [is_hero_event] / set_hero  = "hero"_s
 
             , "hints"_s + event<KeyPressedEvent> [is_esc] / set_normal = "normal"_s
             , "leader"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
@@ -137,6 +145,7 @@ struct modes {
             , "help"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
             , "inspect"_s + event<KeyPressedEvent> [is_esc_or_z] / set_normal  = "normal"_s
             , "target"_s + event<KeyPressedEvent> [is_esc_or_z] / set_normal  = "normal"_s
+            , "hero"_s + event<KeyPressedEvent> [is_esc_or_z] / set_normal  = "normal"_s
 
             , "insert"_s + event<KeyPressedEvent> [is_insert] / set_normal  = "normal"_s
 
@@ -151,6 +160,7 @@ struct modes {
             , "game_over"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
             , "pause"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
             , "target"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
+            , "hero"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
         );
     // clang-format on
   }
@@ -170,6 +180,7 @@ public:
   void toInspect();
   void toPause();
   void toTarget();
+  void toHero();
   std::shared_ptr<Modes> modeFlags = std::make_shared<Modes>();
 
 private:
@@ -275,6 +286,13 @@ class HelpMode : public TextMode {
 public:
   HelpMode(LSSApp *app) : TextMode(app){};
   void render(std::shared_ptr<State>);
+};
+
+class HeroMode : public TextMode {
+public:
+  HeroMode(LSSApp *app) : TextMode(app){};
+  void render(std::shared_ptr<State>);
+  bool processKey(KeyEvent e);
 };
 
 class GameOverMode : public TextMode {

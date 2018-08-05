@@ -115,6 +115,9 @@ void LSSApp::setup() {
   commands.push_back(std::make_shared<UpCommand>());
   commands.push_back(std::make_shared<DownCommand>());
   commands.push_back(std::make_shared<UseCommand>());
+  commands.push_back(std::make_shared<HeroCommand>());
+  commands.push_back(std::make_shared<ThrowCommand>());
+  commands.push_back(std::make_shared<LightCommand>());
 }
 
 void LSSApp::initModes() {
@@ -128,12 +131,14 @@ void LSSApp::initModes() {
   inventoryMode = std::make_shared<InventoryMode>(this);
   pauseMode = std::make_shared<PauseMode>(this);
   targetMode = std::make_shared<TargetMode>(this);
+  heroMode = std::make_shared<HeroMode>(this);
 }
 
 void LSSApp::initStates() {
   state = std::make_shared<State>();
   objectSelectState = std::make_shared<State>();
   helpState = std::make_shared<State>();
+  heroLineState = std::make_shared<State>();
   gameOverState = std::make_shared<State>();
   statusState = std::make_shared<State>();
   heroState = std::make_shared<State>();
@@ -145,6 +150,7 @@ void LSSApp::initStates() {
   statusState->currentPalette = palettes::DARK;
   objectSelectState->currentPalette = palettes::DARK;
   helpState->currentPalette = palettes::DARK;
+  heroLineState->currentPalette = palettes::DARK;
   inventoryState->currentPalette = palettes::DARK;
   gameOverState->currentPalette = palettes::DARK;
   heroState->currentPalette = palettes::DARK;
@@ -158,7 +164,7 @@ void LSSApp::startGame() {
   bgRunning = true;
   hero = std::make_shared<Player>();
   magic = std::make_shared<Magic>(hero);
-  heroLine = std::make_shared<HeroLine>(heroState, hero);
+  heroLine = std::make_shared<HeroLine>(heroLineState, hero);
   logPanel = std::make_shared<LogPanel>(logState, hero);
   statusLine = std::make_shared<StatusLine>(statusState);
 
@@ -427,6 +433,9 @@ void LSSApp::keyDown(KeyEvent event) {
   case Modes::TARGET:
     targetMode->processKey(event);
     break;
+  case Modes::HERO:
+    heroMode->processKey(event);
+    break;
   }
 }
 
@@ -477,6 +486,12 @@ bool LSSApp::processCommand(std::string cmd) {
     eb::EventBus::FireEvent(*e);
   } else if (auto e = std::dynamic_pointer_cast<UseCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
+  } else if (auto e = std::dynamic_pointer_cast<HeroCommandEvent>(*event)) {
+    eb::EventBus::FireEvent(*e);
+  } else if (auto e = std::dynamic_pointer_cast<ThrowCommandEvent>(*event)) {
+    eb::EventBus::FireEvent(*e);
+  } else if (auto e = std::dynamic_pointer_cast<LightCommandEvent>(*event)) {
+    eb::EventBus::FireEvent(*e);
   }
   return true;
 }
@@ -519,6 +534,9 @@ void LSSApp::update() {
   case Modes::HELP:
     s = helpState;
     break;
+  case Modes::HERO:
+    s = heroState;
+    break;
   case Modes::INVENTORY:
     s = inventoryState;
     break;
@@ -531,7 +549,7 @@ void LSSApp::update() {
     statusState->render(statusFrame);
   }
   if (heroFrame != nullptr) {
-    heroState->render(heroFrame);
+    heroLineState->render(heroFrame);
   }
   if (inspectFrame != nullptr) {
     inspectState->render(inspectFrame);
@@ -575,6 +593,7 @@ void LSSApp::draw() {
   case Modes::INSPECT:
   case Modes::PAUSE:
   case Modes::TARGET:
+  case Modes::HERO:
   case Modes::NORMAL:
   case Modes::INSERT:
   case Modes::DIRECTION:

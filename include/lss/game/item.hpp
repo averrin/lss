@@ -101,11 +101,17 @@ typedef std::vector<std::shared_ptr<Item>> Items;
 namespace Prototype {
 const auto TORCH = std::make_shared<Item>(
     ItemType::TORCH, Effects{std::make_shared<VisibilityModifier>(2.5f)});
+const auto LANTERN = std::make_shared<Item>(
+    ItemType::LANTERN, Effects{std::make_shared<VisibilityModifier>(1.5f)});
 const auto PLATE = std::make_shared<Item>(
     ItemType::PLATE, Effects{std::make_shared<ArmorValue>(R::I(3, 5))});
 const auto GOD_PLATE = std::make_shared<Item>(
     "GoD pLaTe", ItemType::PLATE,
-    Effects{std::make_shared<TraitEffect>(Traits::INVULNERABLE)});
+    Effects{
+        std::make_shared<TraitEffect>(Traits::INVULNERABLE),
+        std::make_shared<IntelligenceModifier>(1.f),
+        std::make_shared<StrengthModifier>(1.f),
+    });
 const auto BASIC_LEATHER_ARMOR = std::make_shared<Item>(
     ItemType::LEATHER_ARMOR, Effects{std::make_shared<ArmorValue>(1)});
 const auto LEATHER_ARMOR = std::make_shared<Item>(
@@ -219,6 +225,13 @@ const auto POTION_CONFUSION = std::make_shared<Consumable>(
     fmt::format("{} potion", utils::getRandomColor()), "potion of confusion",
     ItemType::POTION, Spells::CONFUSION);
 
+const auto POTION_INTELLIGENCE_BOOST = std::make_shared<Consumable>(
+    fmt::format("{} potion", utils::getRandomColor()),
+    "intelligence boost potion", ItemType::POTION, Spells::INTELLIGENCE_BOOST);
+const auto POTION_STRENGTH_BOOST = std::make_shared<Consumable>(
+    fmt::format("{} potion", utils::getRandomColor()), "strength boost potion",
+    ItemType::POTION, Spells::STRENGTH_BOOST);
+
 const auto SCROLL_IDENTIFICATION = std::make_shared<Consumable>(
     fmt::format("scroll labled '{}'", utils::getScrollName()),
     "scroll of identification", ItemType::SCROLL, Spells::IDENTIFY);
@@ -264,6 +277,7 @@ const auto THROWING_KNIVES =
 
 const std::vector<std::shared_ptr<Item>> ALL = {
     Prototype::TORCH,
+    Prototype::LANTERN,
     Prototype::PLATE,
     Prototype::GOD_PLATE,
     Prototype::BASIC_LEATHER_ARMOR,
@@ -292,6 +306,8 @@ const std::vector<std::shared_ptr<Item>> ALL = {
     Prototype::POTION_GOD_SPEED,
     Prototype::POTION_HP_BOOST,
     Prototype::POTION_VISIBILITY_BOOST,
+    Prototype::POTION_INTELLIGENCE_BOOST,
+    Prototype::POTION_STRENGTH_BOOST,
     Prototype::POTION_CRIT_BOOST,
     Prototype::POTION_LEVITATION,
     Prototype::POTION_REGENERATION,

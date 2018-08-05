@@ -116,8 +116,8 @@ void EventReactor::onEvent(UseCommandEvent &e) {
     auto me = std::make_shared<MessageEvent>(
         nullptr, fmt::format("You use {}", e.item->getTitle()));
     eb::EventBus::FireEvent(*me);
-    auto caster = std::dynamic_pointer_cast<Creature>(e.getSender());
-    return app->magic->castSpell(caster, spell);
+    // auto caster = std::dynamic_pointer_cast<Creature>(e.getSender());
+    return app->magic->castSpell(app->hero, spell);
   }
   app->objectSelectMode->setHeader(F("Items to use: "));
 
@@ -336,9 +336,13 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
         utils::castObjects<Object>(Spells::USABLE));
   } else {
     std::vector<std::shared_ptr<Spell>> spells(Spells::USABLE.size());
-    auto it = std::copy_if(Spells::USABLE.begin(), Spells::USABLE.end(),
-                           spells.begin(),
-                           [](auto spell) { return spell->cost != 0; });
+    auto it = std::copy_if(
+        Spells::USABLE.begin(), Spells::USABLE.end(), spells.begin(),
+        [&](auto spell) {
+          return spell->cost != 0 &&
+                 spell->level <=
+                     (app->hero->INTELLIGENCE(app->hero.get()) - 1) * 10;
+        });
 
     spells.resize(std::distance(spells.begin(), it));
 
@@ -387,4 +391,99 @@ void EventReactor::onEvent(HeroDiedEvent &e) {
 
 void EventReactor::onEvent(AnimationEvent &e) {
   app->animations.push_back(e.animation);
+}
+
+void EventReactor::onEvent(HeroCommandEvent &e) {
+  app->modeManager.toHero();
+  app->heroMode->render(app->heroState);
+}
+
+// TODO: move to hero
+void EventReactor::onEvent(LightCommandEvent &e) {
+  auto slot = app->hero->getSlot(WearableType::LIGHT);
+  if (slot->item != nullptr) {
+    app->hero->unequip(slot);
+    app->hero->emitsLight = false;
+  } else {
+    if (auto torch = std::find_if(
+            app->hero->inventory.begin(), app->hero->inventory.end(),
+            [](auto i) {
+              return i->type.wearableType == WearableType::LIGHT &&
+                     i->durability > 0;
+            });
+        torch != app->hero->inventory.end()) {
+      app->hero->equip(slot, *torch);
+      app->hero->emitsLight = true;
+    }
+  }
+  app->hero->currentLocation->invalidate();
+  app->hero->commit("equip light", 0);
+  app->hero->calcViewField();
+  app->hero->currentLocation->updateView(app->hero);
+  app->hero->commit("equip light", 0);
+  app->invalidate();
+}
+
+void EventReactor::onEvent(ThrowCommandEvent &e) {
+  if (e.item != nullptr)
+    return;
+
+  app->objectSelectMode->setHeader(F("Items to throw: "));
+
+  Items dropable(app->hero->inventory.size());
+  auto it =
+      std::copy_if(app->hero->inventory.begin(), app->hero->inventory.end(),
+                   dropable.begin(),
+                   [](std::shared_ptr<Item> item) { return !item->equipped; });
+
+  dropable.resize(std::distance(dropable.begin(), it));
+
+  app->objectSelectMode->setObjects(utils::castObjects<Object>(dropable));
+
+  Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
+    if (auto item = std::dynamic_pointer_cast<Item>(o)) {
+      return fmt::format("<span weight='bold'>{}</span> - {}", letter,
+                         item->getFullTitle());
+    }
+    return "Unknown error"s;
+  };
+  app->objectSelectMode->setFormatter(formatter);
+
+  app->objectSelectMode->setCallback([=](std::shared_ptr<Object> o) {
+    auto item = std::dynamic_pointer_cast<Item>(o);
+    app->state->selection.clear();
+    app->targetMode->setCallback([=](auto cell) {
+      ThrowCommandEvent me(item, cell);
+      eb::EventBus::FireEvent(me);
+      app->modeManager.toNormal();
+      app->statusLine->setContent(State::normal_mode);
+      return true;
+    });
+    app->targetMode->setCheckTarget([&](auto line) {
+      auto cell = line.back();
+      if (!cell->type.passThrough)
+        return false;
+      if (line.size() > 5)
+        return false;
+      auto pti = std::find_if(line.begin(), line.end(), [&](auto c) {
+        return !c->passThrough && c != line.back() &&
+               c != app->hero->currentCell;
+      });
+      if (pti != line.end())
+        return false;
+      return true;
+    });
+    app->modeManager.toTarget();
+    app->statusLine->setContent(State::target_mode);
+    auto n = app->hero->currentLocation->getNeighbors(app->hero->currentCell);
+    auto s = std::find_if(n.begin(), n.end(),
+                          [](auto c) { return c->type.passThrough; });
+    app->state->cursor = {(*s)->x, (*s)->y};
+    app->state->setSelect(true);
+    app->state->invalidate();
+    return true;
+  });
+
+  app->objectSelectMode->render(app->objectSelectState);
+  app->modeManager.toObjectSelect();
 }

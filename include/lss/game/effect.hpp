@@ -75,6 +75,33 @@ public:
   };
 };
 
+class IntelligenceModifier : public Effect {
+public:
+  IntelligenceModifier(float m)
+      : Effect(AttributeType::INTELLIGENCE), vmodifier(m){};
+  std::string getTitle();
+  std::string getSign();
+  float vmodifier;
+  std::variant<float, int> getModifier() { return vmodifier; };
+
+  std::shared_ptr<Effect> clone() {
+    return std::make_shared<IntelligenceModifier>(vmodifier);
+  };
+};
+
+class StrengthModifier : public Effect {
+public:
+  StrengthModifier(float m) : Effect(AttributeType::STRENGTH), vmodifier(m){};
+  std::string getTitle();
+  std::string getSign();
+  float vmodifier;
+  std::variant<float, int> getModifier() { return vmodifier; };
+
+  std::shared_ptr<Effect> clone() {
+    return std::make_shared<StrengthModifier>(vmodifier);
+  };
+};
+
 class CritModifier : public Effect {
 public:
   CritModifier(float m) : Effect(AttributeType::CRIT_CHANCE), cmodifier(m){};

@@ -52,6 +52,10 @@ void ModeManager::toHelp() {
   state_machine.process_event(EnableModeEvent{Modes::HELP});
 }
 
+void ModeManager::toHero() {
+  state_machine.process_event(EnableModeEvent{Modes::HERO});
+}
+
 void ModeManager::toInventory() {
   state_machine.process_event(EnableModeEvent{Modes::INVENTORY});
 }
@@ -81,6 +85,8 @@ void HintsMode::processEvent(std::shared_ptr<LssEvent> event) {}
 Mode::Mode(LSSApp *a) : app(a){};
 
 bool HintsMode::processKey(KeyEvent event) { return false; }
+
+bool HeroMode::processKey(KeyEvent event) { return false; }
 
 bool TargetMode::processKey(KeyEvent event) {
   switch (event.getCode()) {
@@ -398,69 +404,14 @@ void InspectMode::render() {
 
 bool NormalMode::processKey(KeyEvent event) {
   switch (event.getCode()) {
-    // TODO: create command
-  case SDL_SCANCODE_T: {
-
-    app->objectSelectMode->setHeader(F("Items to throw: "));
-
-    Items dropable(app->hero->inventory.size());
-    auto it =
-        std::copy_if(app->hero->inventory.begin(), app->hero->inventory.end(),
-                     dropable.begin(), [](std::shared_ptr<Item> item) {
-                       return !item->equipped;
-                     });
-
-    dropable.resize(std::distance(dropable.begin(), it));
-
-    app->objectSelectMode->setObjects(utils::castObjects<Object>(dropable));
-
-    Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
-      if (auto item = std::dynamic_pointer_cast<Item>(o)) {
-        return fmt::format("<span weight='bold'>{}</span> - {}", letter,
-                           item->getFullTitle());
-      }
-      return "Unknown error"s;
-    };
-    app->objectSelectMode->setFormatter(formatter);
-
-    app->objectSelectMode->setCallback([=](std::shared_ptr<Object> o) {
-      auto item = std::dynamic_pointer_cast<Item>(o);
-      app->state->selection.clear();
-      app->targetMode->setCallback([=](auto cell) {
-        app->hero->throwItem(item, cell);
-        app->modeManager.toNormal();
-        app->statusLine->setContent(State::normal_mode);
-        return true;
-      });
-      app->targetMode->setCheckTarget([&](auto line) {
-        auto cell = line.back();
-        if (!cell->type.passThrough)
-          return false;
-        if (line.size() > 5)
-          return false;
-        auto pti = std::find_if(line.begin(), line.end(), [&](auto c) {
-          return !c->passThrough && c != line.back() &&
-                 c != app->hero->currentCell;
-        });
-        if (pti != line.end())
-          return false;
-        return true;
-      });
-      app->modeManager.toTarget();
-      app->statusLine->setContent(State::target_mode);
-      auto n = app->hero->currentLocation->getNeighbors(app->hero->currentCell);
-      auto s = std::find_if(n.begin(), n.end(),
-                            [](auto c) { return c->type.passThrough; });
-      app->state->cursor = {(*s)->x, (*s)->y};
-      app->state->setSelect(true);
-      app->state->invalidate();
-      return true;
-    });
-
-    app->objectSelectMode->render(app->objectSelectState);
-    app->modeManager.toObjectSelect();
-
-  } break;
+  case SDL_SCANCODE_2:
+    if (event.isShiftDown()) {
+      app->processCommand("hero");
+    }
+    break;
+  case SDL_SCANCODE_T:
+    app->processCommand("throw");
+    break;
   case SDL_SCANCODE_F1:
     app->debug = !app->debug;
     app->hero->commit("toggle debug", 0);
@@ -468,30 +419,8 @@ bool NormalMode::processKey(KeyEvent event) {
   case SDL_SCANCODE_J:
   case SDL_SCANCODE_H:
   case SDL_SCANCODE_L:
-    // TODO: create command
     if (event.isShiftDown()) {
-      auto slot = app->hero->getSlot(WearableType::LIGHT);
-      if (slot->item != nullptr) {
-        app->hero->unequip(slot);
-        app->hero->emitsLight = false;
-      } else {
-        if (auto torch = std::find_if(
-                app->hero->inventory.begin(), app->hero->inventory.end(),
-                [](auto i) {
-                  return i->type.wearableType == WearableType::LIGHT &&
-                         i->durability > 0;
-                });
-            torch != app->hero->inventory.end()) {
-          app->hero->equip(slot, *torch);
-          app->hero->emitsLight = true;
-        }
-      }
-      app->hero->currentLocation->invalidate();
-      app->hero->commit("equip light", 0);
-      app->hero->calcViewField();
-      app->hero->currentLocation->updateView(app->hero);
-      app->hero->commit("equip light", 0);
-      app->invalidate();
+      app->processCommand("light");
       break;
     }
   case SDL_SCANCODE_K:
@@ -711,6 +640,12 @@ void HelpMode::render(std::shared_ptr<State> state) {
   state->appendContent(State::END_LINE);
   state->appendContent(State::END_LINE);
   state->appendContent(State::HELP);
+}
+
+void HeroMode::render(std::shared_ptr<State> state) {
+  state->setContent({F("HERO")});
+  state->appendContent(State::END_LINE);
+  state->appendContent(State::END_LINE);
 }
 
 void GameOverMode::render(std::shared_ptr<State> state) {

@@ -64,6 +64,18 @@ public:
   std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
 };
 
+class HeroCommand : public Command {
+public:
+  HeroCommand();
+  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
+};
+
+class LightCommand : public Command {
+public:
+  LightCommand();
+  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
+};
+
 class InventoryCommand : public Command {
 public:
   InventoryCommand();
@@ -73,6 +85,12 @@ public:
 class DropCommand : public Command {
 public:
   DropCommand();
+  std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
+};
+
+class ThrowCommand : public Command {
+public:
+  ThrowCommand();
   std::optional<std::shared_ptr<CommandEvent>> getEvent(std::string);
 };
 

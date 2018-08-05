@@ -58,27 +58,26 @@ void HeroLine::update() {
   int l = lightDurability * ldLine.size();
   std::fill_n(ldLine.begin(), l, '|');
 
-  setContent({
-      F(fmt::format("<b>{}</b> [{}]   {}", hero->name, hero->level, effects)),
-      F(fmt::format("   <b>HP:[<span color='{{{{green}}}}'>{}</span>]</b>"
-                    "   <b>MP:[<span color='{{{{blue}}}}'>{}</span>]</b>    "
-                    "<b>DMG</b>:{}   "
-                    "<b>DEF</b>:{}   <b>EXP</b>:{}",
-                    healthLine, manaLine, hero->getDmgDesc(),
-                    hero->DEF(hero.get()), hero->exp)),
-      F(fmt::format(
-          "{}",
-          hero->emitsLight
-              ? fmt::format(
-                    "   <b>L:[<span color='{{{{orange}}}}'>{}</span>]</b>",
-                    ldLine)
-              : "")),
-      F(fmt::format("   <b>P</b>:{}.{} D:{} [{} {}].{}", hero->currentCell->x,
-                    hero->currentCell->y, hero->currentLocation->depth,
-                    hero->currentLocation->type.name, locationFeatures,
-                    hero->currentLocation->rooms.size())),
-      // State::END_LINE.front(),
-      F(fmt::format("   <b>I</b>:{:g}", hero->INTELLIGENCE(hero.get()))),
-      F(fmt::format("   <b>S</b>:{:g}", hero->STRENGTH(hero.get())))
-  });
+  setContent(
+      {F(fmt::format("<b>{}</b> [{}]   {}", hero->name, hero->level, effects)),
+       F(fmt::format("   <b>HP:[<span color='{{{{green}}}}'>{}</span>]</b>"
+                     "   <b>MP:[<span color='{{{{blue}}}}'>{}</span>]</b>    "
+                     "<b>DMG</b>:{}   "
+                     "<b>DEF</b>:{}   <b>EXP</b>:{}",
+                     healthLine, manaLine, hero->getDmgDesc(),
+                     hero->DEF(hero.get()), hero->exp)),
+       F(fmt::format(
+           "{}",
+           hero->emitsLight
+               ? fmt::format(
+                     "   <b>L:[<span color='{{{{orange}}}}'>{}</span>]</b>",
+                     ldLine)
+               : "")),
+       F(fmt::format("   <b>P</b>:{}.{} D:{} [{} {}].{}", hero->currentCell->x,
+                     hero->currentCell->y, hero->currentLocation->depth,
+                     hero->currentLocation->type.name, locationFeatures,
+                     hero->currentLocation->rooms.size())),
+       // State::END_LINE.front(),
+       F(fmt::format("   <b>I</b>:{:g}", hero->INTELLIGENCE(hero.get()))),
+       F(fmt::format("   <b>S</b>:{:g}", hero->STRENGTH(hero.get())))});
 }

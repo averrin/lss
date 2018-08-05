@@ -19,6 +19,7 @@ struct Modes {
     INSPECT,
     PAUSE,
     TARGET,
+    HERO,
   };
   ModeName currentMode = ModeName::NORMAL;
 };

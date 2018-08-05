@@ -36,6 +36,7 @@ Player::Player() : Creature() {
   handlers.push_back(eb::EventBus::AddHandler<WaitCommandEvent>(*this));
   handlers.push_back(eb::EventBus::AddHandler<ZapCommandEvent>(*this));
   handlers.push_back(eb::EventBus::AddHandler<EnemyDiedEvent>(*this));
+  handlers.push_back(eb::EventBus::AddHandler<ThrowCommandEvent>(*this));
 
   equipment = std::make_shared<Equipment>();
   auto right_hand_slot = std::make_shared<Slot>(
@@ -392,4 +393,10 @@ void Player::onEvent(EnemyDiedEvent &e) {
     hp_max += 100;
     hp = HP_MAX(this);
   }
+}
+
+void Player::onEvent(ThrowCommandEvent &e) {
+  if (e.item == nullptr)
+    return;
+  throwItem(e.item, e.cell);
 }

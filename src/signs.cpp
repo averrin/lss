@@ -31,7 +31,7 @@ const std::map<ItemSpec, std::string> itemSigns = {
     {ItemType::PICK_AXE, "("},       {ItemType::SWORD, "("},
     {ItemType::GOLD_RING, "="},      {ItemType::GOLD_COINS, "$"},
     {ItemType::DAGGER, "("},         {ItemType::TORCH, "]"},
-    {ItemType::GRASS, "\""},
+    {ItemType::GRASS, "\""},         {ItemType::LANTERN, "]"},
 
     {ItemType::GREAT_AXE, "("},      {ItemType::HELMET, "["},
     {ItemType::SHIELD, "["},         {ItemType::GREAVES, "["},
@@ -51,6 +51,7 @@ const std::map<ItemSpec, std::string> itemColors = {
     {ItemType::GOLD_COINS, "#ffd700"},
     {ItemType::DAGGER, COLORS::GRAY},
     {ItemType::TORCH, "#ffa500"},
+    {ItemType::LANTERN, "#a5a500"},
     {ItemType::GRASS, "#006400"},
 
     {ItemType::GREAT_AXE, COLORS::WHITE},
@@ -65,18 +66,12 @@ const std::map<ItemSpec, std::string> itemColors = {
     {ItemType::THROWING_KNIVES, COLORS::WHITE}};
 
 const std::map<EnemySpec, std::string> enemySigns = {
-    {EnemyType::RAT, "r"},
-    {EnemyType::BAT, "b"},
-    {EnemyType::SNAKE, "s"},
-    {EnemyType::VIPER, "s"},
-    {EnemyType::BAT_LARGE, "B"},
-    {EnemyType::GOBLIN, "g"},
-    {EnemyType::ORK_BLACK, "o"},
-    {EnemyType::ORK, "o"},
-    {EnemyType::PIXI, "p"},
-    {EnemyType::OGRE, "O"},
-    {EnemyType::I_OGRE, "O"},
-    {EnemyType::GOBLIN_LIEUTENANT, "g"},
+    {EnemyType::RAT, "r"},          {EnemyType::BAT, "b"},
+    {EnemyType::SNAKE, "s"},        {EnemyType::VIPER, "s"},
+    {EnemyType::BAT_LARGE, "B"},    {EnemyType::GOBLIN, "g"},
+    {EnemyType::ORK_BLACK, "o"},    {EnemyType::ORK, "o"},
+    {EnemyType::PIXI, "p"},         {EnemyType::OGRE, "O"},
+    {EnemyType::I_OGRE, "O"},       {EnemyType::GOBLIN_LIEUTENANT, "g"},
     {EnemyType::GOBLIN_ROGUE, "g"},
 };
 

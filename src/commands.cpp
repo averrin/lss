@@ -20,8 +20,11 @@ DigCommand::DigCommand() : Command({"dig", "d"s}) {}
 AttackCommand::AttackCommand() : Command({"attack", "a"s}) {}
 EquipCommand::EquipCommand() : Command({"equip", "eq"s}) {}
 HelpCommand::HelpCommand() : Command({"help", "h"s}) {}
+HeroCommand::HeroCommand() : Command({"hero"}) {}
+LightCommand::LightCommand() : Command({"light", "l"s}) {}
 InventoryCommand::InventoryCommand() : Command({"inventory", "i"s}) {}
 DropCommand::DropCommand() : Command({"drop", "dr"s}) {}
+ThrowCommand::ThrowCommand() : Command({"throw", "t"s}) {}
 WaitCommand::WaitCommand() : Command({"wait"}) {}
 ZapCommand::ZapCommand() : Command({"zap", "z"s}) {}
 UpCommand::UpCommand() : Command({"up"}) {}
@@ -125,11 +128,23 @@ UnEquipCommandEvent::UnEquipCommandEvent(std::shared_ptr<Slot> s)
     : CommandEvent(nullptr), slot(s) {}
 
 HelpCommandEvent::HelpCommandEvent() : CommandEvent(nullptr) {}
+HeroCommandEvent::HeroCommandEvent() : CommandEvent(nullptr) {}
+LightCommandEvent::LightCommandEvent() : CommandEvent(nullptr) {}
 InventoryCommandEvent::InventoryCommandEvent() : CommandEvent(nullptr) {}
 
 std::optional<std::shared_ptr<CommandEvent>>
 HelpCommand::getEvent(std::string s) {
   return std::make_shared<HelpCommandEvent>();
+}
+
+std::optional<std::shared_ptr<CommandEvent>>
+HeroCommand::getEvent(std::string s) {
+  return std::make_shared<HeroCommandEvent>();
+}
+
+std::optional<std::shared_ptr<CommandEvent>>
+LightCommand::getEvent(std::string s) {
+  return std::make_shared<LightCommandEvent>();
 }
 
 std::optional<std::shared_ptr<CommandEvent>>
@@ -143,6 +158,15 @@ DropCommandEvent::DropCommandEvent(std::shared_ptr<Item> i)
 std::optional<std::shared_ptr<CommandEvent>>
 DropCommand::getEvent(std::string s) {
   return std::make_shared<DropCommandEvent>();
+}
+
+ThrowCommandEvent::ThrowCommandEvent() : CommandEvent(nullptr) {}
+ThrowCommandEvent::ThrowCommandEvent(std::shared_ptr<Item> i,
+                                     std::shared_ptr<Cell> c)
+    : CommandEvent(nullptr), item(i), cell(c) {}
+std::optional<std::shared_ptr<CommandEvent>>
+ThrowCommand::getEvent(std::string s) {
+  return std::make_shared<ThrowCommandEvent>();
 }
 
 ZapCommandEvent::ZapCommandEvent() : CommandEvent(nullptr) {}

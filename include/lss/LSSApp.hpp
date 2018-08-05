@@ -113,6 +113,7 @@ public:
   std::shared_ptr<InspectMode> inspectMode;
   std::shared_ptr<PauseMode> pauseMode;
   std::shared_ptr<TargetMode> targetMode;
+  std::shared_ptr<HeroMode> heroMode;
 
   std::shared_ptr<StatusLine> statusLine;
   std::shared_ptr<HeroLine> heroLine;
@@ -124,6 +125,7 @@ public:
   std::shared_ptr<State> statusState;
   std::shared_ptr<State> objectSelectState;
   std::shared_ptr<State> helpState;
+  std::shared_ptr<State> heroLineState;
   std::shared_ptr<State> inventoryState;
   std::shared_ptr<State> heroState;
   std::shared_ptr<State> gameOverState;

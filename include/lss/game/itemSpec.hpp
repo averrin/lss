@@ -58,6 +58,8 @@ ItemSpec const GOLD_RING = {"gold ring", ItemCategories::JEWELLERY,
                             WearableType::RING};
 ItemSpec const TORCH = {"torch", ItemCategories::LIGHT, WearableType::LIGHT,
                         30000};
+ItemSpec const LANTERN = {"lantern", ItemCategories::LIGHT, WearableType::LIGHT,
+                          60000};
 ItemSpec const GOLD_COINS = {"gold coins", ItemCategories::MISC};
 ItemSpec const PLATE = {"plate", ItemCategories::ARMOR, WearableType::BODY};
 ItemSpec const LEATHER_ARMOR = {"leather armor", ItemCategories::ARMOR,

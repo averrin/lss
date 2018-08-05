@@ -24,6 +24,15 @@ std::string VisibilityModifier::getTitle() {
 }
 std::string VisibilityModifier::getSign() { return "V"s; }
 
+std::string IntelligenceModifier::getTitle() {
+  return fmt::format("int {:+g}", std::get<float>(getModifier()));
+}
+std::string IntelligenceModifier::getSign() { return "I"s; }
+std::string StrengthModifier::getTitle() {
+  return fmt::format("str {:+g}", std::get<float>(getModifier()));
+}
+std::string StrengthModifier::getSign() { return "S"s; }
+
 std::string CritModifier::getTitle() {
   return fmt::format("crit chance {:+g}", std::get<float>(getModifier()));
 }

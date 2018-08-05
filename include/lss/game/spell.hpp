@@ -8,9 +8,10 @@
 
 class Spell : public Object {
 public:
-  Spell(std::string n, int c = 0, int a = 0)
-      : Object(), name(n), cost(c), ap(a) {}
+  Spell(std::string n, int l = 0, int c = 0, int a = 0)
+      : Object(), name(n), level(l), cost(c), ap(a) {}
   std::string name;
+  int level;
   int cost;
   int ap;
   friend bool operator!=(Spell &lhs, const Spell &rhs) {
@@ -33,12 +34,15 @@ public:
 class EffectSpell : public Spell {
 public:
   EffectSpell(std::string n, std::shared_ptr<Effect> e) : Spell(n), effect(e) {}
+  EffectSpell(std::string n, int l, std::shared_ptr<Effect> e)
+      : Spell(n, l), effect(e) {}
   std::shared_ptr<Effect> effect;
 };
 
 class CellSpell : public Spell {
 public:
   CellSpell(std::string n, TerrainSpec ts) : Spell(n), spec(ts) {}
+  CellSpell(std::string n, int l, TerrainSpec ts) : Spell(n, l), spec(ts) {}
   TerrainSpec spec;
   void applyEffect(std::shared_ptr<Location> location,
                    std::shared_ptr<Cell> c) {
@@ -54,94 +58,94 @@ public:
   }
 };
 
-// TODO: damage type
 class DamageSpell : public CellSpell {
 public:
   DamageSpell(std::string n, DamageSpec dmg, TerrainSpec ts)
       : CellSpell(n, ts), damage(dmg) {}
+  DamageSpell(std::string n, int l, DamageSpec dmg, TerrainSpec ts)
+      : CellSpell(n, l, ts), damage(dmg) {}
   DamageSpec damage;
   void applySpell(std::shared_ptr<Creature> caster, std::shared_ptr<Location>,
                   std::shared_ptr<Cell>);
 };
 
-// TODO: target spell
 class RadiusSpell : public Spell {
 public:
-  RadiusSpell(std::string n, std::shared_ptr<Spell> s, float r, int c)
-      : Spell(n, c), spell(s), radius(r) {}
+  RadiusSpell(std::string n, int l, std::shared_ptr<Spell> s, float r, int c)
+      : Spell(n, l, c), spell(s), radius(r) {}
   std::shared_ptr<Spell> spell;
   float radius;
 };
 
 class LineSpell : public Spell {
 public:
-  LineSpell(std::string n, std::shared_ptr<Spell> s, int l, int c)
-      : Spell(n, c), spell(s), length(l) {}
+  LineSpell(std::string n, int l, std::shared_ptr<Spell> s, int le, int c)
+      : Spell(n, l, c), spell(s), length(le) {}
   std::shared_ptr<Spell> spell;
   int length;
 };
 
 class TargetSpell : public Spell {
 public:
-  TargetSpell(std::string n, std::shared_ptr<Spell> s, int l, int c)
-      : Spell(n, c), spell(s), length(l) {}
+  TargetSpell(std::string n, int l, std::shared_ptr<Spell> s, int le, int c)
+      : Spell(n, l, c), spell(s), length(le) {}
   std::shared_ptr<Spell> spell;
   int length;
 };
 
 namespace Spells {
-const auto REVEAL = std::make_shared<Spell>("Reveal", 50, 2000);
+const auto REVEAL = std::make_shared<Spell>("Reveal", 2, 50, 2000);
 const auto MONSTER_SENSE = std::make_shared<Spell>("Monster Sense");
 // const auto MONSTER_FREEZE = std::make_shared<Spell>("Monster Freeze");
 const auto SUMMON_THING = std::make_shared<Spell>("Summon thing");
 
-const auto IDENTIFY = std::make_shared<Spell>("Identify", 30, 500);
-const auto HEAL_LESSER = std::make_shared<Spell>("Lesser heal", 5, 1000);
-const auto HEAL = std::make_shared<Spell>("Heal", 25, 2000);
-const auto HEAL_GREATER = std::make_shared<Spell>("Greater Heal", 45, 5000);
-const auto TELEPORT_RANDOM = std::make_shared<Spell>("Teleport", 20);
+const auto IDENTIFY = std::make_shared<Spell>("Identify", 2, 30, 500);
+const auto HEAL_LESSER = std::make_shared<Spell>("Lesser heal", 0, 5, 1000);
+const auto HEAL = std::make_shared<Spell>("Heal", 1, 25, 2000);
+const auto HEAL_GREATER = std::make_shared<Spell>("Greater Heal", 3, 45, 5000);
+const auto TELEPORT_RANDOM = std::make_shared<Spell>("Teleport", 2, 20);
 
 const auto FIREBALL = std::make_shared<RadiusSpell>(
-    "Fireball",
+    "Fireball", 1,
     std::make_shared<DamageSpell>("Fire damage",
                                   DamageSpec(0, 2, 6, DamageType::FIRE),
                                   TerrainType::FIREBALL),
     1.5, 20);
 const auto FIREBLAST = std::make_shared<RadiusSpell>(
-    "Fireblast",
+    "Fireblast", 3,
     std::make_shared<DamageSpell>("Fire damage",
                                   DamageSpec(0, 2, 6, DamageType::FIRE),
                                   TerrainType::FIREBALL),
     3.5, 40);
 
 const auto FIRESTREAM = std::make_shared<LineSpell>(
-    "Firestream",
+    "Firestream", 2,
     std::make_shared<DamageSpell>("Fire damage",
                                   DamageSpec(0, 2, 6, DamageType::FIRE),
                                   TerrainType::FIREBALL),
     4, 20);
 
 const auto FIRESTRIKE = std::make_shared<TargetSpell>(
-    "Firestrike",
+    "Firestrike", 0,
     std::make_shared<DamageSpell>("Fire damage",
                                   DamageSpec(0, 2, 6, DamageType::FIRE),
                                   TerrainType::FIREBALL),
     4, 10);
 
 const auto FLASH = std::make_shared<RadiusSpell>(
-    "Flash", std::make_shared<CellSpell>("Light", TerrainType::MAGIC_LIGHT),
+    "Flash", 0, std::make_shared<CellSpell>("Light", TerrainType::MAGIC_LIGHT),
     1.5, 10);
 const auto LIGHT = std::make_shared<TargetSpell>(
-    "Light",
+    "Light", 1,
     std::make_shared<CellSpell>("Light", TerrainType::MAGIC_LIGHT_LONG), 6, 10);
 const auto LIGHT_FOREVER = std::make_shared<TargetSpell>(
-    "Eternal Light",
+    "Eternal Light", 2,
     std::make_shared<CellSpell>("Light", TerrainType::MAGIC_LIGHT_FOREVER), 6,
     10);
 const auto ACID_LIGHT_FOREVER = std::make_shared<TargetSpell>(
-    "Eternal green Light",
+    "Eternal green Light", 0,
     std::make_shared<CellSpell>("Light", TerrainType::ACID_LIGHT_FOREVER), 6,
-    10);
+    0);
 
 const auto TOGGLE_DUAL_WIELD = std::make_shared<ToggleTraitSpell>(
     "Toggle Dual Wield trait", Traits::DUAL_WIELD);
@@ -179,6 +183,14 @@ const auto VISIBILITY_BOOST = std::make_shared<EffectSpell>(
 const auto CRIT_BOOST = std::make_shared<EffectSpell>(
     "Boost your crit chance", std::make_shared<LastingEffect>(
                                   std::make_shared<CritModifier>(0.3), 10000));
+
+const auto INTELLIGENCE_BOOST = std::make_shared<EffectSpell>(
+    "Boost your brains",
+    std::make_shared<LastingEffect>(std::make_shared<IntelligenceModifier>(0.1),
+                                    10000));
+const auto STRENGTH_BOOST = std::make_shared<EffectSpell>(
+    "Boost your strength", std::make_shared<LastingEffect>(
+                               std::make_shared<StrengthModifier>(0.1), 10000));
 
 const auto LEVITATION = std::make_shared<EffectSpell>(
     "Levitation", std::make_shared<LastingEffect>(
