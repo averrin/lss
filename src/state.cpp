@@ -164,6 +164,8 @@ const Fragments State::HELP = {F(
     "• <span color='{{orange}}' weight='bold'>t</span> — throw item "
     "[`/throw`, "
     "`/t`]<br>"
+    "• <span color='{{orange}}' weight='bold'>@</span> — status page "
+    "[`/hero`]<br>"
     "• <span color='{{orange}}' weight='bold'>z</span> — cast spell "
     "[`/zap`]<br>"
     "• <span color='{{orange}}' weight='bold'>i</span> — inventory "

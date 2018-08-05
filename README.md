@@ -58,6 +58,7 @@ rendering quality. And you may need install some deps.
 * w[yuhjklbn] — walk until obstacle [`/walk`]
 * p or , — pick [`/pick`, `/p`]
 * e — equip [`/equip`, `/eq`]
+* @ — status page [`/hero`]
 * shift+d — drop [`/drop`, `/dr`]
 * shift+u — use [`/use`, `/u`]
 * shift+l — [un]equip light [`/light`, `/l`]
