@@ -398,13 +398,21 @@ void InspectMode::render() {
 
 bool NormalMode::processKey(KeyEvent event) {
   switch (event.getCode()) {
-    //TODO: create command
+    // TODO: create command
   case SDL_SCANCODE_T: {
 
     app->objectSelectMode->setHeader(F("Items to throw: "));
 
-    auto usable = utils::castObjects<Item>(app->hero->inventory);
-    app->objectSelectMode->setObjects(utils::castObjects<Object>(usable));
+    Items dropable(app->hero->inventory.size());
+    auto it =
+        std::copy_if(app->hero->inventory.begin(), app->hero->inventory.end(),
+                     dropable.begin(), [](std::shared_ptr<Item> item) {
+                       return !item->equipped;
+                     });
+
+    dropable.resize(std::distance(dropable.begin(), it));
+
+    app->objectSelectMode->setObjects(utils::castObjects<Object>(dropable));
 
     Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
       if (auto item = std::dynamic_pointer_cast<Item>(o)) {
@@ -426,7 +434,8 @@ bool NormalMode::processKey(KeyEvent event) {
       });
       app->targetMode->setCheckTarget([&](auto line) {
         auto cell = line.back();
-        if (!cell->type.passThrough) return false;
+        if (!cell->type.passThrough)
+          return false;
         if (line.size() > 5)
           return false;
         auto pti = std::find_if(line.begin(), line.end(), [&](auto c) {

@@ -99,7 +99,7 @@ public:
   std::shared_ptr<Damage> updateDamage(std::shared_ptr<Damage>, DamageSpec);
   std::vector<std::shared_ptr<Cell>> getInRadius(float distance);
 
-  void applyDamage(std::shared_ptr<Creature> attacker, std::shared_ptr<Damage>);
+  void applyDamage(std::shared_ptr<Object> attacker, std::shared_ptr<Damage>);
 
   virtual void onDamage(std::shared_ptr<Creature>, std::shared_ptr<Damage>) = 0;
   virtual void onDie() = 0;

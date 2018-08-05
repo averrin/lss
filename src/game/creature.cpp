@@ -264,8 +264,9 @@ bool Creature::attack(Direction d) {
 }
 
 // TODO: apply durning effect with non-zero fire damage
-void Creature::applyDamage(std::shared_ptr<Creature> attacker,
+void Creature::applyDamage(std::shared_ptr<Object> a,
                            std::shared_ptr<Damage> damage) {
+  auto attacker = std::dynamic_pointer_cast<Creature>(a);
   auto def = R::Z(0, DEF(this));
   if (damage->spec.type == DamageType::ACID && !hasTrait(Traits::ACID_IMMUNE)) {
     def /= 2;
@@ -456,6 +457,23 @@ bool Creature::throwItem(std::shared_ptr<Item> item,
   currentLocation->objects.push_back(throwed);
   auto cells = currentLocation->getLine(currentCell, cell);
   auto a = std::make_shared<MoveAnimation>(throwed, cells, cells.size());
+  a->animationCallback = [=]() {
+    auto e =
+        std::find_if(item->effects.begin(), item->effects.end(), [](auto ef) {
+          return std::dynamic_pointer_cast<MeleeDamage>(ef);
+        });
+    if (e != item->effects.end()) {
+      auto objects = currentLocation->getObjects(cell);
+      for (auto o : objects) {
+        if (auto creature = std::dynamic_pointer_cast<Creature>(o)) {
+          fmt::print("apply t d\n");
+          creature->applyDamage(
+              shared_from_this(),
+              std::dynamic_pointer_cast<MeleeDamage>(*e)->dmgSpec.getDamage());
+        }
+      }
+    }
+  };
   AnimationEvent ae(a);
   eb::EventBus::FireEvent(ae);
   return true;

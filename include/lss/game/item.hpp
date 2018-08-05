@@ -40,6 +40,11 @@ public:
         durability(type.durability) {
     zIndex = 1;
   }
+  Item(ItemSpec t, int c, Effects e)
+      : Object(), type(t), effects(e), unidName(t.name), name(t.name),
+        durability(type.durability), count(c) {
+    zIndex = 1;
+  }
   Item(std::string n, ItemSpec t, Effects e)
       : Object(), type(t), effects(e), unidName(t.name), name(n),
         durability(type.durability) {
@@ -253,7 +258,9 @@ const auto SCROLL_ACID_IMMUNE = std::make_shared<Consumable>(
 const auto GOLD = std::make_shared<Item>(ItemType::GOLD_COINS, 1);
 
 const auto THROWING_KNIVES =
-    std::make_shared<Item>(ItemType::THROWING_KNIVES, 1);
+    std::make_shared<Item>(ItemType::THROWING_KNIVES, 1,
+                           Effects{std::make_shared<MeleeDamage>(
+                               DamageSpec(0, 1, 3, DamageType::WEAPON))});
 
 const std::vector<std::shared_ptr<Item>> ALL = {
     Prototype::TORCH,
@@ -277,6 +284,7 @@ const std::vector<std::shared_ptr<Item>> ALL = {
     Prototype::POISON_DAGGER,
     // Prototype::POISON_FANG,
     Prototype::SWORD_OF_DUALWIELD,
+    Prototype::THROWING_KNIVES,
 
     Prototype::POTION_HEAL_LESSER,
     Prototype::POTION_HEAL,
