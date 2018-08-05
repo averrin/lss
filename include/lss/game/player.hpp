@@ -25,7 +25,6 @@ public:
   Player();
   ~Player();
   bool monsterSense = false;
-  int exp = 0;
   Report report;
 
   bool equip(std::shared_ptr<Slot>, std::shared_ptr<Item>);

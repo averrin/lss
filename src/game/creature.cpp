@@ -76,6 +76,8 @@ float Attribute::operator()(Creature *c) {
   for (auto e : effects) {
     if (std::dynamic_pointer_cast<OverTimeEffect>(e))
       continue;
+    if (e->type != type)
+      continue;
     auto mod = e->getModifier();
     if (auto m = std::get_if<int>(&mod)) {
       base += *m;

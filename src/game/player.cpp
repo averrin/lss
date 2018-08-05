@@ -376,23 +376,6 @@ void Player::onDie() {
 }
 
 void Player::onEvent(EnemyDiedEvent &e) {
-  auto sender = e.getSender();
-  if (auto enemy = std::dynamic_pointer_cast<Enemy>(sender)) {
-    exp += (enemy->type.level + 1) * 5;
-  }
-  if (level == 0 && exp >= 100) {
-    level++;
-    hp_max += 50;
-    hp = HP_MAX(this);
-  } else if (level == 1 && exp >= 200) {
-    level++;
-    hp_max += 70;
-    hp = HP_MAX(this);
-  } else if (level == 2 && exp >= 450) {
-    level++;
-    hp_max += 100;
-    hp = HP_MAX(this);
-  }
 }
 
 void Player::onEvent(ThrowCommandEvent &e) {

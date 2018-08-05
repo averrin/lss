@@ -643,8 +643,57 @@ void HelpMode::render(std::shared_ptr<State> state) {
 }
 
 void HeroMode::render(std::shared_ptr<State> state) {
-  state->setContent({F("HERO")});
+  state->setContent({F("Your character")});
   state->appendContent(State::END_LINE);
+  state->appendContent(State::END_LINE);
+  auto hero = app->hero;
+  state->appendContent(F(fmt::format("<b>Name</b>:              {}", hero->name)));
+  state->appendContent(State::END_LINE);
+  state->appendContent(F(fmt::format("<b>HP</b>:                {:d}/{:d} ({:d})", int(hero->HP(hero.get())), int(hero->HP_MAX(hero.get())), int(hero->hp_max * hero->strength))));
+  state->appendContent(State::END_LINE);
+  state->appendContent(F(fmt::format("<b>MP</b>:                {:d}/{:d} ({:d})", int(hero->MP(hero.get())), int(hero->MP_MAX(hero.get())), int(hero->mp_max * hero->intelligence))));
+  state->appendContent(State::END_LINE);
+  state->appendContent(F(fmt::format("<b>Speed</b>:             {} ({})", hero->SPEED(hero.get()), hero->speed)));
+  state->appendContent(State::END_LINE);
+  state->appendContent(F(fmt::format("<b>Defence</b>:           {:d}", int(hero->DEF(hero.get())))));
+  state->appendContent(State::END_LINE);
+  state->appendContent(F(fmt::format("<b>Damage</b>:            {}", hero->getDmgDesc())));
+  state->appendContent(State::END_LINE);
+
+  std::string intLine = "          ";
+  std::fill_n(intLine.begin(), int((hero->INTELLIGENCE(hero.get())-1) * 10), '|');
+  std::string strLine = "          ";
+  std::fill_n(strLine.begin(), int((hero->STRENGTH(hero.get())-1) * 10), '|');
+  state->appendContent(F(fmt::format("<b>Strength</b>:          <b>[<span color='{{{{green}}}}'>{}</span>]</b>", strLine)));
+  state->appendContent(State::END_LINE);
+  state->appendContent(F(fmt::format("<b>Intelligence</b>:      <b>[<span color='{{{{blue}}}}'>{}</span>]</b>", intLine)));
+  state->appendContent(State::END_LINE);
+  state->appendContent(F(fmt::format("<b>Spell level</b>:       {:d}", int((hero->INTELLIGENCE(hero.get())-1)*10))));
+  state->appendContent(State::END_LINE);
+  state->appendContent(State::END_LINE);
+
+  state->appendContent(F(fmt::format("<b>Traits</b>:")));
+  state->appendContent(State::END_LINE);
+  for (auto t : hero->traits) {
+    state->appendContent(F(fmt::format("   • {}", t.name)));
+    state->appendContent(State::END_LINE);
+  }
+  if (hero->traits.size() == 0) {
+    state->appendContent(F(fmt::format("   <span color='grey'>No traits</span>")));
+    state->appendContent(State::END_LINE);
+  }
+  state->appendContent(State::END_LINE);
+
+  state->appendContent(F(fmt::format("<b>Active effects</b>:")));
+  state->appendContent(State::END_LINE);
+  for (auto e : hero->activeEffects) {
+    state->appendContent(F(fmt::format("   • {}", e->getTitle())));
+    state->appendContent(State::END_LINE);
+  }
+  if (hero->activeEffects.size() == 0) {
+    state->appendContent(F(fmt::format("   <span color='grey'>No effects</span>")));
+    state->appendContent(State::END_LINE);
+  }
   state->appendContent(State::END_LINE);
 }
 
@@ -666,8 +715,6 @@ void GameOverMode::render(std::shared_ptr<State> state) {
 
   state->appendContent(
       F(fmt::format("<b>{}</b> [{}]", hero->name, hero->level)));
-  state->appendContent(State::END_LINE);
-  state->appendContent(F(fmt::format("EXP:             <b>{}</b>", hero->exp)));
   state->appendContent(State::END_LINE);
   state->appendContent(F(fmt::format("GOLD:            <b>{}</b>", gold)));
   state->appendContent(State::END_LINE);

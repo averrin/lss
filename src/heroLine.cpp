@@ -63,9 +63,9 @@ void HeroLine::update() {
        F(fmt::format("   <b>HP:[<span color='{{{{green}}}}'>{}</span>]</b>"
                      "   <b>MP:[<span color='{{{{blue}}}}'>{}</span>]</b>    "
                      "<b>DMG</b>:{}   "
-                     "<b>DEF</b>:{}   <b>EXP</b>:{}",
+                     "<b>DEF</b>:{}",
                      healthLine, manaLine, hero->getDmgDesc(),
-                     hero->DEF(hero.get()), hero->exp)),
+                     hero->DEF(hero.get()))),
        F(fmt::format(
            "{}",
            hero->emitsLight
