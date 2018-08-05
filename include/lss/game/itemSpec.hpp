@@ -80,6 +80,8 @@ ItemSpec const LEFT_GAUNTLET = {"left gauntlet", ItemCategories::ARMOR,
                                 WearableType::LEFT_GAUNTLET};
 
 ItemSpec const CORPSE = {"corpse", ItemCategories::CONSUMABLES};
+
+ItemSpec const THROWING_KNIVES = {"throwing knives", ItemCategories::WEAPONS};
 }; // namespace ItemType
 
 #endif // __ITEMSPEC_H_

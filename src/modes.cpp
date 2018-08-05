@@ -419,11 +419,19 @@ bool NormalMode::processKey(KeyEvent event) {
       auto item = std::dynamic_pointer_cast<Item>(o);
       app->state->selection.clear();
       app->targetMode->setCallback([=](auto cell) {
-        app->hero->inventory.erase(std::remove(app->hero->inventory.begin(), app->hero->inventory.end(), item),
-                  app->hero->inventory.end());
-        app->hero->currentLocation->objects.push_back(item);
+        std::shared_ptr<Item> throwed;
+        if (item->count == 0) {
+          throwed = item;
+          app->hero->inventory.erase(std::remove(app->hero->inventory.begin(), app->hero->inventory.end(), item),
+                app->hero->inventory.end());
+        } else {
+          item->count--;
+          throwed = item->clone();
+          throwed->count = 1;
+        }
+        app->hero->currentLocation->objects.push_back(throwed);
         auto cells = app->hero->currentLocation->getLine(app->hero->currentCell, cell);
-        auto a = std::make_shared<MoveAnimation>(item, cells, cells.size());
+        auto a = std::make_shared<MoveAnimation>(throwed, cells, cells.size());
         a->animationCallback = [=]() {
           app->modeManager.toNormal();
         };

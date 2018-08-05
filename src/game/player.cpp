@@ -80,8 +80,6 @@ Player::Player() : Creature() {
 
   name = "Unnamed hero";
 
-  // auto dagger = Prototype::DAGGER->clone();
-  // inventory.push_back(dagger);
   auto sword = Prototype::BASIC_SWORD->clone();
   inventory.push_back(sword);
   inventory.push_back(Prototype::TORCH->clone());
@@ -89,11 +87,11 @@ Player::Player() : Creature() {
   auto armor = Prototype::BASIC_LEATHER_ARMOR->clone();
   inventory.push_back(armor);
 
+  auto knives = Prototype::THROWING_KNIVES->clone();
+  knives->count = 5;
+  inventory.push_back(knives);
+
   getSlot(sword->type.wearableType)->equip(sword);
-  // auto slot = getSlot(dagger->type.wearableType, false);
-  // if (slot) {
-  //   (*slot)->equip(dagger);
-  // }
   getSlot(armor->type.wearableType)->equip(armor);
 
   // inventory.push_back(axe);

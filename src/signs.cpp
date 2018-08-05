@@ -38,6 +38,7 @@ const std::map<ItemSpec, std::string> itemSigns = {
     {ItemType::BOOTS, "["},         {ItemType::PLATE, "["},
     {ItemType::LEATHER_ARMOR, "["}, {ItemType::POTION, "!"},
     {ItemType::SCROLL, "?"},        {ItemType::BONES, "%"},
+    {ItemType::THROWING_KNIVES, "↑"}
 };
 
 const std::map<ItemSpec, std::string> itemColors = {
@@ -62,6 +63,7 @@ const std::map<ItemSpec, std::string> itemColors = {
     {ItemType::LEATHER_ARMOR, COLORS::WHITE},
     {ItemType::POTION, COLORS::LIGHT_BLUE},
     {ItemType::SCROLL, COLORS::WHITE},
+    {ItemType::THROWING_KNIVES, COLORS::WHITE}
 };
 
 const std::map<EnemySpec, std::string> enemySigns = {
