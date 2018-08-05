@@ -235,7 +235,7 @@ void DamageSpell::applySpell(std::shared_ptr<Creature> caster,
   }
   if (c == location->player->currentCell) {
     location->player->applyDamage(location->player,
-                                  damage.getDamage(caster->intelligence));
+                                  damage.getDamage(caster->INTELLIGENCE(caster.get())));
   }
   applyEffect(location, c);
 }

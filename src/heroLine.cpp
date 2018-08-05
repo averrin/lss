@@ -78,6 +78,7 @@ void HeroLine::update() {
                     hero->currentLocation->type.name, locationFeatures,
                     hero->currentLocation->rooms.size())),
       // State::END_LINE.front(),
-      F(fmt::format("   <b>I</b>:{:g}", hero->intelligence))
+      F(fmt::format("   <b>I</b>:{:g}", hero->INTELLIGENCE(hero.get()))),
+      F(fmt::format("   <b>S</b>:{:g}", hero->STRENGTH(hero.get())))
   });
 }

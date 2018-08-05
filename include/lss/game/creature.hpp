@@ -108,6 +108,7 @@ public:
   std::optional<std::shared_ptr<Slot>> getSlot(WearableType type, bool);
 
   float intelligence = 1.f;
+  float strength = 1.f;
 
   Attribute HP = Attribute(AttributeType::HP);
   Attribute HP_MAX = Attribute(AttributeType::HP_MAX);
@@ -119,6 +120,9 @@ public:
   Attribute DMG = Attribute(AttributeType::DAMAGE);
   Attribute DEF = Attribute(AttributeType::DEFENSE);
   Attribute CRIT = Attribute(AttributeType::CRIT_CHANCE);
+
+  Attribute INTELLIGENCE = Attribute(AttributeType::INTELLIGENCE);
+  Attribute STRENGTH = Attribute(AttributeType::STRENGTH);
 
   void applyEoT(EoT, int);
 

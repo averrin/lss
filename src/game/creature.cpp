@@ -36,7 +36,7 @@ float Attribute::operator()(Creature *c) {
     base = c->hp;
     break;
   case AttributeType::HP_MAX:
-    base = c->hp_max;
+    base = c->hp_max * c->STRENGTH(c);
     break;
   case AttributeType::DEFENSE:
     base = c->defense;
@@ -48,7 +48,13 @@ float Attribute::operator()(Creature *c) {
     base = c->mp;
     break;
   case AttributeType::MP_MAX:
-    base = c->mp_max * c->intelligence;
+    base = c->mp_max * c->INTELLIGENCE(c);
+    break;
+  case AttributeType::INTELLIGENCE:
+    base = c->intelligence;
+    break;
+  case AttributeType::STRENGTH:
+    base = c->strength;
     break;
   }
 

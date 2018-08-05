@@ -14,6 +14,9 @@ enum AttributeType {
   DEFENSE,
   CRIT_CHANCE,
   TRAITS,
+  /**/
+  INTELLIGENCE,
+  STRENGTH,
 };
 
 class Creature;

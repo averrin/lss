@@ -186,6 +186,14 @@ EnemySpec const OGRE = {
     {Traits::NIGHT_VISION},
     Items{Prototype::GREAT_AXE},
 };
+EnemySpec const I_OGRE = {
+    "loooong ogre", 4,
+    1, 1000000, 0, 2,
+    DamageSpec(0, 0, 0, DamageType::WEAPON),
+    LootBox{},
+    {},
+    Items{},
+};
 
   const std::vector<EnemySpec> ALL = {
     RAT,
@@ -195,6 +203,7 @@ EnemySpec const OGRE = {
     ORK, ORK_BLACK,
     PIXI,
     OGRE,
+    I_OGRE,
   };
 } // namespace EnemyType
 // clang-format on

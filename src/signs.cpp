@@ -75,6 +75,7 @@ const std::map<EnemySpec, std::string> enemySigns = {
     {EnemyType::ORK, "o"},
     {EnemyType::PIXI, "p"},
     {EnemyType::OGRE, "O"},
+    {EnemyType::I_OGRE, "O"},
     {EnemyType::GOBLIN_LIEUTENANT, "g"},
     {EnemyType::GOBLIN_ROGUE, "g"},
 };
@@ -89,6 +90,7 @@ const std::map<EnemySpec, std::string> enemyColors = {
     {EnemyType::ORK, "#22aa22"},
     {EnemyType::ORK_BLACK, "#555"},
     {EnemyType::OGRE, "#006400"},
+    {EnemyType::I_OGRE, "#cc0044"},
     {EnemyType::PIXI, "#ff1493"},
     {EnemyType::GOBLIN_LIEUTENANT, "#008b8b"},
     {EnemyType::GOBLIN_ROGUE, "#2f4f4f"},
