@@ -65,6 +65,7 @@ rendering quality. And you may need install some deps.
 * i — inventory [`/inventory`, `/i`]
 * . — wait [`/wait`]
 * z — cast spell [`/zap`, `/z`]
+* t — throw item [`/throw`, `/t`]
 * &lt; — go up [`/up`]
 * &gt; — go down [`/down`]
 

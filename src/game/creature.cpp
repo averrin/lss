@@ -441,7 +441,7 @@ std::vector<std::shared_ptr<Cell>> Creature::getInRadius(float distance) {
   return cells;
 }
 
-// TODO: apply effect on throw
+// TODO: apply effect on throw and maybe not fuul damage
 bool Creature::throwItem(std::shared_ptr<Item> item,
                          std::shared_ptr<Cell> cell) {
   std::shared_ptr<Item> throwed;
@@ -466,7 +466,6 @@ bool Creature::throwItem(std::shared_ptr<Item> item,
       auto objects = currentLocation->getObjects(cell);
       for (auto o : objects) {
         if (auto creature = std::dynamic_pointer_cast<Creature>(o)) {
-          fmt::print("apply t d\n");
           creature->applyDamage(
               shared_from_this(),
               std::dynamic_pointer_cast<MeleeDamage>(*e)->dmgSpec.getDamage());
