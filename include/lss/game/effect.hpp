@@ -211,7 +211,7 @@ public:
 namespace OverTimeEffects {
 const auto HEAL = std::make_shared<OverTimeEffect>("Heal", 5, 500, EoT::HEAL);
 const auto MANA_RESTORE = std::make_shared<OverTimeEffect>(
-    "Mana restore", 1, 15000, EoT::MANA_RESTORE);
+    "Mana restore", 1, 30000, EoT::MANA_RESTORE);
 const auto POISON =
     std::make_shared<OverTimeEffect>("Poison", 3, 500, EoT::POISON);
 } // namespace OverTimeEffects

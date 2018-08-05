@@ -30,6 +30,8 @@ rendering quality. And you may need install some deps.
 - [X] Debug menus for summoning enemies/items & location creator
 - [X] Ranged selection
 - [X] Randomized monsters and loot
+- [ ] Refactor AI for optimization, using magic/throwing and different behaviors
+      like stealth
 - [ ] Hero status page
 - [ ] Refactor effects system
 - [ ] Weights

@@ -252,7 +252,8 @@ const auto SCROLL_ACID_IMMUNE = std::make_shared<Consumable>(
 
 const auto GOLD = std::make_shared<Item>(ItemType::GOLD_COINS, 1);
 
-const auto THROWING_KNIVES = std::make_shared<Item>(ItemType::THROWING_KNIVES, 1);
+const auto THROWING_KNIVES =
+    std::make_shared<Item>(ItemType::THROWING_KNIVES, 1);
 
 const std::vector<std::shared_ptr<Item>> ALL = {
     Prototype::TORCH,

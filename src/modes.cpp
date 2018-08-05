@@ -398,6 +398,7 @@ void InspectMode::render() {
 
 bool NormalMode::processKey(KeyEvent event) {
   switch (event.getCode()) {
+    //TODO: create command
   case SDL_SCANCODE_T: {
 
     app->objectSelectMode->setHeader(F("Items to throw: "));
@@ -414,38 +415,24 @@ bool NormalMode::processKey(KeyEvent event) {
     };
     app->objectSelectMode->setFormatter(formatter);
 
-    //TODO: apply effect on throw
     app->objectSelectMode->setCallback([=](std::shared_ptr<Object> o) {
       auto item = std::dynamic_pointer_cast<Item>(o);
       app->state->selection.clear();
       app->targetMode->setCallback([=](auto cell) {
-        std::shared_ptr<Item> throwed;
-        if (item->count == 0) {
-          throwed = item;
-          app->hero->inventory.erase(std::remove(app->hero->inventory.begin(), app->hero->inventory.end(), item),
-                app->hero->inventory.end());
-        } else {
-          item->count--;
-          throwed = item->clone();
-          throwed->count = 1;
-        }
-        app->hero->currentLocation->objects.push_back(throwed);
-        auto cells = app->hero->currentLocation->getLine(app->hero->currentCell, cell);
-        auto a = std::make_shared<MoveAnimation>(throwed, cells, cells.size());
-        a->animationCallback = [=]() {
-          app->modeManager.toNormal();
-        };
-        AnimationEvent ae(a);
-        eb::EventBus::FireEvent(ae);
-
+        app->hero->throwItem(item, cell);
+        app->modeManager.toNormal();
+        app->statusLine->setContent(State::normal_mode);
         return true;
       });
       app->targetMode->setCheckTarget([&](auto line) {
         auto cell = line.back();
+        if (!cell->type.passThrough) return false;
         if (line.size() > 5)
           return false;
-        auto pti = std::find_if(line.begin(), line.end(),
-                                [&](auto c) { return !c->passThrough && c != line.back() && c != app->hero->currentCell; });
+        auto pti = std::find_if(line.begin(), line.end(), [&](auto c) {
+          return !c->passThrough && c != line.back() &&
+                 c != app->hero->currentCell;
+        });
         if (pti != line.end())
           return false;
         return true;

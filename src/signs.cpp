@@ -27,19 +27,18 @@ const std::map<TerrainSpec, std::string> terrainColors = {
 };
 
 const std::map<ItemSpec, std::string> itemSigns = {
-    {ItemType::CORPSE, "%"},        {ItemType::ROCK, "*"},
-    {ItemType::PICK_AXE, "("},      {ItemType::SWORD, "("},
-    {ItemType::GOLD_RING, "="},     {ItemType::GOLD_COINS, "$"},
-    {ItemType::DAGGER, "("},        {ItemType::TORCH, "]"},
+    {ItemType::CORPSE, "%"},         {ItemType::ROCK, "*"},
+    {ItemType::PICK_AXE, "("},       {ItemType::SWORD, "("},
+    {ItemType::GOLD_RING, "="},      {ItemType::GOLD_COINS, "$"},
+    {ItemType::DAGGER, "("},         {ItemType::TORCH, "]"},
     {ItemType::GRASS, "\""},
 
-    {ItemType::GREAT_AXE, "("},     {ItemType::HELMET, "["},
-    {ItemType::SHIELD, "["},        {ItemType::GREAVES, "["},
-    {ItemType::BOOTS, "["},         {ItemType::PLATE, "["},
-    {ItemType::LEATHER_ARMOR, "["}, {ItemType::POTION, "!"},
-    {ItemType::SCROLL, "?"},        {ItemType::BONES, "%"},
-    {ItemType::THROWING_KNIVES, "↑"}
-};
+    {ItemType::GREAT_AXE, "("},      {ItemType::HELMET, "["},
+    {ItemType::SHIELD, "["},         {ItemType::GREAVES, "["},
+    {ItemType::BOOTS, "["},          {ItemType::PLATE, "["},
+    {ItemType::LEATHER_ARMOR, "["},  {ItemType::POTION, "!"},
+    {ItemType::SCROLL, "?"},         {ItemType::BONES, "%"},
+    {ItemType::THROWING_KNIVES, "↑"}};
 
 const std::map<ItemSpec, std::string> itemColors = {
     {ItemType::BONES, "#aaa"},
@@ -63,8 +62,7 @@ const std::map<ItemSpec, std::string> itemColors = {
     {ItemType::LEATHER_ARMOR, COLORS::WHITE},
     {ItemType::POTION, COLORS::LIGHT_BLUE},
     {ItemType::SCROLL, COLORS::WHITE},
-    {ItemType::THROWING_KNIVES, COLORS::WHITE}
-};
+    {ItemType::THROWING_KNIVES, COLORS::WHITE}};
 
 const std::map<EnemySpec, std::string> enemySigns = {
     {EnemyType::RAT, "r"},

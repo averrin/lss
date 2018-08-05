@@ -439,3 +439,24 @@ std::vector<std::shared_ptr<Cell>> Creature::getInRadius(float distance) {
   cells.resize(std::distance(cells.begin(), it));
   return cells;
 }
+
+// TODO: apply effect on throw
+bool Creature::throwItem(std::shared_ptr<Item> item,
+                         std::shared_ptr<Cell> cell) {
+  std::shared_ptr<Item> throwed;
+  if (item->count == 0) {
+    throwed = item;
+    inventory.erase(std::remove(inventory.begin(), inventory.end(), item),
+                    inventory.end());
+  } else {
+    item->count--;
+    throwed = item->clone();
+    throwed->count = 1;
+  }
+  currentLocation->objects.push_back(throwed);
+  auto cells = currentLocation->getLine(currentCell, cell);
+  auto a = std::make_shared<MoveAnimation>(throwed, cells, cells.size());
+  AnimationEvent ae(a);
+  eb::EventBus::FireEvent(ae);
+  return true;
+}

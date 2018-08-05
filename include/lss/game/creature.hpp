@@ -54,6 +54,7 @@ public:
   std::shared_ptr<Equipment> equipment;
   bool pick(std::shared_ptr<Item>);
   bool drop(std::shared_ptr<Item>);
+  bool throwItem(std::shared_ptr<Item>, std::shared_ptr<Cell>);
 
   int hp;
   int hp_max;
