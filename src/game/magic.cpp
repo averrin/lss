@@ -31,32 +31,38 @@ void Magic::onEvent(ZapCommandEvent &e) {
   castSpell(caster, e.spell);
 }
 
-void toggleTrait(std::shared_ptr<Player> hero,
+void toggleTrait(std::shared_ptr<Creature> caster,
                  std::shared_ptr<ToggleTraitSpell> tspell) {
   if (R::R() < tspell->probability) {
-    if (hero->hasTrait(tspell->trait)) {
-      hero->traits.erase(
-          std::remove(hero->traits.begin(), hero->traits.end(), tspell->trait));
+    if (caster->hasTrait(tspell->trait)) {
+      caster->traits.erase(std::remove(caster->traits.begin(),
+                                       caster->traits.end(), tspell->trait));
     } else {
-      hero->traits.push_back(tspell->trait);
+      caster->traits.push_back(tspell->trait);
     }
   }
-  hero->commit("toggle trait", 0);
+  if (auto hero = std::dynamic_pointer_cast<Player>(caster)) {
+    hero->commit("toggle trait", 0);
+  }
 }
 
-void applyEffect(std::shared_ptr<Player> hero,
+void applyEffect(std::shared_ptr<Creature> caster,
                  std::shared_ptr<EffectSpell> espell) {
-  hero->activeEffects.push_back(espell->effect);
-  hero->commit("apply effect", 0);
-}
-void heal(std::shared_ptr<Player> hero, int min, int max) {
-  auto heal = R::Z(hero->HP_MAX(hero.get()) / 100 * min,
-                   hero->HP_MAX(hero.get()) / 100 * max);
-  hero->hp += heal;
-  if (hero->HP(hero.get()) > hero->HP_MAX(hero.get())) {
-    hero->hp = hero->HP_MAX(hero.get());
+  caster->activeEffects.push_back(espell->effect);
+  if (auto hero = std::dynamic_pointer_cast<Player>(caster)) {
+    hero->commit("apply effect", 0);
   }
-  hero->commit("heal", 0);
+}
+void heal(std::shared_ptr<Creature> caster, int min, int max) {
+  auto heal = R::Z(caster->HP_MAX(caster.get()) / 100 * min,
+                   caster->HP_MAX(caster.get()) / 100 * max);
+  caster->hp += heal;
+  if (caster->HP(caster.get()) > caster->HP_MAX(caster.get())) {
+    caster->hp = caster->HP_MAX(caster.get());
+  }
+  if (auto hero = std::dynamic_pointer_cast<Player>(caster)) {
+    hero->commit("heal", 0);
+  }
 }
 
 void Magic::castSpell(std::shared_ptr<Creature> caster,
@@ -84,32 +90,36 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
     hero->currentLocation->objects.push_back(items.front());
     hero->commit("summon thing", 0);
   } else if (*spell == *Spells::HEAL_LESSER) {
-    heal(hero, 10, 25);
+    heal(caster, 10, 25);
   } else if (*spell == *Spells::HEAL) {
-    heal(hero, 25, 50);
+    heal(caster, 25, 50);
   } else if (*spell == *Spells::HEAL_GREATER) {
-    heal(hero, 50, 100);
+    heal(caster, 50, 100);
   } else if (*spell == *Spells::RESTORE_MANA) {
-    auto heal = R::Z(hero->MP_MAX(hero.get()) / 100 * 25,
-                     hero->MP_MAX(hero.get()) / 100 * 50);
-    hero->mp += heal;
-    if (hero->MP(hero.get()) > hero->MP_MAX(hero.get())) {
-      hero->mp = hero->MP_MAX(hero.get());
+    auto heal = R::Z(caster->MP_MAX(caster.get()) / 100 * 25,
+                     caster->MP_MAX(caster.get()) / 100 * 50);
+    caster->mp += heal;
+    if (caster->MP(caster.get()) > caster->MP_MAX(caster.get())) {
+      caster->mp = caster->MP_MAX(caster.get());
     }
-    hero->commit("mana", 0);
+    if (auto hero = std::dynamic_pointer_cast<Player>(caster)) {
+      hero->commit("mana", 0);
+    }
   } else if (*spell == *Spells::TELEPORT_RANDOM) {
-    auto room = hero->currentLocation
-                    ->rooms[rand() % hero->currentLocation->rooms.size()];
+    auto room = caster->currentLocation
+                    ->rooms[rand() % caster->currentLocation->rooms.size()];
     auto cell = room->cells[rand() % room->cells.size()];
-    hero->currentCell = cell;
-    hero->commit("Teleport", 0);
+    caster->currentCell = cell;
+    if (auto hero = std::dynamic_pointer_cast<Player>(caster)) {
+      hero->commit("Teleport", 0);
+    }
   } else if (auto tspell = std::dynamic_pointer_cast<ToggleTraitSpell>(spell)) {
-    toggleTrait(hero, tspell);
+    toggleTrait(caster, tspell);
   } else if (auto espell = std::dynamic_pointer_cast<EffectSpell>(spell)) {
-    applyEffect(hero, espell);
+    applyEffect(caster, espell);
   } else if (auto rspell = std::dynamic_pointer_cast<RadiusSpell>(spell)) {
     auto cells = caster->getInRadius(rspell->radius);
-    applySpellOnCells(rspell->spell, cells);
+    applySpellOnCells(caster, rspell->spell, cells);
   } else if (auto lspell = std::dynamic_pointer_cast<LineSpell>(spell)) {
     DirectionEvent de([=](auto dir) {
       auto cell = hero->currentLocation->getCell(caster->currentCell, dir);
@@ -120,7 +130,7 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
           break;
         cells.push_back(cell);
       }
-      applySpellOnCells(lspell->spell, cells);
+      applySpellOnCells(caster, lspell->spell, cells);
     });
     eb::EventBus::FireEvent(de);
   } else if (auto tspell = std::dynamic_pointer_cast<TargetSpell>(spell)) {
@@ -157,7 +167,7 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
           auto cells = hero->currentLocation->getLine(hero->currentCell, cell);
           auto a = std::make_shared<MoveAnimation>(fb, cells, cells.size());
           a->animationCallback = [=]() {
-            spell->applySpell(hero->currentLocation, cell);
+            spell->applySpell(caster, hero->currentLocation, cell);
             pauseAndEraseFireballs();
           };
           AnimationEvent ae(a);
@@ -182,16 +192,19 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
   }
 }
 
-void Magic::applySpellOnCells(std::shared_ptr<Spell> spell,
+void Magic::applySpellOnCells(std::shared_ptr<Creature> caster,
+                              std::shared_ptr<Spell> spell,
                               std::vector<std::shared_ptr<Cell>> cells) {
   if (auto ds = std::dynamic_pointer_cast<CellSpell>(spell)) {
     for (auto c : cells) {
-      ds->applySpell(hero->currentLocation, c);
+      ds->applySpell(caster, caster->currentLocation, c);
     }
   }
-  hero->currentLocation->invalidateVisibilityCache(hero->currentCell);
-  hero->calcViewField();
-  hero->commit("cast spell", 0);
+  caster->currentLocation->invalidateVisibilityCache(caster->currentCell);
+  caster->calcViewField();
+  if (auto hero = std::dynamic_pointer_cast<Player>(caster)) {
+    hero->commit("cast spell", 0);
+  }
   pauseAndEraseFireballs();
 }
 
@@ -207,7 +220,8 @@ void Magic::pauseAndEraseFireballs() {
   eb::EventBus::FireEvent(me);
 }
 
-void DamageSpell::applySpell(std::shared_ptr<Location> location,
+void DamageSpell::applySpell(std::shared_ptr<Creature> caster,
+                             std::shared_ptr<Location> location,
                              std::shared_ptr<Cell> c) {
   auto objects = location->getObjects(c);
   for (auto o : objects) {
@@ -220,7 +234,8 @@ void DamageSpell::applySpell(std::shared_ptr<Location> location,
     }
   }
   if (c == location->player->currentCell) {
-    location->player->applyDamage(location->player, damage.getDamage());
+    location->player->applyDamage(location->player,
+                                  damage.getDamage(caster->intelligence));
   }
   applyEffect(location, c);
 }

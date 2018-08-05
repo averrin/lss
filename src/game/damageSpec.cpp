@@ -1,9 +1,13 @@
 #include "lss/game/damageSpec.hpp"
 #include "lss/game/damage.hpp"
 
-std::shared_ptr<Damage> DamageSpec::getDamage(bool critical) {
+std::shared_ptr<Damage> DamageSpec::getDamage(float modifier, bool critical) {
   auto damage = std::make_shared<Damage>(*this);
-  damage->damage = hitRoll(modifier, dices, edges);
+  if (!critical) {
+    damage->damage = hitRoll() * modifier;
+  } else {
+    damage->damage = criticalHit() * modifier;
+  }
   return damage;
 }
 

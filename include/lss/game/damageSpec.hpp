@@ -37,7 +37,7 @@ public:
   DamageType type;
 
   DamageSpec roll();
-  std::shared_ptr<Damage> getDamage(bool critical = false);
+  std::shared_ptr<Damage> getDamage(float modifier = 1, bool critical = false);
 
   int hitRoll() { return hitRoll(modifier, dices, edges); }
 

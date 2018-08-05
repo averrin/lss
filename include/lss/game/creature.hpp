@@ -107,6 +107,8 @@ public:
   std::shared_ptr<Slot> getSlot(WearableType type);
   std::optional<std::shared_ptr<Slot>> getSlot(WearableType type, bool);
 
+  float intelligence = 1.f;
+
   Attribute HP = Attribute(AttributeType::HP);
   Attribute HP_MAX = Attribute(AttributeType::HP_MAX);
   Attribute MP = Attribute(AttributeType::MP);

@@ -48,7 +48,7 @@ float Attribute::operator()(Creature *c) {
     base = c->mp;
     break;
   case AttributeType::MP_MAX:
-    base = c->mp_max;
+    base = c->mp_max * c->intelligence;
     break;
   }
 

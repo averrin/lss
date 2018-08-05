@@ -331,6 +331,7 @@ void Player::onEvent(ZapCommandEvent &e) {
   commit("zap", e.spell->ap);
   mp -= e.spell->cost;
   commit("after zap", 0, true);
+  intelligence += e.spell->cost / MP_MAX(this) / 100;
 }
 
 // TODO: move to creature

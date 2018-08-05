@@ -77,5 +77,7 @@ void HeroLine::update() {
                     hero->currentCell->y, hero->currentLocation->depth,
                     hero->currentLocation->type.name, locationFeatures,
                     hero->currentLocation->rooms.size())),
+      // State::END_LINE.front(),
+      F(fmt::format("   <b>I</b>:{:g}", hero->intelligence))
   });
 }

@@ -47,7 +47,8 @@ public:
     location->objects.push_back(fb);
     location->invalidate();
   }
-  virtual void applySpell(std::shared_ptr<Location> location,
+  virtual void applySpell(std::shared_ptr<Creature> caster,
+                          std::shared_ptr<Location> location,
                           std::shared_ptr<Cell> c) {
     applyEffect(location, c);
   }
@@ -59,7 +60,8 @@ public:
   DamageSpell(std::string n, DamageSpec dmg, TerrainSpec ts)
       : CellSpell(n, ts), damage(dmg) {}
   DamageSpec damage;
-  void applySpell(std::shared_ptr<Location>, std::shared_ptr<Cell>);
+  void applySpell(std::shared_ptr<Creature> caster, std::shared_ptr<Location>,
+                  std::shared_ptr<Cell>);
 };
 
 // TODO: target spell
