@@ -44,11 +44,27 @@ const std::vector<LootBox> POTIONS = {
     {0.1, {Prototype::POTION_CONFUSION}},
     {0.1, {Prototype::POTION_MANA}},
 };
+
 const std::vector<LootBox> SCROLLS = {
     {0.30, {Prototype::SCROLL_IDENTIFICATION}},
     {0.30, {Prototype::SCROLL_REVEAL}},
     {0.30, {Prototype::SCROLL_TELEPORT}}};
-;
+
+const std::vector<LootBox> WEAPONS_TIER_1 = {
+    {0.50, {Prototype::SWORD}},
+    {0.50, {Prototype::DAGGER}}
+};
+const std::vector<LootBox> WEAPONS_TIER_2 = {
+    // {0.50, {Prototype::POISON_SWORD}},
+    {0.50, {Prototype::POISON_DAGGER}}
+};
+const std::vector<LootBox> ARMOR_TIER_1 = {
+  {0.20, {Prototype::PLATE}},
+  {0.20, {Prototype::HELMET}},
+  {0.20, {Prototype::SHIELD}},
+  {0.20, {Prototype::GREAVES}},
+  {0.20, {Prototype::BOOTS}},
+};
 }; // namespace LootBoxes
 
 #endif // __LOOTBOX_H_

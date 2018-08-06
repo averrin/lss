@@ -198,6 +198,7 @@ void LSSApp::startGame() {
   updateMap();
 }
 
+//TODO: fix crashes
 void LSSApp::startBg() {
   bgRunning = false;
   if (bgThread.joinable()) {

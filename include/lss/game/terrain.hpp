@@ -61,16 +61,18 @@ const auto STATUE =
     TerrainSpec{"statue", false, false, -1, true, true, 1.5, LightType::MAGIC};
 const auto ALTAR = TerrainSpec{"altar", true, true, -1, false};
 const auto BUSH = TerrainSpec{"bush", false, true};
-const auto FIREBALL = TerrainSpec{
-    "fireball", true, true, 1, false, true, TORCH_DISTANCE, LightType::FIRE};
-const auto MAGIC_LIGHT = TerrainSpec{
-    "light", true, true, 1, false, true, 2.5, LightType::MAGIC, true};
-const auto MAGIC_LIGHT_LONG = TerrainSpec{
-    "light", true, true, 2500, false, true, 2.5, LightType::MAGIC, true};
-const auto MAGIC_LIGHT_FOREVER = TerrainSpec{
-    "light", true, true, -1, false, true, 2.5, LightType::MAGIC, true};
-const auto ACID_LIGHT_FOREVER = TerrainSpec{
-    "light", true, true, -1, false, true, 2.5, LightType::ACID, true};
+const auto FIREBALL =
+    TerrainSpec{"fireball", true, true, 1, false, true, TORCH_DISTANCE, LightType::FIRE};
+const auto ACIDBALL =
+    TerrainSpec{"acidball", true, true, 1, false, true, TORCH_DISTANCE, LightType::ACID};
+const auto MAGIC_LIGHT =
+    TerrainSpec{"light", true, true, 1, false, true, 2.5, LightType::MAGIC, true};
+const auto MAGIC_LIGHT_LONG =
+    TerrainSpec{"light", true, true, 2500, false, true, 2.5, LightType::MAGIC, true};
+const auto MAGIC_LIGHT_FOREVER =
+    TerrainSpec{"light", true, true, -1, false, true, 2.5, LightType::MAGIC, true};
+const auto ACID_LIGHT_FOREVER =
+    TerrainSpec{"light", true, true, -1, false, true, 2.5, LightType::ACID, true};
 }; // namespace TerrainType
 
 #endif // __TERRAIN_H_

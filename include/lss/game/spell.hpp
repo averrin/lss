@@ -132,6 +132,11 @@ const auto FIRESTRIKE = std::make_shared<TargetSpell>(
                                   TerrainType::FIREBALL),
     4, 10);
 
+const auto ACIDSTRIKE = std::make_shared<TargetSpell>(
+    "Acidstrike", 1,
+    std::make_shared<DamageSpell>("Acid damage", DamageSpec(2, 3, 6, DamageType::ACID),
+                                 TerrainType::FIREBALL), 4, 20);
+
 const auto FLASH = std::make_shared<RadiusSpell>(
     "Flash", 0, std::make_shared<CellSpell>("Light", TerrainType::MAGIC_LIGHT),
     1.5, 10);
@@ -142,10 +147,6 @@ const auto LIGHT_FOREVER = std::make_shared<TargetSpell>(
     "Eternal Light", 2,
     std::make_shared<CellSpell>("Light", TerrainType::MAGIC_LIGHT_FOREVER), 6,
     10);
-const auto ACID_LIGHT_FOREVER = std::make_shared<TargetSpell>(
-    "Eternal green Light", 0,
-    std::make_shared<CellSpell>("Light", TerrainType::ACID_LIGHT_FOREVER), 6,
-    0);
 
 const auto TOGGLE_DUAL_WIELD = std::make_shared<ToggleTraitSpell>(
     "Toggle Dual Wield trait", Traits::DUAL_WIELD);
@@ -163,6 +164,10 @@ const auto TOGGLE_INVULNERABLE = std::make_shared<ToggleTraitSpell>(
     "Toggle Invulnerable trait", Traits::INVULNERABLE);
 const auto TOGGLE_JUMPY =
     std::make_shared<ToggleTraitSpell>("Toggle Jumpy trait", Traits::JUMPY);
+
+const auto ACID_LIGHT_FOREVER = std::make_shared<TargetSpell>(
+    "Eternal green Light", 0,
+    std::make_shared<CellSpell>("Light", TerrainType::ACID_LIGHT_FOREVER), 6, 0);
 
 /* for consumables */
 const auto RESTORE_MANA = std::make_shared<Spell>("Greater mana");

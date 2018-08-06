@@ -4,6 +4,7 @@
 const std::map<TerrainSpec, std::string> terrainSigns = {
     {TerrainType::TORCH_STAND, "*"},
     {TerrainType::FIREBALL, "*"},
+    {TerrainType::ACIDBALL, "*"},
     {TerrainType::MAGIC_LIGHT, "*"},
     {TerrainType::MAGIC_LIGHT_LONG, "*"},
     {TerrainType::MAGIC_LIGHT_FOREVER, "*"},
@@ -15,8 +16,8 @@ const std::map<TerrainSpec, std::string> terrainSigns = {
 };
 
 const std::map<TerrainSpec, std::string> terrainColors = {
-    {TerrainType::TORCH_STAND, "#ffa500"},
-    {TerrainType::FIREBALL, "#ee1111"},
+    {TerrainType::TORCH_STAND, "#ffa500"}, {TerrainType::FIREBALL, "#ee1111"},
+    {TerrainType::ACIDBALL, "#11cc11"},
     {TerrainType::MAGIC_LIGHT, COLORS::LIGHT_BLUE},
     {TerrainType::MAGIC_LIGHT_LONG, COLORS::LIGHT_BLUE},
     {TerrainType::MAGIC_LIGHT_FOREVER, COLORS::LIGHT_BLUE},
