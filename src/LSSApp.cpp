@@ -13,7 +13,7 @@
 #include "lss/keyEvent.hpp"
 #include "lss/utils.hpp"
 
-std::string VERSION = "0.1.0 by Averrin";
+std::string VERSION = "0.1.1 by Averrin";
 
 int HOffset = 24;
 int VOffset = 24;

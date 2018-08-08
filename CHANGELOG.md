@@ -1,6 +1,9 @@
 ## Changelog
 
-### 0.1.0
+### 0.1.1 Feature Freeze
+- more content
+
+### 0.1.0 Suicidal Lemming Migration
 - init hero status page
 - Intelligence & Strength attributes
 - init throwing

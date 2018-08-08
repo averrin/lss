@@ -33,11 +33,11 @@ rendering quality. And you may need install some deps.
 - [ ] Refactor AI for optimization, using magic/throwing and different behaviors
       like stealth
 - [X] Hero status page
+- [X] Throwing
 - [ ] Refactor effects system
 - [ ] Weights
 - [ ] Passive, patrol and "hero search" AI, stealth
 - [ ] Chests and containers
-- [ ] Throwing
 - [ ] Passthrough seed
 - [ ] Hundreds of other features...
 
