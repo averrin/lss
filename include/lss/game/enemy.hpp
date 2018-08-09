@@ -25,7 +25,7 @@ public:
   int baseMP;
   int defense;
   DamageSpec dmgSpec = DamageSpec(0, 0, 0, DamageType::BASIC);
-  LootBox loot;
+  LootBox loot = LootBoxes::ZERO;
   std::vector<Trait> traits;
   Items equipped;
   Effects activeEffects;

@@ -4,6 +4,7 @@
 #include <rang.hpp>
 #include <set>
 
+#include "lss/game/content/enemies.hpp"
 #include "lss/game/door.hpp"
 #include "lss/game/enemy.hpp"
 #include "lss/game/item.hpp"
@@ -475,7 +476,7 @@ std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Location> location,
 
 void placeLoot(std::shared_ptr<Location> location, int threat) {
   log("place loot");
-  LootBox table;
+  auto table = LootBoxes::ZERO;
   if (location->type.type == LocationType::DUNGEON) {
     if (threat >= LootTable::DUNGEON.size())
       threat = LootTable::DUNGEON.size() - 1;

@@ -101,37 +101,32 @@ EnemySpec const ORK = {
     {}, Items{Prototype::TORCH, Prototype::ORK_SWORD, Prototype::LEATHER_SHIELD}
 };
 
+//TODO: better loot
 EnemySpec const ORK_BLACK = {
     "black ork", 2,
     1.1, 75, 0, 2,
     DamageSpec(1, 1, 6, DamageType::WEAPON),
-    LootBox{1, {Prototype::TORCH}, {
-        {0.50, {Prototype::POTION_HEAL}},
-        {0.20, {}, LootBoxes::POTIONS, true},
-        {0.70, {}, {
-          {0.15, {Prototype::PLATE}},
-          {0.35, {Prototype::SWORD}},
-          {0.35, {Prototype::HELMET}},
-          {0.35, {Prototype::SHIELD}},
-          {0.35, {Prototype::GREAVES}},
-          {0.35, {Prototype::BOOTS}},
-          }, true},
-        {0.90, {Prototype::GOLD->setCount(100)}}}},
-    {}, Items{Prototype::TORCH, Prototype::ORK_SWORD, Prototype::SHIELD, Prototype::LEATHER_ARMOR}
+    LootBox(1, {Prototype::TORCH}, {
+        LootBox(0.50, {Prototype::POTION_HEAL}),
+        LootBox(0.20, LootBoxes::POTIONS),
+        LootBox(0.80, LootBoxes::LOOT_TIER_1),
+        LootBox(0.90, {Prototype::GOLD->setCount(100)})
+    }),
+    {}, Items{Prototype::TORCH, Prototype::ORK_SWORD, Prototype::LEATHER_SHIELD, Prototype::LEATHER_CUIRASS}
 };
 EnemySpec const PIXI = {
     "pixi", 3,
     3, 25, 30, 0,
     DamageSpec(0, 3, 4, DamageType::WEAPON),
-    {0.90, {Prototype::GOLD->setCount(200)}, {
-        {0.40, {}, LootBoxes::SCROLLS, true},
-        {10, {Prototype::SPEED_RING}}}},
+    LootBox(0.90, {Prototype::GOLD->setCount(200)}, {
+        LootBox(0.40, LootBoxes::SCROLLS),
+        LootBox(0.10, {Prototype::SPEED_RING})}),
     {Traits::FLY, Traits::MOB}};
 EnemySpec const OGRE = {
     "ogre", 4,
     1, 100, 0, 2,
     DamageSpec(1, 1, 6, DamageType::WEAPON),
-    LootBox{0.80, {Prototype::GREAT_AXE}},
+    LootBox(0.80, {Prototype::GREAT_AXE}),
     {Traits::NIGHT_VISION},
     Items{Prototype::GREAT_AXE},
 };
@@ -139,7 +134,7 @@ EnemySpec const I_OGRE = {
     "loooong ogre", 4,
     1, 1000000, 0, 2,
     DamageSpec(0, 0, 0, DamageType::WEAPON),
-    LootBox{},
+    LootBoxes::ZERO,
     {},
     Items{},
 };

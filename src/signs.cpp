@@ -1,8 +1,8 @@
+#include "lss/game/content/enemies.hpp"
+#include "lss/game/content/items.hpp"
+#include "lss/game/itemSpec.hpp"
 #include "lss/game/terrain.hpp"
 #include "lss/state.hpp"
-#include "lss/game/itemSpec.hpp"
-#include "lss/game/content/items.hpp"
-#include "lss/game/content/enemies.hpp"
 
 const std::map<TerrainSpec, std::string> terrainSigns = {
     {TerrainType::TORCH_STAND, "*"},
@@ -19,7 +19,8 @@ const std::map<TerrainSpec, std::string> terrainSigns = {
 };
 
 const std::map<TerrainSpec, std::string> terrainColors = {
-    {TerrainType::TORCH_STAND, "#ffa500"}, {TerrainType::FIREBALL, "#ee1111"},
+    {TerrainType::TORCH_STAND, "#ffa500"},
+    {TerrainType::FIREBALL, "#ee1111"},
     {TerrainType::ACIDBALL, "#11cc11"},
     {TerrainType::MAGIC_LIGHT, COLORS::LIGHT_BLUE},
     {TerrainType::MAGIC_LIGHT_LONG, COLORS::LIGHT_BLUE},
@@ -31,18 +32,34 @@ const std::map<TerrainSpec, std::string> terrainColors = {
 };
 
 const std::map<ItemSpec, std::string> itemSigns = {
-    {ItemType::CORPSE, "%"},         {ItemType::ROCK, "*"},
-    {ItemType::PICK_AXE, "("},       {ItemType::SWORD, "("},
-    {ItemType::GOLD_RING, "="},      {ItemType::GOLD_COINS, "$"},
-    {ItemType::DAGGER, "("},         {ItemType::TORCH, "]"},
-    {ItemType::GRASS, "\""},         {ItemType::LANTERN, "]"},
+    {ItemType::CORPSE, "%"},
+    {ItemType::ROCK, "*"},
+    {ItemType::PICK_AXE, "("},
+    {ItemType::ONE_HAND, "("},
+    {ItemType::RING, "="},
+    {ItemType::GOLD_COINS, "$"},
+    {ItemType::LIGHT_WEAPON, "("},
+    {ItemType::TORCH, "]"},
+    {ItemType::GRASS, "\""},
+    {ItemType::LANTERN, "]"},
 
-    {ItemType::GREAT_AXE, "("},      {ItemType::HELMET, "["},
-    {ItemType::SHIELD, "["},         {ItemType::GREAVES, "["},
-    {ItemType::BOOTS, "["},          {ItemType::PLATE, "["},
-    {ItemType::CUIRASS, "["},  {ItemType::POTION, "!"},
-    {ItemType::SCROLL, "?"},         {ItemType::BONES, "%"},
-    {ItemType::THROWING_KNIVES, "↑"}};
+    {ItemType::TWO_HAND, "("},
+    {ItemType::HELMET, "["},
+    {ItemType::SHIELD, "["},
+    {ItemType::GREAVES, "["},
+    {ItemType::BOOTS, "["},
+    {ItemType::PLATE, "["},
+    {ItemType::CUIRASS, "["},
+    {ItemType::POTION, "!"},
+    {ItemType::SCROLL, "?"},
+    {ItemType::BONES, "%"},
+    {ItemType::THROWING_KNIVES, "↑"},
+
+    {ItemType::LEFT_PAULDRON, "["},
+    {ItemType::RIGHT_PAULDRON, "["},
+    {ItemType::LEFT_GAUNTLET, "["},
+    {ItemType::RIGHT_GAUNTLET, "["},
+};
 
 const std::map<ItemSpec, std::string> itemColors = {
     {ItemType::BONES, "#aaa"},
@@ -50,15 +67,15 @@ const std::map<ItemSpec, std::string> itemColors = {
     {ItemType::CORPSE, "#ee1111"},
     {ItemType::ROCK, COLORS::GRAY},
     {ItemType::PICK_AXE, COLORS::WHITE},
-    {ItemType::SWORD, "#F7CA88"},
-    {ItemType::GOLD_RING, "#ffd700"},
+    {ItemType::ONE_HAND, "#F7CA88"},
+    {ItemType::RING, "#ffd700"},
     {ItemType::GOLD_COINS, "#ffd700"},
-    {ItemType::DAGGER, COLORS::GRAY},
+    {ItemType::LIGHT_WEAPON, COLORS::GRAY},
     {ItemType::TORCH, "#ffa500"},
     {ItemType::LANTERN, "#a5a500"},
     {ItemType::GRASS, "#006400"},
 
-    {ItemType::GREAT_AXE, COLORS::WHITE},
+    {ItemType::TWO_HAND, COLORS::WHITE},
     {ItemType::HELMET, COLORS::WHITE},
     {ItemType::SHIELD, COLORS::WHITE},
     {ItemType::GREAVES, COLORS::WHITE},
@@ -67,7 +84,13 @@ const std::map<ItemSpec, std::string> itemColors = {
     {ItemType::CUIRASS, COLORS::WHITE},
     {ItemType::POTION, COLORS::LIGHT_BLUE},
     {ItemType::SCROLL, COLORS::WHITE},
-    {ItemType::THROWING_KNIVES, COLORS::WHITE}};
+    {ItemType::THROWING_KNIVES, COLORS::WHITE},
+
+    {ItemType::LEFT_PAULDRON, COLORS::WHITE},
+    {ItemType::RIGHT_PAULDRON, COLORS::WHITE},
+    {ItemType::LEFT_GAUNTLET, COLORS::WHITE},
+    {ItemType::RIGHT_GAUNTLET, COLORS::WHITE},
+};
 
 const std::map<EnemySpec, std::string> enemySigns = {
     {EnemyType::RAT, "r"},          {EnemyType::BAT, "b"},

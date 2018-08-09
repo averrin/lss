@@ -4,6 +4,7 @@
 #include <chrono>
 #include <memory>
 #include <optional>
+#include <set>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -30,12 +31,16 @@ public:
 
   template <typename rT, typename iT>
   static std::vector<std::shared_ptr<rT>>
-  castObjects(std::vector<std::shared_ptr<iT>> input) {
+  castObjects(std::vector<std::shared_ptr<iT>> input, bool unique = false) {
     std::vector<std::shared_ptr<rT>> result;
     for (auto input_object : input) {
       if (auto casted_object = std::dynamic_pointer_cast<rT>(input_object)) {
         result.push_back(casted_object);
       }
+    }
+    if (unique) {
+      auto it = std::unique(result.begin(), result.end());
+      result.resize(std::distance(result.begin(), it));
     }
     return result;
   }

@@ -375,8 +375,7 @@ void Player::onDie() {
   commit("death", 0);
 }
 
-void Player::onEvent(EnemyDiedEvent &e) {
-}
+void Player::onEvent(EnemyDiedEvent &e) {}
 
 void Player::onEvent(ThrowCommandEvent &e) {
   if (e.item == nullptr)

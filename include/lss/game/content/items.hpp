@@ -1,11 +1,14 @@
 #ifndef __ITEMS_H_
 #define __ITEMS_H_
+#include "lss/utils.hpp"
 #include "lss/game/item.hpp"
 #include "lss/game/randomTools.hpp"
 #include "lss/game/content/spells.hpp"
 #include "lss/game/content/specs.hpp"
 #include "lss/game/content/traits.hpp"
-#include "lss/utils.hpp"
+
+#include "lss/game/content/scrolls.hpp"
+#include "lss/game/content/potions.hpp"
 
 namespace Prototype {
 /*LIGHT*/
@@ -51,12 +54,50 @@ const auto LEATHER_LEFT_GAUNTLET = std::make_shared<Item>("leather left gauntlet
     ItemType::LEFT_GAUNTLET, Effects{std::make_shared<ArmorValue>(R::I(1, 2))});
 
 
+/*Iron armor*/
+const auto IRON_CUIRASS = std::make_shared<Item>("iron cuirass",
+    ItemType::CUIRASS, Effects{std::make_shared<ArmorValue>(R::I(3, 5))});
+const auto IRON_HELMET = std::make_shared<Item>("iron helm",
+    ItemType::HELMET, Effects{std::make_shared<ArmorValue>(R::I(3, 5))});
+const auto IRON_SHIELD = std::make_shared<Item>("iron shield",
+    ItemType::SHIELD, Effects{std::make_shared<ArmorValue>(R::I(4, 5))});
+const auto IRON_GREAVES = std::make_shared<Item>("iron greaves",
+    ItemType::GREAVES, Effects{std::make_shared<ArmorValue>(R::I(3, 5))});
+const auto IRON_BOOTS = std::make_shared<Item>("iron boots",
+    ItemType::BOOTS, Effects{std::make_shared<ArmorValue>(R::I(3, 4))});
+const auto IRON_RIGHT_PAULDRON = std::make_shared<Item>("iron right pauldron",
+    ItemType::RIGHT_PAULDRON, Effects{std::make_shared<ArmorValue>(R::I(3, 4))});
+const auto IRON_LEFT_PAULDRON = std::make_shared<Item>("iron left pauldron",
+    ItemType::LEFT_PAULDRON, Effects{std::make_shared<ArmorValue>(R::I(3, 4))});
+const auto IRON_RIGHT_GAUNTLET = std::make_shared<Item>("iron right gauntlet",
+    ItemType::RIGHT_GAUNTLET, Effects{std::make_shared<ArmorValue>(R::I(3, 4))});
+const auto IRON_LEFT_GAUNTLET = std::make_shared<Item>("iron left gauntlet",
+    ItemType::LEFT_GAUNTLET, Effects{std::make_shared<ArmorValue>(R::I(3, 4))});
+
+/*Steel armor*/
+const auto STEEL_CUIRASS = std::make_shared<Item>("steel cuirass",
+    ItemType::CUIRASS, Effects{std::make_shared<ArmorValue>(R::I(5, 7))});
+const auto STEEL_HELMET = std::make_shared<Item>("steel helm",
+    ItemType::HELMET, Effects{std::make_shared<ArmorValue>(R::I(5, 7))});
+const auto STEEL_SHIELD = std::make_shared<Item>("steel shield",
+    ItemType::SHIELD, Effects{std::make_shared<ArmorValue>(R::I(5, 7))});
+const auto STEEL_GREAVES = std::make_shared<Item>("steel greaves",
+    ItemType::GREAVES, Effects{std::make_shared<ArmorValue>(R::I(5, 7))});
+const auto STEEL_BOOTS = std::make_shared<Item>("steel boots",
+    ItemType::BOOTS, Effects{std::make_shared<ArmorValue>(R::I(5, 6))});
+const auto STEEL_RIGHT_PAULDRON = std::make_shared<Item>("steel right pauldron",
+    ItemType::RIGHT_PAULDRON, Effects{std::make_shared<ArmorValue>(R::I(5, 6))});
+const auto STEEL_LEFT_PAULDRON = std::make_shared<Item>("steel left pauldron",
+    ItemType::LEFT_PAULDRON, Effects{std::make_shared<ArmorValue>(R::I(5, 6))});
+const auto STEEL_RIGHT_GAUNTLET = std::make_shared<Item>("steel right gauntlet",
+    ItemType::RIGHT_GAUNTLET, Effects{std::make_shared<ArmorValue>(R::I(5, 6))});
+const auto STEEL_LEFT_GAUNTLET = std::make_shared<Item>("steel left gauntlet",
+    ItemType::LEFT_GAUNTLET, Effects{std::make_shared<ArmorValue>(R::I(5, 6))});
+
 const auto BOOTS_OF_FLY =
     std::make_shared<Item>("flying boots", ItemType::BOOTS,
                            Effects{std::make_shared<TraitEffect>(Traits::FLY)});
 
-const auto PLATE = std::make_shared<Item>(
-    ItemType::PLATE, Effects{std::make_shared<ArmorValue>(R::I(3, 5))});
 const auto GRASS = std::make_shared<Item>("just herb", ItemType::GRASS, 1);
 
 const auto SPEED_RING =
@@ -106,92 +147,6 @@ const auto SWORD_OF_DUALWIELD = std::make_shared<Item>(
                 R::I(-2, 2), R::I(2, 4), R::I(2, 4), DamageType::WEAPON)),
             std::make_shared<TraitEffect>(Traits::DUAL_WIELD)});
 
-// TODO: make colors unique
-const auto POTION_HEAL_LESSER = std::make_shared<Consumable>(
-    fmt::format("{} potion", utils::getRandomColor()), "lesser heal potion",
-    ItemType::POTION, Spells::HEAL_LESSER);
-const auto POTION_HEAL = std::make_shared<Consumable>(
-    fmt::format("{} potion", utils::getRandomColor()), "heal potion",
-    ItemType::POTION, Spells::HEAL);
-
-const auto POTION_MANA = std::make_shared<Consumable>(
-    fmt::format("{} potion", utils::getRandomColor()), "restore mana potion",
-    ItemType::POTION, Spells::RESTORE_MANA);
-
-const auto POTION_GOD_SPEED = std::make_shared<Consumable>(
-    fmt::format("{} potion", utils::getRandomColor()), "god speed potion",
-    ItemType::POTION, Spells::GOD_SPEED);
-
-const auto POTION_HP_BOOST = std::make_shared<Consumable>(
-    fmt::format("{} potion", utils::getRandomColor()), "health boost potion",
-    ItemType::POTION, Spells::HP_BOOST);
-
-const auto POTION_VISIBILITY_BOOST = std::make_shared<Consumable>(
-    fmt::format("{} potion", utils::getRandomColor()),
-    "visibility boost potion", ItemType::POTION, Spells::VISIBILITY_BOOST);
-
-const auto POTION_CRIT_BOOST = std::make_shared<Consumable>(
-    fmt::format("{} potion", utils::getRandomColor()),
-    "crit chance boost potion", ItemType::POTION, Spells::CRIT_BOOST);
-
-const auto POTION_LEVITATION = std::make_shared<Consumable>(
-    fmt::format("{} potion", utils::getRandomColor()), "levitation potion",
-    ItemType::POTION, Spells::LEVITATION);
-
-const auto POTION_REGENERATION = std::make_shared<Consumable>(
-    fmt::format("{} potion", utils::getRandomColor()), "regeneration potion",
-    ItemType::POTION, Spells::EOT_HEAL);
-
-const auto POTION_POISON = std::make_shared<Consumable>(
-    fmt::format("{} potion", utils::getRandomColor()), "poison",
-    ItemType::POTION, Spells::EOT_POISON);
-
-const auto POTION_CONFUSION = std::make_shared<Consumable>(
-    fmt::format("{} potion", utils::getRandomColor()), "potion of confusion",
-    ItemType::POTION, Spells::CONFUSION);
-
-const auto POTION_INTELLIGENCE_BOOST = std::make_shared<Consumable>(
-    fmt::format("{} potion", utils::getRandomColor()),
-    "intelligence boost potion", ItemType::POTION, Spells::INTELLIGENCE_BOOST);
-const auto POTION_STRENGTH_BOOST = std::make_shared<Consumable>(
-    fmt::format("{} potion", utils::getRandomColor()), "strength boost potion",
-    ItemType::POTION, Spells::STRENGTH_BOOST);
-
-const auto SCROLL_IDENTIFICATION = std::make_shared<Consumable>(
-    fmt::format("scroll labled '{}'", utils::getScrollName()),
-    "scroll of identification", ItemType::SCROLL, Spells::IDENTIFY);
-const auto SCROLL_REVEAL = std::make_shared<Consumable>(
-    fmt::format("scroll labled '{}'", utils::getScrollName()),
-    "scroll of reveal", ItemType::SCROLL, Spells::REVEAL);
-const auto SCROLL_TELEPORT = std::make_shared<Consumable>(
-    fmt::format("scroll labled '{}'", utils::getScrollName()),
-    "scroll of teleport", ItemType::SCROLL, Spells::TELEPORT_RANDOM);
-
-const auto SCROLL_WEAPON_RESIST = std::make_shared<Consumable>(
-    fmt::format("scroll labled '{}'", utils::getScrollName()),
-    "scroll of weapon resistance", ItemType::SCROLL, Spells::WEAPON_RESIST);
-const auto SCROLL_WEAPON_IMMUNE = std::make_shared<Consumable>(
-    fmt::format("scroll labled '{}'", utils::getScrollName()),
-    "scroll of weapon immunity", ItemType::SCROLL, Spells::WEAPON_IMMUNE);
-const auto SCROLL_MAGIC_RESIST = std::make_shared<Consumable>(
-    fmt::format("scroll labled '{}'", utils::getScrollName()),
-    "scroll of magic resistance", ItemType::SCROLL, Spells::MAGIC_RESIST);
-const auto SCROLL_MAGIC_IMMUNE = std::make_shared<Consumable>(
-    fmt::format("scroll labled '{}'", utils::getScrollName()),
-    "scroll of magic immunity", ItemType::SCROLL, Spells::MAGIC_IMMUNE);
-
-const auto SCROLL_FIRE_RESIST = std::make_shared<Consumable>(
-    fmt::format("scroll labled '{}'", utils::getScrollName()),
-    "scroll of fire resistance", ItemType::SCROLL, Spells::FIRE_RESIST);
-const auto SCROLL_FIRE_IMMUNE = std::make_shared<Consumable>(
-    fmt::format("scroll labled '{}'", utils::getScrollName()),
-    "scroll of fire immunity", ItemType::SCROLL, Spells::FIRE_IMMUNE);
-const auto SCROLL_ACID_RESIST = std::make_shared<Consumable>(
-    fmt::format("scroll labled '{}'", utils::getScrollName()),
-    "scroll of acid resistance", ItemType::SCROLL, Spells::ACID_RESIST);
-const auto SCROLL_ACID_IMMUNE = std::make_shared<Consumable>(
-    fmt::format("scroll labled '{}'", utils::getScrollName()),
-    "scroll of acid immunity", ItemType::SCROLL, Spells::ACID_IMMUNE);
 
 const auto GOLD = std::make_shared<Item>(ItemType::GOLD_COINS, 1);
 
@@ -237,7 +192,12 @@ const std::vector<std::shared_ptr<Item>> LIGHT = {
     LANTERN,
 };
 
-const std::vector<std::shared_ptr<Item>> ARTEFACTS = {
+const std::vector<std::shared_ptr<Item>> ARTEFACTS_0 = {
+    SPEED_RING,
+    SWORD_OF_DUALWIELD,
+    BOOTS_OF_FLY,
+};
+const std::vector<std::shared_ptr<Item>> ARTEFACTS_1 = {
     SPEED_RING,
     SWORD_OF_DUALWIELD,
     BOOTS_OF_FLY,
@@ -274,6 +234,30 @@ const std::vector<std::shared_ptr<Item>> LEATHER_ARMOR = {
     LEATHER_LEFT_GAUNTLET, 
 };
 
+const std::vector<std::shared_ptr<Item>> IRON_ARMOR = {
+    IRON_CUIRASS,
+    IRON_HELMET,
+    IRON_SHIELD,
+    IRON_GREAVES,
+    IRON_BOOTS,   
+    IRON_RIGHT_PAULDRON,
+    IRON_LEFT_PAULDRON,
+    IRON_RIGHT_GAUNTLET,   
+    IRON_LEFT_GAUNTLET, 
+};
+
+const std::vector<std::shared_ptr<Item>> STEEL_ARMOR = {
+    STEEL_CUIRASS,
+    STEEL_HELMET,
+    STEEL_SHIELD,
+    STEEL_GREAVES,
+    STEEL_BOOTS,   
+    STEEL_RIGHT_PAULDRON,
+    STEEL_LEFT_PAULDRON,
+    STEEL_RIGHT_GAUNTLET,   
+    STEEL_LEFT_GAUNTLET, 
+};
+
 const std::vector<std::shared_ptr<Item>> SCROLLS = {
     SCROLL_IDENTIFICATION,
     SCROLL_REVEAL,
@@ -306,10 +290,12 @@ const std::vector<std::shared_ptr<Item>> POTIONS = {
 };
 
 const std::vector<std::vector<std::shared_ptr<Item>>> ALL = {
+    IRON_ARMOR, STEEL_ARMOR,
     WEAPONS_1, WEAPONS_2,
     POTIONS, SCROLLS,
     MISC, DEBUG, LIGHT,
-    LEATHER_ARMOR, BASIC_ITEMS, ARTEFACTS,
+    LEATHER_ARMOR, BASIC_ITEMS,
+    ARTEFACTS_0, ARTEFACTS_1,
 };
 
 } // namespace Prototype

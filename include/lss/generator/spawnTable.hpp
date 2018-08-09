@@ -1,7 +1,7 @@
 #ifndef __SPAWNTABLE_H_
 #define __SPAWNTABLE_H_
-#include "lss/game/enemy.hpp"
 #include "lss/game/content/enemies.hpp"
+#include "lss/game/enemy.hpp"
 #include <map>
 
 namespace SpawnTable {
@@ -46,41 +46,12 @@ std::map<int, std::map<const EnemySpec, float>> DUNGEON = {
 }
 
 namespace LootTable {
-std::map<int, LootBox> DUNGEON = {{0,
-                                   {0.06,
-                                    {},
-                                    {
-                                        {0.10, {}, LootBoxes::WEAPONS_TIER_1, true},
-                                        {0.10, {Prototype::PLATE}},
-                                        {0.10, {Prototype::HELMET}},
-                                        {0.10, {Prototype::SHIELD}},
-                                        {0.10, {Prototype::GREAVES}},
-                                        {0.10, {Prototype::BOOTS}},
-                                        {0.10, {}, LootBoxes::SCROLLS, true},
-                                        {0.10, {}, LootBoxes::POTIONS, true},
-                                    },
-                                    true}},
-                                  {1,
-                                   {0.08,
-                                    {},
-                                    {
-                                        {0.25, {}, LootBoxes::WEAPONS_TIER_1, true},
-                                        {0.25, {}, LootBoxes::ARMOR_TIER_1, true},
-                                        {0.25, {}, LootBoxes::SCROLLS, true},
-                                        {0.25, {}, LootBoxes::POTIONS, true},
-                                    },
-                                    true}},
-
-                                  {2,
-                                   {0.1,
-                                    {},
-                                    {
-                                        {0.25, {}, LootBoxes::WEAPONS_TIER_2, true},
-                                        {0.25, {}, LootBoxes::ARMOR_TIER_1, true},
-                                        {0.25, {}, LootBoxes::SCROLLS, true},
-                                        {0.25, {}, LootBoxes::POTIONS, true},
-                                    },
-                                    true}}};
+std::map<int, LootBox> DUNGEON = {
+    {0, LootBox(0.06, LootBoxes::DUNGEON_0)},
+    {1, LootBox(0.08, LootBoxes::DUNGEON_1)},
+    {2, LootBox(0.1, LootBoxes::DUNGEON_2)},
+    {3, LootBox(0.12, LootBoxes::DUNGEON_3)},
+};
 }
 
 #endif // __SPAWNTABLE_H_

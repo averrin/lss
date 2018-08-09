@@ -1,32 +1,26 @@
 #ifndef __LOOTBOX_H_
 #define __LOOTBOX_H_
-#include "lss/game/item.hpp"
 #include "lss/game/content/items.hpp"
+#include "lss/game/item.hpp"
 #include "lss/utils.hpp"
 
 struct LootBox {
-  LootBox(float p, std::vector<std::shared_ptr<Item>> loot, std::vector<LootBox> lbs) {
-    probability = p;
-    items = loot;
-    children = lbs;
-  }
-  LootBox(float p, std::vector<std::shared_ptr<Item>> loot, std::vector<LootBox> lbs, bool e) {
-    probability = p;
-    items = loot;
-    children = lbs;
-    exclusive = e;
-  }
+  LootBox() {}
+  LootBox(float p, std::vector<std::shared_ptr<Item>> loot,
+          std::vector<LootBox> lbs)
+      : probability(p), items(loot), children(lbs) {}
+  LootBox(float p, std::vector<std::shared_ptr<Item>> loot,
+          std::vector<LootBox> lbs, bool e)
+      : probability(p), items(loot), children(lbs), exclusive(e) {}
 
-  LootBox(float p, std::vector<std::shared_ptr<Item>> loot) {
+  LootBox(float p, std::vector<std::shared_ptr<Item>> loot)
+      : probability(p), items(loot) {
     probability = p;
     items = loot;
   }
 
-  LootBox(float p, LootBox lb) {
-    probability = p;
-    children = {lb};
-    exclusive = lb.exclusive;
-  }
+  LootBox(float p, LootBox lb)
+      : probability(p), children({lb}), exclusive(lb.exclusive) {}
 
   LootBox(std::vector<std::shared_ptr<Item>> loot) {
     exclusive = true;
@@ -62,7 +56,7 @@ struct LootBox {
 };
 
 namespace LootBoxes {
-const LootBox ZERO = LootBox(0, {});
+const LootBox ZERO = LootBox();
 const LootBox POTIONS = LootBox(Prototype::POTIONS);
 const LootBox SCROLLS = LootBox(Prototype::SCROLLS);
 
@@ -70,8 +64,15 @@ const LootBox LOOT_TIER_0 = LootBox(Prototype::LOOT_0);
 const LootBox LOOT_TIER_1 = LootBox(Prototype::LOOT_1);
 
 const LootBox ARMOR_TIER_1 = LootBox(Prototype::LEATHER_ARMOR);
+const LootBox ARMOR_TIER_2 = LootBox(Prototype::IRON_ARMOR);
+const LootBox ARMOR_TIER_3 = LootBox(Prototype::STEEL_ARMOR);
 const LootBox WEAPONS_TIER_1 = LootBox(Prototype::WEAPONS_1);
 const LootBox WEAPONS_TIER_2 = LootBox(Prototype::WEAPONS_2);
+
+const LootBox DUNGEON_0 = ZERO;
+const LootBox DUNGEON_1 = ZERO;
+const LootBox DUNGEON_2 = ZERO;
+const LootBox DUNGEON_3 = ZERO;
 }; // namespace LootBoxes
 
 #endif // __LOOTBOX_H_

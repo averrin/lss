@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <thread>
 
+#include "lss/game/content/traits.hpp"
 #include "lss/game/damage.hpp"
 #include "lss/game/effect.hpp"
 #include "lss/game/equipment.hpp"
@@ -11,7 +12,6 @@
 #include "lss/game/trait.hpp"
 #include <lss/game/damageSpec.hpp>
 #include <lss/game/location.hpp>
-#include "lss/game/content/traits.hpp"
 
 class Creature : public Object {
 public:

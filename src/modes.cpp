@@ -566,12 +566,12 @@ bool NormalMode::processKey(KeyEvent event) {
       } else {
         app->objectSelectMode->setHeader(F("Items to spawn: "));
 
-        std::set<std::shared_ptr<Item> all;
+        std::vector<std::shared_ptr<Item>> allItems;
         for (auto v : Prototype::ALL) {
-          all.insert(all.end(), v.begin(), v.end());
+          allItems.insert(allItems.end(), v.begin(), v.end());
         }
         app->objectSelectMode->setObjects(
-            utils::castObjects<Object>(all));
+            utils::castObjects<Object>(allItems, true));
 
         Formatter formatter = [](std::shared_ptr<Object> o,
                                  std::string letter) {
@@ -656,28 +656,43 @@ void HeroMode::render(std::shared_ptr<State> state) {
   state->appendContent(State::END_LINE);
   state->appendContent(State::END_LINE);
   auto hero = app->hero;
-  state->appendContent(F(fmt::format("<b>Name</b>:              {}", hero->name)));
+  state->appendContent(
+      F(fmt::format("<b>Name</b>:              {}", hero->name)));
   state->appendContent(State::END_LINE);
-  state->appendContent(F(fmt::format("<b>HP</b>:                {:d}/{:d} ({:d})", int(hero->HP(hero.get())), int(hero->HP_MAX(hero.get())), int(hero->hp_max * hero->strength))));
+  state->appendContent(F(fmt::format(
+      "<b>HP</b>:                {:d}/{:d} ({:d})", int(hero->HP(hero.get())),
+      int(hero->HP_MAX(hero.get())), int(hero->hp_max * hero->strength))));
   state->appendContent(State::END_LINE);
-  state->appendContent(F(fmt::format("<b>MP</b>:                {:d}/{:d} ({:d})", int(hero->MP(hero.get())), int(hero->MP_MAX(hero.get())), int(hero->mp_max * hero->intelligence))));
+  state->appendContent(F(fmt::format(
+      "<b>MP</b>:                {:d}/{:d} ({:d})", int(hero->MP(hero.get())),
+      int(hero->MP_MAX(hero.get())), int(hero->mp_max * hero->intelligence))));
   state->appendContent(State::END_LINE);
-  state->appendContent(F(fmt::format("<b>Speed</b>:             {} ({})", hero->SPEED(hero.get()), hero->speed)));
+  state->appendContent(F(fmt::format("<b>Speed</b>:             {} ({})",
+                                     hero->SPEED(hero.get()), hero->speed)));
   state->appendContent(State::END_LINE);
-  state->appendContent(F(fmt::format("<b>Defence</b>:           {:d}", int(hero->DEF(hero.get())))));
+  state->appendContent(F(fmt::format("<b>Defence</b>:           {:d}",
+                                     int(hero->DEF(hero.get())))));
   state->appendContent(State::END_LINE);
-  state->appendContent(F(fmt::format("<b>Damage</b>:            {}", hero->getDmgDesc())));
+  state->appendContent(
+      F(fmt::format("<b>Damage</b>:            {}", hero->getDmgDesc())));
   state->appendContent(State::END_LINE);
 
   std::string intLine = "          ";
-  std::fill_n(intLine.begin(), int((hero->INTELLIGENCE(hero.get())-1) * 10), '|');
+  std::fill_n(intLine.begin(), int((hero->INTELLIGENCE(hero.get()) - 1) * 10),
+              '|');
   std::string strLine = "          ";
-  std::fill_n(strLine.begin(), int((hero->STRENGTH(hero.get())-1) * 10), '|');
-  state->appendContent(F(fmt::format("<b>Strength</b>:          <b>[<span color='{{{{green}}}}'>{}</span>]</b>", strLine)));
+  std::fill_n(strLine.begin(), int((hero->STRENGTH(hero.get()) - 1) * 10), '|');
+  state->appendContent(F(fmt::format("<b>Strength</b>:          <b>[<span "
+                                     "color='{{{{green}}}}'>{}</span>]</b>",
+                                     strLine)));
   state->appendContent(State::END_LINE);
-  state->appendContent(F(fmt::format("<b>Intelligence</b>:      <b>[<span color='{{{{blue}}}}'>{}</span>]</b>", intLine)));
+  state->appendContent(F(fmt::format(
+      "<b>Intelligence</b>:      <b>[<span color='{{{{blue}}}}'>{}</span>]</b>",
+      intLine)));
   state->appendContent(State::END_LINE);
-  state->appendContent(F(fmt::format("<b>Spell level</b>:       {:d}", int((hero->INTELLIGENCE(hero.get())-1)*10))));
+  state->appendContent(
+      F(fmt::format("<b>Spell level</b>:       {:d}",
+                    int((hero->INTELLIGENCE(hero.get()) - 1) * 10))));
   state->appendContent(State::END_LINE);
   state->appendContent(State::END_LINE);
 
@@ -688,7 +703,8 @@ void HeroMode::render(std::shared_ptr<State> state) {
     state->appendContent(State::END_LINE);
   }
   if (hero->traits.size() == 0) {
-    state->appendContent(F(fmt::format("   <span color='grey'>No traits</span>")));
+    state->appendContent(
+        F(fmt::format("   <span color='grey'>No traits</span>")));
     state->appendContent(State::END_LINE);
   }
   state->appendContent(State::END_LINE);
@@ -700,7 +716,8 @@ void HeroMode::render(std::shared_ptr<State> state) {
     state->appendContent(State::END_LINE);
   }
   if (hero->activeEffects.size() == 0) {
-    state->appendContent(F(fmt::format("   <span color='grey'>No effects</span>")));
+    state->appendContent(
+        F(fmt::format("   <span color='grey'>No effects</span>")));
     state->appendContent(State::END_LINE);
   }
   state->appendContent(State::END_LINE);
@@ -808,6 +825,9 @@ void ObjectSelectMode::render(std::shared_ptr<State> state) {
   std::string letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
   auto n = 0;
   for (auto o : objects) {
+    if (n >= letters.size()) {
+      n = letters.size() - 1;
+    }
     state->appendContent(F(formatter(o, std::string{letters[n]})));
     state->appendContent(State::END_LINE);
     n++;
