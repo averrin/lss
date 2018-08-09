@@ -207,6 +207,20 @@ const std::vector<std::shared_ptr<Item>> LOOT_0 = {
     LEATHER_HELMET,
 };
 
+const std::vector<std::shared_ptr<Item>> LOOT_1 = {
+    DAGGER,
+    THROWING_KNIVES,
+    LEATHER_CUIRASS,
+    LEATHER_HELMET,
+    LEATHER_SHIELD,
+    LEATHER_GREAVES,
+    LEATHER_BOOTS,   
+    LEATHER_RIGHT_PAULDRON,
+    LEATHER_LEFT_PAULDRON,
+    LEATHER_RIGHT_GAUNTLET,   
+    LEATHER_LEFT_GAUNTLET, 
+};
+
 const std::vector<std::shared_ptr<Item>> WEAPONS_1 = {
     SWORD,
     DAGGER,

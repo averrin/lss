@@ -67,6 +67,7 @@ const LootBox POTIONS = LootBox(Prototype::POTIONS);
 const LootBox SCROLLS = LootBox(Prototype::SCROLLS);
 
 const LootBox LOOT_TIER_0 = LootBox(Prototype::LOOT_0);
+const LootBox LOOT_TIER_1 = LootBox(Prototype::LOOT_1);
 
 const LootBox ARMOR_TIER_1 = LootBox(Prototype::LEATHER_ARMOR);
 const LootBox WEAPONS_TIER_1 = LootBox(Prototype::WEAPONS_1);
