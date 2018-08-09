@@ -12,7 +12,7 @@ EnemySpec const RAT = {
     "rat", 0,
     2, 3, 0, 1,
     ds_1d3,
-    LootBox{1, {}},
+    LootBoxes::ZERO,
     {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB},
     Items{}
 };
@@ -21,7 +21,7 @@ EnemySpec const SNAKE = {
     "snake", 0,
     1.5, 3, 0, 1,
     ds_1d3,
-    LootBox{1, {}},
+    LootBoxes::ZERO,
     {},
     Items{}
 };
@@ -30,7 +30,7 @@ EnemySpec const VIPER = {
     "viper", 0,
     2, 3, 0, 1,
     ds_1d3,
-    LootBox{1, {}},
+    LootBoxes::ZERO,
     {},
     Items{Prototype::POISON_FANG}
 };
@@ -38,7 +38,7 @@ EnemySpec const BAT = {
     "bat", 0,
     1.5, 3, 0, 1,
     ds_1d3,
-    LootBox{1, {}},
+    LootBoxes::ZERO,
     {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB, Traits::FLY},
     Items{}, {} //vampire
 };
@@ -46,7 +46,7 @@ EnemySpec const BAT_LARGE = {
     "large bat", 0,
     1.5, 10, 0, 1,
     DamageSpec(0, 2, 3, DamageType::BASIC),
-    LootBox{100, {}},
+    LootBoxes::ZERO,
     {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB, Traits::FLY},
     Items{}, {} //vampire
 };
@@ -54,15 +54,10 @@ EnemySpec const GOBLIN = {
     "goblin", 1,
     1, 15, 0, 1,
     DamageSpec(0, 1, 3, DamageType::WEAPON),
-    LootBox{1, {}, {
-        {0.40, {}, LootBoxes::POTIONS, true},
-        {0.60, {}, {
-          {0.25, {Prototype::DAGGER}},
-          {0.25, {Prototype::HELMET}},
-          {0.25, {Prototype::GREAVES}},
-          {0.25, {Prototype::BOOTS}},
-          }, true},
-        {0.90, {Prototype::GOLD->setCount(50)}}}},
+    LootBox(1, {}, {
+        LootBox(0.40, LootBoxes::POTIONS),
+        LootBox(0.40, LootBoxes::LOOT_TIER_0),
+        LootBox(0.90, {Prototype::GOLD->setCount(50)})}),
     {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER, Traits::MOB, Traits::DUAL_WIELD},
     Items{Prototype::GOBLIN_DAGGER, Prototype::GOBLIN_DAGGER}
 };

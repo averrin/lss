@@ -16,12 +16,13 @@ ItemSpec const ENEMY = {"enemy item", ItemCategories::MISC,
 
 ItemSpec const PICK_AXE = {"pick axe", ItemCategories::WEAPONS,
                            WearableType::WEAPON_TWOHANDED};
-ItemSpec const GREAT_AXE = {"great axe", ItemCategories::WEAPONS,
+
+ItemSpec const TWO_HAND = {"great axe", ItemCategories::WEAPONS,
                             WearableType::WEAPON_TWOHANDED};
-ItemSpec const SWORD = {"sword", ItemCategories::WEAPONS, WearableType::WEAPON};
-ItemSpec const DAGGER = {"dagger", ItemCategories::WEAPONS,
+ItemSpec const ONE_HAND = {"sword", ItemCategories::WEAPONS, WearableType::WEAPON};
+ItemSpec const LIGHT_WEAPON = {"dagger", ItemCategories::WEAPONS,
                          WearableType::WEAPON_LIGHT};
-ItemSpec const GOLD_RING = {"gold ring", ItemCategories::JEWELLERY,
+ItemSpec const RING = {"ring", ItemCategories::JEWELLERY,
                             WearableType::RING};
 ItemSpec const TORCH = {"torch", ItemCategories::LIGHT, WearableType::LIGHT,
                         30000};
@@ -29,7 +30,7 @@ ItemSpec const LANTERN = {"lantern", ItemCategories::LIGHT, WearableType::LIGHT,
                           60000};
 ItemSpec const GOLD_COINS = {"gold coins", ItemCategories::MISC};
 ItemSpec const PLATE = {"plate", ItemCategories::ARMOR, WearableType::BODY};
-ItemSpec const LEATHER_ARMOR = {"leather armor", ItemCategories::ARMOR,
+ItemSpec const CUIRASS = {"cuirass", ItemCategories::ARMOR,
                                 WearableType::BODY};
 
 ItemSpec const HELMET = {"helmet", ItemCategories::ARMOR, WearableType::HEAD};

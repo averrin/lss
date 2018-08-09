@@ -565,8 +565,13 @@ bool NormalMode::processKey(KeyEvent event) {
         app->modeManager.toObjectSelect();
       } else {
         app->objectSelectMode->setHeader(F("Items to spawn: "));
+
+        std::set<std::shared_ptr<Item> all;
+        for (auto v : Prototype::ALL) {
+          all.insert(all.end(), v.begin(), v.end());
+        }
         app->objectSelectMode->setObjects(
-            utils::castObjects<Object>(Prototype::ALL));
+            utils::castObjects<Object>(all));
 
         Formatter formatter = [](std::shared_ptr<Object> o,
                                  std::string letter) {

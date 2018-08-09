@@ -5,7 +5,37 @@
 #include "lss/utils.hpp"
 
 struct LootBox {
-  float probability = 100;
+  LootBox(float p, std::vector<std::shared_ptr<Item>> loot, std::vector<LootBox> lbs) {
+    probability = p;
+    items = loot;
+    children = lbs;
+  }
+  LootBox(float p, std::vector<std::shared_ptr<Item>> loot, std::vector<LootBox> lbs, bool e) {
+    probability = p;
+    items = loot;
+    children = lbs;
+    exclusive = e;
+  }
+
+  LootBox(float p, std::vector<std::shared_ptr<Item>> loot) {
+    probability = p;
+    items = loot;
+  }
+
+  LootBox(float p, LootBox lb) {
+    probability = p;
+    children = {lb};
+    exclusive = lb.exclusive;
+  }
+
+  LootBox(std::vector<std::shared_ptr<Item>> loot) {
+    exclusive = true;
+    float p = 1.f / loot.size();
+    for (auto i : loot) {
+      children.push_back(LootBox(p, {i}));
+    }
+  }
+  float probability = 1;
   Items items;
   std::vector<LootBox> children;
   bool exclusive = false;
@@ -32,40 +62,15 @@ struct LootBox {
 };
 
 namespace LootBoxes {
-const std::vector<LootBox> POTIONS = {
-    {0.1, {Prototype::POTION_HEAL_LESSER}},
-    {0.1, {Prototype::POTION_HEAL}},
-    {0.1, {Prototype::POTION_GOD_SPEED}},
-    // {.30, {Prototype::POTION_HP_BOOST}},
-    {0.1, {Prototype::POTION_VISIBILITY_BOOST}},
-    {0.1, {Prototype::POTION_CRIT_BOOST}},
-    {0.1, {Prototype::POTION_LEVITATION}},
-    {0.1, {Prototype::POTION_REGENERATION}},
-    {0.1, {Prototype::POTION_POISON}},
-    {0.1, {Prototype::POTION_CONFUSION}},
-    {0.1, {Prototype::POTION_MANA}},
-};
+const LootBox ZERO = LootBox(0, {});
+const LootBox POTIONS = LootBox(Prototype::POTIONS);
+const LootBox SCROLLS = LootBox(Prototype::SCROLLS);
 
-const std::vector<LootBox> SCROLLS = {
-    {0.30, {Prototype::SCROLL_IDENTIFICATION}},
-    {0.30, {Prototype::SCROLL_REVEAL}},
-    {0.30, {Prototype::SCROLL_TELEPORT}}};
+const LootBox LOOT_TIER_0 = LootBox(Prototype::LOOT_0);
 
-const std::vector<LootBox> WEAPONS_TIER_1 = {
-    {0.50, {Prototype::SWORD}},
-    {0.50, {Prototype::DAGGER}}
-};
-const std::vector<LootBox> WEAPONS_TIER_2 = {
-    // {0.50, {Prototype::POISON_SWORD}},
-    {0.50, {Prototype::POISON_DAGGER}}
-};
-const std::vector<LootBox> ARMOR_TIER_1 = {
-  {0.20, {Prototype::PLATE}},
-  {0.20, {Prototype::HELMET}},
-  {0.20, {Prototype::SHIELD}},
-  {0.20, {Prototype::GREAVES}},
-  {0.20, {Prototype::BOOTS}},
-};
+const LootBox ARMOR_TIER_1 = LootBox(Prototype::LEATHER_ARMOR);
+const LootBox WEAPONS_TIER_1 = LootBox(Prototype::WEAPONS_1);
+const LootBox WEAPONS_TIER_2 = LootBox(Prototype::WEAPONS_2);
 }; // namespace LootBoxes
 
 #endif // __LOOTBOX_H_

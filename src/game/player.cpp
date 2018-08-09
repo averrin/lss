@@ -85,7 +85,7 @@ Player::Player() : Creature() {
   inventory.push_back(sword);
   inventory.push_back(Prototype::TORCH->clone());
   inventory.push_back(Prototype::POTION_HEAL_LESSER->clone());
-  auto armor = Prototype::BASIC_LEATHER_ARMOR->clone();
+  auto armor = Prototype::BASIC_LEATHER_CUIRASS->clone();
   inventory.push_back(armor);
 
   auto knives = Prototype::THROWING_KNIVES->clone();
