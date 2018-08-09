@@ -11,6 +11,7 @@
 #include "lss/game/trait.hpp"
 #include <lss/game/damageSpec.hpp>
 #include <lss/game/location.hpp>
+#include "lss/game/content/traits.hpp"
 
 class Creature : public Object {
 public:

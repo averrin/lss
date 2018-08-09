@@ -1,6 +1,7 @@
 #ifndef __LOOTBOX_H_
 #define __LOOTBOX_H_
 #include "lss/game/item.hpp"
+#include "lss/game/content/items.hpp"
 #include "lss/utils.hpp"
 
 struct LootBox {

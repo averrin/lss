@@ -1,6 +1,6 @@
 #ifndef __CELL_H_
 #define __CELL_H_
-#include "lss/game/trait.hpp"
+#include "lss/game/content/traits.hpp"
 #include <algorithm>
 #include <cmath>
 #include <memory>

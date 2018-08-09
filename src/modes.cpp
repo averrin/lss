@@ -7,6 +7,10 @@
 #include "lss/modes.hpp"
 #include "lss/utils.hpp"
 
+#include "lss/game/content/enemies.hpp"
+#include "lss/game/content/items.hpp"
+#include "lss/game/content/traits.hpp"
+
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 
 // TODO: to utils

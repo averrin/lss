@@ -1,6 +1,7 @@
 #ifndef __SPAWNTABLE_H_
 #define __SPAWNTABLE_H_
 #include "lss/game/enemy.hpp"
+#include "lss/game/content/enemies.hpp"
 #include <map>
 
 namespace SpawnTable {
