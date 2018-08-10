@@ -68,6 +68,22 @@ const std::vector<std::shared_ptr<Item>> LOOT_1 = {
     LEATHER_LEFT_GAUNTLET,
 };
 
+const std::vector<std::shared_ptr<Item>> LOOT_2 = {
+    LANTERN,
+    STEEL_SWORD,
+    STEEL_AXE,
+    GREAT_AXE, RAPIER,
+    IRON_CUIRASS,
+    IRON_HELMET,
+    IRON_SHIELD,
+    IRON_GREAVES,
+    IRON_BOOTS,
+    IRON_RIGHT_PAULDRON,
+    IRON_LEFT_PAULDRON,
+    IRON_RIGHT_GAUNTLET,
+    IRON_LEFT_GAUNTLET,
+};
+
 const std::vector<std::shared_ptr<Item>> WEAPONS_1 = {
     SWORD, DAGGER, THROWING_KNIVES, RAPIER, AXE,
 };
@@ -90,6 +106,12 @@ const std::vector<std::shared_ptr<Item>> ARTEFACTS_1 = {
     SWORD_OF_DUALWIELD,
     LEFT_GAUNTLET_OF_DUEL,
     POISON_DAGGER, AMULET_OF_BERSERK
+};
+
+const std::vector<std::shared_ptr<Item>> ARTEFACTS_2 = {
+    AMULET_OF_ACID_IMMUNE, AMULET_OF_FIRE_IMMUNE,
+    RING_OF_ACID_RESIST, RING_OF_FIRE_RESIST,
+    RING_OF_REGEN, RING_OF_MANA_RESTORE,
 };
 
 const std::vector<std::shared_ptr<Item>> ENEMY = {
@@ -143,7 +165,7 @@ const std::vector<std::shared_ptr<Item>> POTIONS = {
 };
 
 const std::vector<std::vector<std::shared_ptr<Item>>> ALL = {
-    DEBUG,      ARTEFACTS_0,   ARTEFACTS_1, POTIONS,   SCROLLS,
+    DEBUG,      ARTEFACTS_0,   ARTEFACTS_1,  ARTEFACTS_2, POTIONS,   SCROLLS,
     IRON_ARMOR, STEEL_ARMOR,   WEAPONS_1,   WEAPONS_2, MISC,
     LIGHT,      LEATHER_ARMOR, BASIC_ITEMS,
 };

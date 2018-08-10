@@ -18,6 +18,7 @@ enum class DamageType {
   LIGHT,
   DARKNESS,
   WATER,
+  ELECTRICITY,
 };
 
 class Damage;

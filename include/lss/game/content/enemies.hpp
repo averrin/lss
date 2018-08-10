@@ -133,7 +133,6 @@ EnemySpec const ORK_BERSERK = {
     {Traits::FIRE_VULNERABLE, Traits::BLOOD_THIRST}, Items{}
 };
 
-//TODO: better loot
 EnemySpec const ORK_BLACK = {
     "black ork", 2,
     1.1, 75, 0, 2,
@@ -141,11 +140,12 @@ EnemySpec const ORK_BLACK = {
     LootBox(1, {Prototype::TORCH}, {
         LootBox(0.50, {Prototype::POTION_HEAL}),
         LootBox(0.20, LootBoxes::POTIONS),
-        LootBox(0.80, LootBoxes::LOOT_TIER_1),
+        LootBox(0.80, LootBoxes::LOOT_TIER_2),
         LootBox(0.90, {Prototype::GOLD->setCount(100)})
     }),
     {}, Items{Prototype::TORCH, Prototype::ORK_SWORD, Prototype::LEATHER_SHIELD, Prototype::LEATHER_CUIRASS}
 };
+
 EnemySpec const PIXI = {
     "pixi", 3,
     3, 25, 30, 0,
@@ -154,6 +154,7 @@ EnemySpec const PIXI = {
         LootBox(0.40, LootBoxes::SCROLLS),
         LootBox(0.10, {Prototype::SPEED_RING})}),
     {Traits::FLY, Traits::MOB}};
+
 EnemySpec const OGRE = {
     "ogre", 4,
     1, 100, 0, 2,
@@ -162,6 +163,7 @@ EnemySpec const OGRE = {
     {Traits::NIGHT_VISION, Traits::FIRE_VULNERABLE},
     Items{Prototype::GREAT_AXE},
 };
+
 EnemySpec const I_OGRE = {
     "loooong ogre", 4,
     1, 1000000, 0, 2,

@@ -64,6 +64,8 @@ const LootBox WEAPONS_TIER_2 = LootBox(Prototype::WEAPONS_2);
 const LootBox LOOT_TIER_0 = LootBox(Prototype::LOOT_0);
 const LootBox LOOT_TIER_1 = LootBox(
     {LootBox(0.3, LOOT_TIER_0), LootBox(0.7, Prototype::LOOT_1, {}, true)});
+const LootBox LOOT_TIER_2 = LootBox(
+    {LootBox(0.3, LOOT_TIER_1), LootBox(0.7, Prototype::LOOT_2, {}, true)});
 
 /* Location loot */
 const LootBox DUNGEON_0 = LootBox({
@@ -74,7 +76,10 @@ const LootBox DUNGEON_1 = LootBox({
     LootBox(0.3, LOOT_TIER_1), LootBox(0.3, POTIONS), LootBox(0.3, SCROLLS),
     LootBox(0.1, Prototype::ARTEFACTS_1, {}, true),
 });
-const LootBox DUNGEON_2 = DUNGEON_1;
+const LootBox DUNGEON_2 = LootBox({
+    LootBox(0.3, LOOT_TIER_2), LootBox(0.3, POTIONS), LootBox(0.3, SCROLLS),
+    LootBox(0.1, Prototype::ARTEFACTS_2, {}, true),
+});
 const LootBox DUNGEON_3 = DUNGEON_2;
 }; // namespace LootBoxes
 

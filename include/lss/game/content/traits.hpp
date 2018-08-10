@@ -31,6 +31,14 @@ const Trait FIRE_VULNERABLE = {"Fire vulnerable"};
 const Trait ACID_RESIST = {"Acid resist"};
 const Trait ACID_IMMUNE = {"Acid immune"};
 const Trait ACID_VULNERABLE = {"Acid vulnerable"};
+
+const Trait ICE_RESIST =     {"Ice resist"};
+const Trait ICE_IMMUNE =     {"Ice immune"};
+const Trait ICE_VULNERABLE = {"Ice vulnerable"};
+
+const Trait ELECTRICITY_RESIST =     {"Electricity resist"};
+const Trait ELECTRICITY_IMMUNE =     {"Electricity immune"};
+const Trait ELECTRICITY_VULNERABLE = {"Electricity vulnerable"};
 } // namespace Traits
 
 #endif // __TRAITS_H_

@@ -4,6 +4,7 @@
 #include "lss/game/content/specs.hpp"
 #include "lss/game/content/spells.hpp"
 #include "lss/game/item.hpp"
+#include "lss/game/effect.hpp"
 
 namespace Prototype {
 const auto ROBE_OF_INTELLIGENCE = std::make_shared<Item>(
@@ -53,6 +54,35 @@ const auto POISON_DAGGER = std::make_shared<Item>(
         std::make_shared<OnHitEffect>(
             std::make_shared<LastingEffect>(OverTimeEffects::POISON, 5000),
             0.3)});
+
+/* Immunes */
+const auto AMULET_OF_FIRE_IMMUNE = std::make_shared<Item>(
+    "gold neckless", "amulet of fire immune", ItemType::AMULET,
+    Effects{std::make_shared<TraitEffect>(Traits::FIRE_IMMUNE)});
+
+const auto AMULET_OF_ACID_IMMUNE = std::make_shared<Item>(
+    "old copper neckless", "amulet of acid immune", ItemType::AMULET,
+    Effects{std::make_shared<TraitEffect>(Traits::ACID_IMMUNE)});
+
+/* Resists */
+
+const auto RING_OF_ACID_RESIST = std::make_shared<Item>(
+    "old copper ring", "ring of acid resist", ItemType::RING,
+    Effects{std::make_shared<TraitEffect>(Traits::ACID_RESIST)});
+
+const auto RING_OF_FIRE_RESIST = std::make_shared<Item>(
+    "red copper ring", "ring of fire resist", ItemType::RING,
+    Effects{std::make_shared<TraitEffect>(Traits::FIRE_RESIST)});
+
+/* EoT */
+
+const auto RING_OF_REGEN = std::make_shared<Item>(
+    "emerald ring", "ring of regeneration", ItemType::RING,
+    Effects{OverTimeEffects::REGEN});
+
+const auto RING_OF_MANA_RESTORE = std::make_shared<Item>(
+    "sapfire ring", "ring of mana restore", ItemType::RING,
+    Effects{OverTimeEffects::MANA_RESTORE_LESSER});
 }
 
 #endif // __ARTEFACTS_H_

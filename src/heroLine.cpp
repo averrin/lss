@@ -61,7 +61,7 @@ void HeroLine::update() {
   std::fill_n(ldLine.begin(), l, '|');
 
   setContent(
-      {F(fmt::format("<b>{}</b> [{}]   {}", hero->name, hero->level, effects)),
+      {F(fmt::format("<b>{}</b>   {}", hero->name, effects)),
        F(fmt::format("   <b>HP:[<span color='{{{{green}}}}'>{}</span>]</b>"
                      "   <b>MP:[<span color='{{{{blue}}}}'>{}</span>]</b>    "
                      "<b>DMG</b>:{}   "

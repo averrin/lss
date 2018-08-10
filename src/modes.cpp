@@ -740,7 +740,9 @@ void GameOverMode::render(std::shared_ptr<State> state) {
   }
 
   state->appendContent(
-      F(fmt::format("<b>{}</b> [{}]", hero->name, hero->level)));
+      F(fmt::format("<b>{}</b>", hero->name)));
+  state->appendContent(State::END_LINE);
+  state->appendContent(F(fmt::format("DEPTH:           <b>{}</b>", hero->currentLocation->depth)));
   state->appendContent(State::END_LINE);
   state->appendContent(F(fmt::format("GOLD:            <b>{}</b>", gold)));
   state->appendContent(State::END_LINE);
