@@ -89,7 +89,7 @@ const std::vector<std::shared_ptr<Item>> ARTEFACTS_1 = {
     LEATHER_LEFT_GAUNTLET_OF_STRENGTH,
     SWORD_OF_DUALWIELD,
     LEFT_GAUNTLET_OF_DUEL,
-    POISON_DAGGER,
+    POISON_DAGGER, AMULET_OF_BERSERK
 };
 
 const std::vector<std::shared_ptr<Item>> ENEMY = {

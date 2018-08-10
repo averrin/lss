@@ -18,6 +18,7 @@ std::map<int, std::map<const EnemySpec, float>> DUNGEON = {
      {
          {EnemyType::RAT, 0.5},
          {EnemyType::BAT, 0.4},
+         {EnemyType::ANT, 0.1},
          {EnemyType::SNAKE, 0.3},
          {EnemyType::VIPER, 0.2},
          {EnemyType::BAT_LARGE, 0.15},
@@ -27,6 +28,8 @@ std::map<int, std::map<const EnemySpec, float>> DUNGEON = {
     {2,
      {
          {EnemyType::BAT, 0.2},
+         {EnemyType::ANT, 0.3},
+         {EnemyType::ANT_QUEEN, 0.1},
          {EnemyType::BAT_LARGE, 0.4},
          {EnemyType::SNAKE, 0.3},
          {EnemyType::VIPER, 0.2},
@@ -36,8 +39,10 @@ std::map<int, std::map<const EnemySpec, float>> DUNGEON = {
      }},
     {3,
      {
-         {EnemyType::BAT_LARGE, 0.1},
+         {EnemyType::ANT, 0.3},
+         {EnemyType::ANT_QUEEN, 0.2},
          {EnemyType::ORK, 0.4},
+         {EnemyType::ORK_BERSERK, 0.2},
          {EnemyType::ORK_BLACK, 0.4},
          {EnemyType::GOBLIN_LIEUTENANT, 0.2},
          {EnemyType::GOBLIN_ROGUE, 0.1},

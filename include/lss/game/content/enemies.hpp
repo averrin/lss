@@ -56,7 +56,16 @@ EnemySpec const ANT = {
     1.5, 10, 0, 5,
     DamageSpec(0, 2, 3, DamageType::ACID),
     LootBoxes::ZERO,
-    {Traits::MOB},
+    {Traits::MOB, Traits::FIRE_VULNERABLE},
+    Items{}, {} //vampire
+};
+
+EnemySpec const ANT_QUEEN = {
+    "giant ant", 0,
+    1.5, 20, 0, 8,
+    DamageSpec(1, 3, 3, DamageType::ACID),
+    LootBoxes::ZERO,
+    {Traits::MOB, Traits::FIRE_VULNERABLE},
     Items{}, {} //vampire
 };
 
@@ -111,6 +120,19 @@ EnemySpec const ORK = {
     {}, Items{Prototype::TORCH, Prototype::ORK_SWORD, Prototype::LEATHER_SHIELD}
 };
 
+EnemySpec const ORK_BERSERK = {
+    "ork berserk", 2,
+    1.5, 40, 0, 0,
+    DamageSpec(1, 3, 8, DamageType::WEAPON),
+    LootBox(1, {}, {
+        LootBox(0.40, {Prototype::POTION_HEAL}),
+        LootBox(0.80, LootBoxes::LOOT_TIER_1),
+        LootBox(0.10, Prototype::ARTEFACTS_1),
+        LootBox(0.90, {Prototype::GOLD->setCount(100)})
+    }),
+    {Traits::FIRE_VULNERABLE, Traits::BLOOD_THIRST}, Items{}
+};
+
 //TODO: better loot
 EnemySpec const ORK_BLACK = {
     "black ork", 2,
@@ -137,7 +159,7 @@ EnemySpec const OGRE = {
     1, 100, 0, 2,
     DamageSpec(1, 1, 6, DamageType::WEAPON),
     LootBox(0.80, {Prototype::GREAT_AXE}),
-    {Traits::NIGHT_VISION},
+    {Traits::NIGHT_VISION, Traits::FIRE_VULNERABLE},
     Items{Prototype::GREAT_AXE},
 };
 EnemySpec const I_OGRE = {
@@ -154,8 +176,9 @@ EnemySpec const I_OGRE = {
     SNAKE, VIPER,
     BAT, BAT_LARGE,
     ANT,
+    ANT_QUEEN,
     GOBLIN, GOBLIN_ROGUE, GOBLIN_LIEUTENANT,
-    ORK, ORK_BLACK,
+    ORK, ORK_BLACK, ORK_BERSERK,
     PIXI,
     OGRE,
     I_OGRE,

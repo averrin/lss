@@ -169,6 +169,11 @@ std::shared_ptr<Damage> Creature::updateDamage(std::shared_ptr<Damage> damage,
     damage->damage += spec.criticalHit();
     damage->isCritical = true;
     return damage;
+  } else if (currentCell->hasFeature(CellFeature::BLOOD) && hasTrait(Traits::BLOOD_THIRST)) {
+    damage->traits.push_back(Traits::BLOOD_THIRST);
+    damage->damage += spec.criticalHit();
+    damage->isCritical = true;
+    return damage;
   } else if (r < CRIT(this)) {
     damage->damage += spec.criticalHit();
     damage->isCritical = true;
@@ -300,6 +305,12 @@ void Creature::applyDamage(std::shared_ptr<Object> a,
   if (damage->spec.type == DamageType::FIRE && hasTrait(Traits::FIRE_RESIST)) {
     damage->damage /= 2;
   }
+  if (damage->spec.type == DamageType::ACID && hasTrait(Traits::ACID_VULNERABLE)) {
+    damage->damage *= 1.5;
+  }
+  if (damage->spec.type == DamageType::FIRE && hasTrait(Traits::FIRE_VULNERABLE)) {
+    damage->damage *= 1.5;
+  }
 
   if (damage->spec.type == DamageType::WEAPON &&
       hasTrait(Traits::WEAPON_IMMUNE)) {
@@ -316,6 +327,13 @@ void Creature::applyDamage(std::shared_ptr<Object> a,
   if (damage->spec.type == DamageType::MAGIC &&
       hasTrait(Traits::MAGIC_RESIST)) {
     damage->damage /= 2;
+  }
+
+  if (damage->spec.type == DamageType::WEAPON && hasTrait(Traits::WEAPON_VULNERABLE)) {
+    damage->damage *= 1.5;
+  }
+  if (damage->spec.type == DamageType::MAGIC && hasTrait(Traits::MAGIC_VULNERABLE)) {
+    damage->damage *= 1.5;
   }
 
   hp -= damage->damage;

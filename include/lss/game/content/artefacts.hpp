@@ -10,6 +10,10 @@ const auto ROBE_OF_INTELLIGENCE = std::make_shared<Item>(
     "blue robe", "robe of intelligence", ItemType::CLOAK,
     Effects{std::make_shared<IntelligenceModifier>(0.1)});
 
+const auto AMULET_OF_BERSERK = std::make_shared<Item>(
+    "ruby neckless", "amulet of berserk", ItemType::AMULET,
+    Effects{std::make_shared<TraitEffect>(Traits::BLOOD_THIRST)});
+
 const auto LEATHER_CUIRASS_OF_HP = std::make_shared<Item>(
     "damaged leather cuirass", "leather cuirass of health", ItemType::CUIRASS,
     Effects{std::make_shared<ArmorValue>(R::I(1, 2)),

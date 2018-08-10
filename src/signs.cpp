@@ -95,10 +95,12 @@ const std::map<EnemySpec, std::string> enemySigns = {
     {EnemyType::SNAKE, "s"},        {EnemyType::VIPER, "s"},
     {EnemyType::BAT_LARGE, "B"},    {EnemyType::GOBLIN, "g"},
     {EnemyType::ORK_BLACK, "o"},    {EnemyType::ORK, "o"},
+    {EnemyType::ORK_BERSERK, "o"},
     {EnemyType::PIXI, "p"},         {EnemyType::OGRE, "O"},
     {EnemyType::I_OGRE, "O"},       {EnemyType::GOBLIN_LIEUTENANT, "g"},
     {EnemyType::GOBLIN_ROGUE, "g"},
     {EnemyType::ANT, "a"},
+    {EnemyType::ANT_QUEEN, "a"},
 };
 
 const std::map<EnemySpec, std::string> enemyColors = {
@@ -109,6 +111,7 @@ const std::map<EnemySpec, std::string> enemyColors = {
     {EnemyType::BAT_LARGE, "#a9a9a9"},
     {EnemyType::GOBLIN, "#00f000"},
     {EnemyType::ORK, "#22aa22"},
+    {EnemyType::ORK_BERSERK, "#aa2222"},
     {EnemyType::ORK_BLACK, "#555"},
     {EnemyType::OGRE, "#006400"},
     {EnemyType::I_OGRE, "#cc0044"},
@@ -116,6 +119,7 @@ const std::map<EnemySpec, std::string> enemyColors = {
     {EnemyType::GOBLIN_LIEUTENANT, "#008b8b"},
     {EnemyType::GOBLIN_ROGUE, "#2f4f4f"},
     {EnemyType::ANT, "#8f4f4f"},
+    {EnemyType::ANT_QUEEN, "#8f6f4f"},
 };
 
 const std::map<CellSpec, std::string> cellSigns = {
