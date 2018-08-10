@@ -50,6 +50,16 @@ EnemySpec const BAT_LARGE = {
     {Traits::NIGHT_VISION, Traits::SHADOW_RUNNER, Traits::MOB, Traits::FLY},
     Items{}, {} //vampire
 };
+
+EnemySpec const ANT = {
+    "giant ant", 0,
+    1.5, 10, 0, 5,
+    DamageSpec(0, 2, 3, DamageType::ACID),
+    LootBoxes::ZERO,
+    {Traits::MOB},
+    Items{}, {} //vampire
+};
+
 EnemySpec const GOBLIN = {
     "goblin", 1,
     1, 15, 0, 1,
@@ -61,7 +71,7 @@ EnemySpec const GOBLIN = {
     {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER, Traits::MOB, Traits::DUAL_WIELD},
     Items{Prototype::GOBLIN_DAGGER, Prototype::GOBLIN_DAGGER}
 };
-// Goblin lieutenant
+
 EnemySpec const GOBLIN_LIEUTENANT = {
     "goblin lieutenant", 1,
     1, 25, 0, 1,
@@ -143,6 +153,7 @@ EnemySpec const I_OGRE = {
     RAT,
     SNAKE, VIPER,
     BAT, BAT_LARGE,
+    ANT,
     GOBLIN, GOBLIN_ROGUE, GOBLIN_LIEUTENANT,
     ORK, ORK_BLACK,
     PIXI,
