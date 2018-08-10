@@ -2,7 +2,6 @@
 #define __SPECS_H_
 #include "lss/game/itemSpec.hpp"
 
-
 namespace ItemType {
 ItemSpec const GRASS = {"herb", ItemCategories::CONSUMABLES};
 ItemSpec const SCROLL = {"scroll", ItemCategories::CONSUMABLES};
@@ -18,20 +17,21 @@ ItemSpec const PICK_AXE = {"pick axe", ItemCategories::WEAPONS,
                            WearableType::WEAPON_TWOHANDED};
 
 ItemSpec const TWO_HAND = {"great axe", ItemCategories::WEAPONS,
-                            WearableType::WEAPON_TWOHANDED};
-ItemSpec const ONE_HAND = {"sword", ItemCategories::WEAPONS, WearableType::WEAPON};
+                           WearableType::WEAPON_TWOHANDED};
+ItemSpec const ONE_HAND = {"sword", ItemCategories::WEAPONS,
+                           WearableType::WEAPON};
 ItemSpec const LIGHT_WEAPON = {"dagger", ItemCategories::WEAPONS,
-                         WearableType::WEAPON_LIGHT};
-ItemSpec const RING = {"ring", ItemCategories::JEWELLERY,
-                            WearableType::RING};
+                               WearableType::WEAPON_LIGHT};
+ItemSpec const RING = {"ring", ItemCategories::JEWELLERY, WearableType::RING};
+ItemSpec const AMULET = {"amulet", ItemCategories::JEWELLERY,
+                         WearableType::NECK};
 ItemSpec const TORCH = {"torch", ItemCategories::LIGHT, WearableType::LIGHT,
                         30000};
 ItemSpec const LANTERN = {"lantern", ItemCategories::LIGHT, WearableType::LIGHT,
                           60000};
 ItemSpec const GOLD_COINS = {"gold coins", ItemCategories::MISC};
 ItemSpec const PLATE = {"plate", ItemCategories::ARMOR, WearableType::BODY};
-ItemSpec const CUIRASS = {"cuirass", ItemCategories::ARMOR,
-                                WearableType::BODY};
+ItemSpec const CUIRASS = {"cuirass", ItemCategories::ARMOR, WearableType::BODY};
 
 ItemSpec const HELMET = {"helmet", ItemCategories::ARMOR, WearableType::HEAD};
 ItemSpec const SHIELD = {"shield", ItemCategories::ARMOR, WearableType::SHIELD};
@@ -53,6 +53,5 @@ ItemSpec const CORPSE = {"corpse", ItemCategories::CONSUMABLES};
 
 ItemSpec const THROWING_KNIVES = {"throwing knives", ItemCategories::WEAPONS};
 }; // namespace ItemType
-
 
 #endif // __SPECS_H_

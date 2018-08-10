@@ -1,8 +1,8 @@
 #ifndef __SCROLLS_H_
 #define __SCROLLS_H_
-#include "lss/game/item.hpp"
 #include "lss/game/content/specs.hpp"
 #include "lss/game/content/spells.hpp"
+#include "lss/game/item.hpp"
 
 namespace Prototype {
 const auto SCROLL_IDENTIFICATION = std::make_shared<Consumable>(

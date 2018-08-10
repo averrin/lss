@@ -106,8 +106,8 @@ bool TargetMode::processKey(KeyEvent event) {
     if (d == std::nullopt)
       break;
     auto nc = app->hero->currentLocation->getCell(
-        app->hero->currentLocation
-            ->cells[app->state->cursor.y][app->state->cursor.x],
+        app->hero->currentLocation->cells[app->state->cursor.y]
+                                         [app->state->cursor.x],
         *utils::getDirectionByName(*d));
     auto location = app->hero->currentLocation;
     auto line = location->getLine(app->hero->currentCell, nc);
@@ -126,8 +126,8 @@ bool TargetMode::processKey(KeyEvent event) {
   } break;
   case SDL_SCANCODE_T:
   case SDL_SCANCODE_RETURN:
-    callback(app->hero->currentLocation
-                 ->cells[app->state->cursor.y][app->state->cursor.x]);
+    callback(app->hero->currentLocation->cells[app->state->cursor.y]
+                                              [app->state->cursor.x]);
     return true;
     break;
   }
@@ -191,8 +191,8 @@ bool InspectMode::processKey(KeyEvent event) {
     if (d == std::nullopt)
       break;
     auto nc = app->hero->currentLocation->getCell(
-        app->hero->currentLocation
-            ->cells[app->state->cursor.y][app->state->cursor.x],
+        app->hero->currentLocation->cells[app->state->cursor.y]
+                                         [app->state->cursor.x],
         *utils::getDirectionByName(*d));
     app->state->cursor = {nc->x, nc->y};
     app->state->invalidate();
@@ -760,7 +760,7 @@ void GameOverMode::render(std::shared_ptr<State> state) {
 
   state->appendContent(F(fmt::format("<b>KILLS</b>:")));
   state->appendContent(State::END_LINE);
-  for (auto [name, kills] : hero->report.kills) {
+  for (auto[name, kills] : hero->report.kills) {
     state->appendContent(
         F(fmt::format("{:14}   <b>{}</b>", name + ":", kills)));
     state->appendContent(State::END_LINE);

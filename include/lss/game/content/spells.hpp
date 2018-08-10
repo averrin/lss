@@ -1,8 +1,8 @@
 #ifndef __SPELLS_H_
 #define __SPELLS_H_
-#include "lss/game/spell.hpp"
-#include "lss/game/content/traits.hpp"
 #include "lss/game/content/lastingSpells.hpp"
+#include "lss/game/content/traits.hpp"
+#include "lss/game/spell.hpp"
 
 namespace Spells {
 const auto REVEAL = std::make_shared<Spell>("Reveal", 2, 50, 2000);
@@ -19,36 +19,33 @@ const auto HEAL_GREATER = std::make_shared<Spell>("Greater Heal", 3, 45, 5000);
 
 /* COMBAT */
 const auto FIREBALL = std::make_shared<RadiusSpell>(
-    "Fireball", 1,
-    std::make_shared<DamageSpell>("Fire damage",
-                                  DamageSpec(0, 2, 6, DamageType::FIRE),
-                                  TerrainType::FIREBALL),
+    "Fireball", 1, std::make_shared<DamageSpell>(
+                       "Fire damage", DamageSpec(0, 2, 6, DamageType::FIRE),
+                       TerrainType::FIREBALL),
     1.5, 20);
 const auto FIREBLAST = std::make_shared<RadiusSpell>(
-    "Fireblast", 3,
-    std::make_shared<DamageSpell>("Fire damage",
-                                  DamageSpec(0, 2, 6, DamageType::FIRE),
-                                  TerrainType::FIREBALL),
+    "Fireblast", 3, std::make_shared<DamageSpell>(
+                        "Fire damage", DamageSpec(0, 2, 6, DamageType::FIRE),
+                        TerrainType::FIREBALL),
     3.5, 40);
 
 const auto FIRESTREAM = std::make_shared<LineSpell>(
-    "Firestream", 2,
-    std::make_shared<DamageSpell>("Fire damage",
-                                  DamageSpec(0, 2, 6, DamageType::FIRE),
-                                  TerrainType::FIREBALL),
+    "Firestream", 2, std::make_shared<DamageSpell>(
+                         "Fire damage", DamageSpec(0, 2, 6, DamageType::FIRE),
+                         TerrainType::FIREBALL),
     4, 20);
 
 const auto FIRESTRIKE = std::make_shared<TargetSpell>(
-    "Firestrike", 0,
-    std::make_shared<DamageSpell>("Fire damage",
-                                  DamageSpec(0, 2, 6, DamageType::FIRE),
-                                  TerrainType::FIREBALL),
+    "Firestrike", 0, std::make_shared<DamageSpell>(
+                         "Fire damage", DamageSpec(0, 2, 6, DamageType::FIRE),
+                         TerrainType::FIREBALL),
     4, 10);
 
 const auto ACIDSTRIKE = std::make_shared<TargetSpell>(
-    "Acidstrike", 1,
-    std::make_shared<DamageSpell>("Acid damage", DamageSpec(2, 3, 6, DamageType::ACID),
-                                 TerrainType::FIREBALL), 4, 20);
+    "Acidstrike", 1, std::make_shared<DamageSpell>(
+                         "Acid damage", DamageSpec(2, 3, 6, DamageType::ACID),
+                         TerrainType::FIREBALL),
+    4, 20);
 
 /* LIGHT */
 const auto FLASH = std::make_shared<RadiusSpell>(
@@ -83,9 +80,8 @@ const auto RESTORE_MANA = std::make_shared<Spell>("Greater mana");
 
 const auto ACID_LIGHT_FOREVER = std::make_shared<TargetSpell>(
     "Eternal green Light", 0,
-    std::make_shared<CellSpell>("Light", TerrainType::ACID_LIGHT_FOREVER), 6, 0);
-
-
+    std::make_shared<CellSpell>("Light", TerrainType::ACID_LIGHT_FOREVER), 6,
+    0);
 
 const std::vector<std::shared_ptr<Spell>> USABLE = {
     REVEAL,
@@ -118,7 +114,5 @@ const std::vector<std::shared_ptr<Spell>> USABLE = {
     TOGGLE_JUMPY,
 };
 } // namespace Spells
-
-
 
 #endif // __SPELLS_H_

@@ -49,7 +49,7 @@ namespace LootTable {
 std::map<int, LootBox> DUNGEON = {
     {0, LootBox(0.06, LootBoxes::DUNGEON_0)},
     {1, LootBox(0.08, LootBoxes::DUNGEON_1)},
-    {2, LootBox(0.1, LootBoxes::DUNGEON_2)},
+    {2, LootBox(0.10, LootBoxes::DUNGEON_2)},
     {3, LootBox(0.12, LootBoxes::DUNGEON_3)},
 };
 }

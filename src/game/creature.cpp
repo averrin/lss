@@ -184,7 +184,7 @@ std::shared_ptr<Damage> Creature::getDamage(std::shared_ptr<Object>) {
       std::make_shared<Damage>(DamageSpec(0, 0, 0, DamageType::WEAPON));
   auto primaryDmg = getPrimaryDmg();
   if (primaryDmg != std::nullopt) {
-    auto [primarySlot, spec] = *primaryDmg;
+    auto[primarySlot, spec] = *primaryDmg;
     damage = updateDamage(damage, spec);
   }
   auto haveLeft =
@@ -201,7 +201,7 @@ std::shared_ptr<Damage> Creature::getDamage(std::shared_ptr<Object>) {
           }) > 0;
   auto secondaryDmg = getSecondaryDmg(nullptr);
   if (secondaryDmg != std::nullopt && haveLeft) {
-    auto [secondarySlot, spec] = *secondaryDmg;
+    auto[secondarySlot, spec] = *secondaryDmg;
     if (hasTrait(Traits::DUAL_WIELD)) {
       damage = updateDamage(damage, spec);
     } else {

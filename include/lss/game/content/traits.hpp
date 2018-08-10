@@ -28,6 +28,4 @@ const Trait ACID_RESIST = {"Acid resist"};
 const Trait ACID_IMMUNE = {"Acid immune"};
 } // namespace Traits
 
-
-
 #endif // __TRAITS_H_

@@ -32,33 +32,29 @@ const std::map<TerrainSpec, std::string> terrainColors = {
 };
 
 const std::map<ItemSpec, std::string> itemSigns = {
-    {ItemType::CORPSE, "%"},
-    {ItemType::ROCK, "*"},
-    {ItemType::PICK_AXE, "("},
-    {ItemType::ONE_HAND, "("},
-    {ItemType::RING, "="},
-    {ItemType::GOLD_COINS, "$"},
-    {ItemType::LIGHT_WEAPON, "("},
-    {ItemType::TORCH, "]"},
-    {ItemType::GRASS, "\""},
-    {ItemType::LANTERN, "]"},
-
-    {ItemType::TWO_HAND, "("},
-    {ItemType::HELMET, "["},
-    {ItemType::SHIELD, "["},
-    {ItemType::GREAVES, "["},
-    {ItemType::BOOTS, "["},
-    {ItemType::PLATE, "["},
-    {ItemType::CUIRASS, "["},
-    {ItemType::POTION, "!"},
-    {ItemType::SCROLL, "?"},
+    {ItemType::GRASS, "\""},        {ItemType::SCROLL, "?"},
+    {ItemType::POTION, "!"},        {ItemType::ROCK, "*"},
     {ItemType::BONES, "%"},
-    {ItemType::THROWING_KNIVES, "↑"},
 
-    {ItemType::LEFT_PAULDRON, "["},
-    {ItemType::RIGHT_PAULDRON, "["},
-    {ItemType::LEFT_GAUNTLET, "["},
-    {ItemType::RIGHT_GAUNTLET, "["},
+    {ItemType::ENEMY, "X"},
+
+    {ItemType::PICK_AXE, "("},      {ItemType::TWO_HAND, "("},
+    {ItemType::ONE_HAND, "("},      {ItemType::LIGHT_WEAPON, "("},
+
+    {ItemType::RING, "="},          {ItemType::AMULET, "'"},
+
+    {ItemType::TORCH, "]"},         {ItemType::LANTERN, "]"},
+    {ItemType::GOLD_COINS, "$"},    {ItemType::PLATE, "["},
+    {ItemType::CUIRASS, "["},
+
+    {ItemType::HELMET, "["},        {ItemType::SHIELD, "["},
+    {ItemType::GREAVES, "["},       {ItemType::BOOTS, "["},
+    {ItemType::CLOAK, "["},
+
+    {ItemType::LEFT_PAULDRON, "["}, {ItemType::RIGHT_PAULDRON, "["},
+    {ItemType::LEFT_GAUNTLET, "["}, {ItemType::RIGHT_GAUNTLET, "["},
+
+    {ItemType::CORPSE, "%"},        {ItemType::THROWING_KNIVES, "↑"},
 };
 
 const std::map<ItemSpec, std::string> itemColors = {
@@ -69,6 +65,7 @@ const std::map<ItemSpec, std::string> itemColors = {
     {ItemType::PICK_AXE, COLORS::WHITE},
     {ItemType::ONE_HAND, "#F7CA88"},
     {ItemType::RING, "#ffd700"},
+    {ItemType::AMULET, "#ffd700"},
     {ItemType::GOLD_COINS, "#ffd700"},
     {ItemType::LIGHT_WEAPON, COLORS::GRAY},
     {ItemType::TORCH, "#ffa500"},
@@ -82,6 +79,7 @@ const std::map<ItemSpec, std::string> itemColors = {
     {ItemType::BOOTS, COLORS::WHITE},
     {ItemType::PLATE, COLORS::WHITE},
     {ItemType::CUIRASS, COLORS::WHITE},
+    {ItemType::CLOAK, COLORS::WHITE},
     {ItemType::POTION, COLORS::LIGHT_BLUE},
     {ItemType::SCROLL, COLORS::WHITE},
     {ItemType::THROWING_KNIVES, COLORS::WHITE},

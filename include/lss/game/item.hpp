@@ -9,28 +9,20 @@
 #include <fmt/format.h>
 #include <variant>
 
+// TODO: refactor constructors
 class Item : public Object {
 public:
-  Item(std::string n, ItemSpec t)
-      : Object(), type(t), unidName(type.name), name(n),
-        durability(type.durability) {
+  Item(std::string un, std::string n, ItemSpec t, Effects e = {})
+      : Object(), type(t), unidName(un), name(n), durability(type.durability),
+        effects(e) {
     zIndex = 1;
   }
-  Item(std::string un, std::string n, ItemSpec t)
-      : Object(), type(t), unidName(un), name(n), durability(type.durability) {
-    zIndex = 1;
-  }
-  Item(ItemSpec t)
-      : Object(), type(t), unidName(type.name), name(t.name),
-        durability(type.durability) {
-    zIndex = 1;
-  }
-  Item(ItemSpec t, int c)
+  Item(ItemSpec t, int c = -1)
       : Object(), type(t), count(c), unidName(t.name), name(t.name),
         durability(type.durability) {
     zIndex = 1;
   }
-  Item(std::string n, ItemSpec t, int c)
+  Item(std::string n, ItemSpec t, int c = -1)
       : Object(), type(t), count(c), unidName(t.name), name(n),
         durability(type.durability) {
     zIndex = 1;

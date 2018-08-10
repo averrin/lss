@@ -1,8 +1,8 @@
 #ifndef __ENEMIES_H_
 #define __ENEMIES_H_
-#include "lss/game/enemy.hpp"
 #include "lss/game/content/items.hpp"
 #include "lss/game/content/traits.hpp"
+#include "lss/game/enemy.hpp"
 
 const auto ds_1d3 = DamageSpec(0, 1, 3, DamageType::BASIC);
 

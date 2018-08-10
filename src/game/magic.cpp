@@ -81,8 +81,8 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
     }
 
   } else if (*spell == *Spells::SUMMON_THING) {
-    auto c = hero->currentLocation
-                 ->cells[hero->currentCell->y + 1][hero->currentCell->x];
+    auto c = hero->currentLocation->cells[hero->currentCell->y + 1]
+                                         [hero->currentCell->x];
     // auto item = Prototype::GOD_PLATE->roll();
     auto lt = LootBox{1, {Prototype::POTION_MANA}};
     auto items = lt.open();

@@ -5,8 +5,9 @@ std::mt19937 gen{rd()};
 
 namespace R {
 float R(float min, float max) {
-  return min + static_cast<float>(rand()) /
-                   (static_cast<float>(RAND_MAX / (max - min)));
+  return min +
+         static_cast<float>(rand()) /
+             (static_cast<float>(RAND_MAX / (max - min)));
   ;
 }
 float R() { return static_cast<float>(rand()) / static_cast<float>(RAND_MAX); }

@@ -1,8 +1,8 @@
 #ifndef __LASTINGSPELLS_H_
 #define __LASTINGSPELLS_H_
 
-#include "lss/game/spell.hpp"
 #include "lss/game/content/traits.hpp"
+#include "lss/game/spell.hpp"
 
 namespace Spells {
 const auto GOD_SPEED = std::make_shared<EffectSpell>(
@@ -80,6 +80,5 @@ const auto EOT_HEAL = std::make_shared<EffectSpell>(
 const auto EOT_POISON = std::make_shared<EffectSpell>(
     "Poison", std::make_shared<LastingEffect>(OverTimeEffects::POISON, 5000));
 }
-
 
 #endif // __LASTINGSPELLS_H_
