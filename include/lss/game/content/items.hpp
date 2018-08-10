@@ -43,7 +43,7 @@ const auto BASIC_SWORD = std::make_shared<Item>(
 const auto GRASS = std::make_shared<Item>("just herb", ItemType::GRASS, 1);
 const auto ROCK = std::make_shared<Item>(
     ItemType::ROCK, 1, Effects{std::make_shared<MeleeDamage>(
-                           DamageSpec(0, 1, 3, DamageType::WEAPON))});
+                           DamageSpec(1, 0, 0, DamageType::WEAPON))});
 const auto PICK_AXE = std::make_shared<Item>(ItemType::PICK_AXE);
 
 /* Kits */
@@ -73,6 +73,7 @@ const std::vector<std::shared_ptr<Item>> WEAPONS_1 = {
 };
 
 const std::vector<std::shared_ptr<Item>> WEAPONS_2 = {
+    STEEL_SWORD, STEEL_AXE,
     GREAT_AXE, RAPIER,
 };
 
