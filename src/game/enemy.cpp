@@ -187,7 +187,7 @@ void Enemy::onEvent(CommitEvent &e) {
       while (actionPoints >= stepCost && n < 2) {
         if (nc->x != hero->currentCell->x || nc->y != hero->currentCell->y) {
           if (move(cd)) {
-            if (i < path.size() - 1) {
+            if (i < int(path.size() - 1)) {
               i++;
               nptr = path[i];
               nc = static_cast<Cell *>(nptr);
@@ -204,7 +204,7 @@ void Enemy::onEvent(CommitEvent &e) {
       }
     }
   } else {
-    if (step >= path.size() - 1 || path.size() == 0 ||
+    if (step >= int(path.size() - 1) || path.size() == 0 ||
         currentCell.get() == static_cast<Cell *>(path[path.size() - 1])) {
       if (!randomPath()) {
         return;
@@ -222,7 +222,7 @@ void Enemy::onEvent(CommitEvent &e) {
 
       while (actionPoints >= stepCost) {
         if (move(cd)) {
-          if (step < path.size() - 1) {
+          if (step < int(path.size() - 1)) {
             step++;
             nptr = path[step];
             nc = static_cast<Cell *>(nptr);

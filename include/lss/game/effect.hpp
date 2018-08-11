@@ -20,9 +20,9 @@ class Effect {
 public:
   Effect(AttributeType at) : type(at){};
   Effect(AttributeType at, R::rndInt m) : type(at), modifier(R::I(m)){};
-  Effect(AttributeType at, bool s) : type(at), special(s) {}
+  Effect(AttributeType at, bool s) : special(s),type(at) {}
   Effect(AttributeType at, bool s, R::rndInt m)
-      : type(at), special(s), modifier(m) {}
+      : special(s), type(at), modifier(m) {}
   virtual std::string getTitle() = 0;
   virtual std::string getSign() = 0;
   virtual std::shared_ptr<Effect> clone() = 0;
@@ -32,7 +32,7 @@ public:
   R::rndInt modifier;
 
   void roll() {
-    if (auto m = std::get_if<std::shared_ptr<R::Int>>(&modifier)) {
+    if (std::get_if<std::shared_ptr<R::Int>>(&modifier)) {
       modifier = R::I(modifier);
     }
   }

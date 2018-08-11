@@ -18,26 +18,20 @@ float getDistance(std::shared_ptr<Cell> c, std::shared_ptr<Cell> cc) {
 Location::~Location() { clearHandlers(); }
 
 void Location::invalidateVisibilityCache(std::shared_ptr<Cell> cell) {
-  auto vd = TORCH_DISTANCE;
-  // fmt::print("--- {} ", visibilityCache.size());
   std::vector<std::pair<std::shared_ptr<Cell>, float>> hits;
   for (auto ls : cell->lightSources) {
     for (auto [lsk, _] : visibilityCache) {
       if (lsk.first != ls->currentCell && lsk.first != player->currentCell)
         continue;
-      // fmt::print("cache hit: {}.{} - {}\n", lsk.first->x, lsk.first->y,
-      // lsk.second);
       hits.push_back(lsk);
     }
   }
   for (auto lsk : hits) {
     auto lsi = visibilityCache.find(lsk);
     if (lsi != visibilityCache.end()) {
-      // fmt::print(".");
       visibilityCache.erase(lsi);
     }
   }
-  // fmt::print(" {} ---\n", visibilityCache.size());
 }
 
 void Location::onEvent(DoorOpenedEvent &e) {
@@ -48,12 +42,12 @@ void Location::onEvent(DoorOpenedEvent &e) {
 }
 
 void Location::onEvent(CommitEvent &e) {
-  auto t0 = std::chrono::system_clock::now();
+  // auto t0 = std::chrono::system_clock::now();
   player->calcViewField();
   updateView(player);
-  auto t1 = std::chrono::system_clock::now();
-  using milliseconds = std::chrono::duration<double, std::milli>;
-  milliseconds ms = t1 - t0;
+  // auto t1 = std::chrono::system_clock::now();
+  // using milliseconds = std::chrono::duration<double, std::milli>;
+  // milliseconds ms = t1 - t0;
   // std::cout << "onCommit: " << rang::fg::yellow << "location"
   //           << rang::style::reset << ": " << rang::fg::green << ms.count()
   //           << rang::style::reset << '\n';
@@ -234,9 +228,8 @@ void Location::leave(std::shared_ptr<Player> hero) {
 void Location::updateLight(std::shared_ptr<Player> hero) {
   if (!needUpdateLight)
     return;
-  auto t0 = std::chrono::system_clock::now();
+  // auto t0 = std::chrono::system_clock::now();
   auto heroVD = hero->lightStrength;
-  auto hasLight = hero->hasLight();
   auto enemies = utils::castObjects<Enemy>(objects);
   std::vector<std::shared_ptr<Object>> torches;
   for (auto ts : objects) {
@@ -334,9 +327,9 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
     }
   }
 
-  auto t1 = std::chrono::system_clock::now();
-  using milliseconds = std::chrono::duration<double, std::milli>;
-  milliseconds ms = t1 - t0;
+  // auto t1 = std::chrono::system_clock::now();
+  // using milliseconds = std::chrono::duration<double, std::milli>;
+  // milliseconds ms = t1 - t0;
   // std::cout << rang::fg::yellow << "update light" << rang::style::reset << ":
   // "
   // << rang::fg::green << ms.count() << rang::style::reset << '\n';

@@ -438,13 +438,13 @@ bool NormalMode::processKey(KeyEvent event) {
   case SDL_SCANCODE_N: {
     if (!app->hero->hasTrait(Traits::CONFUSED)) {
       auto d = getDir(event.getCode());
-      if (d == std::nullopt)
+      if (!d)
         break;
       app->processCommand(*d);
     } else {
       auto ds =
           std::vector<std::string>{"e", "s", "w", "n", "nw", "ne", "sw", "se"};
-      auto d = ds[rand() % ds.size()];
+      auto d = ds.at(rand() % ds.size());
       app->processCommand(d);
     }
   } break;

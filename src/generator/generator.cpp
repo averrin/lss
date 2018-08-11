@@ -95,10 +95,10 @@ void paste(std::vector<std::shared_ptr<Cell>> room,
 }
 
 void paste(Cells room, std::shared_ptr<Location> location, int x, int y) {
-  auto bh = location->cells.size();
-  auto bw = location->cells.front().size();
-  for (auto r = y; r < room.size() + y && r < bh; r++) {
-    for (auto c = x; c < room.front().size() + x && c < bw; c++) {
+  int bh = location->cells.size();
+  int bw = location->cells.front().size();
+  for (auto r = y; r < int(room.size() + y) && r < bh; r++) {
+    for (auto c = x; c < int(room.front().size() + x) && c < bw; c++) {
       auto cell = room[r - y][c - x];
       if (cell->type == CellType::UNKNOWN)
         continue;
@@ -247,7 +247,6 @@ void makePassageBetweenRooms(std::shared_ptr<Location> location,
                 RoomFeature::DUNGEON) == room2->features.end())
     room2->features.push_back(RoomFeature::DUNGEON);
 
-  auto l = 0;
   if (sc->y > ec->y) {
     std::swap(sc, ec);
   }
@@ -477,13 +476,13 @@ std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Location> location,
 void placeLoot(std::shared_ptr<Location> location, int threat) {
   log("place loot");
   auto table = LootBoxes::ZERO;
-  if (location->type.type == LocationType::DUNGEON) {
+  if (location->type.type == int(LocationType::DUNGEON)) {
     if (threat >= LootTable::DUNGEON.size())
       threat = LootTable::DUNGEON.size() - 1;
     table = LootTable::DUNGEON[threat];
   } else if (location->type.type == LocationType::CAVERN) {
     // TODO: use cavern table
-    if (threat >= LootTable::DUNGEON.size())
+    if (threat >= int(LootTable::DUNGEON.size()))
       threat = LootTable::DUNGEON.size() - 1;
     table = LootTable::DUNGEON[threat];
   }
@@ -529,12 +528,12 @@ void placeEnemies(std::shared_ptr<Location> location, int threat) {
   float totalCost = 0;
 
   if (location->type.type == LocationType::DUNGEON) {
-    if (threat >= SpawnTable::DUNGEON.size())
+    if (threat >= int(SpawnTable::DUNGEON.size()))
       threat = SpawnTable::DUNGEON.size() - 1;
     table = SpawnTable::DUNGEON[threat];
   } else if (location->type.type == LocationType::CAVERN) {
     // TODO: use cavern table
-    if (threat >= SpawnTable::DUNGEON.size())
+    if (threat >= int(SpawnTable::DUNGEON.size()))
       threat = SpawnTable::DUNGEON.size() - 1;
     table = SpawnTable::DUNGEON[threat];
   }

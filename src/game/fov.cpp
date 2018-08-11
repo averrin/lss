@@ -162,7 +162,7 @@ std::list<Vec> refresh(Vec pos, Vec bounds, Cells cells) {
   result.push_back(pos);
 
   result.sort([](const Vec a, const Vec b) {
-    return a.y < b.y || a.y == b.y && a.x < b.x;
+    return (a.y < b.y || a.y == b.y) && a.x < b.x;
   });
   result.unique(
       [](const Vec a, const Vec b) { return a.x == b.x && a.y == b.y; });

@@ -103,13 +103,13 @@ public:
         nbrs.push_back(cells[cell->y - 1][cell->x]);
         nbrs.push_back(cells[cell->y][cell->x - 1]);
 
-        if (cell->x < cells.front().size() - 1) {
+        if (cell->x < int(cells.front().size() - 1)) {
           nbrs.push_back(cells[cell->y - 1][cell->x + 1]);
           nbrs.push_back(cells[cell->y][cell->x + 1]);
         }
       }
-      if (cell->y < cells.size() - 1) {
-        if (cell->x < cells.front().size() - 1) {
+      if (cell->y < int(cells.size() - 1)) {
+        if (cell->x < int(cells.front().size() - 1)) {
           nbrs.push_back(cells[cell->y + 1][cell->x + 1]);
           nbrs.push_back(cells[cell->y + 1][cell->x - 1]);
         }

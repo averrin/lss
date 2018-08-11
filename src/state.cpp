@@ -36,11 +36,11 @@ void State::render(pango::SurfaceRef surface) {
     surface->setDefaultTextColor(currentPalette.fgColor);
 
     surface->setText(cache);
-    auto t0 = std::chrono::system_clock::now();
+    // auto t0 = std::chrono::system_clock::now();
     surface->render();
-    auto t1 = std::chrono::system_clock::now();
-    using milliseconds = std::chrono::duration<double, std::milli>;
-    milliseconds ms = t1 - t0;
+    // auto t1 = std::chrono::system_clock::now();
+    // using milliseconds = std::chrono::duration<double, std::milli>;
+    // milliseconds ms = t1 - t0;
     // std::cout << "settext + render time taken: " << rang::fg::green
     // << ms.count() << rang::style::reset << '\n';
     return;
@@ -48,7 +48,7 @@ void State::render(pango::SurfaceRef surface) {
 
   std::string content;
   auto n = 0;
-  auto t0 = std::chrono::system_clock::now();
+  // auto t0 = std::chrono::system_clock::now();
   for (auto f : fragments) {
     std::string fContent;
     if (!f->damaged) {
