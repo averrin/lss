@@ -169,7 +169,8 @@ std::shared_ptr<Damage> Creature::updateDamage(std::shared_ptr<Damage> damage,
     damage->damage += spec.criticalHit();
     damage->isCritical = true;
     return damage;
-  } else if (currentCell->hasFeature(CellFeature::BLOOD) && hasTrait(Traits::BLOOD_THIRST)) {
+  } else if (currentCell->hasFeature(CellFeature::BLOOD) &&
+             hasTrait(Traits::BLOOD_THIRST)) {
     damage->traits.push_back(Traits::BLOOD_THIRST);
     damage->damage += spec.criticalHit();
     damage->isCritical = true;
@@ -189,7 +190,7 @@ std::shared_ptr<Damage> Creature::getDamage(std::shared_ptr<Object>) {
       std::make_shared<Damage>(DamageSpec(0, 0, 0, DamageType::WEAPON));
   auto primaryDmg = getPrimaryDmg();
   if (primaryDmg != std::nullopt) {
-    auto[primarySlot, spec] = *primaryDmg;
+    auto [primarySlot, spec] = *primaryDmg;
     damage = updateDamage(damage, spec);
   }
   auto haveLeft =
@@ -206,7 +207,7 @@ std::shared_ptr<Damage> Creature::getDamage(std::shared_ptr<Object>) {
           }) > 0;
   auto secondaryDmg = getSecondaryDmg(nullptr);
   if (secondaryDmg != std::nullopt && haveLeft) {
-    auto[secondarySlot, spec] = *secondaryDmg;
+    auto [secondarySlot, spec] = *secondaryDmg;
     if (hasTrait(Traits::DUAL_WIELD)) {
       damage = updateDamage(damage, spec);
     } else {
@@ -305,10 +306,12 @@ void Creature::applyDamage(std::shared_ptr<Object> a,
   if (damage->spec.type == DamageType::FIRE && hasTrait(Traits::FIRE_RESIST)) {
     damage->damage /= 2;
   }
-  if (damage->spec.type == DamageType::ACID && hasTrait(Traits::ACID_VULNERABLE)) {
+  if (damage->spec.type == DamageType::ACID &&
+      hasTrait(Traits::ACID_VULNERABLE)) {
     damage->damage *= 1.5;
   }
-  if (damage->spec.type == DamageType::FIRE && hasTrait(Traits::FIRE_VULNERABLE)) {
+  if (damage->spec.type == DamageType::FIRE &&
+      hasTrait(Traits::FIRE_VULNERABLE)) {
     damage->damage *= 1.5;
   }
 
@@ -329,10 +332,12 @@ void Creature::applyDamage(std::shared_ptr<Object> a,
     damage->damage /= 2;
   }
 
-  if (damage->spec.type == DamageType::WEAPON && hasTrait(Traits::WEAPON_VULNERABLE)) {
+  if (damage->spec.type == DamageType::WEAPON &&
+      hasTrait(Traits::WEAPON_VULNERABLE)) {
     damage->damage *= 1.5;
   }
-  if (damage->spec.type == DamageType::MAGIC && hasTrait(Traits::MAGIC_VULNERABLE)) {
+  if (damage->spec.type == DamageType::MAGIC &&
+      hasTrait(Traits::MAGIC_VULNERABLE)) {
     damage->damage *= 1.5;
   }
 

@@ -3,11 +3,12 @@
 #include "lss/game/content/items.hpp"
 #include "lss/game/item.hpp"
 #include "lss/utils.hpp"
+#include <algorithm>
 
 struct LootBox {
   LootBox() {}
   LootBox(float p, std::vector<std::shared_ptr<Item>> loot,
-          std::vector<LootBox> lbs = {}, bool e = false)
+          std::vector<LootBox> lbs = {}, bool e = true)
       : probability(p), items(loot), children(lbs), exclusive(e) {}
 
   LootBox(float p, LootBox lb)
@@ -15,30 +16,38 @@ struct LootBox {
 
   LootBox(std::vector<LootBox> lbs) : children(lbs), exclusive(true) {}
 
-  LootBox(std::vector<std::shared_ptr<Item>> loot) {
-    exclusive = true;
+  LootBox(std::vector<std::shared_ptr<Item>> loot) : exclusive(true) {
     float p = 1.f / loot.size();
-    for (auto i : loot) {
-      children.push_back(LootBox(p, {i}, {}, true));
-    }
+    children.resize(loot.size());
+    std::transform(loot.begin(), loot.end(), children.begin(),
+                   [p](auto i) { return LootBox(p, {i}, {}, true); });
   }
-  float probability = 1;
+  float probability = 1.f;
   Items items;
   std::vector<LootBox> children;
-  bool exclusive = false;
+  bool exclusive = true;
 
-  Items open() {
-    fmt::print("exclusive: {}\n", exclusive);
+  Items open(bool force = false) {
     Items loot;
     auto roll = R::R();
-    if (roll < probability) {
+
+    if (roll <= probability || force) {
       loot.insert(loot.end(), items.begin(), items.end());
+
+      float fullP = 0;
+      std::for_each(children.begin(), children.end(),
+                    [&](auto box) { fullP += box.probability; });
+      roll *= fullP;
+      float ap = 0;
       for (auto child : children) {
-        auto childLoot = child.open();
-        if (childLoot.size() > 0) {
-          loot.insert(loot.end(), childLoot.begin(), childLoot.end());
-          if (exclusive)
-            break;
+        ap += child.probability;
+        if (roll < ap) {
+          auto childLoot = child.open(true);
+          if (childLoot.size() > 0) {
+            loot.insert(loot.end(), childLoot.begin(), childLoot.end());
+            if (exclusive)
+              break;
+          }
         }
       }
     }
@@ -47,6 +56,12 @@ struct LootBox {
                    [](auto item) { return item->roll(); });
     return loot;
   };
+};
+
+class LootBoxHolder : public Object {
+public:
+  LootBoxHolder(LootBox s) : Object(), box(s) {}
+  LootBox box;
 };
 
 namespace LootBoxes {
@@ -63,24 +78,36 @@ const LootBox WEAPONS_TIER_2 = LootBox(Prototype::WEAPONS_2);
 /* Enemy loot */
 const LootBox LOOT_TIER_0 = LootBox(Prototype::LOOT_0);
 const LootBox LOOT_TIER_1 = LootBox(
-    {LootBox(0.3, LOOT_TIER_0), LootBox(0.7, Prototype::LOOT_1, {}, true)});
+    {LootBox(0.3, LOOT_TIER_0), LootBox(0.7, LootBox(Prototype::LOOT_1))});
 const LootBox LOOT_TIER_2 = LootBox(
-    {LootBox(0.3, LOOT_TIER_1), LootBox(0.7, Prototype::LOOT_2, {}, true)});
+    {LootBox(0.3, LOOT_TIER_1), LootBox(0.7, LootBox(Prototype::LOOT_2))});
 
 /* Location loot */
 const LootBox DUNGEON_0 = LootBox({
-    LootBox(0.3, LOOT_TIER_0), LootBox(0.3, POTIONS), LootBox(0.3, SCROLLS),
-    LootBox(0.1, Prototype::ARTEFACTS_0, {}, true),
+    LootBox(0.3, LOOT_TIER_0),
+    LootBox(0.3, POTIONS),
+    LootBox(0.3, SCROLLS),
+    LootBox(0.1, LootBox(Prototype::ARTEFACTS_0)),
 });
 const LootBox DUNGEON_1 = LootBox({
-    LootBox(0.3, LOOT_TIER_1), LootBox(0.3, POTIONS), LootBox(0.3, SCROLLS),
-    LootBox(0.1, Prototype::ARTEFACTS_1, {}, true),
+    LootBox(0.3, LOOT_TIER_1),
+    LootBox(0.3, POTIONS),
+    LootBox(0.3, SCROLLS),
+    LootBox(0.1, LootBox(Prototype::ARTEFACTS_1)),
 });
 const LootBox DUNGEON_2 = LootBox({
-    LootBox(0.3, LOOT_TIER_2), LootBox(0.3, POTIONS), LootBox(0.3, SCROLLS),
-    LootBox(0.1, Prototype::ARTEFACTS_2, {}, true),
+    LootBox(0.3, LOOT_TIER_2),
+    LootBox(0.3, POTIONS),
+    LootBox(0.3, SCROLLS),
+    LootBox(0.1, LootBox(Prototype::ARTEFACTS_2)),
 });
 const LootBox DUNGEON_3 = DUNGEON_2;
-}; // namespace LootBoxes
 
-#endif // __LOOTBOX_H_
+const std::vector<LootBox> ALL = {
+    POTIONS,        SCROLLS,        ARMOR_TIER_1, ARMOR_TIER_2, ARMOR_TIER_3,
+    WEAPONS_TIER_1, WEAPONS_TIER_2, LOOT_TIER_0,  LOOT_TIER_1,  LOOT_TIER_2,
+    DUNGEON_0,      DUNGEON_1,      DUNGEON_2,    DUNGEON_3,
+};
+} // namespace LootBoxes
+
+#endif // __MAGIC_H_

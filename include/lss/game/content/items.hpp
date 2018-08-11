@@ -48,7 +48,7 @@ const auto PICK_AXE = std::make_shared<Item>(ItemType::PICK_AXE);
 
 /* Kits */
 const std::vector<std::shared_ptr<Item>> LOOT_0 = {
-    DAGGER, THROWING_KNIVES, LEATHER_CUIRASS, LEATHER_HELMET,
+    DAGGER, THROWING_KNIVES->setCount(5), LEATHER_CUIRASS, LEATHER_HELMET,
 };
 
 const std::vector<std::shared_ptr<Item>> LOOT_1 = {
@@ -56,7 +56,7 @@ const std::vector<std::shared_ptr<Item>> LOOT_1 = {
     SWORD,
     RAPIER,
     AXE,
-    THROWING_KNIVES,
+    THROWING_KNIVES->setCount(10),
     LEATHER_CUIRASS,
     LEATHER_HELMET,
     LEATHER_SHIELD,
@@ -85,7 +85,7 @@ const std::vector<std::shared_ptr<Item>> LOOT_2 = {
 };
 
 const std::vector<std::shared_ptr<Item>> WEAPONS_1 = {
-    SWORD, DAGGER, THROWING_KNIVES, RAPIER, AXE,
+    SWORD, DAGGER, THROWING_KNIVES->setCount(5), RAPIER, AXE,
 };
 
 const std::vector<std::shared_ptr<Item>> WEAPONS_2 = {

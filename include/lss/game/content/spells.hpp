@@ -13,7 +13,7 @@ const auto IDENTIFY = std::make_shared<Spell>("Identify", 2, 30, 500);
 const auto TELEPORT_RANDOM = std::make_shared<Spell>("Teleport", 2, 20);
 
 /* HEAL */
-const auto HEAL_LESSER = std::make_shared<Spell>("Lesser heal", 0, 5, 1000);
+const auto HEAL_LESSER = std::make_shared<Spell>("Lesser heal", 0, 15, 1000);
 const auto HEAL = std::make_shared<Spell>("Heal", 1, 25, 2000);
 const auto HEAL_GREATER = std::make_shared<Spell>("Greater Heal", 3, 45, 5000);
 
@@ -39,7 +39,7 @@ const auto FIRESTRIKE = std::make_shared<TargetSpell>(
     "Firestrike", 0, std::make_shared<DamageSpell>(
                          "Fire damage", DamageSpec(0, 2, 6, DamageType::FIRE),
                          TerrainType::FIREBALL),
-    4, 10);
+    4, 15);
 
 const auto ACIDSTRIKE = std::make_shared<TargetSpell>(
     "Acidstrike", 1, std::make_shared<DamageSpell>(
@@ -50,7 +50,7 @@ const auto ACIDSTRIKE = std::make_shared<TargetSpell>(
 /* LIGHT */
 const auto FLASH = std::make_shared<RadiusSpell>(
     "Flash", 0, std::make_shared<CellSpell>("Light", TerrainType::MAGIC_LIGHT),
-    1.5, 10);
+    2.5, 10);
 const auto LIGHT = std::make_shared<TargetSpell>(
     "Light", 1,
     std::make_shared<CellSpell>("Light", TerrainType::MAGIC_LIGHT_LONG), 6, 10);

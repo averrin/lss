@@ -64,7 +64,7 @@ void LSSApp::setup() {
   // SDL_Log("Extensions : %s\n", GL_NO_CHECK(GetString(GL_EXTENSIONS)));
   SDL_Log("Width      : %d\n", dm.w);
   SDL_Log("Height     : %d\n", dm.h);
-// SDL_Log("\n");
+  // SDL_Log("\n");
 
 #ifdef _WIN32
   // Initialize GLES2 function table
@@ -172,7 +172,7 @@ void LSSApp::startGame() {
   l->depth = 0;
   locations[0] = l;
 
-  for (auto n = 1; n < 26; n++) {
+  for (auto n = 1; n < MAX_LEVELS; n++) {
     threads.push_back(std::thread(
         [&](int n) {
           auto l = generator->getRandomLocation(hero, n);
@@ -221,7 +221,7 @@ void LSSApp::startBg() {
       }
 
       std::map<std::shared_ptr<Object>, int> ld;
-      for (auto[ls, cells] : lightMap) {
+      for (auto [ls, cells] : lightMap) {
         if (!ls->emitsLight || ls->lightStable)
           continue;
         if (ld.find(ls) == ld.end()) {
@@ -378,7 +378,8 @@ void LSSApp::repeatTimer() {
         repeatKeyEvent = true;
         repeatTimer();
       }
-    }).detach();
+    })
+        .detach();
   }
 }
 
@@ -394,7 +395,8 @@ void LSSApp::keyDown(KeyEvent event) {
     if (lastKeyEvent != std::nullopt) {
       repeatTimer();
     }
-  }).detach();
+  })
+      .detach();
 
   auto prevMode = modeManager.modeFlags->currentMode;
   modeManager.processKey(event);
@@ -628,9 +630,10 @@ void LSSApp::draw() {
   }
 
   if (heroFrame != nullptr) {
-    drawFrame(heroFrame, {HOffset, getWindowHeight() - StatusLine::HEIGHT -
-                                       HeroLine::HEIGHT,
-                          getWindowWidth() - HOffset, HeroLine::HEIGHT});
+    drawFrame(heroFrame,
+              {HOffset,
+               getWindowHeight() - StatusLine::HEIGHT - HeroLine::HEIGHT,
+               getWindowWidth() - HOffset, HeroLine::HEIGHT});
   }
 
   needRedraw = false;

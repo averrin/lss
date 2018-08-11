@@ -106,8 +106,8 @@ bool TargetMode::processKey(KeyEvent event) {
     if (d == std::nullopt)
       break;
     auto nc = app->hero->currentLocation->getCell(
-        app->hero->currentLocation->cells[app->state->cursor.y]
-                                         [app->state->cursor.x],
+        app->hero->currentLocation
+            ->cells[app->state->cursor.y][app->state->cursor.x],
         *utils::getDirectionByName(*d));
     auto location = app->hero->currentLocation;
     auto line = location->getLine(app->hero->currentCell, nc);
@@ -126,8 +126,8 @@ bool TargetMode::processKey(KeyEvent event) {
   } break;
   case SDL_SCANCODE_T:
   case SDL_SCANCODE_RETURN:
-    callback(app->hero->currentLocation->cells[app->state->cursor.y]
-                                              [app->state->cursor.x]);
+    callback(app->hero->currentLocation
+                 ->cells[app->state->cursor.y][app->state->cursor.x]);
     return true;
     break;
   }
@@ -191,8 +191,8 @@ bool InspectMode::processKey(KeyEvent event) {
     if (d == std::nullopt)
       break;
     auto nc = app->hero->currentLocation->getCell(
-        app->hero->currentLocation->cells[app->state->cursor.y]
-                                         [app->state->cursor.x],
+        app->hero->currentLocation
+            ->cells[app->state->cursor.y][app->state->cursor.x],
         *utils::getDirectionByName(*d));
     app->state->cursor = {nc->x, nc->y};
     app->state->invalidate();
@@ -519,8 +519,44 @@ bool NormalMode::processKey(KeyEvent event) {
     app->processCommand("zap");
     break;
   case SDL_SCANCODE_R:
-    app->hero->currentCell = app->hero->currentLocation->exitCell;
-    app->processCommand("down");
+    if (!event.isShiftDown()) {
+      app->hero->currentCell = app->hero->currentLocation->exitCell;
+      app->processCommand("down");
+    } else {
+      app->objectSelectMode->setHeader(F("Lootbox for open: "));
+
+      std::vector<std::shared_ptr<LootBoxHolder>> boxes;
+      boxes.resize(LootBoxes::ALL.size());
+      std::transform(LootBoxes::ALL.begin(), LootBoxes::ALL.end(),
+                     boxes.begin(),
+                     [](auto b) { return std::make_shared<LootBoxHolder>(b); });
+      app->objectSelectMode->setObjects(
+          utils::castObjects<Object>(boxes, true));
+
+      Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
+        if (auto h = std::dynamic_pointer_cast<LootBoxHolder>(o)) {
+          return fmt::format(
+              "<span weight='bold'>{}</span> - {} items, {} children, {}",
+              letter, h->box.items.size(), h->box.children.size(),
+              h->box.exclusive);
+        }
+        return "Unknown error"s;
+      };
+      app->objectSelectMode->setFormatter(formatter);
+
+      app->objectSelectMode->setCallback([&](std::shared_ptr<Object> o) {
+        auto box = std::dynamic_pointer_cast<LootBoxHolder>(o)->box;
+        for (auto item : box.open()) {
+          item->currentCell = app->hero->currentCell;
+          app->hero->currentLocation->objects.push_back(item);
+        }
+        app->modeManager.toNormal();
+        return true;
+      });
+
+      app->objectSelectMode->render(app->objectSelectState);
+      app->modeManager.toObjectSelect();
+    }
     break;
   case SDL_SCANCODE_SLASH:
     if (event.isShiftDown()) {
@@ -739,10 +775,10 @@ void GameOverMode::render(std::shared_ptr<State> state) {
     }
   }
 
-  state->appendContent(
-      F(fmt::format("<b>{}</b>", hero->name)));
+  state->appendContent(F(fmt::format("<b>{}</b>", hero->name)));
   state->appendContent(State::END_LINE);
-  state->appendContent(F(fmt::format("DEPTH:           <b>{}</b>", hero->currentLocation->depth)));
+  state->appendContent(F(
+      fmt::format("DEPTH:           <b>{}</b>", hero->currentLocation->depth)));
   state->appendContent(State::END_LINE);
   state->appendContent(F(fmt::format("GOLD:            <b>{}</b>", gold)));
   state->appendContent(State::END_LINE);
@@ -762,7 +798,7 @@ void GameOverMode::render(std::shared_ptr<State> state) {
 
   state->appendContent(F(fmt::format("<b>KILLS</b>:")));
   state->appendContent(State::END_LINE);
-  for (auto[name, kills] : hero->report.kills) {
+  for (auto [name, kills] : hero->report.kills) {
     state->appendContent(
         F(fmt::format("{:14}   <b>{}</b>", name + ":", kills)));
     state->appendContent(State::END_LINE);

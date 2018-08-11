@@ -43,6 +43,8 @@
 class EventReactor;
 class LSSApp {
 public:
+  static const int MAX_LEVELS = 10;
+
   ~LSSApp();
   SDL_DisplayMode dm;
   int getWindowWidth() { return dm.w; }

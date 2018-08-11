@@ -52,7 +52,8 @@ Player::Player() : Creature() {
                              std::vector<WearableType>{RIGHT_PAULDRON}),
       std::make_shared<Slot>("Left pauldron",
                              std::vector<WearableType>{LEFT_PAULDRON}),
-      right_hand_slot, left_hand_slot,
+      right_hand_slot,
+      left_hand_slot,
       std::make_shared<Slot>("Right gauntlet",
                              std::vector<WearableType>{RIGHT_GAUNTLET}),
       std::make_shared<Slot>("Left gauntlet",
@@ -115,10 +116,10 @@ std::string Player::getDmgDesc() {
           }) > 0;
 
   if (primaryDmg != std::nullopt && haveLeft) {
-    auto[primarySlot, spec] = *primaryDmg;
+    auto [primarySlot, spec] = *primaryDmg;
     auto secondaryDmg = getSecondaryDmg(primarySlot);
     if (secondaryDmg != std::nullopt) {
-      auto[secondarySlot, spec2] = *secondaryDmg;
+      auto [secondarySlot, spec2] = *secondaryDmg;
       return fmt::format("{:+d} {}d{}{}", spec.modifier, spec.dices, spec.edges,
                          hasTrait(Traits::DUAL_WIELD)
                              ? fmt::format(" ({:+d} {}d{})", spec2.modifier,
@@ -128,14 +129,14 @@ std::string Player::getDmgDesc() {
   } else if (haveLeft) {
     auto secondaryDmg = getSecondaryDmg(nullptr);
     if (secondaryDmg != std::nullopt) {
-      auto[secondarySlot, spec2] = *secondaryDmg;
+      auto [secondarySlot, spec2] = *secondaryDmg;
       return hasTrait(Traits::DUAL_WIELD)
                  ? fmt::format("~ {:+d} {}d{}", spec2.modifier, spec2.dices,
                                spec2.edges)
                  : fmt::format("~ {:+d}", spec2.modifier);
     }
   } else if (primaryDmg != std::nullopt) {
-    auto[primarySlot, spec] = *primaryDmg;
+    auto [primarySlot, spec] = *primaryDmg;
     return fmt::format("{:+d} {}d{}", spec.modifier, spec.dices, spec.edges);
   }
   return fmt::format("{:+d} {}d{}", dmgSpec.modifier, dmgSpec.dices,
@@ -331,7 +332,8 @@ void Player::onEvent(ZapCommandEvent &e) {
   commit("zap", e.spell->ap);
   mp -= e.spell->cost;
   commit("after zap", 0, true);
-  intelligence += e.spell->cost / MP_MAX(this) / 100;
+  intelligence +=
+      (e.spell->cost / MP_MAX(this) / 100) * pow(currentLocation->depth + 1, 2);
 }
 
 // TODO: move to creature

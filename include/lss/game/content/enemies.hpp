@@ -76,7 +76,7 @@ EnemySpec const GOBLIN = {
     LootBox(1, {}, {
         LootBox(0.40, LootBoxes::POTIONS),
         LootBox(0.40, LootBoxes::LOOT_TIER_0),
-        LootBox(0.90, {Prototype::GOLD->setCount(50)})}),
+        LootBox(0.90, {Prototype::GOLD->setCount(50)})}, false),
     {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER, Traits::MOB, Traits::DUAL_WIELD},
     Items{Prototype::GOBLIN_DAGGER, Prototype::GOBLIN_DAGGER}
 };
@@ -91,7 +91,7 @@ EnemySpec const GOBLIN_LIEUTENANT = {
         LootBox(0.40, LootBoxes::SCROLLS),
         LootBox(0.80, LootBoxes::LOOT_TIER_1),
         LootBox(0.90, {Prototype::GOLD->setCount(50)})
-    }),
+    }, false),
     {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER, Traits::MOB, Traits::DUAL_WIELD},
     Items{Prototype::GOBLIN_DAGGER, Prototype::GOBLIN_DAGGER, Prototype::LEATHER_CUIRASS}
 };
@@ -103,7 +103,7 @@ EnemySpec const GOBLIN_ROGUE = {
     LootBox(1, {}, {
         LootBox(0.80, LootBoxes::LOOT_TIER_1),
         LootBox(0.90, {Prototype::GOLD->setCount(50)})
-    }),
+    }, false),
     {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER, Traits::MOB, Traits::DUAL_WIELD},
     Items{Prototype::POISON_DAGGER, Prototype::GOBLIN_DAGGER}
 };
@@ -116,7 +116,7 @@ EnemySpec const ORK = {
         LootBox(0.40, LootBoxes::SCROLLS),
         LootBox(0.80, LootBoxes::LOOT_TIER_1),
         LootBox(0.90, {Prototype::GOLD->setCount(100)})
-    }),
+    }, false),
     {}, Items{Prototype::TORCH, Prototype::ORK_SWORD, Prototype::LEATHER_SHIELD}
 };
 
@@ -129,7 +129,7 @@ EnemySpec const ORK_BERSERK = {
         LootBox(0.80, LootBoxes::LOOT_TIER_1),
         LootBox(0.10, Prototype::ARTEFACTS_1),
         LootBox(0.90, {Prototype::GOLD->setCount(100)})
-    }),
+    }, false),
     {Traits::FIRE_VULNERABLE, Traits::BLOOD_THIRST}, Items{}
 };
 
@@ -142,7 +142,7 @@ EnemySpec const ORK_BLACK = {
         LootBox(0.20, LootBoxes::POTIONS),
         LootBox(0.80, LootBoxes::LOOT_TIER_2),
         LootBox(0.90, {Prototype::GOLD->setCount(100)})
-    }),
+    }, false),
     {}, Items{Prototype::TORCH, Prototype::ORK_SWORD, Prototype::LEATHER_SHIELD, Prototype::LEATHER_CUIRASS}
 };
 
@@ -152,7 +152,7 @@ EnemySpec const PIXI = {
     DamageSpec(0, 3, 4, DamageType::WEAPON),
     LootBox(0.90, {Prototype::GOLD->setCount(200)}, {
         LootBox(0.40, LootBoxes::SCROLLS),
-        LootBox(0.10, {Prototype::SPEED_RING})}),
+        LootBox(0.10, {Prototype::SPEED_RING})}, false),
     {Traits::FLY, Traits::MOB}};
 
 EnemySpec const OGRE = {
