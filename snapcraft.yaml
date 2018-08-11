@@ -1,0 +1,57 @@
+name: lss
+version: 0.1.1
+summary: Long Story Short
+description: Yet another unfinished roguelike game.
+
+grade: devel
+confinement: devmode
+
+parts:
+  conan:
+    plugin: python
+    python-version: python3
+    python-packages:
+      - conan
+  lss:
+    plugin: nil
+    source-type: git
+    source: git@github.com:averrin/lss.git
+    after: [conan]
+    build-packages:
+      - g++
+      - make
+      - cmake
+      - libsdl1.2-dev
+      - libsdl-net1.2-dev
+      - libsdl-sound1.2-dev
+      - libasound2-dev
+    override-build: |
+      # conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+      conan install -s compiler.version=7.3 --build=missing .
+      cmake .
+      make -j4
+      mv bin $SNAPCRAFT_PART_INSTALL/bin
+      mv run_snap.sh $SNAPCRAFT_PART_INSTALL/bin
+
+    filesets:
+      wanted:
+        - bin/*
+    prime:
+      - $wanted
+  packages:
+    plugin: nil
+    after: [lss]
+    stage-packages:
+      - libstdc++6
+      - libsdl2-2.0-0
+      - libsdl2-gfx-1.0-0
+      - libdrm2
+      - libegl1-mesa
+      - libglu1-mesa
+      - libgles2-mesa
+      - libgl1-mesa-dri
+
+apps:
+  lss:
+    plugs: [opengl, x11]
+    command: run_snap.sh
