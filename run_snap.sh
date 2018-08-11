@@ -6,4 +6,6 @@ export XLOCALEDIR=$RUNTIME/usr/share/X11/locale
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$RUNTIME/usr/lib/$ARCH/mesa
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$RUNTIME/usr/lib/$ARCH/mesa-egl
 
-$RUNTIME/bin/LSS
+SCRIPT=`realpath $0`
+SCRIPTPATH=`dirname $SCRIPT`
+$SCRIPTPATH/LSS

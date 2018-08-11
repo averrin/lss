@@ -30,6 +30,7 @@ parts:
       conan install -s compiler.version=7.3 --build=missing .
       cmake .
       make -j4
+      mkdir $SNAPCRAFT_PART_INSTALL/bin
       mv run_snap.sh bin/
       mv bin/* $SNAPCRAFT_PART_INSTALL/bin
 
