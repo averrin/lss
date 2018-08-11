@@ -50,7 +50,8 @@ parts:
       - libegl1-mesa
       - libglu1-mesa
       - libgles2-mesa
-      # - libgl1-mesa-dri
+      - libgl1-mesa-dri
+      - libgl1-mesa-glx
 
 apps:
   lss:
