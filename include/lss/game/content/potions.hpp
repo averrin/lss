@@ -52,9 +52,15 @@ const auto POTION_CONFUSION = std::make_shared<Consumable>(
 const auto POTION_INTELLIGENCE_BOOST = std::make_shared<Consumable>(
     fmt::format("{} potion", utils::getRandomColor()),
     "intelligence boost potion", ItemType::POTION, Spells::INTELLIGENCE_BOOST);
+
 const auto POTION_STRENGTH_BOOST = std::make_shared<Consumable>(
     fmt::format("{} potion", utils::getRandomColor()), "strength boost potion",
     ItemType::POTION, Spells::STRENGTH_BOOST);
-}
+
+const auto POTION_INVULNERABILITY = std::make_shared<Consumable>(
+    fmt::format("{} potion", utils::getRandomColor()), "invulnerability potion",
+    ItemType::POTION, Spells::INVULNERABILITY);
+
+} // namespace Prototype
 
 #endif // __POTIONS_H_

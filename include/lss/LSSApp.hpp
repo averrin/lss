@@ -57,6 +57,8 @@ public:
   bool running = true;
   bool bgRunning = true;
   void startBg();
+  void serveBg();
+  void playAnimations();
 
   SDL_Window *window = nullptr;
   SDL_Renderer *renderer = nullptr;

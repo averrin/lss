@@ -31,11 +31,14 @@ public:
   bool equip(std::shared_ptr<Item>);
   bool unequip(std::shared_ptr<Slot>);
   void commit(std::string reason, int ap, bool s = false);
-  bool interact(std::shared_ptr<Object> actor);
+  bool interact(std::shared_ptr<Object> actor) override;
 
   std::string getDmgDesc();
-  void onDamage(std::shared_ptr<Creature>, std::shared_ptr<Damage>);
-  void onDie();
+  void onDamage(std::shared_ptr<Creature>, std::shared_ptr<Damage>) override;
+  void onDie() override;
+  void increaseIntelligence(float val);
+  void increaseStrength(float val);
+  std::map<std::shared_ptr<Object>, std::set<std::shared_ptr<Cell>>> getLightMap();
 
   virtual void onEvent(MoveCommandEvent &e) override;
   virtual void onEvent(PickCommandEvent &e) override;

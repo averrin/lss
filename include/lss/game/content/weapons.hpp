@@ -35,8 +35,15 @@ const auto RAPIER = std::make_shared<Item>(
 const auto GREAT_AXE = std::make_shared<Item>(
     "great axe", ItemType::TWO_HAND,
     Effects{
-        std::make_shared<MeleeDamage>(DamageSpec(-1, 6, 7, DamageType::WEAPON)),
-        std::make_shared<SpeedModifier>(-0.3f)});
+        std::make_shared<MeleeDamage>(DamageSpec(R::I(-2, 0), 2, R::I(5, 7), DamageType::WEAPON)),
+        std::make_shared<SpeedModifier>(-0.4f)});
+
+const auto GREAT_SWORD = std::make_shared<Item>(
+    "great sword", ItemType::TWO_HAND,
+    Effects{
+        std::make_shared<MeleeDamage>(DamageSpec(0, 2, R::I(4, 6), DamageType::WEAPON)),
+        std::make_shared<SpeedModifier>(-0.2f)});
+
 const auto DAGGER = std::make_shared<Item>(
     "dagger", ItemType::LIGHT_WEAPON,
     Effects{std::make_shared<MeleeDamage>(
@@ -45,6 +52,11 @@ const auto THROWING_KNIVES =
     std::make_shared<Item>(ItemType::THROWING_KNIVES, 1,
                            Effects{std::make_shared<MeleeDamage>(
                                DamageSpec(0, 1, 6, DamageType::WEAPON))});
+
+const auto THROWING_AXES =
+    std::make_shared<Item>("throwing axes", ItemType::THROWING_KNIVES, 1,
+                           Effects{std::make_shared<MeleeDamage>(
+                               DamageSpec(0, 2, 6, DamageType::WEAPON))});
 
 const auto ORK_SWORD = std::make_shared<Item>(
     ItemType::ONE_HAND, Effects{std::make_shared<MeleeDamage>(
@@ -55,14 +67,24 @@ const auto GOBLIN_DAGGER =
                            Effects{std::make_shared<MeleeDamage>(
                                        DamageSpec(2, 3, 3, DamageType::WEAPON)),
                                    std::make_shared<CritModifier>(0.2)});
+const auto WRAITH_TOUCH = std::make_shared<Item>(
+    ItemType::ENEMY,
+    Effects{
+        std::make_shared<MeleeDamage>(DamageSpec(2, 3, 6, DamageType::MAGIC)),
+        std::make_shared<CritModifier>(0.2),
+        std::make_shared<OnHitEffect>(
+            std::make_shared<LastingEffect>(
+                     std::make_shared<TraitEffect>(Traits::CONFUSED), 50000),
+            0.5)});
+
 const auto POISON_FANG = std::make_shared<Item>(
     ItemType::ENEMY,
     Effects{
-        std::make_shared<MeleeDamage>(DamageSpec(2, 3, 3, DamageType::WEAPON)),
+        std::make_shared<MeleeDamage>(DamageSpec(1, 2, 3, DamageType::WEAPON)),
         std::make_shared<CritModifier>(0.2),
         std::make_shared<OnHitEffect>(
             std::make_shared<LastingEffect>(OverTimeEffects::POISON, 5000),
             0.3)});
-}
+} // namespace Prototype
 
 #endif // __WEAPONS_H_

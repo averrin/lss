@@ -205,20 +205,12 @@ void LSSApp::startBg() {
     bgThread.join();
   }
   bgRunning = true;
-  bgThread = std::thread([&]() {
+  bgThread = std::thread([&](){serveBg();});
+}
+
+void LSSApp::serveBg() {
     while (bgRunning) {
-      std::map<std::shared_ptr<Object>, std::set<std::shared_ptr<Cell>>>
-          lightMap;
-      for (auto c : hero->viewField) {
-        if (!c->illuminated)
-          continue;
-        for (auto ls : c->lightSources) {
-          if (lightMap.find(ls) == lightMap.end()) {
-            lightMap[ls] = {};
-          }
-          lightMap[ls].insert(c);
-        }
-      }
+      auto lightMap = hero->getLightMap();
 
       std::map<std::shared_ptr<Object>, int> ld;
       for (auto [ls, cells] : lightMap) {
@@ -244,22 +236,26 @@ void LSSApp::startBg() {
         }
       }
 
-      damaged = false;
-      auto _anims = animations;
-      for (auto a : _anims) {
-        if (a->stopped) {
-          animations.erase(
-              std::remove(animations.begin(), animations.end(), a));
-          continue;
-        }
-        a->tick();
-        invalidate();
-      }
+      playAnimations();
 
       state->invalidate();
       SDL_Delay(32);
     }
-  });
+  
+}
+
+void LSSApp::playAnimations() {
+    damaged = false;
+    auto _anims = animations;
+    for (auto a : _anims) {
+      if (a->stopped) {
+        animations.erase(
+            std::remove(animations.begin(), animations.end(), a));
+        continue;
+      }
+      a->tick();
+      invalidate();
+    }
 }
 
 void LSSApp::setListeners() { reactor = std::make_shared<EventReactor>(this); }

@@ -20,7 +20,7 @@ class Effect {
 public:
   Effect(AttributeType at) : type(at){};
   Effect(AttributeType at, R::rndInt m) : type(at), modifier(R::I(m)){};
-  Effect(AttributeType at, bool s) : special(s),type(at) {}
+  Effect(AttributeType at, bool s) : special(s), type(at) {}
   Effect(AttributeType at, bool s, R::rndInt m)
       : special(s), type(at), modifier(m) {}
   virtual std::string getTitle() = 0;

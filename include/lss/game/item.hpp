@@ -22,9 +22,9 @@ public:
         durability(type.durability) {
     zIndex = 1;
   }
-  Item(std::string n, ItemSpec t, int c = -1)
+  Item(std::string n, ItemSpec t, int c = -1, Effects e = {})
       : Object(), type(t), count(c), unidName(t.name), name(n),
-        durability(type.durability) {
+        durability(type.durability), effects(e) {
     zIndex = 1;
   }
   Item(ItemSpec t, Effects e)

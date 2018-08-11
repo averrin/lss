@@ -107,6 +107,9 @@ const std::map<EnemySpec, std::string> enemySigns = {
     {EnemyType::GOBLIN_ROGUE, "g"},
     {EnemyType::ANT, "a"},
     {EnemyType::ANT_QUEEN, "a"},
+    {EnemyType::SKELETON, "z"},
+    {EnemyType::ZOMBIE, "z"},
+    {EnemyType::WRAITH, "W"},
 };
 
 const std::map<EnemySpec, std::string> enemyColors = {
@@ -126,6 +129,10 @@ const std::map<EnemySpec, std::string> enemyColors = {
     {EnemyType::GOBLIN_ROGUE, "#2f4f4f"},
     {EnemyType::ANT, "#8f4f4f"},
     {EnemyType::ANT_QUEEN, "#8f6f4f"},
+
+    {EnemyType::SKELETON, COLORS::WHITE},
+    {EnemyType::ZOMBIE, "#8A9A5B"},
+    {EnemyType::WRAITH, COLORS::GRAY},
 };
 
 const std::map<CellSpec, std::string> cellSigns = {

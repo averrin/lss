@@ -332,8 +332,7 @@ void Player::onEvent(ZapCommandEvent &e) {
   commit("zap", e.spell->ap);
   mp -= e.spell->cost;
   commit("after zap", 0, true);
-  intelligence +=
-      (e.spell->cost / MP_MAX(this) / 100) * pow(currentLocation->depth + 1, 2);
+  increaseIntelligence(e.spell->cost);
 }
 
 // TODO: move to creature
@@ -364,6 +363,8 @@ bool Player::interact(std::shared_ptr<Object> actor) {
 
 void Player::onDamage(std::shared_ptr<Creature> attacker,
                       std::shared_ptr<Damage> damage) {
+
+  increaseStrength(damage->deflected);
   HeroTakeDamageEvent e(attacker, damage);
   eb::EventBus::FireEvent(e);
 }
@@ -382,4 +383,43 @@ void Player::onEvent(ThrowCommandEvent &e) {
   if (e.item == nullptr)
     return;
   throwItem(e.item, e.cell);
+}
+
+void Player::increaseIntelligence(float val) {
+  intelligence += (val / 10000.f) * (currentLocation->depth + 1) * 1.5;
+  if (intelligence >= 1.1 && std::find(traits.begin(), traits.end(), Traits::NOVICE_MAGE) == traits.end()) {
+    traits.push_back(Traits::NOVICE_MAGE);
+    mp_max += 30;
+  }
+  if (intelligence >= 1.2 && std::find(traits.begin(), traits.end(), Traits::APPRENTICE_MAGE) == traits.end()) {
+    traits.push_back(Traits::APPRENTICE_MAGE);
+    activeEffects.push_back(OverTimeEffects::MANA_RESTORE_LESSER);
+  }
+}
+
+void Player::increaseStrength(float val) {
+  strength += (val / 10000.f) * (currentLocation->depth + 1) * 1.5;
+  if (strength >= 1.1 && std::find(traits.begin(), traits.end(), Traits::NATURAL_ARMOR) == traits.end()) {
+    traits.push_back(Traits::NATURAL_ARMOR);
+    defense += 3;
+  }
+  if (strength >= 1.2 && std::find(traits.begin(), traits.end(), Traits::DUAL_WIELD) == traits.end()) {
+    traits.push_back(Traits::DUAL_WIELD);
+  }
+}
+
+std::map<std::shared_ptr<Object>, std::set<std::shared_ptr<Cell>>> Player::getLightMap() {
+    std::map<std::shared_ptr<Object>, std::set<std::shared_ptr<Cell>>>
+        lightMap;
+    for (auto c : viewField) {
+      if (!c->illuminated)
+        continue;
+      for (auto ls : c->lightSources) {
+        if (lightMap.find(ls) == lightMap.end()) {
+          lightMap[ls] = {};
+        }
+        lightMap[ls].insert(c);
+      }
+    }
+    return lightMap;
 }

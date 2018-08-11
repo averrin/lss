@@ -3,10 +3,14 @@
 
 #include "lss/game/content/specs.hpp"
 #include "lss/game/content/spells.hpp"
-#include "lss/game/item.hpp"
 #include "lss/game/effect.hpp"
+#include "lss/game/item.hpp"
 
 namespace Prototype {
+const auto BAND_OF_DARKVISION =
+    std::make_shared<Item>("thin band", "band of darkvision", ItemType::HELMET,
+                           Effects{std::make_shared<VisibilityModifier>(5)});
+
 const auto ROBE_OF_INTELLIGENCE = std::make_shared<Item>(
     "blue robe", "robe of intelligence", ItemType::CLOAK,
     Effects{std::make_shared<IntelligenceModifier>(0.1)});
@@ -20,10 +24,11 @@ const auto LEATHER_CUIRASS_OF_HP = std::make_shared<Item>(
     Effects{std::make_shared<ArmorValue>(R::I(1, 2)),
             std::make_shared<HPModifier>(25)});
 
-const auto LEATHER_LEFT_GAUNTLET_OF_STRENGTH = std::make_shared<Item>(
-    "worn leather left gauntlet", "left gauntlet of strength",
-    ItemType::LEFT_GAUNTLET, Effects{std::make_shared<ArmorValue>(R::I(1, 2)),
-                                     std::make_shared<StrengthModifier>(0.1)});
+const auto LEATHER_LEFT_GAUNTLET_OF_STRENGTH =
+    std::make_shared<Item>("worn leather left gauntlet",
+                           "left gauntlet of strength", ItemType::LEFT_GAUNTLET,
+                           Effects{std::make_shared<ArmorValue>(R::I(1, 2)),
+                                   std::make_shared<StrengthModifier>(0.1)});
 
 const auto LEFT_GAUNTLET_OF_DUEL = std::make_shared<Item>(
     "black left gauntlet", "duelist's left gauntlet", ItemType::LEFT_GAUNTLET,
@@ -76,13 +81,13 @@ const auto RING_OF_FIRE_RESIST = std::make_shared<Item>(
 
 /* EoT */
 
-const auto RING_OF_REGEN = std::make_shared<Item>(
-    "emerald ring", "ring of regeneration", ItemType::RING,
-    Effects{OverTimeEffects::REGEN});
+const auto RING_OF_REGEN =
+    std::make_shared<Item>("emerald ring", "ring of regeneration",
+                           ItemType::RING, Effects{OverTimeEffects::REGEN});
 
 const auto RING_OF_MANA_RESTORE = std::make_shared<Item>(
     "sapfire ring", "ring of mana restore", ItemType::RING,
     Effects{OverTimeEffects::MANA_RESTORE_LESSER});
-}
+} // namespace Prototype
 
 #endif // __ARTEFACTS_H_

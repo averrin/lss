@@ -345,6 +345,8 @@ void EventReactor::onEvent(ZapCommandEvent &e) {
         });
 
     spells.resize(std::distance(spells.begin(), it));
+    std::sort(spells.begin(), spells.end(),
+              [](auto s1, auto s2) { return s1->level < s2->level; });
 
     app->objectSelectMode->setObjects(utils::castObjects<Object>(spells));
   }

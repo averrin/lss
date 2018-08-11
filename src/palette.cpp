@@ -30,4 +30,3 @@ const Palette palettes::LIGHT = Palette{"light"s,
                                         "#137a63"s,
                                         "#777"s,
                                         "#aaa"s};
-

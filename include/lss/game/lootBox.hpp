@@ -74,6 +74,7 @@ const LootBox ARMOR_TIER_2 = LootBox(Prototype::IRON_ARMOR);
 const LootBox ARMOR_TIER_3 = LootBox(Prototype::STEEL_ARMOR);
 const LootBox WEAPONS_TIER_1 = LootBox(Prototype::WEAPONS_1);
 const LootBox WEAPONS_TIER_2 = LootBox(Prototype::WEAPONS_2);
+const LootBox WEAPONS_TIER_3 = LootBox(Prototype::WEAPONS_3);
 
 /* Enemy loot */
 const LootBox LOOT_TIER_0 = LootBox(Prototype::LOOT_0);
@@ -81,6 +82,8 @@ const LootBox LOOT_TIER_1 = LootBox(
     {LootBox(0.3, LOOT_TIER_0), LootBox(0.7, LootBox(Prototype::LOOT_1))});
 const LootBox LOOT_TIER_2 = LootBox(
     {LootBox(0.3, LOOT_TIER_1), LootBox(0.7, LootBox(Prototype::LOOT_2))});
+const LootBox LOOT_TIER_3 = LootBox(
+    {LootBox(0.3, LOOT_TIER_2), LootBox(0.7, LootBox(Prototype::LOOT_3))});
 
 /* Location loot */
 const LootBox DUNGEON_0 = LootBox({
@@ -101,7 +104,15 @@ const LootBox DUNGEON_2 = LootBox({
     LootBox(0.3, SCROLLS),
     LootBox(0.1, LootBox(Prototype::ARTEFACTS_2)),
 });
-const LootBox DUNGEON_3 = DUNGEON_2;
+
+const LootBox DUNGEON_3 = LootBox({
+    LootBox(0.3, LOOT_TIER_3),
+    LootBox(0.3, POTIONS),
+    LootBox(0.3, SCROLLS),
+    LootBox(0.1, LootBox(Prototype::ARTEFACTS_3)),
+});
+
+const LootBox DUNGEON_4 = DUNGEON_3;
 
 const std::vector<LootBox> ALL = {
     POTIONS,        SCROLLS,        ARMOR_TIER_1, ARMOR_TIER_2, ARMOR_TIER_3,

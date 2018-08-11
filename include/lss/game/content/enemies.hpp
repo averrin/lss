@@ -43,7 +43,7 @@ EnemySpec const BAT = {
     Items{}, {} //vampire
 };
 EnemySpec const BAT_LARGE = {
-    "large bat", 0,
+    "large bat", 1,
     1.5, 10, 0, 1,
     DamageSpec(0, 2, 3, DamageType::BASIC),
     LootBoxes::ZERO,
@@ -97,7 +97,7 @@ EnemySpec const GOBLIN_LIEUTENANT = {
 };
 
 EnemySpec const GOBLIN_ROGUE = {
-    "goblin rogue", 1,
+    "goblin rogue", 2,
     1.5, 15, 0, 1,
     DamageSpec(1, 1, 3, DamageType::WEAPON),
     LootBox(1, {}, {
@@ -121,7 +121,7 @@ EnemySpec const ORK = {
 };
 
 EnemySpec const ORK_BERSERK = {
-    "ork berserk", 2,
+    "ork berserk", 3,
     1.5, 40, 0, 0,
     DamageSpec(1, 3, 8, DamageType::WEAPON),
     LootBox(1, {}, {
@@ -134,7 +134,7 @@ EnemySpec const ORK_BERSERK = {
 };
 
 EnemySpec const ORK_BLACK = {
-    "black ork", 2,
+    "black ork", 3,
     1.1, 75, 0, 2,
     DamageSpec(1, 1, 6, DamageType::WEAPON),
     LootBox(1, {Prototype::TORCH}, {
@@ -173,17 +173,50 @@ EnemySpec const I_OGRE = {
     Items{},
 };
 
+
+
+EnemySpec const SKELETON = {
+    "skeleton", 3,
+    1, 55, 0, 2,
+    DamageSpec(1, 1, 6, DamageType::WEAPON),
+    LootBox(1, {}, {
+        LootBox(0.80, LootBoxes::LOOT_TIER_1),
+        LootBox(0.90, {Prototype::GOLD->setCount(100)})
+    }, false),
+    {Traits::WEAPON_RESIST, Traits::MAGIC_VULNERABLE}, Items{Prototype::ORK_SWORD, Prototype::LEATHER_SHIELD}
+};
+
+EnemySpec const ZOMBIE = {
+    "zombie", 3,
+    0.5, 75, 0, 2,
+    DamageSpec(1, 1, 6, DamageType::WEAPON),
+    LootBox(1, {}, {
+        LootBox(0.80, LootBoxes::LOOT_TIER_1),
+        LootBox(0.90, {Prototype::GOLD->setCount(100)})
+    }, false),
+    {Traits::WEAPON_RESIST}, Items{Prototype::ORK_SWORD, Prototype::LEATHER_SHIELD}
+};
+
+EnemySpec const WRAITH = {
+    "wraith", 4,
+    1.5, 45, 0, 2,
+    DamageSpec(1, 3, 6, DamageType::MAGIC),
+    LootBox(1, {}, {}, false),
+    {Traits::WEAPON_IMMUNE}, Items{Prototype::WRAITH_TOUCH}
+};
+
   const std::vector<EnemySpec> ALL = {
     RAT,
     SNAKE, VIPER,
     BAT, BAT_LARGE,
-    ANT,
-    ANT_QUEEN,
+    ANT, ANT_QUEEN,
     GOBLIN, GOBLIN_ROGUE, GOBLIN_LIEUTENANT,
     ORK, ORK_BLACK, ORK_BERSERK,
     PIXI,
     OGRE,
     I_OGRE,
+
+    SKELETON, ZOMBIE, WRAITH
   };
 } // namespace EnemyType
 // clang-format on

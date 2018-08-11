@@ -93,6 +93,6 @@ const auto STEEL_RIGHT_GAUNTLET =
 const auto STEEL_LEFT_GAUNTLET =
     std::make_shared<Item>("steel left gauntlet", ItemType::LEFT_GAUNTLET,
                            Effects{std::make_shared<ArmorValue>(R::I(5, 6))});
-}
+} // namespace Prototype
 
 #endif // __ARMOR_H_

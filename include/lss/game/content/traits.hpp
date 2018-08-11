@@ -13,6 +13,15 @@ const Trait INVULNERABLE = {"Invulnerable"};
 const Trait MOB = {"Mob"};
 const Trait CONFUSED = {"Confused"};
 const Trait JUMPY = {"Jumpy"};
+const Trait NATURAL_ARMOR = {"Natural armor"};
+const Trait NOVICE_MAGE = {"Novice mage"};
+const Trait APPRENTICE_MAGE = {"Apprentice mage"};
+
+const Trait ADEPT_MAGE = {"Adept mage"};
+const Trait EXPERT_MAGE = {"Expert mage"};
+const Trait MASTER_MAGE = {"Master mage"};
+const Trait ARCH_MAGE = {"Arch mage"};
+const Trait ASCENDANT_MAGE = {"Ascendant mage"};
 
 const Trait DEADLY_SHADOWS = {"Deadly shadows"};
 const Trait SHADOW_RUNNER = {"Shadow runner"};
@@ -32,12 +41,12 @@ const Trait ACID_RESIST = {"Acid resist"};
 const Trait ACID_IMMUNE = {"Acid immune"};
 const Trait ACID_VULNERABLE = {"Acid vulnerable"};
 
-const Trait ICE_RESIST =     {"Ice resist"};
-const Trait ICE_IMMUNE =     {"Ice immune"};
+const Trait ICE_RESIST = {"Ice resist"};
+const Trait ICE_IMMUNE = {"Ice immune"};
 const Trait ICE_VULNERABLE = {"Ice vulnerable"};
 
-const Trait ELECTRICITY_RESIST =     {"Electricity resist"};
-const Trait ELECTRICITY_IMMUNE =     {"Electricity immune"};
+const Trait ELECTRICITY_RESIST = {"Electricity resist"};
+const Trait ELECTRICITY_IMMUNE = {"Electricity immune"};
 const Trait ELECTRICITY_VULNERABLE = {"Electricity vulnerable"};
 } // namespace Traits
 

@@ -78,8 +78,7 @@ bool Enemy::interact(std::shared_ptr<Object> actor) {
     }
   }
   auto damage = hero->getDamage(shared_from_this());
-  hero->strength +=
-      (damage->damage / 10000.f) * pow(currentLocation->depth + 1, 2);
+  hero->increaseStrength(damage->damage);
   applyDamage(hero, damage);
   return hp > 0;
 }

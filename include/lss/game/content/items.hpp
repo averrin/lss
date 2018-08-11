@@ -41,14 +41,18 @@ const auto BASIC_SWORD = std::make_shared<Item>(
 
 /* Misc */
 const auto GRASS = std::make_shared<Item>("just herb", ItemType::GRASS, 1);
-const auto ROCK = std::make_shared<Item>(
-    ItemType::ROCK, 1, Effects{std::make_shared<MeleeDamage>(
-                           DamageSpec(1, 0, 0, DamageType::WEAPON))});
+const auto ROCK =
+    std::make_shared<Item>(ItemType::ROCK, 1,
+                           Effects{std::make_shared<MeleeDamage>(
+                               DamageSpec(1, 0, 0, DamageType::WEAPON))});
 const auto PICK_AXE = std::make_shared<Item>(ItemType::PICK_AXE);
 
 /* Kits */
 const std::vector<std::shared_ptr<Item>> LOOT_0 = {
-    DAGGER, THROWING_KNIVES->setCount(5), LEATHER_CUIRASS, LEATHER_HELMET,
+    DAGGER,
+    THROWING_KNIVES->setCount(5),
+    LEATHER_CUIRASS,
+    LEATHER_HELMET,
 };
 
 const std::vector<std::shared_ptr<Item>> LOOT_1 = {
@@ -72,7 +76,7 @@ const std::vector<std::shared_ptr<Item>> LOOT_2 = {
     LANTERN,
     STEEL_SWORD,
     STEEL_AXE,
-    GREAT_AXE, RAPIER,
+    RAPIER,
     IRON_CUIRASS,
     IRON_HELMET,
     IRON_SHIELD,
@@ -84,38 +88,70 @@ const std::vector<std::shared_ptr<Item>> LOOT_2 = {
     IRON_LEFT_GAUNTLET,
 };
 
+const std::vector<std::shared_ptr<Item>> LOOT_3 = {
+    LANTERN,
+    THROWING_AXES->setCount(5),
+    GREAT_AXE,
+    GREAT_SWORD,
+    STEEL_CUIRASS,
+    STEEL_HELMET,
+    STEEL_SHIELD,
+    STEEL_GREAVES,
+    STEEL_BOOTS,
+    STEEL_RIGHT_PAULDRON,
+    STEEL_LEFT_PAULDRON,
+    STEEL_RIGHT_GAUNTLET,
+    STEEL_LEFT_GAUNTLET,
+};
+
 const std::vector<std::shared_ptr<Item>> WEAPONS_1 = {
     SWORD, DAGGER, THROWING_KNIVES->setCount(5), RAPIER, AXE,
 };
 
 const std::vector<std::shared_ptr<Item>> WEAPONS_2 = {
-    STEEL_SWORD, STEEL_AXE,
-    GREAT_AXE, RAPIER,
+    STEEL_SWORD,
+    STEEL_AXE,
+    RAPIER,
+};
+
+const std::vector<std::shared_ptr<Item>> WEAPONS_3 = {
+    THROWING_AXES->setCount(5),
+    GREAT_AXE,
+    GREAT_SWORD,
 };
 
 const std::vector<std::shared_ptr<Item>> LIGHT = {
-    TORCH, LANTERN,
+    TORCH,
+    LANTERN,
 };
 
-const std::vector<std::shared_ptr<Item>> ARTEFACTS_0 = {SPEED_RING,
-                                                        BOOTS_OF_FLY, PICK_AXE};
+const std::vector<std::shared_ptr<Item>> ARTEFACTS_0 = {
+    SPEED_RING,
+    BOOTS_OF_FLY,
+    PICK_AXE,
+    BAND_OF_DARKVISION,
+};
 const std::vector<std::shared_ptr<Item>> ARTEFACTS_1 = {
     ROBE_OF_INTELLIGENCE,
     LEATHER_CUIRASS_OF_HP,
     LEATHER_LEFT_GAUNTLET_OF_STRENGTH,
     SWORD_OF_DUALWIELD,
     LEFT_GAUNTLET_OF_DUEL,
-    POISON_DAGGER, AMULET_OF_BERSERK
-};
+    POISON_DAGGER,
+    AMULET_OF_BERSERK};
 
 const std::vector<std::shared_ptr<Item>> ARTEFACTS_2 = {
-    AMULET_OF_ACID_IMMUNE, AMULET_OF_FIRE_IMMUNE,
-    RING_OF_ACID_RESIST, RING_OF_FIRE_RESIST,
-    RING_OF_REGEN, RING_OF_MANA_RESTORE,
+    AMULET_OF_ACID_IMMUNE, AMULET_OF_FIRE_IMMUNE, RING_OF_ACID_RESIST,
+    RING_OF_FIRE_RESIST,   RING_OF_REGEN,         RING_OF_MANA_RESTORE,
+};
+
+const std::vector<std::shared_ptr<Item>> ARTEFACTS_3 = {
 };
 
 const std::vector<std::shared_ptr<Item>> ENEMY = {
-    ORK_SWORD, GOBLIN_DAGGER, POISON_FANG,
+    ORK_SWORD,
+    GOBLIN_DAGGER,
+    POISON_FANG,
 };
 
 const std::vector<std::shared_ptr<Item>> DEBUG = {
@@ -123,11 +159,13 @@ const std::vector<std::shared_ptr<Item>> DEBUG = {
 };
 
 const std::vector<std::shared_ptr<Item>> MISC = {
-    GRASS, ROCK,
+    GRASS,
+    ROCK,
 };
 
 const std::vector<std::shared_ptr<Item>> BASIC_ITEMS = {
-    BASIC_LEATHER_CUIRASS, BASIC_SWORD,
+    BASIC_LEATHER_CUIRASS,
+    BASIC_SWORD,
 };
 
 const std::vector<std::shared_ptr<Item>> LEATHER_ARMOR = {
@@ -157,17 +195,26 @@ const std::vector<std::shared_ptr<Item>> SCROLLS = {
 };
 
 const std::vector<std::shared_ptr<Item>> POTIONS = {
-    POTION_HEAL_LESSER,        POTION_HEAL,           POTION_MANA,
-    POTION_GOD_SPEED,          POTION_HP_BOOST,       POTION_VISIBILITY_BOOST,
-    POTION_INTELLIGENCE_BOOST, POTION_STRENGTH_BOOST, POTION_CRIT_BOOST,
-    POTION_LEVITATION,         POTION_REGENERATION,   POTION_POISON,
+    POTION_HEAL_LESSER,
+    POTION_HEAL,
+    POTION_MANA,
+    POTION_GOD_SPEED,
+    POTION_HP_BOOST,
+    POTION_VISIBILITY_BOOST,
+    POTION_INTELLIGENCE_BOOST,
+    POTION_STRENGTH_BOOST,
+    POTION_CRIT_BOOST,
+    POTION_LEVITATION,
+    POTION_REGENERATION,
+    POTION_POISON,
     POTION_CONFUSION,
+    POTION_INVULNERABILITY,
 };
 
 const std::vector<std::vector<std::shared_ptr<Item>>> ALL = {
-    DEBUG,      ARTEFACTS_0,   ARTEFACTS_1,  ARTEFACTS_2, POTIONS,   SCROLLS,
-    IRON_ARMOR, STEEL_ARMOR,   WEAPONS_1,   WEAPONS_2, MISC,
-    LIGHT,      LEATHER_ARMOR, BASIC_ITEMS,
+    DEBUG,   ARTEFACTS_0, ARTEFACTS_1,   ARTEFACTS_2, POTIONS,
+    SCROLLS, IRON_ARMOR,  STEEL_ARMOR,   WEAPONS_1,   WEAPONS_2,
+    MISC,    LIGHT,       LEATHER_ARMOR, BASIC_ITEMS,
 };
 
 } // namespace Prototype

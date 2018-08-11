@@ -16,11 +16,11 @@ const auto HP_BOOST = std::make_shared<EffectSpell>(
 
 const auto VISIBILITY_BOOST = std::make_shared<EffectSpell>(
     "Boost your eyes", std::make_shared<LastingEffect>(
-                           std::make_shared<VisibilityModifier>(5), 10000));
+                           std::make_shared<VisibilityModifier>(5), 30000));
 
 const auto CRIT_BOOST = std::make_shared<EffectSpell>(
     "Boost your crit chance", std::make_shared<LastingEffect>(
-                                  std::make_shared<CritModifier>(0.3), 10000));
+                                  std::make_shared<CritModifier>(0.3), 30000));
 
 const auto INTELLIGENCE_BOOST = std::make_shared<EffectSpell>(
     "Boost your brains",
@@ -33,6 +33,11 @@ const auto STRENGTH_BOOST = std::make_shared<EffectSpell>(
 const auto LEVITATION = std::make_shared<EffectSpell>(
     "Levitation", std::make_shared<LastingEffect>(
                       std::make_shared<TraitEffect>(Traits::FLY), 10000));
+
+const auto INVULNERABILITY = std::make_shared<EffectSpell>(
+    "INVULNERABILITY",
+    std::make_shared<LastingEffect>(
+        std::make_shared<TraitEffect>(Traits::INVULNERABLE), 10000));
 
 const auto CONFUSION = std::make_shared<EffectSpell>(
     "Confusion", std::make_shared<LastingEffect>(
@@ -79,6 +84,6 @@ const auto EOT_HEAL = std::make_shared<EffectSpell>(
 
 const auto EOT_POISON = std::make_shared<EffectSpell>(
     "Poison", std::make_shared<LastingEffect>(OverTimeEffects::POISON, 5000));
-}
+} // namespace Spells
 
 #endif // __LASTINGSPELLS_H_

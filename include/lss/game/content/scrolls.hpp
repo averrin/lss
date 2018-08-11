@@ -40,6 +40,6 @@ const auto SCROLL_ACID_RESIST = std::make_shared<Consumable>(
 const auto SCROLL_ACID_IMMUNE = std::make_shared<Consumable>(
     fmt::format("scroll labled '{}'", utils::getScrollName()),
     "scroll of acid immunity", ItemType::SCROLL, Spells::ACID_IMMUNE);
-}
+} // namespace Prototype
 
 #endif // __SCROLLS_H_
