@@ -4,6 +4,13 @@ Yet another unfinished roguelike game.
 
 ![screenshot](https://raw.githubusercontent.com/averrin/lss/master/screenshot.png)
 
+## Play
+You can use `snap` from [releases](https://github.com/averrin/lss/releases)
+Install it with
+```
+sudo snap install lss_*.snap --devmode --dangerous
+```
+
 ## Build
 * `git clone --recursive git@github.com:averrin/lss.git`
 * `cd ./lss; mkdir build; cd ./build`

@@ -127,7 +127,7 @@ EnemySpec const ORK_BERSERK = {
     LootBox(1, {}, {
         LootBox(0.40, {Prototype::POTION_HEAL}),
         LootBox(0.80, LootBoxes::LOOT_TIER_1),
-        LootBox(0.10, Prototype::ARTEFACTS_1),
+        LootBox(0.10, Prototype::ARTIFACTS_1),
         LootBox(0.90, {Prototype::GOLD->setCount(100)})
     }, false),
     {Traits::FIRE_VULNERABLE, Traits::BLOOD_THIRST}, Items{}
@@ -205,7 +205,70 @@ EnemySpec const WRAITH = {
     {Traits::WEAPON_IMMUNE}, Items{Prototype::WRAITH_TOUCH}
 };
 
-  const std::vector<EnemySpec> ALL = {
+EnemySpec const FIRE_ELEMENTAL = {
+    "fire elemental", 5,
+    1, 80, 0, 4,
+    DamageSpec(1, 3, 6, DamageType::FIRE),
+    LootBox(1, {}, {}, false),
+    {Traits::FIRE_IMMUNE, Traits::FROST_VULNERABLE}, Items{}
+};
+
+EnemySpec const FROST_ELEMENTAL = {
+    "frost elemental", 5,
+    1, 80, 0, 4,
+    DamageSpec(1, 3, 6, DamageType::FROST),
+    LootBox(1, {}, {}, false),
+    {Traits::FROST_IMMUNE, Traits::FIRE_VULNERABLE}, Items{}
+};
+
+EnemySpec const ACID_ELEMENTAL = {
+    "acid elemental", 5,
+    1, 80, 0, 4,
+    DamageSpec(1, 3, 6, DamageType::ACID),
+    LootBox(1, {}, {}, false),
+    {Traits::ACID_IMMUNE, Traits::MAGIC_VULNERABLE}, Items{}
+};
+
+EnemySpec const STONE_GOLEM = {
+    "stone golem", 6,
+    0.7, 100, 0, 10,
+    DamageSpec(3, 3, 6, DamageType::WEAPON),
+    LootBox(1, {}, {}, false),
+    {}, Items{}
+};
+
+EnemySpec const STEEL_GOLEM = {
+    "steel golem", 6,
+    0.7, 80, 0, 12,
+    DamageSpec(3, 4, 8, DamageType::WEAPON),
+    LootBox(1, {}, {}, false),
+    {}, Items{}
+};
+
+EnemySpec const FIRE_DRAGON = {
+    "fire DRAGON", 7,
+    1, 150, 0, 8,
+    DamageSpec(5, 5, 8, DamageType::FIRE),
+    LootBox(1, {}, {}, false),
+    {Traits::FIRE_IMMUNE, Traits::FROST_VULNERABLE}, Items{}
+};
+
+EnemySpec const FROST_DRAGON = {
+    "frost dragon", 7,
+    1, 150, 0, 8,
+    DamageSpec(5, 5, 8, DamageType::FROST),
+    LootBox(1, {}, {}, false),
+    {Traits::FROST_IMMUNE, Traits::FIRE_VULNERABLE}, Items{}
+};
+
+EnemySpec const ACID_DRAGON = {
+    "acid dragon", 7,
+    1, 150, 0, 8,
+    DamageSpec(5, 5, 8, DamageType::ACID),
+    LootBox(1, {}, {}, false),
+    {Traits::ACID_IMMUNE, Traits::MAGIC_VULNERABLE}, Items{}
+};
+const std::vector<EnemySpec> ALL = {
     RAT,
     SNAKE, VIPER,
     BAT, BAT_LARGE,
@@ -216,8 +279,12 @@ EnemySpec const WRAITH = {
     OGRE,
     I_OGRE,
 
-    SKELETON, ZOMBIE, WRAITH
-  };
+    SKELETON, ZOMBIE, WRAITH,
+    FIRE_ELEMENTAL, FROST_ELEMENTAL, ACID_ELEMENTAL,
+    STONE_GOLEM, STEEL_GOLEM,
+    
+    FIRE_DRAGON, FROST_DRAGON, ACID_DRAGON,
+};
 } // namespace EnemyType
 // clang-format on
 

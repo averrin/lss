@@ -7,6 +7,7 @@
 const std::map<TerrainSpec, std::string> terrainSigns = {
     {TerrainType::TORCH_STAND, "*"},
     {TerrainType::FIREBALL, "*"},
+    {TerrainType::FROSTBALL, "*"},
     {TerrainType::ACIDBALL, "*"},
     {TerrainType::MAGIC_LIGHT, "*"},
     {TerrainType::MAGIC_LIGHT_LONG, "*"},
@@ -22,6 +23,7 @@ const std::map<TerrainSpec, std::string> terrainColors = {
     {TerrainType::TORCH_STAND, "#ffa500"},
     {TerrainType::FIREBALL, "#ee1111"},
     {TerrainType::ACIDBALL, "#11cc11"},
+    {TerrainType::FROSTBALL, COLORS::LIGHT_BLUE},
     {TerrainType::MAGIC_LIGHT, COLORS::LIGHT_BLUE},
     {TerrainType::MAGIC_LIGHT_LONG, COLORS::LIGHT_BLUE},
     {TerrainType::MAGIC_LIGHT_FOREVER, COLORS::LIGHT_BLUE},
@@ -110,6 +112,17 @@ const std::map<EnemySpec, std::string> enemySigns = {
     {EnemyType::SKELETON, "z"},
     {EnemyType::ZOMBIE, "z"},
     {EnemyType::WRAITH, "W"},
+
+    {EnemyType::FIRE_ELEMENTAL, "E"},
+    {EnemyType::FROST_ELEMENTAL, "E"},
+    {EnemyType::ACID_ELEMENTAL, "E"},
+
+    {EnemyType::STONE_GOLEM, "Y"},
+    {EnemyType::STEEL_GOLEM, "Y"},
+
+    {EnemyType::FIRE_DRAGON, "D"},
+    {EnemyType::FROST_DRAGON, "D"},
+    {EnemyType::ACID_DRAGON, "D"},
 };
 
 const std::map<EnemySpec, std::string> enemyColors = {
@@ -133,6 +146,17 @@ const std::map<EnemySpec, std::string> enemyColors = {
     {EnemyType::SKELETON, COLORS::WHITE},
     {EnemyType::ZOMBIE, "#8A9A5B"},
     {EnemyType::WRAITH, COLORS::GRAY},
+
+    {EnemyType::FIRE_ELEMENTAL, "#cc1111"},
+    {EnemyType::FROST_ELEMENTAL, COLORS::LIGHT_BLUE},
+    {EnemyType::ACID_ELEMENTAL, "#11cc11"},
+
+    {EnemyType::STONE_GOLEM, COLORS::GRAY},
+    {EnemyType::STEEL_GOLEM, "#2f4f4f"},
+
+    {EnemyType::FIRE_DRAGON, "#cc1111"},
+    {EnemyType::FROST_DRAGON, COLORS::LIGHT_BLUE},
+    {EnemyType::ACID_DRAGON, "#11cc11"},
 };
 
 const std::map<CellSpec, std::string> cellSigns = {
@@ -154,6 +178,7 @@ const std::map<LightType, std::string> lightColors = {
     {LightType::FIRE, "#cc5511"},
     {LightType::MAGIC, "#1133cc"},
     {LightType::ACID, "#11cc11"},
+    {LightType::FROST, "#3333ff"},
 };
 
 const std::map<CellSpec, std::string> cellWeights = {
@@ -165,6 +190,7 @@ const std::map<CellSpec, std::string> cellWeights = {
 const std::map<CellFeature, std::string> featureColors = {
     {CellFeature::CAVE, "#897546"},
     {CellFeature::BLOOD, "#8b0000"},
+    {CellFeature::FROST, "#aaaaff"},
     {CellFeature::MARK1, "#0000ff"},
     {CellFeature::MARK2, "#00ff00"},
 };

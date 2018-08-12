@@ -11,6 +11,7 @@ public:
   int damage = 0;
   bool isCritical = false;
   std::vector<Trait> traits;
+  std::vector<Trait> defTraits;
   int deflected = 0;
   DamageSpec spec;
 };

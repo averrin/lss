@@ -8,7 +8,7 @@
 #include "lss/utils.hpp"
 
 #include "lss/game/content/armor.hpp"
-#include "lss/game/content/artefacts.hpp"
+#include "lss/game/content/artifacts.hpp"
 #include "lss/game/content/potions.hpp"
 #include "lss/game/content/scrolls.hpp"
 #include "lss/game/content/weapons.hpp"
@@ -125,13 +125,13 @@ const std::vector<std::shared_ptr<Item>> LIGHT = {
     LANTERN,
 };
 
-const std::vector<std::shared_ptr<Item>> ARTEFACTS_0 = {
+const std::vector<std::shared_ptr<Item>> ARTIFACTS_0 = {
     SPEED_RING,
     BOOTS_OF_FLY,
     PICK_AXE,
     BAND_OF_DARKVISION,
 };
-const std::vector<std::shared_ptr<Item>> ARTEFACTS_1 = {
+const std::vector<std::shared_ptr<Item>> ARTIFACTS_1 = {
     ROBE_OF_INTELLIGENCE,
     LEATHER_CUIRASS_OF_HP,
     LEATHER_LEFT_GAUNTLET_OF_STRENGTH,
@@ -140,12 +140,13 @@ const std::vector<std::shared_ptr<Item>> ARTEFACTS_1 = {
     POISON_DAGGER,
     AMULET_OF_BERSERK};
 
-const std::vector<std::shared_ptr<Item>> ARTEFACTS_2 = {
-    AMULET_OF_ACID_IMMUNE, AMULET_OF_FIRE_IMMUNE, RING_OF_ACID_RESIST,
+const std::vector<std::shared_ptr<Item>> ARTIFACTS_2 = {
+    AMULET_OF_ACID_IMMUNE, AMULET_OF_FIRE_IMMUNE, AMULET_OF_FROST_IMMUNE,
+    RING_OF_ACID_RESIST, RING_OF_FROST_RESIST,
     RING_OF_FIRE_RESIST,   RING_OF_REGEN,         RING_OF_MANA_RESTORE,
 };
 
-const std::vector<std::shared_ptr<Item>> ARTEFACTS_3 = {
+const std::vector<std::shared_ptr<Item>> ARTIFACTS_3 = {
 };
 
 const std::vector<std::shared_ptr<Item>> ENEMY = {
@@ -212,7 +213,7 @@ const std::vector<std::shared_ptr<Item>> POTIONS = {
 };
 
 const std::vector<std::vector<std::shared_ptr<Item>>> ALL = {
-    DEBUG,   ARTEFACTS_0, ARTEFACTS_1,   ARTEFACTS_2, POTIONS,
+    DEBUG,   ARTIFACTS_0, ARTIFACTS_1,   ARTIFACTS_2, POTIONS,
     SCROLLS, IRON_ARMOR,  STEEL_ARMOR,   WEAPONS_1,   WEAPONS_2,
     MISC,    LIGHT,       LEATHER_ARMOR, BASIC_ITEMS,
 };

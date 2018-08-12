@@ -64,9 +64,17 @@ void LogPanel::onEvent(EnemyTakeDamageEvent &e) {
   hero->report.damageInflicted += e.damage->damage;
   auto enemy = std::dynamic_pointer_cast<Enemy>(e.getSender());
   if (e.damage > 0) {
+    std::string tags = "";
+    if (e.damage->traits.size() > 0 || e.damage->defTraits.size() > 0) {
+      std::vector<std::string> traitNames;
+      for (auto t : e.damage->defTraits) {
+        traitNames.push_back(fmt::format("<i>{}</i>", t.name));
+      }
+      tags = fmt::format(" &lt;{}&gt;", utils::join(traitNames, ", "));
+    }
     appendLine(
-        {F(fmt::format("You <b>hit</b> {}: <b>{}</b> dmg{}", enemy->type.name,
-                       e.damage->damage,
+        {F(fmt::format("You <b>hit</b> {}: <b>{}</b> dmg{}{}", enemy->type.name,
+                       e.damage->damage, tags,
                        e.damage->deflected > 0
                            ? fmt::format(" [{} deflected]", e.damage->deflected)
                            : ""))});
@@ -88,10 +96,13 @@ void LogPanel::onEvent(HeroTakeDamageEvent &e) {
   }
   if (e.damage->damage > 0) {
     std::string tags = "";
-    if (e.damage->traits.size() > 0) {
+    if (e.damage->traits.size() > 0 || e.damage->defTraits.size() > 0) {
       std::vector<std::string> traitNames;
       for (auto t : e.damage->traits) {
         traitNames.push_back(t.name);
+      }
+      for (auto t : e.damage->defTraits) {
+        traitNames.push_back(fmt::format("<i>{}</i>", t.name));
       }
       tags = fmt::format(" &lt;{}&gt;", utils::join(traitNames, ", "));
     }
@@ -124,6 +135,8 @@ void LogPanel::onEvent(MessageEvent &e) { appendLine({F(e.message)}); }
 void LogPanel::onEvent(EnterCellEvent &e) {
   if (e.cell->hasFeature(CellFeature::BLOOD)) {
     appendLine({F("The floor is splattered with blood.")});
+  } else if (e.cell->hasFeature(CellFeature::FROST)) {
+    appendLine({F("The floor is covered with hoarfrost.")});
   }
   if (auto t = utils::castObjects<Terrain>(
           hero->currentLocation->getObjects(e.cell));
