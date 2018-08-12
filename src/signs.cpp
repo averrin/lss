@@ -7,6 +7,7 @@
 const std::map<TerrainSpec, std::string> terrainSigns = {
     {TerrainType::TORCH_STAND, "*"},
     {TerrainType::FIREBALL, "*"},
+    {TerrainType::FROSTBALL, "*"},
     {TerrainType::ACIDBALL, "*"},
     {TerrainType::MAGIC_LIGHT, "*"},
     {TerrainType::MAGIC_LIGHT_LONG, "*"},
@@ -22,6 +23,7 @@ const std::map<TerrainSpec, std::string> terrainColors = {
     {TerrainType::TORCH_STAND, "#ffa500"},
     {TerrainType::FIREBALL, "#ee1111"},
     {TerrainType::ACIDBALL, "#11cc11"},
+    {TerrainType::FROSTBALL, COLORS::LIGHT_BLUE},
     {TerrainType::MAGIC_LIGHT, COLORS::LIGHT_BLUE},
     {TerrainType::MAGIC_LIGHT_LONG, COLORS::LIGHT_BLUE},
     {TerrainType::MAGIC_LIGHT_FOREVER, COLORS::LIGHT_BLUE},
@@ -154,6 +156,7 @@ const std::map<LightType, std::string> lightColors = {
     {LightType::FIRE, "#cc5511"},
     {LightType::MAGIC, "#1133cc"},
     {LightType::ACID, "#11cc11"},
+    {LightType::FROST, "#3333ff"},
 };
 
 const std::map<CellSpec, std::string> cellWeights = {
@@ -165,6 +168,7 @@ const std::map<CellSpec, std::string> cellWeights = {
 const std::map<CellFeature, std::string> featureColors = {
     {CellFeature::CAVE, "#897546"},
     {CellFeature::BLOOD, "#8b0000"},
+    {CellFeature::FROST, "#aaaaff"},
     {CellFeature::MARK1, "#0000ff"},
     {CellFeature::MARK2, "#00ff00"},
 };

@@ -10,7 +10,7 @@ enum class DamageType {
   FIRE,
   ACID,
   /**/
-  ICE,
+  FROST,
   HOLY,
   DEATH,
   AIR,
@@ -19,6 +19,33 @@ enum class DamageType {
   DARKNESS,
   WATER,
   ELECTRICITY,
+};
+
+const std::map<DamageType, Trait> RESISTS = {
+  {DamageType::WEAPON, Traits::WEAPON_RESIST},
+  {DamageType::MAGIC, Traits::MAGIC_RESIST},
+
+  {DamageType::ACID, Traits::ACID_RESIST},
+  {DamageType::FIRE, Traits::FIRE_RESIST},
+  {DamageType::FROST, Traits::FROST_RESIST},
+};
+
+const std::map<DamageType, Trait> IMMUNITIES = {
+  {DamageType::WEAPON, Traits::WEAPON_IMMUNE},
+  {DamageType::MAGIC, Traits::MAGIC_IMMUNE},
+
+  {DamageType::ACID, Traits::ACID_IMMUNE},
+  {DamageType::FIRE, Traits::FIRE_IMMUNE},
+  {DamageType::FROST, Traits::FROST_IMMUNE},
+};
+
+const std::map<DamageType, Trait> VULNERABLES = {
+  {DamageType::WEAPON, Traits::WEAPON_VULNERABLE},
+  {DamageType::MAGIC, Traits::MAGIC_VULNERABLE},
+
+  {DamageType::ACID, Traits::ACID_VULNERABLE},
+  {DamageType::FIRE, Traits::FIRE_VULNERABLE},
+  {DamageType::FROST, Traits::FROST_VULNERABLE},
 };
 
 class Damage;

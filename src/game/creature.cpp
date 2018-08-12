@@ -293,52 +293,17 @@ void Creature::applyDamage(std::shared_ptr<Object> a,
   }
   damage->deflected = def;
 
-  // TODO: declarative
-  if (damage->spec.type == DamageType::ACID && hasTrait(Traits::ACID_IMMUNE)) {
+  if (hasImmunity(damage->spec.type)) {
     damage->damage = 0;
+    damage->defTraits.push_back(IMMUNITIES.at(damage->spec.type));
   }
-  if (damage->spec.type == DamageType::FIRE && hasTrait(Traits::FIRE_IMMUNE)) {
-    damage->damage = 0;
-  }
-  if (damage->spec.type == DamageType::ACID && hasTrait(Traits::ACID_RESIST)) {
+  if (hasResist(damage->spec.type)) {
     damage->damage /= 2;
+    damage->defTraits.push_back(RESISTS.at(damage->spec.type));
   }
-  if (damage->spec.type == DamageType::FIRE && hasTrait(Traits::FIRE_RESIST)) {
-    damage->damage /= 2;
-  }
-  if (damage->spec.type == DamageType::ACID &&
-      hasTrait(Traits::ACID_VULNERABLE)) {
+  if (hasVulnerable(damage->spec.type)) {
     damage->damage *= 1.5;
-  }
-  if (damage->spec.type == DamageType::FIRE &&
-      hasTrait(Traits::FIRE_VULNERABLE)) {
-    damage->damage *= 1.5;
-  }
-
-  if (damage->spec.type == DamageType::WEAPON &&
-      hasTrait(Traits::WEAPON_IMMUNE)) {
-    damage->damage = 0;
-  }
-  if (damage->spec.type == DamageType::MAGIC &&
-      hasTrait(Traits::MAGIC_IMMUNE)) {
-    damage->damage = 0;
-  }
-  if (damage->spec.type == DamageType::WEAPON &&
-      hasTrait(Traits::WEAPON_RESIST)) {
-    damage->damage /= 2;
-  }
-  if (damage->spec.type == DamageType::MAGIC &&
-      hasTrait(Traits::MAGIC_RESIST)) {
-    damage->damage /= 2;
-  }
-
-  if (damage->spec.type == DamageType::WEAPON &&
-      hasTrait(Traits::WEAPON_VULNERABLE)) {
-    damage->damage *= 1.5;
-  }
-  if (damage->spec.type == DamageType::MAGIC &&
-      hasTrait(Traits::MAGIC_VULNERABLE)) {
-    damage->damage *= 1.5;
+    damage->defTraits.push_back(VULNERABLES.at(damage->spec.type));
   }
 
   hp -= damage->damage;

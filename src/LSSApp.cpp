@@ -227,6 +227,9 @@ void LSSApp::serveBg() {
                   [c->y * (hero->currentLocation->cells.front().size() + 1) +
                    c->x];
           auto a = f->alpha + d + cd;
+          if (c->hasFeature(CellFeature::FROST)) {
+            a = 100 - R::N(0, 5);
+          }
           auto ml = 25 + 5 * c->lightSources.size();
           if (a < ml)
             a = ml;

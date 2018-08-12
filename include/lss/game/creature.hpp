@@ -107,6 +107,20 @@ public:
 
   std::shared_ptr<Slot> getSlot(WearableType type);
   std::optional<std::shared_ptr<Slot>> getSlot(WearableType type, bool);
+  bool hasResist(DamageType dt) {
+    auto trait = RESISTS.at(dt);
+    return hasTrait(trait);
+  }
+
+  bool hasImmunity(DamageType dt) {
+    auto trait = IMMUNITIES.at(dt);
+    return hasTrait(trait);
+  }
+
+  bool hasVulnerable(DamageType dt) {
+    auto trait = VULNERABLES.at(dt);
+    return hasTrait(trait);
+  }
 
   float intelligence = 1.f;
   float strength = 1.f;

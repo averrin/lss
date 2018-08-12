@@ -70,6 +70,9 @@ std::string getColor(std::shared_ptr<Cell> cell) {
           cell->type != CellType::WATER) {
         color = featureColors.at(CellFeature::CAVE);
       }
+      if (cell->hasFeature(CellFeature::FROST)) {
+        color = featureColors.at(CellFeature::FROST);
+      }
       if (cell->hasFeature(CellFeature::BLOOD)) {
         color = featureColors.at(CellFeature::BLOOD);
       }

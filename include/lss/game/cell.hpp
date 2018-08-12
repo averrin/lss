@@ -42,7 +42,7 @@ const CellSpec VOID = CellSpec{"void", false, true, {Traits::FLY}};
 }; // namespace CellType
 
 enum class VisibilityState { UNKNOWN, SEEN, VISIBLE };
-enum class CellFeature { BLOOD, CAVE, MARK1, MARK2 };
+enum class CellFeature { BLOOD, CAVE, FROST, MARK1, MARK2 };
 
 class Cell {
 public:

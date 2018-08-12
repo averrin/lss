@@ -49,6 +49,14 @@ public:
     auto fb = std::make_shared<Terrain>(spec, 8);
     fb->currentCell = c;
     location->objects.push_back(fb);
+
+    if (spec == TerrainType::FROSTBALL) {
+      c->features.push_back(CellFeature::FROST);
+      for (auto n : location->getNeighbors(c)) {
+        n->features.push_back(CellFeature::FROST);
+      }
+    }
+
     location->invalidate();
   }
   virtual void applySpell(std::shared_ptr<Creature> caster,
@@ -60,11 +68,12 @@ public:
 
 class DamageSpell : public CellSpell {
 public:
-  DamageSpell(std::string n, DamageSpec dmg, TerrainSpec ts)
-      : CellSpell(n, ts), damage(dmg) {}
-  DamageSpell(std::string n, int l, DamageSpec dmg, TerrainSpec ts)
-      : CellSpell(n, l, ts), damage(dmg) {}
+  DamageSpell(std::string n, DamageSpec dmg, TerrainSpec ts, bool d=false)
+      : CellSpell(n, ts), damage(dmg), destroyObjects(d) {}
+  DamageSpell(std::string n, int l, DamageSpec dmg, TerrainSpec ts, bool d=false)
+      : CellSpell(n, l, ts), damage(dmg), destroyObjects(d) {}
   DamageSpec damage;
+  bool destroyObjects = false;
   void applySpell(std::shared_ptr<Creature> caster, std::shared_ptr<Location>,
                   std::shared_ptr<Cell>);
 };

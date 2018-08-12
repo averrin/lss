@@ -41,9 +41,9 @@ const Trait ACID_RESIST = {"Acid resist"};
 const Trait ACID_IMMUNE = {"Acid immune"};
 const Trait ACID_VULNERABLE = {"Acid vulnerable"};
 
-const Trait ICE_RESIST = {"Ice resist"};
-const Trait ICE_IMMUNE = {"Ice immune"};
-const Trait ICE_VULNERABLE = {"Ice vulnerable"};
+const Trait FROST_RESIST = {"Frost resist"};
+const Trait FROST_IMMUNE = {"Frost immune"};
+const Trait FROST_VULNERABLE = {"Frost vulnerable"};
 
 const Trait ELECTRICITY_RESIST = {"Electricity resist"};
 const Trait ELECTRICITY_IMMUNE = {"Electricity immune"};

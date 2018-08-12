@@ -22,34 +22,41 @@ const auto FIREBALL = std::make_shared<RadiusSpell>(
     "Fireball", 1,
     std::make_shared<DamageSpell>("Fire damage",
                                   DamageSpec(0, 2, 6, DamageType::FIRE),
-                                  TerrainType::FIREBALL),
+                                  TerrainType::FIREBALL, true),
     1.5, 20);
 const auto FIREBLAST = std::make_shared<RadiusSpell>(
     "Fireblast", 3,
     std::make_shared<DamageSpell>("Fire damage",
                                   DamageSpec(0, 2, 6, DamageType::FIRE),
-                                  TerrainType::FIREBALL),
+                                  TerrainType::FIREBALL, true),
     3.5, 40);
 
 const auto FIRESTREAM = std::make_shared<LineSpell>(
     "Firestream", 2,
     std::make_shared<DamageSpell>("Fire damage",
                                   DamageSpec(0, 2, 6, DamageType::FIRE),
-                                  TerrainType::FIREBALL),
+                                  TerrainType::FIREBALL, true),
     4, 20);
 
 const auto FIRESTRIKE = std::make_shared<TargetSpell>(
     "Firestrike", 0,
     std::make_shared<DamageSpell>("Fire damage",
                                   DamageSpec(0, 2, 6, DamageType::FIRE),
-                                  TerrainType::FIREBALL),
+                                  TerrainType::FIREBALL, true),
+    4, 15);
+
+const auto FROSTSTRIKE = std::make_shared<TargetSpell>(
+    "Froststrike", 0,
+    std::make_shared<DamageSpell>("Ice damage",
+                                  DamageSpec(0, 2, 6, DamageType::FROST),
+                                  TerrainType::FROSTBALL, true),
     4, 15);
 
 const auto ACIDSTRIKE = std::make_shared<TargetSpell>(
     "Acidstrike", 1,
     std::make_shared<DamageSpell>("Acid damage",
                                   DamageSpec(2, 3, 6, DamageType::ACID),
-                                  TerrainType::FIREBALL),
+                                  TerrainType::ACIDBALL, true),
     4, 20);
 
 /* LIGHT */
@@ -100,6 +107,7 @@ const std::vector<std::shared_ptr<Spell>> USABLE = {
     FIREBLAST,
     FIRESTREAM,
     FIRESTRIKE,
+    FROSTSTRIKE,
 
     FLASH,
     LIGHT,

@@ -63,6 +63,8 @@ const auto ALTAR = TerrainSpec{"altar", true, true, -1, false};
 const auto BUSH = TerrainSpec{"bush", false, true};
 const auto FIREBALL = TerrainSpec{
     "fireball", true, true, 1, false, true, TORCH_DISTANCE, LightType::FIRE};
+const auto FROSTBALL = TerrainSpec{
+    "frostball", true, true, 1, false, true, TORCH_DISTANCE, LightType::FROST};
 const auto ACIDBALL = TerrainSpec{
     "acidball", true, true, 1, false, true, TORCH_DISTANCE, LightType::ACID};
 const auto MAGIC_LIGHT = TerrainSpec{
