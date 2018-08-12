@@ -13,6 +13,7 @@ std::map<int, std::map<const EnemySpec, float>> DUNGEON = {
          {EnemyType::SNAKE, 0.3},
          {EnemyType::VIPER, 0.2},
          {EnemyType::BAT_LARGE, 0.1},
+         {EnemyType::GOBLIN, 0.05},
      }},
     {1,
      {
@@ -24,6 +25,7 @@ std::map<int, std::map<const EnemySpec, float>> DUNGEON = {
          {EnemyType::BAT_LARGE, 0.15},
          {EnemyType::GOBLIN, 0.4},
          {EnemyType::GOBLIN_ROGUE, 0.1},
+         {EnemyType::GOBLIN_LIEUTENANT, 0.02},
      }},
     {2,
      {
@@ -41,6 +43,7 @@ std::map<int, std::map<const EnemySpec, float>> DUNGEON = {
          {EnemyType::ANT, 0.3},
          {EnemyType::ANT_QUEEN, 0.2},
          {EnemyType::ORK, 0.1},
+         {EnemyType::VIPER, 0.05},
          {EnemyType::GOBLIN_LIEUTENANT, 0.2},
          {EnemyType::ORK_BERSERK, 0.4},
          {EnemyType::ORK_BLACK, 0.5},
@@ -48,6 +51,8 @@ std::map<int, std::map<const EnemySpec, float>> DUNGEON = {
      }},
     {4,
      {
+         {EnemyType::GOBLIN_LIEUTENANT, 0.02},
+         {EnemyType::GOBLIN_ROGUE, 0.01},
          {EnemyType::ORK_BERSERK, 0.4},
          {EnemyType::ORK_BLACK, 0.5},
          {EnemyType::OGRE, 0.3},
@@ -57,6 +62,8 @@ std::map<int, std::map<const EnemySpec, float>> DUNGEON = {
      }},
     {5,
      {
+         {EnemyType::ORK_BERSERK, 0.07},
+         {EnemyType::ORK_BLACK, 0.05},
          {EnemyType::OGRE, 0.3},
          {EnemyType::SKELETON, 0.3},
          {EnemyType::ZOMBIE, 0.3},
@@ -64,15 +71,35 @@ std::map<int, std::map<const EnemySpec, float>> DUNGEON = {
      }},
     {6,
      {
+         {EnemyType::FIRE_ELEMENTAL, 0.3},
+         {EnemyType::FROST_ELEMENTAL, 0.3},
+         {EnemyType::ACID_ELEMENTAL, 0.3},
+         {EnemyType::WRAITH, 0.3},
+         {EnemyType::SKELETON, 0.03},
+         {EnemyType::ZOMBIE, 0.03},
      }},
     {7,
      {
+         {EnemyType::FIRE_ELEMENTAL, 0.3},
+         {EnemyType::FROST_ELEMENTAL, 0.3},
+         {EnemyType::ACID_ELEMENTAL, 0.3},
+         {EnemyType::STONE_GOLEM, 0.1},
+         {EnemyType::STEEL_GOLEM, 0.1},
+         {EnemyType::WRAITH, 0.05},
      }},
     {8,
      {
+         {EnemyType::FIRE_ELEMENTAL, 0.05},
+         {EnemyType::FROST_ELEMENTAL, 0.05},
+         {EnemyType::ACID_ELEMENTAL, 0.05},
+         {EnemyType::STONE_GOLEM, 0.3},
+         {EnemyType::STEEL_GOLEM, 0.3},
      }},
     {9,
      {
+         {EnemyType::FIRE_DRAGON, 0.3},
+         {EnemyType::FROST_DRAGON, 0.3},
+         {EnemyType::ACID_DRAGON, 0.3},
      }},
 };
 }

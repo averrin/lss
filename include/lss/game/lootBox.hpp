@@ -90,26 +90,26 @@ const LootBox DUNGEON_0 = LootBox({
     LootBox(0.3, LOOT_TIER_0),
     LootBox(0.3, POTIONS),
     LootBox(0.3, SCROLLS),
-    LootBox(0.1, LootBox(Prototype::ARTEFACTS_0)),
+    LootBox(0.1, LootBox(Prototype::ARTIFACTS_0)),
 });
 const LootBox DUNGEON_1 = LootBox({
     LootBox(0.3, LOOT_TIER_1),
     LootBox(0.3, POTIONS),
     LootBox(0.3, SCROLLS),
-    LootBox(0.1, LootBox(Prototype::ARTEFACTS_1)),
+    LootBox(0.1, LootBox(Prototype::ARTIFACTS_1)),
 });
 const LootBox DUNGEON_2 = LootBox({
     LootBox(0.3, LOOT_TIER_2),
     LootBox(0.3, POTIONS),
     LootBox(0.3, SCROLLS),
-    LootBox(0.1, LootBox(Prototype::ARTEFACTS_2)),
+    LootBox(0.1, LootBox(Prototype::ARTIFACTS_2)),
 });
 
 const LootBox DUNGEON_3 = LootBox({
     LootBox(0.3, LOOT_TIER_3),
     LootBox(0.3, POTIONS),
     LootBox(0.3, SCROLLS),
-    LootBox(0.1, LootBox(Prototype::ARTEFACTS_3)),
+    LootBox(0.1, LootBox(Prototype::ARTIFACTS_3)),
 });
 
 const LootBox DUNGEON_4 = DUNGEON_3;

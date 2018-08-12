@@ -69,6 +69,10 @@ const auto AMULET_OF_ACID_IMMUNE = std::make_shared<Item>(
     "old copper neckless", "amulet of acid immune", ItemType::AMULET,
     Effects{std::make_shared<TraitEffect>(Traits::ACID_IMMUNE)});
 
+const auto AMULET_OF_FROST_IMMUNE = std::make_shared<Item>(
+    "shining silver neckless", "amulet of frost immune", ItemType::AMULET,
+    Effects{std::make_shared<TraitEffect>(Traits::FROST_IMMUNE)});
+
 /* Resists */
 
 const auto RING_OF_ACID_RESIST = std::make_shared<Item>(
@@ -78,6 +82,10 @@ const auto RING_OF_ACID_RESIST = std::make_shared<Item>(
 const auto RING_OF_FIRE_RESIST = std::make_shared<Item>(
     "red copper ring", "ring of fire resist", ItemType::RING,
     Effects{std::make_shared<TraitEffect>(Traits::FIRE_RESIST)});
+
+const auto RING_OF_FROST_RESIST = std::make_shared<Item>(
+    "silver ring", "ring of frost resist", ItemType::RING,
+    Effects{std::make_shared<TraitEffect>(Traits::FROST_RESIST)});
 
 /* EoT */
 
