@@ -16,7 +16,7 @@ parts:
     plugin: nil
     source-type: git
     source: git@github.com:averrin/lss.git
-    after: [conan]
+    after: [conan, desktop-gtk3]
     build-packages:
       - g++
       - make
@@ -31,7 +31,6 @@ parts:
       cmake .
       make -j4
       mkdir $SNAPCRAFT_PART_INSTALL/bin
-      mv run_snap.sh bin/
       mv bin/* $SNAPCRAFT_PART_INSTALL/bin
 
     filesets:
@@ -51,9 +50,8 @@ parts:
       - libglu1-mesa
       - libgles2-mesa
       - libgl1-mesa-dri
-      - libgl1-mesa-glx
 
 apps:
   lss:
-    plugs: [opengl, x11]
-    command: run_snap.sh
+    plugs: [opengl, desktop, desktop-legacy]
+    command: desktop-launch $SNAP/bin/LSS
