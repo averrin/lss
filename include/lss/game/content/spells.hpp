@@ -24,6 +24,13 @@ const auto FIREBALL = std::make_shared<RadiusSpell>(
                                   DamageSpec(0, 2, 6, DamageType::FIRE),
                                   TerrainType::FIREBALL, true),
     1.5, 20);
+
+const auto FROSTBALL = std::make_shared<RadiusSpell>(
+    "Frostball", 1,
+    std::make_shared<DamageSpell>("Ice damage",
+                                  DamageSpec(0, 2, 6, DamageType::FROST),
+                                  TerrainType::FROSTBALL, true),
+    1.5, 20);
 const auto FIREBLAST = std::make_shared<RadiusSpell>(
     "Fireblast", 3,
     std::make_shared<DamageSpell>("Fire damage",
@@ -31,11 +38,32 @@ const auto FIREBLAST = std::make_shared<RadiusSpell>(
                                   TerrainType::FIREBALL, true),
     3.5, 40);
 
+const auto FROSTBLAST = std::make_shared<RadiusSpell>(
+    "Frost Nova", 3,
+    std::make_shared<DamageSpell>("Frost damage",
+                                  DamageSpec(0, 2, 6, DamageType::FROST),
+                                  TerrainType::FROSTBALL, true),
+    3.5, 40);
+
 const auto FIRESTREAM = std::make_shared<LineSpell>(
     "Firestream", 2,
     std::make_shared<DamageSpell>("Fire damage",
                                   DamageSpec(0, 2, 6, DamageType::FIRE),
                                   TerrainType::FIREBALL, true),
+    4, 20);
+
+const auto FROSTSTREAM = std::make_shared<LineSpell>(
+    "Froststream", 2,
+    std::make_shared<DamageSpell>("Ice damage",
+                                  DamageSpec(0, 2, 6, DamageType::FROST),
+                                  TerrainType::FROSTBALL, true),
+    4, 20);
+
+const auto ACIDSTREAM = std::make_shared<LineSpell>(
+    "Acidstream", 3,
+    std::make_shared<DamageSpell>("Acid damage",
+                                  DamageSpec(2, 2, 6, DamageType::ACID),
+                                  TerrainType::ACIDBALL, true),
     4, 20);
 
 const auto FIRESTRIKE = std::make_shared<TargetSpell>(
@@ -104,8 +132,11 @@ const std::vector<std::shared_ptr<Spell>> USABLE = {
     IDENTIFY,
     TELEPORT_RANDOM,
     FIREBALL,
+    FROSTBALL,
     FIREBLAST,
+    FROSTBLAST,
     FIRESTREAM,
+    FROSTSTREAM,
     FIRESTRIKE,
     FROSTSTRIKE,
 

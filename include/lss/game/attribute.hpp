@@ -14,6 +14,7 @@ enum AttributeType {
   DEFENSE,
   CRIT_CHANCE,
   TRAITS,
+  GLOW,
   /**/
   INTELLIGENCE,
   STRENGTH,

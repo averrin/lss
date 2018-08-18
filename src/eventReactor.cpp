@@ -405,7 +405,6 @@ void EventReactor::onEvent(LightCommandEvent &e) {
   auto slot = app->hero->getSlot(WearableType::LIGHT);
   if (slot->item != nullptr) {
     app->hero->unequip(slot);
-    app->hero->emitsLight = false;
   } else {
     if (auto torch = std::find_if(
             app->hero->inventory.begin(), app->hero->inventory.end(),
@@ -415,7 +414,6 @@ void EventReactor::onEvent(LightCommandEvent &e) {
             });
         torch != app->hero->inventory.end()) {
       app->hero->equip(slot, *torch);
-      app->hero->emitsLight = true;
     }
   }
   app->hero->currentLocation->invalidate();

@@ -229,13 +229,6 @@ public:
   bool processKey(KeyEvent e);
 };
 
-class InspectMode : public Mode {
-public:
-  InspectMode(LSSApp *app) : Mode(app){};
-  bool processKey(KeyEvent e);
-  void render();
-};
-
 typedef std::function<std::string(std::shared_ptr<Object>, std::string)>
     Formatter;
 typedef std::function<bool(std::shared_ptr<Object>)> SelectCallback;

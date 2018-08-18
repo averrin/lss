@@ -61,7 +61,8 @@ public:
   int hp_max;
   DamageSpec dmgSpec = DamageSpec(0, 0, 0, DamageType::BASIC);
   float speed = 1.f;
-  float visibility_distance = 5.5f;
+  float visibility_distance = 0;
+  float default_visibility = 3.2f;
   float crit_chance = 0.1;
   int defense = 0;
   int level = 0;
@@ -120,6 +121,37 @@ public:
   bool hasVulnerable(DamageType dt) {
     auto trait = VULNERABLES.at(dt);
     return hasTrait(trait);
+  }
+
+  std::optional<LightSpec> getGlow() override {
+    std::optional<LightSpec> result = std::nullopt;
+    auto effects = getEffects(AttributeType::VISIBILITY_DISTANCE);
+    for (auto e : effects) {
+      if (auto vm = std::dynamic_pointer_cast<VisibilityModifier>(e); vm && vm->glow) {
+        if (!result || vm->light.distance > (*result).distance) {
+          result = vm->light;
+        }
+      }
+    }
+    return result;
+  }
+
+  Effects getEffects(AttributeType type) {
+    Effects effects;
+    effects.insert(effects.end(), activeEffects.begin(), activeEffects.end());
+    for (auto s : equipment->slots) {
+      if (s->item == nullptr ||
+          std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
+                    s->item->type.wearableType) == s->acceptTypes.end()) {
+        continue;
+      }
+      for (auto e : s->item->effects) {
+        if (e->type != type)
+          continue;
+        effects.push_back(e);
+      }
+    }
+    return effects;
   }
 
   float intelligence = 1.f;

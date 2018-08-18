@@ -63,14 +63,20 @@ public:
 
 class VisibilityModifier : public Effect {
 public:
-  VisibilityModifier(float m)
-      : Effect(AttributeType::VISIBILITY_DISTANCE), vmodifier(m){};
+  VisibilityModifier(float m) : Effect(AttributeType::VISIBILITY_DISTANCE), vmodifier(m), glow(false) {}
+  VisibilityModifier(LightSpec t)
+      : Effect(AttributeType::VISIBILITY_DISTANCE), vmodifier(t.distance), glow(true), light(t){};
   std::string getTitle();
   std::string getSign();
   float vmodifier;
+  bool glow;
+  LightSpec light;
   std::variant<float, int> getModifier() { return vmodifier; };
 
   std::shared_ptr<Effect> clone() {
+    if (glow) {
+      return std::make_shared<VisibilityModifier>(light);
+    }
     return std::make_shared<VisibilityModifier>(vmodifier);
   };
 };

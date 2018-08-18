@@ -23,7 +23,7 @@ rendering quality. And you may need install some deps.
 
 ## TODO
 - [ ] Achieve same text quality as in `cinder` branch
-- [ ] Pages in lists
+- [X] Pages in lists
 - [ ] Documentation (in help mode)
 - [X] Game over mode
 - [X] Fix attributes and effects

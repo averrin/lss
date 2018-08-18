@@ -229,11 +229,11 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
   if (!needUpdateLight)
     return;
   // auto t0 = std::chrono::system_clock::now();
-  auto heroVD = hero->lightStrength;
+  auto heroVD = hero->VISIBILITY_DISTANCE(hero.get());
   auto enemies = utils::castObjects<Enemy>(objects);
   std::vector<std::shared_ptr<Object>> torches;
   for (auto ts : objects) {
-    if (ts->emitsLight) {
+    if (ts->getGlow()) {
       torches.push_back(ts);
     }
   }
@@ -260,7 +260,7 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
       }
       c->illuminated = false;
       // FIXME: not in distance, but only visible
-      if (hero->emitsLight && getDistance(c, hero->currentCell) <= heroVD) {
+      if (hero->getGlow() && getDistance(c, hero->currentCell) <= heroVD) {
         c->illuminated = true;
         c->lightSources.insert(hero);
         continue;
@@ -270,10 +270,11 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
   std::vector<std::shared_ptr<Object>> ts;
   for (auto t : torches) {
     ts.push_back(t);
-    for (auto c : getVisible(t->currentCell, t->lightStrength)) {
+    auto glow = *t->getGlow();
+    for (auto c : getVisible(t->currentCell, glow.distance)) {
       auto d = sqrt(pow(t->currentCell->x - c->x, 2) +
                     pow(t->currentCell->y - c->y, 2));
-      if (d <= t->lightStrength) {
+      if (d <= glow.distance) {
         c->lightSources.insert(t);
         c->illuminated = true;
       }
@@ -281,7 +282,8 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
   }
   for (auto e : enemies) {
     if (e->hasLight()) {
-      for (auto c : getVisible(e->currentCell, TORCH_DISTANCE)) {
+      auto glow = *e->getGlow();
+      for (auto c : getVisible(e->currentCell, glow.distance)) {
         c->lightSources.insert(e);
         c->illuminated = true;
       }
@@ -296,7 +298,7 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
       }
       std::vector<std::shared_ptr<Object>> lss;
       for (auto ls : c->lightSources) {
-        if (ls->emitsLight) {
+        if (ls->getGlow()) {
           lss.push_back(ls);
         }
       }
@@ -312,7 +314,7 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
           d = td;
           c->nearestLightEmitter = ls;
         }
-        auto strength = ls->lightStrength;
+        auto strength = (*ls->getGlow()).distance;
         if (ls == player) {
           strength = TORCH_DISTANCE;
         }

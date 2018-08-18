@@ -214,7 +214,8 @@ void LSSApp::serveBg() {
 
     std::map<std::shared_ptr<Object>, int> ld;
     for (auto [ls, cells] : lightMap) {
-      if (!ls->emitsLight || ls->lightStable)
+      auto glow = ls->getGlow();
+      if (!glow || glow->stable)
         continue;
       if (ld.find(ls) == ld.end()) {
         ld[ls] = R::N(0, 2);
@@ -347,7 +348,7 @@ void LSSApp::updateMap() {
                t && hero->canSee(ec)) {
       state->fragments[index] = std::make_shared<TerrainSign>(t->type);
       state->fragments[index]->setAlpha(ec->illumination);
-      if (t->emitsLight) {
+      if (t->getGlow()) {
         state->fragments[index]->setAlpha(100);
       }
     }

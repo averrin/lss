@@ -70,12 +70,6 @@ Player::Player() : Creature() {
   mp_max = 50;
   mp = mp_max;
   dmgSpec = DamageSpec(0, 1, 3, DamageType::WEAPON);
-  visibility_distance = 3.2f;
-
-  emitsLight = false;
-  lightType = LightType::FIRE;
-  lightStrength = VISIBILITY_DISTANCE(this);
-  // lightStable = true;
 
   activeEffects.push_back(OverTimeEffects::MANA_RESTORE);
 
@@ -145,13 +139,7 @@ std::string Player::getDmgDesc() {
 
 void Player::commit(std::string reason, int ap, bool s) {
   if (hasLight() && !hasTrait(Traits::MAGIC_TORCH)) {
-    auto lightSlot = *std::find_if(
-        equipment->slots.begin(), equipment->slots.end(),
-        [](std::shared_ptr<Slot> s) {
-          return s->item != nullptr &&
-                 std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
-                           LIGHT) != s->acceptTypes.end();
-        });
+    auto lightSlot = getSlot(WearableType::LIGHT);
     if (lightSlot->item != nullptr && lightSlot->item->durability != -1) {
       lightSlot->item->durability -= ap / 10;
       if (lightSlot->item->durability <= 0) {
@@ -160,8 +148,6 @@ void Player::commit(std::string reason, int ap, bool s) {
       }
     }
   }
-  emitsLight = hasLight();
-  lightStrength = VISIBILITY_DISTANCE(this);
 
   auto t0 = std::chrono::system_clock::now();
   auto ptr = shared_from_this();

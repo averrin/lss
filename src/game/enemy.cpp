@@ -40,7 +40,6 @@ Enemy::Enemy(EnemySpec t) : Creature(), type(t) {
     for (auto s : equipment->slots) {
       if (std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
                     i->type.wearableType) != s->acceptTypes.end()) {
-        // fmt::print("{} : {}\n", s->name, i->getTitle());
         equipment->equip(s, i->roll());
         break;
       }

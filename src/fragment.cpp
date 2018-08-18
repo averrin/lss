@@ -89,14 +89,16 @@ std::string getColor(std::shared_ptr<Cell> cell) {
       auto fg = Color(color);
       float n = 0;
       for (auto ls : cell->lightSources) {
-        if (!ls->emitsLight)
+        auto glow = ls->getGlow();
+        if (!glow)
           continue;
         n++;
       }
       for (auto ls : cell->lightSources) {
-        if (!ls->emitsLight)
+        auto glow = ls->getGlow();
+        if (!glow)
           continue;
-        auto lc = Color(lightColors.at(ls->lightType));
+        auto lc = Color(lightColors.at((*glow).type));
         fg.blend(lc, 1 / (n + 1));
       }
       color = fg.getString();

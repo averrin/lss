@@ -5,9 +5,8 @@
 #include "EventRegisttration.hpp"
 #include "Object.hpp"
 
+#include "lss/game/light.hpp"
 #include "lss/game/cell.hpp"
-
-enum class LightType { FIRE, MAGIC, ACID, FROST };
 
 class Object : public eb::Object, public std::enable_shared_from_this<Object> {
 public:
@@ -26,11 +25,11 @@ public:
   std::string name;
   int zIndex = 0;
 
-  // TODO: move to other class
-  bool emitsLight = false;
-  float lightStrength = 0;
-  LightType lightType;
-  bool lightStable = false;
+  LightSpec light;
+
+  virtual std::optional<LightSpec> getGlow() {
+    return std::nullopt;
+  };
 
   int apLeft = -1;
   bool destructable = true;

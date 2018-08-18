@@ -9,6 +9,8 @@
 #include <string>
 #include <vector>
 
+#include <SDL.h>
+
 #include <lss/game/direction.hpp>
 
 using namespace std::string_literals;
@@ -106,6 +108,28 @@ public:
       break;
     }
     return "";
+  }
+
+  static std::optional<std::string> getDir(int code) {
+    switch (code) {
+    case SDL_SCANCODE_J:
+      return "s"s;
+    case SDL_SCANCODE_H:
+      return "w"s;
+    case SDL_SCANCODE_L:
+      return "e"s;
+    case SDL_SCANCODE_K:
+      return "n"s;
+    case SDL_SCANCODE_Y:
+      return "nw"s;
+    case SDL_SCANCODE_U:
+      return "ne"s;
+    case SDL_SCANCODE_B:
+      return "sw"s;
+    case SDL_SCANCODE_N:
+      return "se"s;
+    }
+    return std::nullopt;
   }
 
   static std::string getScrollName() {

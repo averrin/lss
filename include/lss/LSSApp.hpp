@@ -34,6 +34,7 @@
 #include "lss/ui/heroLine.hpp"
 #include "lss/ui/logPanel.hpp"
 #include "lss/ui/statusLine.hpp"
+#include "lss/ui/inspectMode.hpp"
 
 #include "lss/generator/generator.hpp"
 

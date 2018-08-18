@@ -31,13 +31,7 @@ void HeroLine::onEvent(HeroTakeDamageEvent &e) { update(); }
 void HeroLine::update() {
   float lightDurability = 0;
   if (hero->hasLight()) {
-    auto lightSlot = *std::find_if(
-        hero->equipment->slots.begin(), hero->equipment->slots.end(),
-        [](std::shared_ptr<Slot> s) {
-          return s->item != nullptr &&
-                 std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
-                           LIGHT) != s->acceptTypes.end();
-        });
+    auto lightSlot = hero->getSlot(WearableType::LIGHT);
     lightDurability =
         float(lightSlot->item->durability) / lightSlot->item->type.durability;
   }
@@ -70,7 +64,7 @@ void HeroLine::update() {
                      hero->DEF(hero.get()))),
        F(fmt::format(
            "{}",
-           hero->emitsLight
+           hero->hasLight()
                ? fmt::format(
                      "   <b>L:[<span color='{{{{orange}}}}'>{}</span>]</b>",
                      ldLine)

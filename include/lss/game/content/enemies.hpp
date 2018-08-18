@@ -211,7 +211,7 @@ EnemySpec const FIRE_ELEMENTAL = {
     1, 80, 0, 4,
     DamageSpec(1, 3, 6, DamageType::FIRE),
     LootBox(1, {}, {}, false),
-    {Traits::FIRE_IMMUNE, Traits::FROST_VULNERABLE}, Items{}
+    {Traits::FIRE_IMMUNE, Traits::FROST_VULNERABLE}, Items{Prototype::LANTERN}
 };
 
 EnemySpec const FROST_ELEMENTAL = {

@@ -58,21 +58,7 @@ float Attribute::operator()(Creature *c) {
     break;
   }
 
-  Effects effects;
-  effects.insert(effects.end(), c->activeEffects.begin(),
-                 c->activeEffects.end());
-  for (auto s : c->equipment->slots) {
-    if (s->item == nullptr ||
-        std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
-                  s->item->type.wearableType) == s->acceptTypes.end()) {
-      continue;
-    }
-    for (auto e : s->item->effects) {
-      if (e->type != type)
-        continue;
-      effects.push_back(e);
-    }
-  }
+  auto effects = c->getEffects(type);
   for (auto e : effects) {
     if (std::dynamic_pointer_cast<OverTimeEffect>(e))
       continue;
@@ -84,6 +70,9 @@ float Attribute::operator()(Creature *c) {
     } else if (auto m = std::get_if<float>(&mod)) {
       base += *m;
     }
+  }
+  if (type == AttributeType::VISIBILITY_DISTANCE && base == 0) {
+    base = c->default_visibility;
   }
   return base;
 }
@@ -398,11 +387,11 @@ void Creature::calcViewField(bool force) {
 
 // TODO: migrate to emit
 bool Creature::hasLight() {
-  return std::find_if(inventory.begin(), inventory.end(),
-                      [](std::shared_ptr<Item> item) {
-                        return item->type.wearableType == WearableType::LIGHT &&
-                               item->equipped;
-                      }) != inventory.end();
+  auto glow = getGlow();
+  if (glow) {
+    return true;
+  }
+  return false;
 }
 
 void Creature::applyEoT(EoT eot, int modifier) {
