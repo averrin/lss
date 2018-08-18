@@ -136,10 +136,6 @@ void Enemy::onEvent(CommitEvent &e) {
     return;
   }
 
-  if (pather == nullptr) {
-    pather = new micropather::MicroPather(currentLocation.get());
-  }
-
   actionPoints += e.actionPoints;
 
   // TODO: add lastheropoint and attack hero if its near
@@ -161,22 +157,11 @@ void Enemy::onEvent(CommitEvent &e) {
         actionPoints -= attackCost;
       }
     } else {
-      float totalCost = 0;
-      pather->Reset();
-      int result = pather->Solve(currentCell.get(), hero->currentCell.get(),
-                                 &path, &totalCost);
-      if (result != micropather::MicroPather::SOLVED) {
-        fmt::print("cannot find path to hero [{}.{} -> {}.{}]\n",
-                   currentCell->x, currentCell->y, hero->currentCell->x,
-                   hero->currentCell->y);
-        actionPoints = 0;
-        return;
-      }
+      path = currentLocation->getLine(currentCell, hero->currentCell);
 
       auto i = 1;
-      auto nptr = path[i];
-      auto nc = static_cast<Cell *>(nptr);
-      auto cd = getDirFromCell(currentCell, nc);
+      auto nc = path[i];
+      auto cd = getDirFromCell(currentCell, nc.get());
       auto inShadow = !nc->illuminated;
       if (inShadow && hasTrait(Traits::SHADOW_RUNNER)) {
         stepCost /= 2;
@@ -188,9 +173,8 @@ void Enemy::onEvent(CommitEvent &e) {
           if (move(cd)) {
             if (i < int(path.size() - 1)) {
               i++;
-              nptr = path[i];
-              nc = static_cast<Cell *>(nptr);
-              cd = getDirFromCell(currentCell, nc);
+              nc = path[i];
+              cd = getDirFromCell(currentCell, nc.get());
             }
             actionPoints -= stepCost;
           } else {
@@ -204,37 +188,28 @@ void Enemy::onEvent(CommitEvent &e) {
     }
   } else {
     if (step >= int(path.size() - 1) || path.size() == 0 ||
-        currentCell.get() == static_cast<Cell *>(path[path.size() - 1])) {
-      if (!randomPath()) {
-        return;
-      }
+        currentCell == path[path.size() - 1]) {
     }
-
-    fmt::print("path created: {}/{} [{}]\n", step, path.size(),
-               currentCell.get() != static_cast<Cell *>(path[path.size() - 1]));
     if (path.size() >= 1 &&
-        currentCell.get() != static_cast<Cell *>(path[path.size() - 1])) {
-      auto nptr = path[step];
-      auto nc = static_cast<Cell *>(nptr);
-      fmt::print("NC: {}.{}\n", nc->x, nc->y);
-      cd = getDirFromCell(currentCell, nc);
+        currentCell != path[path.size() - 1]) {
+      auto nc = path[step];
+      cd = getDirFromCell(currentCell, nc.get());
 
       while (actionPoints >= stepCost) {
         if (move(cd)) {
           if (step < int(path.size() - 1)) {
             step++;
-            nptr = path[step];
-            nc = static_cast<Cell *>(nptr);
-            cd = getDirFromCell(currentCell, nc);
+            nc = path[step];
+            cd = getDirFromCell(currentCell, nc.get());
           } else {
             fmt::print("clear path 1\n");
-            randomPath();
+            // randomPath();
             break;
           }
           actionPoints -= stepCost;
         } else {
           fmt::print("clear path\n");
-          randomPath();
+          // randomPath();
           break;
         }
       }
@@ -253,26 +228,26 @@ void Enemy::onEvent(CommitEvent &e) {
 }
 
 bool Enemy::randomPath() {
-  if (currentCell->room == nullptr) {
-    fmt::print("no room here\n");
-    return false;
-  }
-  fmt::print("R: {}.{}\n", currentCell->room->x, currentCell->room->y);
-  auto target =
-      currentCell->room->cells[rand() % currentCell->room->cells.size()];
-  fmt::print("T: {}.{}\n", target->x, target->y);
-  auto pather = new micropather::MicroPather(currentLocation.get());
-  float totalCost = 0;
-  pather->Reset();
-  int result =
-      pather->Solve(currentCell.get(), target.get(), &path, &totalCost);
-  delete pather;
-  step = 1;
-  if (result != micropather::MicroPather::SOLVED) {
-    fmt::print("cannot find path\n");
-    actionPoints = 0;
-    return false;
-  }
+  // if (currentCell->room == nullptr) {
+  //   fmt::print("no room here\n");
+  //   return false;
+  // }
+  // fmt::print("R: {}.{}\n", currentCell->room->x, currentCell->room->y);
+  // auto target =
+  //     currentCell->room->cells[rand() % currentCell->room->cells.size()];
+  // fmt::print("T: {}.{}\n", target->x, target->y);
+  // auto pather = new micropather::MicroPather(currentLocation.get());
+  // float totalCost = 0;
+  // pather->Reset();
+  // int result =
+  //     pather->Solve(currentCell.get(), target.get(), &path, &totalCost);
+  // delete pather;
+  // step = 1;
+  // if (result != micropather::MicroPather::SOLVED) {
+  //   fmt::print("cannot find path\n");
+  //   actionPoints = 0;
+  //   return false;
+  // }
   return true;
 }
 

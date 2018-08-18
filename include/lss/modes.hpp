@@ -270,7 +270,16 @@ public:
   void setCallback(SelectCallback c) { callback = c; };
   SelectCallback callback;
 
+  std::shared_ptr<State> state;
+  void setState(std::shared_ptr<State> s) {
+    state = s;
+  }
   void render(std::shared_ptr<State>);
+  void render() {
+    render(state);
+  }
+  int currentPage = 0;
+  std::string letters = "abcdefghijklmnopqrstuvw";
 };
 
 class InventoryMode : public TextMode {

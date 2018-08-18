@@ -324,8 +324,8 @@ void LSSApp::updateMap() {
         // }
         unsigned size = e->path.size();
         for (int k = 0; k < size; ++k) {
-          auto ptr = e->path[k];
-          auto dot = static_cast<Cell *>(ptr);
+          auto dot = e->path[k];
+          // auto dot = static_cast<Cell *>(ptr);
           auto i = dot->y * (hero->currentLocation->cells.front().size() + 1) +
                    dot->x;
           state->fragments[i] = std::make_shared<ItemSign>(ItemType::ROCK);
@@ -403,6 +403,7 @@ void LSSApp::keyDown(KeyEvent event) {
     typedCommand = "";
   }
   if (modeManager.modeFlags->currentMode != prevMode) {
+    objectSelectMode->currentPage = 0;
     statusLine->setModeLine(modeManager.modeFlags->currentMode);
     return;
   }

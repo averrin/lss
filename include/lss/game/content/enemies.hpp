@@ -205,6 +205,7 @@ EnemySpec const WRAITH = {
     {Traits::WEAPON_IMMUNE}, Items{Prototype::WRAITH_TOUCH}
 };
 
+//TODO: add glow
 EnemySpec const FIRE_ELEMENTAL = {
     "fire elemental", 5,
     1, 80, 0, 4,

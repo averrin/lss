@@ -2,6 +2,7 @@
 
 ### 0.1.1 Feature Freeze
 - more content
+- pagination in object select mode
 
 ### 0.1.0 Suicidal Lemming Migration
 - init hero status page

@@ -109,7 +109,7 @@ const Fragments State::leader_mode = {
 const Fragments State::unknown_command = {
     F("<span color='{{red}}' weight='bold'>Unknown command</span>")};
 const Fragments State::object_select_mode = {
-    F("<span color='{{blue}}'>Select item</span> [a-y] or [Zz, Esc] for exit")};
+    F("<span color='{{blue}}'>Select item</span> [a-y] and &lt;/&gt; for changing page or [Zz, Esc] for exit")};
 const Fragments State::text_mode = {F("[Zz, Esc] for exit")};
 const Fragments State::pause_mode = {F("Paused. Press any key for continue")};
 const Fragments State::inspect_mode = {

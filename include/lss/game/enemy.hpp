@@ -45,8 +45,9 @@ public:
   Direction cd = Direction::W;
   int actionPoints = 0;
   EnemySpec type;
-  micropather::MPVector<void *> path;
-  micropather::MPVector<void *> pathToHero;
+  // micropather::MPVector<void *> path;
+  // micropather::MPVector<void *> pathToHero;
+  std::vector<std::shared_ptr<Cell>> path;
   int step;
   micropather::MicroPather *pather = nullptr;
   bool randomPath();

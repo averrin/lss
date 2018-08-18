@@ -135,16 +135,41 @@ bool TargetMode::processKey(KeyEvent event) {
 }
 
 bool ObjectSelectMode::processKey(KeyEvent event) {
-  std::string letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  auto ch = event.getChar();
-  if (event.isShiftDown()) {
-    ch = toupper(ch);
-  }
-  auto index = letters.find(ch);
-  if (objects.size() > index) {
-    if (callback(objects[index])) {
+  switch (event.getCode()) {
+  case SDL_SCANCODE_PERIOD:
+    if (event.isShiftDown()) {
+      currentPage++;
+      if (currentPage > objects.size() / letters.size() - 1) {
+        currentPage = objects.size() / letters.size() - 1;
+      }
+      render(app->objectSelectState);
       return true;
     }
+    break;
+  case SDL_SCANCODE_COMMA:
+    if (event.isShiftDown()) {
+      currentPage--;
+      if (currentPage < 0) {
+        currentPage = 0;
+      }
+      render(app->objectSelectState);
+      return true;
+    }
+    break;
+  default: {
+    auto ch = event.getChar();
+    if (event.isShiftDown()) {
+      ch = toupper(ch);
+    }
+    auto index = letters.find(ch);
+    if (objects.size() > index) {
+      if (callback(objects[index + (letters.size() * currentPage)])) {
+        currentPage = 0;
+        return true;
+      }
+    }
+
+  } break;
   }
   return false;
 }
@@ -851,7 +876,8 @@ void InventoryMode::render(std::shared_ptr<State> state) {
 
 // TODO: scroll
 void ObjectSelectMode::render(std::shared_ptr<State> state) {
-  state->setContent({header});
+  state->setContent({header, F(fmt::format(" [{}/{}]", currentPage + 1,
+                                           objects.size() / letters.size()))});
   state->appendContent(State::END_LINE);
   state->appendContent(State::END_LINE);
 
@@ -860,14 +886,11 @@ void ObjectSelectMode::render(std::shared_ptr<State> state) {
     return;
   }
 
-  std::string letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  auto n = 0;
-  for (auto o : objects) {
-    if (n >= letters.size()) {
-      n = letters.size() - 1;
-    }
+  auto offset = currentPage * letters.size();
+
+  for (auto n = 0; n < letters.size(); n++) {
+    auto o = objects[n + offset];
     state->appendContent(F(formatter(o, std::string{letters[n]})));
     state->appendContent(State::END_LINE);
-    n++;
   }
 }
