@@ -889,6 +889,9 @@ void ObjectSelectMode::render(std::shared_ptr<State> state) {
   auto offset = currentPage * letters.size();
 
   for (auto n = 0; n < letters.size(); n++) {
+    if (n + offset >= objects.size()) {
+      break;
+    }
     auto o = objects[n + offset];
     state->appendContent(F(formatter(o, std::string{letters[n]})));
     state->appendContent(State::END_LINE);

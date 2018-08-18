@@ -190,8 +190,7 @@ void Enemy::onEvent(CommitEvent &e) {
     if (step >= int(path.size() - 1) || path.size() == 0 ||
         currentCell == path[path.size() - 1]) {
     }
-    if (path.size() >= 1 &&
-        currentCell != path[path.size() - 1]) {
+    if (path.size() >= 1 && currentCell != path[path.size() - 1]) {
       auto nc = path[step];
       cd = getDirFromCell(currentCell, nc.get());
 

@@ -271,13 +271,9 @@ public:
   SelectCallback callback;
 
   std::shared_ptr<State> state;
-  void setState(std::shared_ptr<State> s) {
-    state = s;
-  }
+  void setState(std::shared_ptr<State> s) { state = s; }
   void render(std::shared_ptr<State>);
-  void render() {
-    render(state);
-  }
+  void render() { render(state); }
   int currentPage = 0;
   std::string letters = "abcdefghijklmnopqrstuvw";
 };

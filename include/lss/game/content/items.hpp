@@ -142,12 +142,11 @@ const std::vector<std::shared_ptr<Item>> ARTIFACTS_1 = {
 
 const std::vector<std::shared_ptr<Item>> ARTIFACTS_2 = {
     AMULET_OF_ACID_IMMUNE, AMULET_OF_FIRE_IMMUNE, AMULET_OF_FROST_IMMUNE,
-    RING_OF_ACID_RESIST, RING_OF_FROST_RESIST,
-    RING_OF_FIRE_RESIST,   RING_OF_REGEN,         RING_OF_MANA_RESTORE,
+    RING_OF_ACID_RESIST,   RING_OF_FROST_RESIST,  RING_OF_FIRE_RESIST,
+    RING_OF_REGEN,         RING_OF_MANA_RESTORE,
 };
 
-const std::vector<std::shared_ptr<Item>> ARTIFACTS_3 = {
-};
+const std::vector<std::shared_ptr<Item>> ARTIFACTS_3 = {};
 
 const std::vector<std::shared_ptr<Item>> ENEMY = {
     ORK_SWORD,

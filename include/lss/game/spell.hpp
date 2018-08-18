@@ -68,9 +68,10 @@ public:
 
 class DamageSpell : public CellSpell {
 public:
-  DamageSpell(std::string n, DamageSpec dmg, TerrainSpec ts, bool d=false)
+  DamageSpell(std::string n, DamageSpec dmg, TerrainSpec ts, bool d = false)
       : CellSpell(n, ts), damage(dmg), destroyObjects(d) {}
-  DamageSpell(std::string n, int l, DamageSpec dmg, TerrainSpec ts, bool d=false)
+  DamageSpell(std::string n, int l, DamageSpec dmg, TerrainSpec ts,
+              bool d = false)
       : CellSpell(n, l, ts), damage(dmg), destroyObjects(d) {}
   DamageSpec damage;
   bool destroyObjects = false;

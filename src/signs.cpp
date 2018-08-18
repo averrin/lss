@@ -188,9 +188,7 @@ const std::map<CellSpec, std::string> cellWeights = {
 };
 
 const std::map<CellFeature, std::string> featureColors = {
-    {CellFeature::CAVE, "#897546"},
-    {CellFeature::BLOOD, "#8b0000"},
-    {CellFeature::FROST, "#aaaaff"},
-    {CellFeature::MARK1, "#0000ff"},
+    {CellFeature::CAVE, "#897546"},  {CellFeature::BLOOD, "#8b0000"},
+    {CellFeature::FROST, "#aaaaff"}, {CellFeature::MARK1, "#0000ff"},
     {CellFeature::MARK2, "#00ff00"},
 };

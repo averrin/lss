@@ -34,15 +34,15 @@ const auto RAPIER = std::make_shared<Item>(
 
 const auto GREAT_AXE = std::make_shared<Item>(
     "great axe", ItemType::TWO_HAND,
-    Effects{
-        std::make_shared<MeleeDamage>(DamageSpec(R::I(-2, 0), 2, R::I(5, 7), DamageType::WEAPON)),
-        std::make_shared<SpeedModifier>(-0.4f)});
+    Effects{std::make_shared<MeleeDamage>(
+                DamageSpec(R::I(-2, 0), 2, R::I(5, 7), DamageType::WEAPON)),
+            std::make_shared<SpeedModifier>(-0.4f)});
 
-const auto GREAT_SWORD = std::make_shared<Item>(
-    "great sword", ItemType::TWO_HAND,
-    Effects{
-        std::make_shared<MeleeDamage>(DamageSpec(0, 2, R::I(4, 6), DamageType::WEAPON)),
-        std::make_shared<SpeedModifier>(-0.2f)});
+const auto GREAT_SWORD =
+    std::make_shared<Item>("great sword", ItemType::TWO_HAND,
+                           Effects{std::make_shared<MeleeDamage>(DamageSpec(
+                                       0, 2, R::I(4, 6), DamageType::WEAPON)),
+                                   std::make_shared<SpeedModifier>(-0.2f)});
 
 const auto DAGGER = std::make_shared<Item>(
     "dagger", ItemType::LIGHT_WEAPON,
@@ -74,7 +74,7 @@ const auto WRAITH_TOUCH = std::make_shared<Item>(
         std::make_shared<CritModifier>(0.2),
         std::make_shared<OnHitEffect>(
             std::make_shared<LastingEffect>(
-                     std::make_shared<TraitEffect>(Traits::CONFUSED), 50000),
+                std::make_shared<TraitEffect>(Traits::CONFUSED), 50000),
             0.5)});
 
 const auto POISON_FANG = std::make_shared<Item>(

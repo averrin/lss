@@ -205,60 +205,57 @@ void LSSApp::startBg() {
     bgThread.join();
   }
   bgRunning = true;
-  bgThread = std::thread([&](){serveBg();});
+  bgThread = std::thread([&]() { serveBg(); });
 }
 
 void LSSApp::serveBg() {
-    while (bgRunning) {
-      auto lightMap = hero->getLightMap();
+  while (bgRunning) {
+    auto lightMap = hero->getLightMap();
 
-      std::map<std::shared_ptr<Object>, int> ld;
-      for (auto [ls, cells] : lightMap) {
-        if (!ls->emitsLight || ls->lightStable)
-          continue;
-        if (ld.find(ls) == ld.end()) {
-          ld[ls] = R::N(0, 2);
-        }
-        auto d = ld[ls];
-        for (auto c : cells) {
-          auto cd = R::N(0, 1);
-          auto f =
-              state->fragments
-                  [c->y * (hero->currentLocation->cells.front().size() + 1) +
-                   c->x];
-          auto a = f->alpha + d + cd;
-          if (c->hasFeature(CellFeature::FROST)) {
-            a = 100 - R::N(0, 5);
-          }
-          auto ml = 25 + 5 * c->lightSources.size();
-          if (a < ml)
-            a = ml;
-          if (a > 100)
-            a = 100;
-          f->setAlpha(a);
-        }
+    std::map<std::shared_ptr<Object>, int> ld;
+    for (auto [ls, cells] : lightMap) {
+      if (!ls->emitsLight || ls->lightStable)
+        continue;
+      if (ld.find(ls) == ld.end()) {
+        ld[ls] = R::N(0, 2);
       }
-
-      playAnimations();
-
-      state->invalidate();
-      SDL_Delay(32);
+      auto d = ld[ls];
+      for (auto c : cells) {
+        auto cd = R::N(0, 1);
+        auto f = state->fragments
+                     [c->y * (hero->currentLocation->cells.front().size() + 1) +
+                      c->x];
+        auto a = f->alpha + d + cd;
+        if (c->hasFeature(CellFeature::FROST)) {
+          a = 100 - R::N(0, 5);
+        }
+        auto ml = 25 + 5 * c->lightSources.size();
+        if (a < ml)
+          a = ml;
+        if (a > 100)
+          a = 100;
+        f->setAlpha(a);
+      }
     }
-  
+
+    playAnimations();
+
+    state->invalidate();
+    SDL_Delay(32);
+  }
 }
 
 void LSSApp::playAnimations() {
-    damaged = false;
-    auto _anims = animations;
-    for (auto a : _anims) {
-      if (a->stopped) {
-        animations.erase(
-            std::remove(animations.begin(), animations.end(), a));
-        continue;
-      }
-      a->tick();
-      invalidate();
+  damaged = false;
+  auto _anims = animations;
+  for (auto a : _anims) {
+    if (a->stopped) {
+      animations.erase(std::remove(animations.begin(), animations.end(), a));
+      continue;
     }
+    a->tick();
+    invalidate();
+  }
 }
 
 void LSSApp::setListeners() { reactor = std::make_shared<EventReactor>(this); }
@@ -437,6 +434,10 @@ void LSSApp::keyDown(KeyEvent event) {
   case Modes::HERO:
     heroMode->processKey(event);
     break;
+  }
+
+  if (modeManager.modeFlags->currentMode != prevMode) {
+    statusLine->setModeLine(modeManager.modeFlags->currentMode);
   }
 }
 
