@@ -15,7 +15,7 @@ parts:
   lss:
     plugin: nil
     source-type: git
-    source: git@github.com:averrin/lss.git
+    source: https://github.com/averrin/lss.git
     after: [conan, desktop-gtk3]
     build-packages:
       - g++
