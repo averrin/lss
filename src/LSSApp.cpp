@@ -172,17 +172,15 @@ void LSSApp::startGame() {
   l->depth = 0;
   locations[0] = l;
 
-  for (auto n = 1; n < MAX_LEVELS; n++) {
-    threads.push_back(std::thread(
-        [&](int n) {
-          auto l = generator->getRandomLocation(hero, n);
+  threads.push_back(std::thread(
+    [&](std::shared_ptr<Location> l) {
+      for (auto n = 1; n < MAX_LEVELS; n++) {
+          l = generator->getRandomLocation(hero, n, l->exitCell);
           locations[n] = l;
-          // MessageEvent me(nullptr, fmt::format("Generated location count:
-          // {}", locations.size()));
-          // eb::EventBus::FireEvent(me);
-        },
-        n));
-  }
+          MessageEvent me(nullptr, fmt::format("Generated location count: {}", locations.size()));
+          eb::EventBus::FireEvent(me);
+        }
+      }, l));
 
   state->clear();
   state->fragments.assign(

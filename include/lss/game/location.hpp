@@ -28,6 +28,7 @@ struct LocationSpec {
   LocationType type = LocationType::DUNGEON;
   std::vector<LocationFeature> features;
   std::vector<CellFeature> cellFeatures;
+  std::shared_ptr<Cell> enterCell;
 };
 
 class Player;

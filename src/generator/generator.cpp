@@ -593,7 +593,7 @@ void makeRiver(std::shared_ptr<Location> location) {
 
 // TODO: respect void on prev location
 std::shared_ptr<Location>
-Generator::getRandomLocation(std::shared_ptr<Player> hero, int depth) {
+Generator::getRandomLocation(std::shared_ptr<Player> hero, int depth, std::shared_ptr<Cell> enter) {
   if (depth == -1 && hero->currentLocation == nullptr) {
     depth = 0;
   }
@@ -628,6 +628,7 @@ Generator::getRandomLocation(std::shared_ptr<Player> hero, int depth) {
     spec.features.push_back(LocationFeature::LAKE);
   }
   spec.threat = depth;
+  spec.enterCell = enter;
   auto l = getLocation(spec);
   l->depth = depth;
   return l;
@@ -665,10 +666,14 @@ void placeTorches(std::shared_ptr<Location> location) {
   // fmt::print("Torches: {}\n", n);
 }
 
-void placeStairs(std::shared_ptr<Location> location) {
+bool placeStairs(std::shared_ptr<Location> location) {
   log("place stairs");
 
   auto entr = getRandomCell(location, CellType::FLOOR);
+  if (location->type.enterCell != nullptr) {
+    auto e = location->type.enterCell;
+    entr = std::make_optional<std::shared_ptr<Cell>>(location->cells[e->y][e->x]);
+  }
   auto exir = getRandomCell(location, CellType::FLOOR);
   while (!entr) {
     entr = getRandomCell(location, CellType::FLOOR);
@@ -687,12 +692,13 @@ void placeStairs(std::shared_ptr<Location> location) {
   int result = pather->Solve(location->enterCell.get(),
                              location->exitCell.get(), &path, &totalCost);
 
-  while (result != micropather::MicroPather::SOLVED || totalCost < 20) {
-    entr = getRandomCell(location, CellType::FLOOR);
+  auto i = 0;
+  while (result != micropather::MicroPather::SOLVED || (totalCost < 20 && i < 10)) {
+    // entr = getRandomCell(location, CellType::FLOOR);
     exir = getRandomCell(location, CellType::FLOOR);
-    while (!entr) {
-      entr = getRandomCell(location, CellType::FLOOR);
-    }
+    // while (!entr) {
+      // entr = getRandomCell(location, CellType::FLOOR);
+    // }
     while (!exir) {
       exir = getRandomCell(location, CellType::FLOOR);
     }
@@ -701,6 +707,11 @@ void placeStairs(std::shared_ptr<Location> location) {
     pather->Reset();
     result = pather->Solve(location->enterCell.get(), location->exitCell.get(),
                            &path, &totalCost);
+    i++;
+    if (i == 30) {
+      fmt::print("cannot place exit\n");
+      return false;
+    }
   }
   // fmt::print("{}.{} -> {}.{} = {}\n", location->enterCell->x,
   //            location->enterCell->y, location->exitCell->x,
@@ -730,6 +741,7 @@ void placeStairs(std::shared_ptr<Location> location) {
     c->room = location->enterCell->room;
     c->room->cells.push_back(c);
   });
+  return true;
 }
 
 void makePassages(std::shared_ptr<Location> location) {
@@ -770,6 +782,19 @@ void placeRooms(std::shared_ptr<Location> location) {
   auto rc = rand() % 12 + 7;
 
   location->cells = fill(HEIGHT, WIDTH, CellType::UNKNOWN);
+  //TODO: ensure place in location borders
+  if (location->type.enterCell != nullptr) {
+    auto room = getRoom(5,3,5,3);
+    auto e = location->type.enterCell;
+    auto rx = e->x-room->width/2;
+    auto ry = e->y-room->height/2;
+    paste(room->cells, location, rx, ry);
+    room->x = rx;
+    room->y = ry;
+    room->threat = rand() % 4;
+    location->rooms.push_back(room);
+  }
+
   for (auto n = 0; n < rc; n++) {
     auto room = getRoom();
     auto ry = rand() % (location->cells.size() - room->height - 2) + 2;
@@ -1126,7 +1151,11 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   }
 
   start = std::chrono::system_clock::now();
-  placeStairs(location);
+  auto success = placeStairs(location);
+  if (!success) {
+    fmt::print("regen location\n");
+    return getLocation(spec);
+  }
   end = std::chrono::system_clock::now();
   timings["placeStairs"] = end - start;
 

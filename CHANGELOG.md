@@ -7,6 +7,7 @@
 - better AI
 - enemies can throw
 - blink on hit
+- location enter in the same place as prev location exit
 
 ### 0.1.0 Suicidal Lemming Migration
 - init hero status page
