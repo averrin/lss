@@ -239,8 +239,9 @@ void InspectMode::render() {
         app->inspectState->appendContent({F("Inventory:")});
         app->inspectState->appendContent(State::END_LINE);
         for (auto s : e->equipment->slots) {
-          app->inspectState->appendContent(
-              {F(fmt::format("    * {} -- {}", s->name,  s->item != nullptr ? s->item->getTitle() : "empty"))});
+          app->inspectState->appendContent({F(fmt::format(
+              "    * {} -- {}", s->name,
+              s->item != nullptr ? s->item->getTitle() : "empty"))});
           app->inspectState->appendContent(State::END_LINE);
         }
       }

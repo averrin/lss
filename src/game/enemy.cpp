@@ -122,12 +122,10 @@ Direction getDirFromCell(std::shared_ptr<Cell> c, Cell *nc) {
   }
 };
 
-void Enemy::commit(int ap) {
-  actionPoints -= ap;
-}
+void Enemy::commit(int ap) { actionPoints -= ap; }
 
 std::optional<int> Enemy::execAiNone(int ap) {
-  std::optional<int> cost; 
+  std::optional<int> cost;
   if (ap >= ap_cost::WAIT) {
     cost = ap_cost::WAIT;
   }
@@ -135,7 +133,7 @@ std::optional<int> Enemy::execAiNone(int ap) {
 }
 
 std::optional<int> Enemy::execAiPassive(int ap) {
-  std::optional<int> cost; 
+  std::optional<int> cost;
   if (ap >= ap_cost::WAIT) {
     cost = ap_cost::WAIT;
   }
@@ -144,7 +142,7 @@ std::optional<int> Enemy::execAiPassive(int ap) {
 
 // TODO: add magic cast and pause mode
 std::optional<int> Enemy::execAiAggressive(int ap) {
-  std::optional<int> cost; 
+  std::optional<int> cost;
   auto stepCost = ap_cost::STEP / speed;
   auto attackCost = ap_cost::ATTACK / speed;
   auto waitCost = ap_cost::WAIT;
@@ -162,16 +160,16 @@ std::optional<int> Enemy::execAiAggressive(int ap) {
 
   if (!cost && ap >= attackCost) {
     if (s.nearTarget) {
-        auto directionToTarget = getDirFromCell(currentCell, s.targetCell.get());
-        attack(directionToTarget);
-        cost = attackCost;
-        fmt::print("attack\n");
+      auto directionToTarget = getDirFromCell(currentCell, s.targetCell.get());
+      attack(directionToTarget);
+      cost = attackCost;
+      fmt::print("attack\n");
     }
   }
   if (!cost && ap >= throwCost) {
     if (!s.nearTarget && s.targetInTargetCell && s.canThrow) {
       fmt::print("throw\n");
-      auto t  = std::find_if(inventory.begin(), inventory.end(), [](auto i) {
+      auto t = std::find_if(inventory.begin(), inventory.end(), [](auto i) {
         return i->type.category == ItemCategories::THROWABLE;
       });
       throwItem(*t, s.targetCell);
@@ -197,17 +195,17 @@ std::optional<int> Enemy::execAiAggressive(int ap) {
 }
 
 std::optional<int> Enemy::execAction(int ap) {
-  std::optional<int> cost; 
+  std::optional<int> cost;
 
   switch (type.aiType) {
-    case AIType::NONE:
-      return execAiNone(ap);
-    case AIType::PASSIVE:
-      return execAiPassive(ap);
-    case AIType::AGGRESSIVE:
-      return execAiAggressive(ap);
+  case AIType::NONE:
+    return execAiNone(ap);
+  case AIType::PASSIVE:
+    return execAiPassive(ap);
+  case AIType::AGGRESSIVE:
+    return execAiAggressive(ap);
   }
-  
+
   if (ap >= ap_cost::WAIT) {
     cost = ap_cost::WAIT;
   }
@@ -245,9 +243,7 @@ void Enemy::onEvent(CommitEvent &e) {
             << '\n';
 }
 
-bool Enemy::randomPath() {
-  return true;
-}
+bool Enemy::randomPath() { return true; }
 
 EnemyTakeDamageEvent::EnemyTakeDamageEvent(eb::ObjectPtr s,
                                            std::shared_ptr<Damage> d)

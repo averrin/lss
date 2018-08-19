@@ -4,14 +4,13 @@
 enum class LightType { NONE, CLEAR, FIRE, MAGIC, ACID, FROST };
 
 struct LightSpec {
-    float distance;
-    LightType type;
-    bool stable = false;
-
+  float distance;
+  LightType type;
+  bool stable = false;
 };
 
 namespace Glow {
-    const LightSpec NONE = {0, LightType::NONE};
+const LightSpec NONE = {0, LightType::NONE};
 }
 
 #endif // __LIGHT_H_

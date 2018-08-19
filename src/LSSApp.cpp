@@ -208,40 +208,46 @@ void LSSApp::startBg() {
   bgThread = std::thread([&]() { serveBg(); });
 }
 
+void LSSApp::frameBg() {
+  std::lock_guard<std::mutex> lock(exec_mutex);
+  auto lightMap = hero->getLightMap();
+
+  std::map<std::shared_ptr<Object>, int> ld;
+  for (auto [ls, cells] : lightMap) {
+    auto glow = ls->getGlow();
+    if (!glow || glow->stable)
+      continue;
+    if (ld.find(ls) == ld.end()) {
+      ld[ls] = R::N(0, 2);
+    }
+    auto d = ld[ls];
+    for (auto c : cells) {
+      auto cd = R::N(0, 1);
+      auto f =
+          state->fragments[c->y * (hero->currentLocation->cells.front().size() +
+                                   1) +
+                           c->x];
+      auto a = f->alpha + d + cd;
+      if (c->hasFeature(CellFeature::FROST)) {
+        a = 100 - R::N(0, 5);
+      }
+      auto ml = 25 + 5 * c->lightSources.size();
+      if (a < ml)
+        a = ml;
+      if (a > 100)
+        a = 100;
+      f->setAlpha(a);
+    }
+  }
+
+  playAnimations();
+
+  state->invalidate();
+}
+
 void LSSApp::serveBg() {
   while (bgRunning) {
-    auto lightMap = hero->getLightMap();
-
-    std::map<std::shared_ptr<Object>, int> ld;
-    for (auto [ls, cells] : lightMap) {
-      auto glow = ls->getGlow();
-      if (!glow || glow->stable)
-        continue;
-      if (ld.find(ls) == ld.end()) {
-        ld[ls] = R::N(0, 2);
-      }
-      auto d = ld[ls];
-      for (auto c : cells) {
-        auto cd = R::N(0, 1);
-        auto f = state->fragments
-                     [c->y * (hero->currentLocation->cells.front().size() + 1) +
-                      c->x];
-        auto a = f->alpha + d + cd;
-        if (c->hasFeature(CellFeature::FROST)) {
-          a = 100 - R::N(0, 5);
-        }
-        auto ml = 25 + 5 * c->lightSources.size();
-        if (a < ml)
-          a = ml;
-        if (a > 100)
-          a = 100;
-        f->setAlpha(a);
-      }
-    }
-
-    playAnimations();
-
-    state->invalidate();
+    frameBg();
     SDL_Delay(32);
   }
 }
@@ -254,9 +260,24 @@ void LSSApp::playAnimations() {
       animations.erase(std::remove(animations.begin(), animations.end(), a));
       continue;
     }
+    if (auto ca = std::dynamic_pointer_cast<ColorAnimation>(a)) {
+      if (ca->object == nullptr || ca->object->currentCell == nullptr) {
+        animations.erase(std::remove(animations.begin(), animations.end(), a));
+        continue;
+      };
+      auto c = ca->object->currentCell;
+      auto f =
+          state->fragments[c->x +
+                           c->y * (hero->currentLocation->cells.front().size() +
+                                   1)];
+      if (ca->fragment == nullptr) {
+        ca->initColor = Color(f->fgColor);
+      }
+      ca->fragment = f;
+    }
     a->tick();
-    invalidate();
   }
+  invalidate();
 }
 
 void LSSApp::setListeners() { reactor = std::make_shared<EventReactor>(this); }
@@ -459,6 +480,7 @@ bool LSSApp::processCommand(std::string cmd) {
   if (event == std::nullopt)
     return false;
 
+  std::lock_guard<std::mutex> lock(exec_mutex);
   // TODO: do it automagicaly
   if (auto e = std::dynamic_pointer_cast<MoveCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);

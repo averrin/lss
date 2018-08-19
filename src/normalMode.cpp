@@ -42,7 +42,7 @@ bool NormalMode::processKey(KeyEvent event) {
         break;
       app->processCommand(*d);
     } else {
-    //TODO: move to utils
+      // TODO: move to utils
       auto ds =
           std::vector<std::string>{"e", "s", "w", "n", "nw", "ne", "sw", "se"};
       auto d = ds.at(rand() % ds.size());
@@ -239,5 +239,3 @@ bool NormalMode::processKey(KeyEvent event) {
   }
   return true;
 }
-
-

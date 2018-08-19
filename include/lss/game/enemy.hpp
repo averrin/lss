@@ -4,11 +4,11 @@
 
 #include "Event.hpp"
 #include "EventBus.hpp"
+#include "lss/game/ai.hpp"
 #include "lss/game/creature.hpp"
 #include "lss/game/damageSpec.hpp"
 #include "lss/game/item.hpp"
 #include "lss/game/lootBox.hpp"
-#include "lss/game/ai.hpp"
 #include "micropather/micropather.h"
 
 struct EnemySpec {

@@ -9,6 +9,7 @@ using namespace std::string_literals;
 
 class Color {
 public:
+  Color() {}
   Color(std::string name) {
     if (name.front() != '#')
       return;
@@ -50,6 +51,7 @@ public:
 };
 
 namespace COLORS {
+const auto FG = "#fafafa"s;
 const auto BG = "#1d1f22"s;
 const auto WHITE = "#fafafa"s;
 const auto GRAY = "#808080"s;

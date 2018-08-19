@@ -1,5 +1,6 @@
 #ifndef __ANIMATION_H_
 #define __ANIMATION_H_
+#include "lss/color.hpp"
 #include "lss/game/cell.hpp"
 #include "lss/game/object.hpp"
 #include <functional>
@@ -7,6 +8,7 @@
 typedef std::function<void(int)> FrameCallback;
 typedef std::function<void()> AnimationCallback;
 
+class Fragment;
 class Animation {
 public:
   Animation(int s) : steps(s) {}
@@ -26,6 +28,19 @@ public:
       : Animation(s), object(o), path(c) {}
   std::shared_ptr<Object> object;
   std::vector<std::shared_ptr<Cell>> path;
+  int tick();
+};
+
+class ColorAnimation : public Animation {
+public:
+  ColorAnimation(std::shared_ptr<Object> o, Color c, int s, bool p)
+      : Animation(s), object(o), targetColor(c), pulse(p) {}
+  std::shared_ptr<Object> object;
+  Color targetColor;
+  Color initColor;
+  std::shared_ptr<Fragment> fragment;
+  bool pulse;
+  bool wayback = false;
   int tick();
 };
 

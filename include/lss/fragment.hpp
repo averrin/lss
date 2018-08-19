@@ -36,6 +36,7 @@ public:
   int alpha = Cell::DEFAULT_LIGHT;
   int bgAlpha = 100;
   std::string bgColor = COLORS::BG;
+  std::string fgColor = COLORS::FG;
 
   void setAlpha(int a) {
     alpha = a;
@@ -47,6 +48,10 @@ public:
   }
   void setBgColor(std::string c) {
     bgColor = c;
+    damaged = true;
+  }
+  void setFgColor(std::string c) {
+    fgColor = c;
     damaged = true;
   }
 

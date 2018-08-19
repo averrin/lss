@@ -15,6 +15,23 @@ QuitCommand::getEvent(std::string s) {
   return std::make_shared<QuitCommandEvent>();
 }
 
+void EventReactor::onEvent(EnemyTakeDamageEvent &e) {
+  if (e.damage->damage == 0)
+    return;
+  auto enemy = std::dynamic_pointer_cast<Enemy>(e.getSender());
+
+  auto a = std::make_shared<ColorAnimation>(enemy, Color("#ff0000"), 8, true);
+  app->animations.push_back(a);
+}
+
+void EventReactor::onEvent(HeroTakeDamageEvent &e) {
+  if (e.damage->damage == 0)
+    return;
+  auto a =
+      std::make_shared<ColorAnimation>(app->hero, Color("#ff0000"), 8, true);
+  app->animations.push_back(a);
+}
+
 void EventReactor::onEvent(StairEvent &e) {
   if (app->hero->currentCell->type == CellType::UPSTAIRS &&
       e.dir == StairType::UP) {

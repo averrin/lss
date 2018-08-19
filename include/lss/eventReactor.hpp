@@ -23,6 +23,8 @@ class EventReactor : public eb::EventHandler<EquipCommandEvent>,
                      public eb::EventHandler<DirectionEvent>,
                      public eb::EventHandler<TargetEvent>,
                      public eb::EventHandler<AnimationEvent>,
+                     public eb::EventHandler<EnemyTakeDamageEvent>,
+                     public eb::EventHandler<HeroTakeDamageEvent>,
                      public eb::EventHandler<QuitCommandEvent> {
 public:
   EventReactor(LSSApp *a) : app(a) {
@@ -44,6 +46,8 @@ public:
     eb::EventBus::AddHandler<DirectionEvent>(*this);
     eb::EventBus::AddHandler<TargetEvent>(*this);
     eb::EventBus::AddHandler<AnimationEvent>(*this);
+    eb::EventBus::AddHandler<EnemyTakeDamageEvent>(*this);
+    eb::EventBus::AddHandler<HeroTakeDamageEvent>(*this);
   }
   LSSApp *app;
 
@@ -65,6 +69,8 @@ public:
   virtual void onEvent(DirectionEvent &e) override;
   virtual void onEvent(TargetEvent &e) override;
   virtual void onEvent(AnimationEvent &e) override;
+  virtual void onEvent(EnemyTakeDamageEvent &e) override;
+  virtual void onEvent(HeroTakeDamageEvent &e) override;
 
   bool slotCallback(std::shared_ptr<Object>);
   bool itemCallback(std::shared_ptr<Slot>, std::shared_ptr<Object>);

@@ -10,9 +10,9 @@
 #include "lss/game/item.hpp"
 #include "lss/game/object.hpp"
 #include "lss/game/trait.hpp"
+#include <lss/game/ai.hpp>
 #include <lss/game/damageSpec.hpp>
 #include <lss/game/location.hpp>
-#include <lss/game/ai.hpp>
 
 class Creature : public Object {
 public:
@@ -179,9 +179,7 @@ public:
   Attribute INTELLIGENCE = Attribute(AttributeType::INTELLIGENCE);
   Attribute STRENGTH = Attribute(AttributeType::STRENGTH);
 
-  float getThrowRange() {
-    return STRENGTH(this)*throw_distance;
-  }
+  float getThrowRange() { return STRENGTH(this) * throw_distance; }
 
   void applyEoT(EoT, int);
 

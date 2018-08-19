@@ -6,6 +6,7 @@
 #include <cmath>
 #include <iostream>
 #include <iterator>
+#include <mutex>
 #include <ostream>
 #include <sstream>
 #include <stdio.h>
@@ -32,10 +33,10 @@
 #include "lss/game/player.hpp"
 
 #include "lss/ui/heroLine.hpp"
-#include "lss/ui/logPanel.hpp"
-#include "lss/ui/statusLine.hpp"
 #include "lss/ui/inspectMode.hpp"
+#include "lss/ui/logPanel.hpp"
 #include "lss/ui/normalMode.hpp"
+#include "lss/ui/statusLine.hpp"
 
 #include "lss/generator/generator.hpp"
 
@@ -60,11 +61,13 @@ public:
   bool bgRunning = true;
   void startBg();
   void serveBg();
+  void frameBg();
   void playAnimations();
 
   SDL_Window *window = nullptr;
   SDL_Renderer *renderer = nullptr;
   int gameWidth, gameHeight;
+  std::mutex exec_mutex;
 
   pango::SurfaceRef gameFrame;
   pango::SurfaceRef statusFrame;

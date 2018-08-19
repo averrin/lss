@@ -121,6 +121,7 @@ void Location::onEvent(EnemyDiedEvent &e) {
       }
     }
     invalidateVisibilityCache(enemy->currentCell);
+    enemy->currentCell = nullptr;
     objects.erase(std::remove(objects.begin(), objects.end(), sender),
                   objects.end());
   }

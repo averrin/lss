@@ -53,18 +53,22 @@ public:
 
 namespace TerrainType {
 const auto TORCH_STAND =
-    TerrainSpec{"torch stand", false, true,           -1,
+    TerrainSpec{"torch stand", false,
+                true,          -1,
                 true,          LightSpec{TORCH_DISTANCE, LightType::FIRE}};
-const auto STATUE =
-    TerrainSpec{"statue", false, false, -1, true, LightSpec{1.5, LightType::MAGIC}};
+const auto STATUE = TerrainSpec{
+    "statue", false, false, -1, true, LightSpec{1.5, LightType::MAGIC}};
 const auto ALTAR = TerrainSpec{"altar", true, true, -1, false};
 const auto BUSH = TerrainSpec{"bush", false, true};
-const auto FIREBALL = TerrainSpec{
-    "fireball", true, true, 1, false, LightSpec{TORCH_DISTANCE, LightType::FIRE}};
+const auto FIREBALL =
+    TerrainSpec{"fireball", true,  true,
+                1,          false, LightSpec{TORCH_DISTANCE, LightType::FIRE}};
 const auto FROSTBALL = TerrainSpec{
-    "frostball", true, true, 1, false, LightSpec{TORCH_DISTANCE, LightType::FROST}};
-const auto ACIDBALL = TerrainSpec{
-    "acidball", true, true, 1, false, LightSpec{TORCH_DISTANCE, LightType::ACID}};
+    "frostball", true,  true,
+    1,           false, LightSpec{TORCH_DISTANCE, LightType::FROST}};
+const auto ACIDBALL =
+    TerrainSpec{"acidball", true,  true,
+                1,          false, LightSpec{TORCH_DISTANCE, LightType::ACID}};
 const auto MAGIC_LIGHT = TerrainSpec{
     "light", true, true, 1, false, LightSpec{2.5, LightType::MAGIC, true}};
 const auto MAGIC_LIGHT_LONG = TerrainSpec{

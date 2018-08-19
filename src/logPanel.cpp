@@ -63,6 +63,7 @@ void LogPanel::onEvent(DoorOpenedEvent &e) {
 void LogPanel::onEvent(EnemyTakeDamageEvent &e) {
   hero->report.damageInflicted += e.damage->damage;
   auto enemy = std::dynamic_pointer_cast<Enemy>(e.getSender());
+
   if (e.damage > 0) {
     std::string tags = "";
     if (e.damage->traits.size() > 0 || e.damage->defTraits.size() > 0) {

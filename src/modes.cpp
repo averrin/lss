@@ -351,7 +351,7 @@ void GameOverMode::render(std::shared_ptr<State> state) {
         " or [<span color='{{orange}}' weight='bold'>r</span>] for restart"));
 }
 
-//TODO: add pages
+// TODO: add pages
 void InventoryMode::render(std::shared_ptr<State> state) {
   state->setContent({header});
   state->appendContent(State::END_LINE);
@@ -362,10 +362,9 @@ void InventoryMode::render(std::shared_ptr<State> state) {
   }
 
   namespace ic = ItemCategories;
-  std::vector<ItemCategory> categories = {ic::ARMOR,     ic::WEAPONS,
-                                          ic::THROWABLE,
-                                          ic::JEWELLERY, ic::CONSUMABLES,
-                                          ic::LIGHT,     ic::MISC};
+  std::vector<ItemCategory> categories = {
+      ic::ARMOR,       ic::WEAPONS, ic::THROWABLE, ic::JEWELLERY,
+      ic::CONSUMABLES, ic::LIGHT,   ic::MISC};
   auto items = utils::castObjects<Item>(objects);
   for (auto cat : categories) {
     Fragments fragments;
@@ -392,8 +391,9 @@ void InventoryMode::render(std::shared_ptr<State> state) {
 }
 
 void ObjectSelectMode::render(std::shared_ptr<State> state) {
-  state->setContent({header, F(fmt::format(" [{}/{}]", currentPage + 1,
-                                           objects.size() / letters.size() + 1))});
+  state->setContent(
+      {header, F(fmt::format(" [{}/{}]", currentPage + 1,
+                             objects.size() / letters.size() + 1))});
   state->appendContent(State::END_LINE);
   state->appendContent(State::END_LINE);
 

@@ -11,7 +11,11 @@ using namespace Jinja2CppLight;
 using namespace std::string_literals;
 
 Fragment::Fragment(std::string t, std::map<std::string, tpl_arg> a)
-    : template_str(t), args(a){};
+    : template_str(t), args(a) {
+  if (args.find("color") != args.end()) {
+    fgColor = std::get<std::string>(args["color"]);
+  }
+};
 Fragment::Fragment(std::string t, std::map<std::string, tpl_arg> a, bool n)
     : template_str(t), args(a), needRender(n){};
 Fragment::Fragment(std::string t) : template_str(t){};
@@ -48,6 +52,9 @@ std::string Fragment::render(State *state) {
 
   for (auto [key, value] : args) {
     std::visit([&](auto const &val) { tpl.setValue(key, val); }, value);
+  }
+  if (fgColor != COLORS::FG) {
+    tpl.setValue("color", fgColor);
   }
 
   auto content = tpl.render();

@@ -63,9 +63,11 @@ public:
 
 class VisibilityModifier : public Effect {
 public:
-  VisibilityModifier(float m) : Effect(AttributeType::VISIBILITY_DISTANCE), vmodifier(m), glow(false) {}
+  VisibilityModifier(float m)
+      : Effect(AttributeType::VISIBILITY_DISTANCE), vmodifier(m), glow(false) {}
   VisibilityModifier(LightSpec t)
-      : Effect(AttributeType::VISIBILITY_DISTANCE), vmodifier(t.distance), glow(true), light(t){};
+      : Effect(AttributeType::VISIBILITY_DISTANCE), vmodifier(t.distance),
+        glow(true), light(t){};
   std::string getTitle();
   std::string getSign();
   float vmodifier;

@@ -6,6 +6,7 @@
 - refactor lighting system (again)
 - better AI
 - enemies can throw
+- blink on hit
 
 ### 0.1.0 Suicidal Lemming Migration
 - init hero status page

@@ -488,7 +488,7 @@ AiState Creature::getAiState(std::shared_ptr<Object> target) {
 
   if (!s.canSeeTargetCell) {
     auto it = path.end() - 2;
-    for (auto n = 0; n < path.size() -2; n++ ) {
+    for (auto n = 0; n < path.size() - 2; n++) {
       if (it == path.begin()) {
         s.exit = true;
         return s;
@@ -505,22 +505,26 @@ AiState Creature::getAiState(std::shared_ptr<Object> target) {
   s.path = currentLocation->getLine(currentCell, s.targetCell);
   s.nearTargetCell = s.canSeeTarget && s.path.size() <= 2;
   s.inThrowRange = s.canSeeTarget && s.path.size() - 1 <= getThrowRange();
-  s.canThrow = s.inThrowRange && std::find_if(inventory.begin(), inventory.end(), [](auto i) {
-    return i->type.category == ItemCategories::THROWABLE;
-  }) != inventory.end();
+  s.canThrow = s.inThrowRange &&
+               std::find_if(inventory.begin(), inventory.end(), [](auto i) {
+                 return i->type.category == ItemCategories::THROWABLE;
+               }) != inventory.end();
 
   s.nearTarget = s.nearTargetCell;
   if (s.nearTarget) {
     s.neighbors = currentLocation->getNeighbors(currentCell);
-    s.nearTarget = std::find_if(s.neighbors.begin(), s.neighbors.end(), [&target](auto n) {
-      return n == target->currentCell;
-    }) != s.neighbors.end();
+    s.nearTarget =
+        std::find_if(s.neighbors.begin(), s.neighbors.end(), [&target](auto n) {
+          return n == target->currentCell;
+        }) != s.neighbors.end();
   }
 
-  s.canReachTarget = s.nearTarget || std::find_if(s.path.begin(), s.path.end(), [&](auto c) {
-    return c != currentCell && c != s.targetCell && !c->canPass(getTraits());
-  }) == s.path.end();
-  if (!s.canReachTarget){
+  s.canReachTarget =
+      s.nearTarget || std::find_if(s.path.begin(), s.path.end(), [&](auto c) {
+                        return c != currentCell && c != s.targetCell &&
+                               !c->canPass(getTraits());
+                      }) == s.path.end();
+  if (!s.canReachTarget) {
     fmt::print("can reach: {} (will use pather)\n", s.canReachTarget);
     s.path = findPath(s.targetCell);
     s.canReachTarget = s.path.size() > 1;
@@ -530,7 +534,8 @@ AiState Creature::getAiState(std::shared_ptr<Object> target) {
   return s;
 }
 
-std::vector<std::shared_ptr<Cell>> Creature::findPath(std::shared_ptr<Cell> targetCell) {
+std::vector<std::shared_ptr<Cell>>
+Creature::findPath(std::shared_ptr<Cell> targetCell) {
   std::vector<std::shared_ptr<Cell>> resultPath = {};
   if (pather == nullptr) {
     pather = new micropather::MicroPather(currentLocation.get());
@@ -542,7 +547,7 @@ std::vector<std::shared_ptr<Cell>> Creature::findPath(std::shared_ptr<Cell> targ
       pather->Solve(currentCell.get(), targetCell.get(), &raw_path, &totalCost);
   if (result == micropather::MicroPather::SOLVED) {
     for (auto i = 0; i < raw_path.size(); i++) {
-      auto c = (Cell*)(raw_path[i]);
+      auto c = (Cell *)(raw_path[i]);
       auto ptr = currentLocation->cells[c->y][c->x];
       if (ptr != nullptr) {
         fmt::print("{}.{}\n", c->x, c->y);

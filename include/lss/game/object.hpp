@@ -5,8 +5,8 @@
 #include "EventRegisttration.hpp"
 #include "Object.hpp"
 
-#include "lss/game/light.hpp"
 #include "lss/game/cell.hpp"
+#include "lss/game/light.hpp"
 
 class Object : public eb::Object, public std::enable_shared_from_this<Object> {
 public:
@@ -27,9 +27,7 @@ public:
 
   LightSpec light;
 
-  virtual std::optional<LightSpec> getGlow() {
-    return std::nullopt;
-  };
+  virtual std::optional<LightSpec> getGlow() { return std::nullopt; };
 
   int apLeft = -1;
   bool destructable = true;
