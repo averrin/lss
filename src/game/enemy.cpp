@@ -142,6 +142,7 @@ std::optional<int> Enemy::execAiPassive(int ap) {
   return cost;
 }
 
+// TODO: add magic cast and pause mode
 std::optional<int> Enemy::execAiAggressive(int ap) {
   std::optional<int> cost; 
   auto stepCost = ap_cost::STEP / speed;

@@ -5,6 +5,7 @@
 - pagination in object select mode
 - refactor lighting system (again)
 - better AI
+- enemies can throw
 
 ### 0.1.0 Suicidal Lemming Migration
 - init hero status page
