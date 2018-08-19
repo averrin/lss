@@ -463,3 +463,27 @@ bool Creature::throwItem(std::shared_ptr<Item> item,
   eb::EventBus::FireEvent(ae);
   return true;
 }
+
+std::vector<std::shared_ptr<Cell>> Creature::findPath(std::shared_ptr<Cell> targetCell) {
+  std::vector<std::shared_ptr<Cell>> resultPath = {};
+  if (pather == nullptr) {
+    pather = new micropather::MicroPather(currentLocation.get());
+  }
+  pather->Reset();
+  float totalCost = 0;
+  micropather::MPVector<void *> raw_path;
+  int result =
+      pather->Solve(currentCell.get(), targetCell.get(), &raw_path, &totalCost);
+  if (result == micropather::MicroPather::SOLVED) {
+    for (auto i = 0; i < raw_path.size(); i++) {
+      auto c = (Cell*)(raw_path[i]);
+      auto ptr = currentLocation->cells[c->y][c->x];
+      if (ptr != nullptr) {
+        fmt::print("{}.{}\n", c->x, c->y);
+        resultPath.push_back(ptr);
+      }
+    }
+  }
+
+  return resultPath;
+}

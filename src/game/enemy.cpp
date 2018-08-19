@@ -122,6 +122,124 @@ Direction getDirFromCell(std::shared_ptr<Cell> c, Cell *nc) {
   }
 };
 
+void Enemy::commit(int ap) {
+  actionPoints -= ap;
+}
+
+std::optional<int> Enemy::execAiNone(int ap) {
+  std::optional<int> cost; 
+  if (ap >= ap_cost::WAIT) {
+    cost = ap_cost::WAIT;
+  }
+  return cost;
+}
+
+std::optional<int> Enemy::execAiPassive(int ap) {
+  std::optional<int> cost; 
+  if (ap >= ap_cost::WAIT) {
+    cost = ap_cost::WAIT;
+  }
+  return cost;
+}
+
+std::optional<int> Enemy::execAiAggressive(int ap) {
+  std::optional<int> cost; 
+  auto stepCost = ap_cost::STEP / speed;
+  auto attackCost = ap_cost::ATTACK / speed;
+  auto waitCost = ap_cost::WAIT;
+
+  auto target = currentLocation->player;
+  if (lastTarget == nullptr || lastTarget != target) {
+    lastTarget = target;
+  }
+  auto canSeeTarget = canSee(target->currentCell);
+  auto targetCell = target->currentCell;
+  if (canSeeTarget) {
+    lastTargetCell = targetCell;
+  } else {
+    targetCell = lastTargetCell;
+  }
+  if (targetCell == nullptr) return cost;
+  if (targetCell == currentCell) return cost;
+
+  auto canSeeTargetCell = canSee(targetCell);
+  if (!canSeeTargetCell) {
+    auto it = path.end() - 2;
+    for (auto n = 0; n < path.size() -2; n++ ) {
+      if (it == path.begin()) {
+        return cost;
+      }
+      auto cell = *it;
+      if (canSee(cell)) {
+        targetCell = cell;
+        break;
+      }
+    }
+  }
+
+  path = currentLocation->getLine(currentCell, targetCell);
+  auto nearTargetCell = canSeeTarget && path.size() <= 2;
+  auto nearTarget = nearTargetCell;
+  if (nearTarget) {
+    auto neighbors = currentLocation->getNeighbors(currentCell);
+    nearTarget = std::find_if(neighbors.begin(), neighbors.end(), [&target](auto n) {
+      return n == target->currentCell;
+    }) != neighbors.end();
+  }
+
+  auto canReachTarget = nearTarget || std::find_if(path.begin(), path.end(), [&](auto c) {
+    return c != currentCell && c != targetCell && !c->canPass(getTraits());
+  }) == path.end();
+  if (!canReachTarget){
+    fmt::print("can reach: {} (will use pather)\n", canReachTarget);
+    path = findPath(targetCell);
+    canReachTarget = path.size() > 1;
+    fmt::print("can reach: {}\n", canReachTarget);
+  }
+
+  if (!cost && ap >= attackCost) {
+    if (nearTarget) {
+        auto directionToTarget = getDirFromCell(currentCell, targetCell.get());
+        attack(directionToTarget);
+        cost = attackCost;
+        fmt::print("attack\n");
+    }
+  }
+  if (!cost && ap >= stepCost) {
+    if (!nearTarget && canReachTarget) {
+      auto nextCell = path[1];
+      auto direction = getDirFromCell(currentCell, nextCell.get());
+      move(direction);
+      cost = stepCost;
+      fmt::print("move\n");
+    }
+  }
+
+  if (!cost && ap >= waitCost) {
+    cost = waitCost;
+    fmt::print("wait\n");
+  }
+  return cost;
+}
+
+std::optional<int> Enemy::execAction(int ap) {
+  std::optional<int> cost; 
+
+  switch (type.aiType) {
+    case AIType::NONE:
+      return execAiNone(ap);
+    case AIType::PASSIVE:
+      return execAiPassive(ap);
+    case AIType::AGGRESSIVE:
+      return execAiAggressive(ap);
+  }
+  
+  if (ap >= ap_cost::WAIT) {
+    cost = ap_cost::WAIT;
+  }
+  return cost;
+}
+
 // TODO: refactor. Divide by actions;
 void Enemy::onEvent(CommitEvent &e) {
   auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
@@ -130,92 +248,20 @@ void Enemy::onEvent(CommitEvent &e) {
 
   auto t0 = std::chrono::system_clock::now();
   calcViewField();
-  if (e.actionPoints == 0 ||
-      (!canSee(hero->currentCell) && !hero->canSee(currentCell))) {
+  if (e.actionPoints == 0) {
     return;
   }
 
-  actionPoints += e.actionPoints;
+  auto ap = actionPoints + e.actionPoints;
+  auto spent = 0;
 
-  // TODO: add lastheropoint and attack hero if its near
-  auto stepCost = ap_cost::STEP / speed;
-  auto attackCost = ap_cost::ATTACK / speed;
-  auto waitCost = ap_cost::WAIT;
-  fmt::print("Reaction [{}/{}]: step: {}, attack: {}, wait: {}\n",
-             e.actionPoints, actionPoints, stepCost, attackCost, waitCost);
-
-  // TODO: implement passive ai
-  // fmt::print("{}\n", canSee(hero->currentCell));
-  if (type.aiType == AIType::AGGRESSIVE &&
-      hero->currentLocation == currentLocation && canSee(hero->currentCell)) {
-    auto nbrs = currentLocation->getNeighbors(currentCell);
-    if (std::find(nbrs.begin(), nbrs.end(), hero->currentCell) != nbrs.end()) {
-      while (actionPoints >= attackCost) {
-        auto cd = getDirFromCell(currentCell, hero->currentCell.get());
-        attack(cd);
-        actionPoints -= attackCost;
-      }
-    } else {
-      path = currentLocation->getLine(currentCell, hero->currentCell);
-
-      auto i = 1;
-      auto nc = path[i];
-      auto cd = getDirFromCell(currentCell, nc.get());
-      auto inShadow = !nc->illuminated;
-      if (inShadow && hasTrait(Traits::SHADOW_RUNNER)) {
-        stepCost /= 2;
-      }
-
-      auto n = 0;
-      while (actionPoints >= stepCost && n < 2) {
-        if (nc->x != hero->currentCell->x || nc->y != hero->currentCell->y) {
-          if (move(cd)) {
-            if (i < int(path.size() - 1)) {
-              i++;
-              nc = path[i];
-              cd = getDirFromCell(currentCell, nc.get());
-            }
-            actionPoints -= stepCost;
-          } else {
-            n++;
-          }
-        } else {
-          attack(cd);
-          actionPoints -= attackCost;
-        }
-      }
-    }
-  } else {
-    if (step >= int(path.size() - 1) || path.size() == 0 ||
-        currentCell == path[path.size() - 1]) {
-    }
-    if (path.size() >= 1 && currentCell != path[path.size() - 1]) {
-      auto nc = path[step];
-      cd = getDirFromCell(currentCell, nc.get());
-
-      while (actionPoints >= stepCost) {
-        if (move(cd)) {
-          if (step < int(path.size() - 1)) {
-            step++;
-            nc = path[step];
-            cd = getDirFromCell(currentCell, nc.get());
-          } else {
-            fmt::print("clear path 1\n");
-            // randomPath();
-            break;
-          }
-          actionPoints -= stepCost;
-        } else {
-          fmt::print("clear path\n");
-          // randomPath();
-          break;
-        }
-      }
-    }
-
-    while (actionPoints >= waitCost) {
-      actionPoints -= waitCost;
-    }
+  while (auto cost = execAction(ap)) {
+    ap -= *cost;
+    spent += *cost;
+  }
+  commit(spent);
+  if (spent > 0) {
+    actionPoints = ap;
   }
   auto t1 = std::chrono::system_clock::now();
   using milliseconds = std::chrono::duration<double, std::milli>;
@@ -226,26 +272,6 @@ void Enemy::onEvent(CommitEvent &e) {
 }
 
 bool Enemy::randomPath() {
-  // if (currentCell->room == nullptr) {
-  //   fmt::print("no room here\n");
-  //   return false;
-  // }
-  // fmt::print("R: {}.{}\n", currentCell->room->x, currentCell->room->y);
-  // auto target =
-  //     currentCell->room->cells[rand() % currentCell->room->cells.size()];
-  // fmt::print("T: {}.{}\n", target->x, target->y);
-  // auto pather = new micropather::MicroPather(currentLocation.get());
-  // float totalCost = 0;
-  // pather->Reset();
-  // int result =
-  //     pather->Solve(currentCell.get(), target.get(), &path, &totalCost);
-  // delete pather;
-  // step = 1;
-  // if (result != micropather::MicroPather::SOLVED) {
-  //   fmt::print("cannot find path\n");
-  //   actionPoints = 0;
-  //   return false;
-  // }
   return true;
 }
 

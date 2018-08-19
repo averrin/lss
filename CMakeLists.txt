@@ -65,6 +65,7 @@ set( SRC_FILES
 
 	${SRC_DIR}/modes.cpp
 	${SRC_DIR}/inspectMode.cpp
+	${SRC_DIR}/normalMode.cpp
 	${SRC_DIR}/commands.cpp
 
 	${SRC_DIR}/game/cell.cpp

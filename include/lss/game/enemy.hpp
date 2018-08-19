@@ -10,8 +10,8 @@
 #include "lss/game/lootBox.hpp"
 #include "micropather/micropather.h"
 
-enum AIType {
-  NO_AI,
+enum class AIType {
+  NONE,
   AGGRESSIVE,
   PASSIVE,
 };
@@ -29,7 +29,7 @@ public:
   std::vector<Trait> traits;
   Items equipped;
   Effects activeEffects;
-  AIType aiType = AGGRESSIVE;
+  AIType aiType = AIType::AGGRESSIVE;
 
   friend bool operator<(const EnemySpec &lhs, const EnemySpec &rhs) {
     return lhs.name < rhs.name;
@@ -45,15 +45,19 @@ public:
   Direction cd = Direction::W;
   int actionPoints = 0;
   EnemySpec type;
-  // micropather::MPVector<void *> path;
-  // micropather::MPVector<void *> pathToHero;
   std::vector<std::shared_ptr<Cell>> path;
   int step;
-  micropather::MicroPather *pather = nullptr;
   bool randomPath();
   void onDamage(std::shared_ptr<Creature>, std::shared_ptr<Damage>) override;
   void onDie() override;
-  bool interact(std::shared_ptr<Object> actor) override;
+  bool interact(std::shared_ptr<Object> actor);
+  void commit(int ap);
+  std::optional<int> execAction(int ap);
+  std::optional<int> execAiNone(int ap);
+  std::optional<int> execAiPassive(int ap);
+  std::optional<int> execAiAggressive(int ap);
+  std::shared_ptr<Creature> lastTarget;
+  std::shared_ptr<Cell> lastTargetCell;
 
   virtual void onEvent(CommitEvent &e) override;
 };

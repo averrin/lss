@@ -204,12 +204,6 @@ public:
   void processEvent(std::shared_ptr<LssEvent> e);
 };
 
-class NormalMode : public Mode {
-public:
-  NormalMode(LSSApp *app) : Mode(app){};
-  bool processKey(KeyEvent e);
-};
-
 class LeaderMode : public Mode {
   LeaderMode(LSSApp *app) : Mode(app){};
   bool processKey(KeyEvent e);

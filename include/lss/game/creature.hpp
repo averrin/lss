@@ -73,9 +73,9 @@ public:
   std::optional<std::tuple<std::shared_ptr<Slot>, DamageSpec>> getPrimaryDmg();
   std::optional<std::tuple<std::shared_ptr<Slot>, DamageSpec>>
       getSecondaryDmg(std::shared_ptr<Slot>);
-  bool hasTrait(Trait t) {
-    auto allTraits = traits;
 
+  std::vector<Trait> getTraits() {
+    auto allTraits = traits;
     for (auto s : equipment->slots) {
       if (s->item == nullptr ||
           std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
@@ -95,6 +95,11 @@ public:
         }
       }
     }
+    return allTraits;
+  }
+  bool hasTrait(Trait t) {
+    auto allTraits = getTraits();
+
     return std::find(allTraits.begin(), allTraits.end(), t) != allTraits.end();
   }
   bool hasLight();
@@ -127,7 +132,8 @@ public:
     std::optional<LightSpec> result = std::nullopt;
     auto effects = getEffects(AttributeType::VISIBILITY_DISTANCE);
     for (auto e : effects) {
-      if (auto vm = std::dynamic_pointer_cast<VisibilityModifier>(e); vm && vm->glow) {
+      if (auto vm = std::dynamic_pointer_cast<VisibilityModifier>(e);
+          vm && vm->glow) {
         if (!result || vm->light.distance > (*result).distance) {
           result = vm->light;
         }
@@ -172,6 +178,9 @@ public:
   Attribute STRENGTH = Attribute(AttributeType::STRENGTH);
 
   void applyEoT(EoT, int);
+
+  micropather::MicroPather *pather = nullptr;
+  std::vector<std::shared_ptr<Cell>> findPath(std::shared_ptr<Cell>);
 
 private:
   std::shared_ptr<Cell> cachedCell;

@@ -35,6 +35,7 @@
 #include "lss/ui/logPanel.hpp"
 #include "lss/ui/statusLine.hpp"
 #include "lss/ui/inspectMode.hpp"
+#include "lss/ui/normalMode.hpp"
 
 #include "lss/generator/generator.hpp"
 
