@@ -1,4 +1,4 @@
-# Long Story Short
+# Long Story Short [![Snap Status](https://build.snapcraft.io/badge/averrin/lss.svg)](https://build.snapcraft.io/user/averrin/lss)
 
 Yet another unfinished roguelike game.
 
