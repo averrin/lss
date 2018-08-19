@@ -427,7 +427,8 @@ std::vector<std::shared_ptr<Cell>> Creature::getInRadius(float distance) {
   return cells;
 }
 
-// TODO: apply effect on throw and maybe not fuul damage
+// TODO: apply effect on throw and maybe not full damage
+// TODO: show animation if enemy throw
 bool Creature::throwItem(std::shared_ptr<Item> item,
                          std::shared_ptr<Cell> cell) {
   std::shared_ptr<Item> throwed;
@@ -450,6 +451,9 @@ bool Creature::throwItem(std::shared_ptr<Item> item,
         });
     if (e != item->effects.end()) {
       auto objects = currentLocation->getObjects(cell);
+      if (currentLocation->player->currentCell == cell) {
+        objects.push_back(currentLocation->player);
+      }
       for (auto o : objects) {
         if (auto creature = std::dynamic_pointer_cast<Creature>(o)) {
           creature->applyDamage(
@@ -462,6 +466,68 @@ bool Creature::throwItem(std::shared_ptr<Item> item,
   AnimationEvent ae(a);
   eb::EventBus::FireEvent(ae);
   return true;
+}
+
+AiState Creature::getAiState(std::shared_ptr<Object> target) {
+  AiState s;
+  s.exit = false;
+  s.target = target;
+  s.canSeeTarget = canSee(target->currentCell);
+  s.targetCell = target->currentCell;
+  s.canSeeTargetCell = canSee(s.targetCell);
+
+  if (s.canSeeTarget) {
+    lastTargetCell = s.targetCell;
+  } else {
+    s.targetCell = lastTargetCell;
+  }
+  if (s.targetCell == nullptr || s.targetCell == currentCell) {
+    s.exit = true;
+    return s;
+  }
+
+  if (!s.canSeeTargetCell) {
+    auto it = path.end() - 2;
+    for (auto n = 0; n < path.size() -2; n++ ) {
+      if (it == path.begin()) {
+        s.exit = true;
+        return s;
+      }
+      auto cell = *it;
+      if (canSee(cell)) {
+        s.targetCell = cell;
+        break;
+      }
+    }
+  }
+
+  s.targetInTargetCell = target->currentCell == s.targetCell;
+  s.path = currentLocation->getLine(currentCell, s.targetCell);
+  s.nearTargetCell = s.canSeeTarget && s.path.size() <= 2;
+  s.inThrowRange = s.canSeeTarget && s.path.size() - 1 <= getThrowRange();
+  s.canThrow = s.inThrowRange && std::find_if(inventory.begin(), inventory.end(), [](auto i) {
+    return i->type.category == ItemCategories::THROWABLE;
+  }) != inventory.end();
+
+  s.nearTarget = s.nearTargetCell;
+  if (s.nearTarget) {
+    s.neighbors = currentLocation->getNeighbors(currentCell);
+    s.nearTarget = std::find_if(s.neighbors.begin(), s.neighbors.end(), [&target](auto n) {
+      return n == target->currentCell;
+    }) != s.neighbors.end();
+  }
+
+  s.canReachTarget = s.nearTarget || std::find_if(s.path.begin(), s.path.end(), [&](auto c) {
+    return c != currentCell && c != s.targetCell && !c->canPass(getTraits());
+  }) == s.path.end();
+  if (!s.canReachTarget){
+    fmt::print("can reach: {} (will use pather)\n", s.canReachTarget);
+    s.path = findPath(s.targetCell);
+    s.canReachTarget = s.path.size() > 1;
+    fmt::print("can reach: {}\n", s.canReachTarget);
+  }
+
+  return s;
 }
 
 std::vector<std::shared_ptr<Cell>> Creature::findPath(std::shared_ptr<Cell> targetCell) {

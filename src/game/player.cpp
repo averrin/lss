@@ -70,6 +70,7 @@ Player::Player() : Creature() {
   mp_max = 50;
   mp = mp_max;
   dmgSpec = DamageSpec(0, 1, 3, DamageType::WEAPON);
+  throw_distance = 5;
 
   activeEffects.push_back(OverTimeEffects::MANA_RESTORE);
 
@@ -369,6 +370,7 @@ void Player::onEvent(ThrowCommandEvent &e) {
   if (e.item == nullptr)
     return;
   throwItem(e.item, e.cell);
+  commit("throw", ap_cost::THROW / speed);
 }
 
 void Player::increaseIntelligence(float val) {

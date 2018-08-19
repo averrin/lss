@@ -31,9 +31,9 @@ Enemy::Enemy(EnemySpec t) : Creature(), type(t) {
                                             WEAPON_TWOHANDED, SHIELD}),
       std::make_shared<Slot>("Body", std::vector<WearableType>{BODY}),
       std::make_shared<Slot>("Light", std::vector<WearableType>{LIGHT}),
-      std::make_shared<Slot>("--", std::vector<WearableType>{ENEMY}),
-      std::make_shared<Slot>("--", std::vector<WearableType>{ENEMY}),
-      std::make_shared<Slot>("--", std::vector<WearableType>{ENEMY}),
+      std::make_shared<Slot>("Special", std::vector<WearableType>{ENEMY}),
+      std::make_shared<Slot>("Special", std::vector<WearableType>{ENEMY}),
+      std::make_shared<Slot>("Special", std::vector<WearableType>{ENEMY}),
   };
   for (auto i : type.equipped) {
     inventory.push_back(i);
@@ -147,70 +147,43 @@ std::optional<int> Enemy::execAiAggressive(int ap) {
   auto stepCost = ap_cost::STEP / speed;
   auto attackCost = ap_cost::ATTACK / speed;
   auto waitCost = ap_cost::WAIT;
+  auto throwCost = ap_cost::THROW / speed;
 
   auto target = currentLocation->player;
   if (lastTarget == nullptr || lastTarget != target) {
     lastTarget = target;
   }
-  auto canSeeTarget = canSee(target->currentCell);
-  auto targetCell = target->currentCell;
-  if (canSeeTarget) {
-    lastTargetCell = targetCell;
-  } else {
-    targetCell = lastTargetCell;
+  auto s = getAiState(target);
+  if (s.exit) {
+    return cost;
   }
-  if (targetCell == nullptr) return cost;
-  if (targetCell == currentCell) return cost;
-
-  auto canSeeTargetCell = canSee(targetCell);
-  if (!canSeeTargetCell) {
-    auto it = path.end() - 2;
-    for (auto n = 0; n < path.size() -2; n++ ) {
-      if (it == path.begin()) {
-        return cost;
-      }
-      auto cell = *it;
-      if (canSee(cell)) {
-        targetCell = cell;
-        break;
-      }
-    }
-  }
-
-  path = currentLocation->getLine(currentCell, targetCell);
-  auto nearTargetCell = canSeeTarget && path.size() <= 2;
-  auto nearTarget = nearTargetCell;
-  if (nearTarget) {
-    auto neighbors = currentLocation->getNeighbors(currentCell);
-    nearTarget = std::find_if(neighbors.begin(), neighbors.end(), [&target](auto n) {
-      return n == target->currentCell;
-    }) != neighbors.end();
-  }
-
-  auto canReachTarget = nearTarget || std::find_if(path.begin(), path.end(), [&](auto c) {
-    return c != currentCell && c != targetCell && !c->canPass(getTraits());
-  }) == path.end();
-  if (!canReachTarget){
-    fmt::print("can reach: {} (will use pather)\n", canReachTarget);
-    path = findPath(targetCell);
-    canReachTarget = path.size() > 1;
-    fmt::print("can reach: {}\n", canReachTarget);
-  }
+  path = s.path;
 
   if (!cost && ap >= attackCost) {
-    if (nearTarget) {
-        auto directionToTarget = getDirFromCell(currentCell, targetCell.get());
+    if (s.nearTarget) {
+        auto directionToTarget = getDirFromCell(currentCell, s.targetCell.get());
         attack(directionToTarget);
         cost = attackCost;
         fmt::print("attack\n");
     }
   }
+  if (!cost && ap >= throwCost) {
+    if (!s.nearTarget && s.targetInTargetCell && s.canThrow) {
+      fmt::print("throw\n");
+      auto t  = std::find_if(inventory.begin(), inventory.end(), [](auto i) {
+        return i->type.category == ItemCategories::THROWABLE;
+      });
+      throwItem(*t, s.targetCell);
+    }
+  }
+
   if (!cost && ap >= stepCost) {
-    if (!nearTarget && canReachTarget) {
+    if (!s.nearTarget && s.canReachTarget) {
       auto nextCell = path[1];
       auto direction = getDirFromCell(currentCell, nextCell.get());
       move(direction);
       cost = stepCost;
+
       fmt::print("move\n");
     }
   }

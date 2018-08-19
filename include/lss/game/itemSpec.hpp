@@ -19,6 +19,7 @@ static const ItemCategory LIGHT = {"Light"};
 static const ItemCategory JEWELLERY = {"Jewellery"};
 static const ItemCategory CONSUMABLES = {"Consumables"};
 static const ItemCategory MISC = {"Misc"};
+static const ItemCategory THROWABLE = {"Throwable"};
 } // namespace ItemCategories
 
 struct ItemSpec {

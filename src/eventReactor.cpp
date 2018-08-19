@@ -463,7 +463,7 @@ void EventReactor::onEvent(ThrowCommandEvent &e) {
       auto cell = line.back();
       if (!cell->type.passThrough)
         return false;
-      if (line.size() > 5)
+      if (line.size() > app->hero->getThrowRange())
         return false;
       auto pti = std::find_if(line.begin(), line.end(), [&](auto c) {
         return !c->passThrough && c != line.back() &&

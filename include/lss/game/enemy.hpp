@@ -8,13 +8,8 @@
 #include "lss/game/damageSpec.hpp"
 #include "lss/game/item.hpp"
 #include "lss/game/lootBox.hpp"
+#include "lss/game/ai.hpp"
 #include "micropather/micropather.h"
-
-enum class AIType {
-  NONE,
-  AGGRESSIVE,
-  PASSIVE,
-};
 
 struct EnemySpec {
 public:
@@ -45,7 +40,6 @@ public:
   Direction cd = Direction::W;
   int actionPoints = 0;
   EnemySpec type;
-  std::vector<std::shared_ptr<Cell>> path;
   int step;
   bool randomPath();
   void onDamage(std::shared_ptr<Creature>, std::shared_ptr<Damage>) override;
@@ -56,8 +50,6 @@ public:
   std::optional<int> execAiNone(int ap);
   std::optional<int> execAiPassive(int ap);
   std::optional<int> execAiAggressive(int ap);
-  std::shared_ptr<Creature> lastTarget;
-  std::shared_ptr<Cell> lastTargetCell;
 
   virtual void onEvent(CommitEvent &e) override;
 };

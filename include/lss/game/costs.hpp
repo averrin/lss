@@ -9,6 +9,7 @@ const int EQUIP = 200;
 const int UNEQUIP = 200;
 const int PICK = 200;
 const int DROP = 200;
+const int THROW = 300;
 } // namespace ap_cost
 
 #endif // __COSTS_H_

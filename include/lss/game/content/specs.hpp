@@ -7,7 +7,7 @@ ItemSpec const GRASS = {"herb", ItemCategories::CONSUMABLES};
 ItemSpec const SCROLL = {"scroll", ItemCategories::CONSUMABLES};
 ItemSpec const POTION = {"potion", ItemCategories::CONSUMABLES};
 
-ItemSpec const ROCK = {"rock", ItemCategories::MISC};
+ItemSpec const ROCK = {"rock", ItemCategories::THROWABLE};
 ItemSpec const BONES = {"bones", ItemCategories::MISC};
 
 ItemSpec const ENEMY = {"enemy item", ItemCategories::MISC,
@@ -51,7 +51,7 @@ ItemSpec const LEFT_GAUNTLET = {"left gauntlet", ItemCategories::ARMOR,
 
 ItemSpec const CORPSE = {"corpse", ItemCategories::CONSUMABLES};
 
-ItemSpec const THROWING_KNIVES = {"throwing knives", ItemCategories::WEAPONS};
+ItemSpec const THROWING_KNIVES = {"throwing knives", ItemCategories::THROWABLE};
 }; // namespace ItemType
 
 #endif // __SPECS_H_

@@ -69,6 +69,17 @@ EnemySpec const ANT_QUEEN = {
     Items{}, {} //vampire
 };
 
+EnemySpec const GOBLIN_ROCKTHROWER = {
+    "goblin rockthrower", 1,
+    1, 5, 0, 1,
+    DamageSpec(0, 1, 3, DamageType::WEAPON),
+    LootBox(1, {}, {
+        LootBox(0.40, LootBoxes::POTIONS),
+        LootBox(0.90, {Prototype::ROCK->setCount(10)})}, false),
+    {Traits::CAN_SWIM, Traits::SHADOW_RUNNER},
+    Items{Prototype::GOBLIN_DAGGER, Prototype::ROCK->setCount(25)}
+};
+
 EnemySpec const GOBLIN = {
     "goblin", 1,
     1, 15, 0, 1,
@@ -93,7 +104,8 @@ EnemySpec const GOBLIN_LIEUTENANT = {
         LootBox(0.90, {Prototype::GOLD->setCount(50)})
     }, false),
     {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER, Traits::MOB, Traits::DUAL_WIELD},
-    Items{Prototype::GOBLIN_DAGGER, Prototype::GOBLIN_DAGGER, Prototype::LEATHER_CUIRASS}
+    Items{Prototype::GOBLIN_DAGGER, Prototype::GOBLIN_DAGGER, Prototype::LEATHER_CUIRASS,
+          Prototype::THROWING_KNIVES->setCount(3)}
 };
 
 EnemySpec const GOBLIN_ROGUE = {
@@ -105,7 +117,7 @@ EnemySpec const GOBLIN_ROGUE = {
         LootBox(0.90, {Prototype::GOLD->setCount(50)})
     }, false),
     {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER, Traits::MOB, Traits::DUAL_WIELD},
-    Items{Prototype::POISON_DAGGER, Prototype::GOBLIN_DAGGER}
+    Items{Prototype::POISON_DAGGER, Prototype::GOBLIN_DAGGER, Prototype::THROWING_AXES->setCount(5)}
 };
 EnemySpec const ORK = {
     "ork", 2,
@@ -274,6 +286,7 @@ const std::vector<EnemySpec> ALL = {
     SNAKE, VIPER,
     BAT, BAT_LARGE,
     ANT, ANT_QUEEN,
+    GOBLIN_ROCKTHROWER,
     GOBLIN, GOBLIN_ROGUE, GOBLIN_LIEUTENANT,
     ORK, ORK_BLACK, ORK_BERSERK,
     PIXI,

@@ -12,6 +12,7 @@
 #include "lss/game/trait.hpp"
 #include <lss/game/damageSpec.hpp>
 #include <lss/game/location.hpp>
+#include <lss/game/ai.hpp>
 
 class Creature : public Object {
 public:
@@ -66,6 +67,7 @@ public:
   float crit_chance = 0.1;
   int defense = 0;
   int level = 0;
+  int throw_distance = 7;
 
   int mp = 0;
   int mp_max = 0;
@@ -177,10 +179,19 @@ public:
   Attribute INTELLIGENCE = Attribute(AttributeType::INTELLIGENCE);
   Attribute STRENGTH = Attribute(AttributeType::STRENGTH);
 
+  float getThrowRange() {
+    return STRENGTH(this)*throw_distance;
+  }
+
   void applyEoT(EoT, int);
 
+  std::vector<std::shared_ptr<Cell>> path;
   micropather::MicroPather *pather = nullptr;
+  std::shared_ptr<Creature> lastTarget;
+  std::shared_ptr<Cell> lastTargetCell;
   std::vector<std::shared_ptr<Cell>> findPath(std::shared_ptr<Cell>);
+
+  AiState getAiState(std::shared_ptr<Object>);
 
 private:
   std::shared_ptr<Cell> cachedCell;

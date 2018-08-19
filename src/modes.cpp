@@ -363,6 +363,7 @@ void InventoryMode::render(std::shared_ptr<State> state) {
 
   namespace ic = ItemCategories;
   std::vector<ItemCategory> categories = {ic::ARMOR,     ic::WEAPONS,
+                                          ic::THROWABLE,
                                           ic::JEWELLERY, ic::CONSUMABLES,
                                           ic::LIGHT,     ic::MISC};
   auto items = utils::castObjects<Item>(objects);
