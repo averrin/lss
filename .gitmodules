@@ -1,21 +1,21 @@
 [submodule "include/sml"]
 	path = include/sml
-	url = git@github.com:boost-experimental/sml.git
+	url = https://github.com/boost-experimental/sml.git
 [submodule "linux/backward-cpp"]
 	path = linux/backward-cpp
-	url = git@github.com:bombela/backward-cpp.git
+	url = https://github.com/bombela/backward-cpp.git
 [submodule "include/Jinja2CppLight"]
 	path = include/Jinja2CppLight
-	url = git@github.com:hughperkins/Jinja2CppLight.git
+	url = https://github.com/hughperkins/Jinja2CppLight.git
 [submodule "include/EventBus"]
 	path = include/EventBus
-	url = git@github.com:averrin/EventBus.git
+	url = https://github.com/averrin/EventBus.git
 [submodule "include/fmt"]
 	path = include/fmt
-	url = git@github.com:fmtlib/fmt.git
+	url = https://github.com/fmtlib/fmt.git
 [submodule "include/glm"]
 	path = include/glm
-	url = git@github.com:g-truc/glm.git
+	url = https://github.com/g-truc/glm.git
 [submodule "backward-cpp"]
 	path = backward-cpp
-	url = git@github.com:bombela/backward-cpp.git
+	url = https://github.com/bombela/backward-cpp.git

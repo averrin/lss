@@ -18,16 +18,24 @@ parts:
     source: https://github.com/averrin/lss.git
     after: [conan, desktop-gtk3]
     build-packages:
-      - g++
       - make
-      - cmake
       - libsdl1.2-dev
       - libsdl-net1.2-dev
       - libsdl-sound1.2-dev
       - libasound2-dev
+      - software-properties-common
+      - wget
     override-build: |
-      # conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-      conan install -s compiler.version=7.3 --build=missing .
+      sudo add-apt-repository ppa:jonathonf/gcc-7.1
+      sudo apt-get update
+      sudo apt-get install -y gcc-7 g++-7
+      export CXX=/usr/bin/g++-7
+      export CC=/usr/bin/gcc-7
+      wget https://cmake.org/files/v3.12/cmake-3.12.1-Linux-x86_64.sh
+      chmod +x cmake-3.12.1-Linux-x86_64.sh
+      sudo  ./cmake-3.12.1-Linux-x86_64.sh --skip-license --prefix=/usr/local
+      conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+      conan install -s compiler.version=7.1 --build=missing .
       cmake .
       make -j4
       mkdir $SNAPCRAFT_PART_INSTALL/bin
