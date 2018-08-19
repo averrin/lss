@@ -34,7 +34,7 @@ public:
   bool damaged = true;
   std::string cache;
   int alpha = Cell::DEFAULT_LIGHT;
-  int bgAlpha = 100;
+  int bgAlpha = 0;
   std::string bgColor = COLORS::BG;
   std::string fgColor = COLORS::FG;
 
@@ -48,6 +48,11 @@ public:
   }
   void setBgColor(std::string c) {
     bgColor = c;
+    if (bgColor != COLORS::BG) {
+      bgAlpha = 100;
+    } else {
+      bgAlpha = 0;
+    }
     damaged = true;
   }
   void setFgColor(std::string c) {

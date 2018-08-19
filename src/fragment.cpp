@@ -15,6 +15,9 @@ Fragment::Fragment(std::string t, std::map<std::string, tpl_arg> a)
   if (args.find("color") != args.end()) {
     fgColor = std::get<std::string>(args["color"]);
   }
+  if (args.find("bgColor") != args.end()) {
+    bgColor = std::get<std::string>(args["bgColor"]);
+  }
 };
 Fragment::Fragment(std::string t, std::map<std::string, tpl_arg> a, bool n)
     : template_str(t), args(a), needRender(n){};
@@ -49,6 +52,7 @@ std::string Fragment::render(State *state) {
   tpl.setValue("red", state->currentPalette.red);
   tpl.setValue("blue", state->currentPalette.blue);
   tpl.setValue("orange", state->currentPalette.orange);
+  tpl.setValue("bgColor", bgColor);
 
   for (auto [key, value] : args) {
     std::visit([&](auto const &val) { tpl.setValue(key, val); }, value);
@@ -58,7 +62,7 @@ std::string Fragment::render(State *state) {
   }
 
   auto content = tpl.render();
-  if (content != "" && content != "<br>" && content[0] != '<') {
+  if (content != ""s && content != "<br>"s && content[0] != '<') {
     content = "<span>" + content + "</span>";
   }
   cache = content;
@@ -131,6 +135,7 @@ CellSign::CellSign(std::shared_ptr<Cell> cell)
                        cell->visibilityState == VisibilityState::UNKNOWN
                    ? cellSigns.at(cell->type)
                    : "<span color='{{color}}' alpha='{{alpha}}%' "
+                     "bgcolor='{{bgColor}}' "
                      "bgalpha='{{bgAlpha}}%' "
                      "weight='{{weight}}'>{{sign}}</span>",
                getCellArgs(cell),
@@ -138,24 +143,29 @@ CellSign::CellSign(std::shared_ptr<Cell> cell)
                  cell->visibilityState == VisibilityState::UNKNOWN)) {}
 HeroSign::HeroSign(std::string color)
     : Fragment("<span color='{{color}}' alpha='100%' bgalpha='{{bgAlpha}}%' "
+               "bgcolor='{{bgColor}}' "
                "weight='bold'>@</span>",
                {{"color", color}}) {}
 EnemySign::EnemySign(EnemySpec type)
     : Fragment(
           "<span color='{{color}}' alpha='{{alpha}}%' bgalpha='{{bgAlpha}}%' "
+          "bgcolor='{{bgColor}}' "
           "weight='bold'>{{sign}}</span>",
           {{"sign", enemySigns.at(type)}, {"color", enemyColors.at(type)}}) {}
 DoorSign::DoorSign(bool opened)
     : Fragment("<span weight='bold' alpha='{{alpha}}%' bgalpha='{{bgAlpha}}%' "
+               "bgcolor='{{bgColor}}' "
                "color='#8B5F20'>{{sign}}</span>",
                {{"sign", opened ? "/"s : "+"s}}) {}
 ItemSign::ItemSign(ItemSpec type)
     : Fragment("<span color='{{color}}' alpha='{{alpha}}%' "
+               "bgcolor='{{bgColor}}' "
                "bgalpha='{{bgAlpha}}%'>{{sign}}</span>",
                {{"sign", itemSigns.at(type)}, {"color", itemColors.at(type)}}) {
 }
 TerrainSign::TerrainSign(TerrainSpec type)
     : Fragment("<span color='{{color}}' alpha='{{alpha}}%' "
+               "bgcolor='{{bgColor}}' "
                "bgalpha='{{bgAlpha}}%'>{{sign}}</span>",
                {{"sign", terrainSigns.at(type)},
                 {"color", terrainColors.at(type)}}) {}

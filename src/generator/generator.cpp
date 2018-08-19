@@ -593,7 +593,8 @@ void makeRiver(std::shared_ptr<Location> location) {
 
 // TODO: respect void on prev location
 std::shared_ptr<Location>
-Generator::getRandomLocation(std::shared_ptr<Player> hero, int depth, std::shared_ptr<Cell> enter) {
+Generator::getRandomLocation(std::shared_ptr<Player> hero, int depth,
+                             std::shared_ptr<Cell> enter) {
   if (depth == -1 && hero->currentLocation == nullptr) {
     depth = 0;
   }
@@ -672,7 +673,8 @@ bool placeStairs(std::shared_ptr<Location> location) {
   auto entr = getRandomCell(location, CellType::FLOOR);
   if (location->type.enterCell != nullptr) {
     auto e = location->type.enterCell;
-    entr = std::make_optional<std::shared_ptr<Cell>>(location->cells[e->y][e->x]);
+    entr =
+        std::make_optional<std::shared_ptr<Cell>>(location->cells[e->y][e->x]);
   }
   auto exir = getRandomCell(location, CellType::FLOOR);
   while (!entr) {
@@ -693,11 +695,12 @@ bool placeStairs(std::shared_ptr<Location> location) {
                              location->exitCell.get(), &path, &totalCost);
 
   auto i = 0;
-  while (result != micropather::MicroPather::SOLVED || (totalCost < 20 && i < 10)) {
+  while (result != micropather::MicroPather::SOLVED ||
+         (totalCost < 20 && i < 10)) {
     // entr = getRandomCell(location, CellType::FLOOR);
     exir = getRandomCell(location, CellType::FLOOR);
     // while (!entr) {
-      // entr = getRandomCell(location, CellType::FLOOR);
+    // entr = getRandomCell(location, CellType::FLOOR);
     // }
     while (!exir) {
       exir = getRandomCell(location, CellType::FLOOR);
@@ -782,12 +785,12 @@ void placeRooms(std::shared_ptr<Location> location) {
   auto rc = rand() % 12 + 7;
 
   location->cells = fill(HEIGHT, WIDTH, CellType::UNKNOWN);
-  //TODO: ensure place in location borders
+  // TODO: ensure place in location borders
   if (location->type.enterCell != nullptr) {
-    auto room = getRoom(5,3,5,3);
+    auto room = getRoom(5, 3, 5, 3);
     auto e = location->type.enterCell;
-    auto rx = e->x-room->width/2;
-    auto ry = e->y-room->height/2;
+    auto rx = e->x - room->width / 2;
+    auto ry = e->y - room->height / 2;
     paste(room->cells, location, rx, ry);
     room->x = rx;
     room->y = ry;

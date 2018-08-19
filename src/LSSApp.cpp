@@ -173,14 +173,16 @@ void LSSApp::startGame() {
   locations[0] = l;
 
   threads.push_back(std::thread(
-    [&](std::shared_ptr<Location> l) {
-      for (auto n = 1; n < MAX_LEVELS; n++) {
+      [&](std::shared_ptr<Location> l) {
+        for (auto n = 1; n < MAX_LEVELS; n++) {
           l = generator->getRandomLocation(hero, n, l->exitCell);
           locations[n] = l;
-          MessageEvent me(nullptr, fmt::format("Generated location count: {}", locations.size()));
+          MessageEvent me(nullptr, fmt::format("Generated location count: {}",
+                                               locations.size()));
           eb::EventBus::FireEvent(me);
         }
-      }, l));
+      },
+      l));
 
   state->clear();
   state->fragments.assign(
@@ -239,7 +241,6 @@ void LSSApp::frameBg() {
   }
 
   playAnimations();
-
   state->invalidate();
 }
 
