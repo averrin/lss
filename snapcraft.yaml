@@ -33,7 +33,7 @@ parts:
       export CC=/usr/bin/gcc-7
       wget https://cmake.org/files/v3.12/cmake-3.12.1-Linux-x86_64.sh
       chmod +x cmake-3.12.1-Linux-x86_64.sh
-      sudo  ./cmake-3.12.1-Linux-x86_64.sh --skip-license --prefix=/usr/local
+      sudo  ./cmake-3.12.1-Linux-x86_64.sh --skip-license --prefix=/usr
       conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
       conan install -s compiler.version=7.1 --build=missing .
       cmake .
