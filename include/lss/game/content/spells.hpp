@@ -98,6 +98,12 @@ const auto LIGHT_FOREVER = std::make_shared<TargetSpell>(
     "Eternal Light", 2,
     std::make_shared<CellSpell>("Light", TerrainType::MAGIC_LIGHT_FOREVER), 6,
     10);
+const auto DARKNESS = std::make_shared<TargetSpell>(
+    "Darkness", 0,
+    std::make_shared<CellSpell>("Darkness", TerrainType::DARKNESS), 6, 10);
+const auto DARKNESS_CLOUD = std::make_shared<RadiusSpell>(
+    "Cloud of Darkness", 0,
+    std::make_shared<CellSpell>("Darkness", TerrainType::DARKNESS), 2.5, 10);
 
 /* DEBUG */
 const auto TOGGLE_DUAL_WIELD = std::make_shared<ToggleTraitSpell>(
@@ -144,6 +150,8 @@ const std::vector<std::shared_ptr<Spell>> USABLE = {
     LIGHT,
     LIGHT_FOREVER,
     ACID_LIGHT_FOREVER,
+    DARKNESS,
+    DARKNESS_CLOUD,
 
     SUMMON_THING,
     RESTORE_MANA,

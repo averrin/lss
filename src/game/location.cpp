@@ -268,8 +268,20 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
       }
     }
   }
+
+  std::vector<std::shared_ptr<Cell>> darkness;
+  for (auto t : utils::castObjects<Terrain>(objects)) {
+    if (t->type == TerrainType::DARKNESS) {
+      darkness.push_back(t->currentCell);
+    }
+  }
+
   std::vector<std::shared_ptr<Object>> ts;
   for (auto t : torches) {
+    if (std::find(darkness.begin(), darkness.end(), t->currentCell) !=
+        darkness.end()) {
+      continue;
+    }
     ts.push_back(t);
     auto glow = *t->getGlow();
     for (auto c : getVisible(t->currentCell, glow.distance)) {

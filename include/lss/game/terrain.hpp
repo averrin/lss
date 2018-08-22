@@ -52,6 +52,7 @@ public:
 };
 
 namespace TerrainType {
+const auto DARKNESS = TerrainSpec{"darkness", false, true, 5000, false};
 const auto TORCH_STAND =
     TerrainSpec{"torch stand", false,
                 true,          -1,

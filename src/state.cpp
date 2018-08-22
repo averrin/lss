@@ -51,23 +51,27 @@ void State::render(pango::SurfaceRef surface) {
   // auto t0 = std::chrono::system_clock::now();
   for (auto f : fragments) {
     std::string fContent;
+    auto isCursor = select && n == cursor.y * (width + 1) + cursor.x;
+    auto selectionIt =
+        std::find_if(selection.begin(), selection.end(), [&](Selection s) {
+          return s.pos.y * (width + 1) + s.pos.x == n;
+        });
+    auto hasBg = isCursor || (select && selectionIt != selection.end());
+    auto currentBg = f->bgColor;
+    if (hasBg) {
+      auto color = "#5b4650"s;
+      if (!isCursor && selectionIt != selection.end()) {
+        color = (*selectionIt).color;
+      }
+      f->setBgColor(color);
+    }
     if (!f->damaged) {
       fContent = f->cache;
     } else {
       fContent = f->render(this);
     }
-    if (select && n == cursor.y * (width + 1) + cursor.x) {
-      fContent = "<span background='#5b4650'>" + fContent + "</span>";
-    }
-    if (select) {
-      auto it =
-          std::find_if(selection.begin(), selection.end(), [&](Selection s) {
-            return s.pos.y * (width + 1) + s.pos.x == n;
-          });
-      if (it != selection.end()) {
-        fContent = fmt::format("<span background='{}'>{}</span>", (*it).color,
-                               fContent);
-      }
+    if (hasBg) {
+      f->setBgColor(currentBg);
     }
     content.append(fContent);
     n++;

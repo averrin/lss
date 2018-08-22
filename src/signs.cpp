@@ -17,6 +17,7 @@ const std::map<TerrainSpec, std::string> terrainSigns = {
     {TerrainType::ALTAR, "_"},
     // {TerrainType::BUSH, "⇞"},
     {TerrainType::BUSH, "❞"},
+    {TerrainType::DARKNESS, " "},
 };
 
 const std::map<TerrainSpec, std::string> terrainColors = {
@@ -31,6 +32,7 @@ const std::map<TerrainSpec, std::string> terrainColors = {
     {TerrainType::STATUE, "#f0f0ff"},
     {TerrainType::ALTAR, COLORS::GRAY},
     {TerrainType::BUSH, "#228b22"},
+    {TerrainType::DARKNESS, "#000"},
 };
 
 const std::map<ItemSpec, std::string> itemSigns = {

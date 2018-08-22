@@ -26,6 +26,13 @@ public:
   bool move(Direction, bool autoAction = false);
   bool attack(Direction);
   bool canSee(std::shared_ptr<Cell> c) {
+    for (auto t : utils::castObjects<Terrain>(
+             currentLocation->getObjects(currentCell))) {
+      if (t->type == TerrainType::DARKNESS) {
+        return false;
+      }
+    }
+
     return std::find(viewField.begin(), viewField.end(), c) !=
                viewField.end() ||
            hasTrait(Traits::MIND_SIGHT);

@@ -253,6 +253,7 @@ void LSSApp::serveBg() {
 
 void LSSApp::playAnimations() {
   damaged = false;
+  auto changed = false;
   auto _anims = animations;
   for (auto a : _anims) {
     if (a->stopped) {
@@ -275,8 +276,11 @@ void LSSApp::playAnimations() {
       ca->fragment = f;
     }
     a->tick();
+    changed = true;
   }
-  invalidate();
+  if (changed) {
+    invalidate();
+  }
 }
 
 void LSSApp::setListeners() { reactor = std::make_shared<EventReactor>(this); }
