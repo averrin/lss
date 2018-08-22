@@ -149,7 +149,7 @@ bool NormalMode::processKey(KeyEvent event) {
         auto box = std::dynamic_pointer_cast<LootBoxHolder>(o)->box;
         for (auto item : box.open()) {
           item->currentCell = app->hero->currentCell;
-          app->hero->currentLocation->addObject(item);
+          app->hero->currentLocation->addObject<Item>(item);
         }
         app->modeManager.toNormal();
         return true;
@@ -193,7 +193,7 @@ bool NormalMode::processKey(KeyEvent event) {
           enemy->handlers.push_back(
               eb::EventBus::AddHandler<CommitEvent>(*enemy, app->hero));
           enemy->calcViewField();
-          app->hero->currentLocation->addObject(enemy);
+          app->hero->currentLocation->addObject<Enemy>(enemy);
           app->modeManager.toNormal();
           return true;
         });
@@ -223,7 +223,7 @@ bool NormalMode::processKey(KeyEvent event) {
         app->objectSelectMode->setCallback([&](std::shared_ptr<Object> o) {
           auto item = std::dynamic_pointer_cast<Item>(o)->roll();
           item->currentCell = app->hero->currentCell;
-          app->hero->currentLocation->addObject(item);
+          app->hero->currentLocation->addObject<Item>(item);
           app->modeManager.toNormal();
           return true;
         });

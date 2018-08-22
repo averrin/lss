@@ -8,6 +8,8 @@
 #include "lss/game/cell.hpp"
 #include "lss/game/light.hpp"
 
+#include <fmt/format.h>
+
 class Object : public eb::Object, public std::enable_shared_from_this<Object> {
 public:
   Object() {}
@@ -34,6 +36,12 @@ public:
 
   std::vector<eb::HandlerRegistrationPtr> handlers;
   std::shared_ptr<Cell> currentCell;
+  void setCurrentCell(std::shared_ptr<Cell> c) {
+    if (c == nullptr)  {
+      throw std::runtime_error(fmt::format("you trying to set nullptr as current cell for {}", name));
+    }
+    currentCell = c;
+  }
 
   virtual bool interact(std::shared_ptr<Object> actor) { return false; };
 };

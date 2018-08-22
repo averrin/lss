@@ -53,7 +53,13 @@ public:
   std::shared_ptr<Player> player;
   int depth = 0;
 
-    void addObject(std::shared_ptr<Object> o) {
+    template <typename T>
+    void addObject(std::shared_ptr<T> o) {
+      if (o->currentCell == nullptr) {
+        throw std::runtime_error("you cannot add object without currentCell");
+        return;
+      }
+      // o->currentLocation = shared_from_this();
       objects.push_back(o);
       if (cellObjects.find(o->currentCell) == cellObjects.end()) {
         cellObjects[o->currentCell] = {}; 
@@ -195,6 +201,10 @@ public:
       break;
     }
     return cell;
+  }
+
+  float getDistance(std::shared_ptr<Cell> c, std::shared_ptr<Cell> cc) {
+    return sqrt(pow(cc->x - c->x, 2) + pow(cc->y - c->y, 2));
   }
 
 private:

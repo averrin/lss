@@ -80,7 +80,7 @@ public:
   void updateMap();
   void invalidate() { damaged = true; }
   void invalidate(std::string reason) {
-    // fmt::print("Invalidate reason: {}\n", reason);
+    fmt::print("Invalidate reason: {}\n", reason);
     auto t0 = std::chrono::system_clock::now();
     invalidate();
     auto t1 = std::chrono::system_clock::now();

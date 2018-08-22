@@ -21,7 +21,7 @@ void Location::invalidateVisibilityCache(std::shared_ptr<Cell> cell) {
   std::vector<std::pair<std::shared_ptr<Cell>, float>> hits;
   for (auto ls : cell->lightSources) {
     for (auto [lsk, _] : visibilityCache) {
-      if (lsk.first != ls->currentCell && lsk.first != player->currentCell)
+      if (lsk.first != nullptr && lsk.first != ls->currentCell && lsk.first != player->currentCell)
         continue;
       hits.push_back(lsk);
     }
@@ -97,6 +97,10 @@ void Location::onEvent(CommitEvent &e) {
 
   LocationChangeEvent ec(nullptr);
   eb::EventBus::FireEvent(ec);
+
+  for (auto o : objects) {
+    fmt::print("{} -> {}\n", o->name, o->currentCell == nullptr);
+  }
 }
 
 void Location::onEvent(DropEvent &e) {
@@ -385,19 +389,21 @@ void Location::AdjacentCost(void *state,
 void Location::PrintStateInfo(void *state){};
 
 Objects Location::getObjects(std::shared_ptr<Cell> cell) {
-  if (cellObjects.find(cell) != cellObjects.end())
+  if (cell == nullptr)  {
+    throw std::runtime_error("who the fuck call like this?");
+  }
+  if (cellObjects.find(cell) != cellObjects.end()) {
     return cellObjects[cell];
-  else
-    return {};
+  }
+  return {};
 }
 
 std::vector<std::shared_ptr<Cell>>
 Location::getVisible(std::shared_ptr<Cell> start, float distance) {
   auto it = visibilityCache.find({start, distance});
   if (it != visibilityCache.end()) {
-    return visibilityCache[{start, distance}];
+    return visibilityCache.at({start, distance});
   }
-  // fmt::print("cache miss for {}.{} : {}\n", start->x, start->y, distance);
   std::vector<std::shared_ptr<Cell>> result;
   fov::Vec creaturePoint{start->x, start->y};
   fov::Vec bounds{(int)cells.front().size(), (int)cells.size()};
@@ -406,7 +412,7 @@ Location::getVisible(std::shared_ptr<Cell> start, float distance) {
   auto field = fov::refresh(creaturePoint, bounds, cells);
   // fmt::print("{}.{} : {}\n", start->x, start->y, field.size());
   for (auto v : field) {
-    auto c = cells[v.y][v.x];
+    auto c = cells.at(v.y).at(v.x);
     auto d = sqrt(pow(start->x - c->x, 2) + pow(start->y - c->y, 2));
     if (c->illuminated || d <= distance) {
       result.push_back(c);

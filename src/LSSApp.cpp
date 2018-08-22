@@ -171,6 +171,7 @@ void LSSApp::startGame() {
   auto l = generator->getRandomLocation(hero);
   l->depth = 0;
   locations[0] = l;
+  l->enterCell->type = CellType::FLOOR;
 
   threads.push_back(std::thread(
       [&](std::shared_ptr<Location> l) {
@@ -252,7 +253,6 @@ void LSSApp::serveBg() {
 }
 
 void LSSApp::playAnimations() {
-  damaged = false;
   auto changed = false;
   auto _anims = animations;
   for (auto a : _anims) {
@@ -534,6 +534,7 @@ void LSSApp::update() {
     hero->calcViewField();
     hero->currentLocation->updateView(hero);
     updateMap();
+    damaged = false;
   }
 
   // gl::clear(state->currentPalette.bgColor);

@@ -357,7 +357,7 @@ bool Creature::move(Direction d, bool autoAction) {
     return false;
   }
 
-  currentCell = nc;
+  setCurrentCell(nc);
 
   LeaveCellEvent le(shared_from_this(), cc);
   eb::EventBus::FireEvent(le);

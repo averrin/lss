@@ -145,36 +145,21 @@ void Magic::castLineSpell(std::shared_ptr<Creature> caster,
 
 void Magic::castTargetSpell(std::shared_ptr<Creature> caster,
                       std::shared_ptr<TargetSpell> tspell) {
-    auto cells = caster->getInRadius(tspell->length);
-    std::vector<std::shared_ptr<Enemy>> targets;
-    for (auto c : cells) {
-      auto enemies =
-          utils::castObjects<Enemy>(hero->currentLocation->getObjects(c));
-      if (enemies.size() != 0) {
-        targets.push_back(enemies.front());
-      }
-    }
-    fmt::print("before targeting \n");
-    auto d = tspell->length;
+    auto nearestTarget = caster->getNearestTarget(tspell->length);
     std::shared_ptr<Cell> target;
-    if (std::dynamic_pointer_cast<DamageSpell>(tspell->spell)) {
-      auto cc = hero->currentCell;
-      for (auto e : targets) {
-        auto td = sqrt(pow(cc->x - e->currentCell->x, 2) +
-                       pow(cc->y - e->currentCell->y, 2));
-        if (td <= d) {
-          target = e->currentCell;
-          d = td;
-        }
+    if (nearestTarget) {
+      auto d = hero->currentLocation->getDistance((*nearestTarget)->currentCell, caster->currentCell);
+      if (d <= tspell->length) {
+        target = (*nearestTarget)->currentCell;
       }
     }
 
-    fmt::print("before event \n");
     TargetEvent de(
         target,
         [=](auto cell) {
           auto spell = std::dynamic_pointer_cast<CellSpell>(tspell->spell);
           auto fb = std::make_shared<Terrain>(spell->spec, 8);
+          fb->currentCell = hero->currentCell;
           hero->currentLocation->addObject(fb);
           auto cells = hero->currentLocation->getLine(hero->currentCell, cell);
           auto a = std::make_shared<MoveAnimation>(fb, cells, cells.size());
@@ -235,16 +220,18 @@ void DamageSpell::applySpell(std::shared_ptr<Creature> caster,
                              std::shared_ptr<Location> location,
                              std::shared_ptr<Cell> c) {
   auto objects = location->getObjects(c);
+  fmt::print("objects: {} {}.{}\n", objects.size(), c->x, c->y);
   for (auto o : objects) {
     if (auto creature = std::dynamic_pointer_cast<Creature>(o)) {
-      creature->applyDamage(location->player, damage.getDamage());
+      fmt::print("apply spell to {}\n", creature->name);
+      creature->applyDamage(std::dynamic_pointer_cast<Object>(location->player), damage.getDamage(caster->INTELLIGENCE(caster.get())));
     } else if (o->destructable && destroyObjects) {
       location->removeObject(o);
     }
   }
   if (c == location->player->currentCell) {
     location->player->applyDamage(
-        location->player, damage.getDamage(caster->INTELLIGENCE(caster.get())));
+        std::dynamic_pointer_cast<Object>(location->player), damage.getDamage(caster->INTELLIGENCE(caster.get())));
   }
   applyEffect(location, c);
 }
