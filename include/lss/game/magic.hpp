@@ -14,8 +14,10 @@ public:
   ~Magic();
   std::shared_ptr<Player> hero;
   void castSpell(std::shared_ptr<Creature>, std::shared_ptr<Spell> spell);
-  void castTargetSpell(std::shared_ptr<Creature>, std::shared_ptr<TargetSpell> spell);
-  void castLineSpell(std::shared_ptr<Creature>, std::shared_ptr<LineSpell> spell);
+  void castTargetSpell(std::shared_ptr<Creature>,
+                       std::shared_ptr<TargetSpell> spell);
+  void castLineSpell(std::shared_ptr<Creature>,
+                     std::shared_ptr<LineSpell> spell);
   void pauseAndEraseFireballs();
   void applySpellOnCells(std::shared_ptr<Creature> caster,
                          std::shared_ptr<Spell> spell,

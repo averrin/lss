@@ -9,7 +9,8 @@ public:
   bool interact(std::shared_ptr<Object>);
 
   bool opened = false;
-  bool locked;
+  bool locked = false;
+  bool hidden = false;
 };
 
 #endif // __DOOR_H_

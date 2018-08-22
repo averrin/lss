@@ -9,6 +9,7 @@
 - blink on hit
 - location enter in the same place as prev location exit
 - darkness
+- hidden doors
 
 ### 0.1.0 Suicidal Lemming Migration
 - init hero status page

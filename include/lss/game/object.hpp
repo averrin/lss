@@ -36,9 +36,15 @@ public:
 
   std::vector<eb::HandlerRegistrationPtr> handlers;
   std::shared_ptr<Cell> currentCell;
+
+  void removeCell() {
+    fmt::print("somebody remove cell from {}\n", name);
+    currentCell = nullptr;
+  }
   void setCurrentCell(std::shared_ptr<Cell> c) {
-    if (c == nullptr)  {
-      throw std::runtime_error(fmt::format("you trying to set nullptr as current cell for {}", name));
+    if (c == nullptr) {
+      throw std::runtime_error(fmt::format(
+          "you trying to set nullptr as current cell for {}", name));
     }
     currentCell = c;
   }

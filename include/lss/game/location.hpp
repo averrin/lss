@@ -53,29 +53,25 @@ public:
   std::shared_ptr<Player> player;
   int depth = 0;
 
-    template <typename T>
-    void addObject(std::shared_ptr<T> o) {
-      if (o->currentCell == nullptr) {
-        throw std::runtime_error("you cannot add object without currentCell");
-        return;
-      }
-      // o->currentLocation = shared_from_this();
-      objects.push_back(o);
-      if (cellObjects.find(o->currentCell) == cellObjects.end()) {
-        cellObjects[o->currentCell] = {}; 
-      }
-      cellObjects[o->currentCell].push_back(o);
+  template <typename T> void addObject(std::shared_ptr<T> o) {
+    if (o->currentCell == nullptr) {
+      throw std::runtime_error("you cannot add object without currentCell");
+      return;
     }
+    // o->currentLocation = shared_from_this();
+    objects.push_back(o);
+    // if (cellObjects.find(o->currentCell) == cellObjects.end()) {
+    //   cellObjects[o->currentCell] = {};
+    // }
+    // cellObjects[o->currentCell].push_back(o);
+  }
 
-    void removeObject(std::shared_ptr<Object> o) {
-        objects.erase(std::remove(objects.begin(), objects.end(), o),
-                      objects.end());
-        auto co = getObjects(o->currentCell);
-        co.erase(std::remove(co.begin(), co.end(), o),
-                      co.end());
-        o->currentCell = nullptr;
-      
-    }
+  void removeObject(std::shared_ptr<Object> o) {
+    objects.erase(std::remove(objects.begin(), objects.end(), o));
+    // auto co = cellObjects[o->currentCell];
+    // co.erase(std::remove(co.begin(), co.end(), o));
+    o->removeCell();
+  }
 
   std::shared_ptr<Cell> enterCell;
   std::shared_ptr<Cell> exitCell;

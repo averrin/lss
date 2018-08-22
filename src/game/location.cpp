@@ -98,10 +98,6 @@ void Location::onEvent(CommitEvent &e) {
 
   LocationChangeEvent ec(nullptr);
   eb::EventBus::FireEvent(ec);
-
-  for (auto o : objects) {
-    fmt::print("{} -> {}\n", o->name, o->currentCell == nullptr);
-  }
 }
 
 void Location::onEvent(DropEvent &e) {
@@ -391,10 +387,23 @@ Objects Location::getObjects(std::shared_ptr<Cell> cell) {
   if (cell == nullptr) {
     throw std::runtime_error("who the fuck call like this?");
   }
-  if (cellObjects.find(cell) != cellObjects.end()) {
-    return cellObjects[cell];
+  Objects cellObjects(objects.size());
+  auto it = std::copy_if(objects.begin(), objects.end(), cellObjects.begin(),
+                         [cell](std::shared_ptr<Object> o) {
+                           // return o->currentCell == cell;
+                           try {
+                             return o->currentCell->x == cell->x &&
+                                    o->currentCell->y == cell->y;
+                           } catch (std::exception &e) {
+                             fmt::print("BUG: ghost cell!!!\n");
+                             return false;
+                           }
+                         });
+  if (it == objects.end()) {
+    return {};
   }
-  return {};
+  cellObjects.resize(std::distance(cellObjects.begin(), it));
+  return cellObjects;
 }
 
 std::vector<std::shared_ptr<Cell>>

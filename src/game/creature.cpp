@@ -441,6 +441,7 @@ bool Creature::throwItem(std::shared_ptr<Item> item,
     throwed = item->clone();
     throwed->count = 1;
   }
+  throwed->setCurrentCell(currentCell);
   currentLocation->addObject(throwed);
   auto cells = currentLocation->getLine(currentCell, cell);
   auto a = std::make_shared<MoveAnimation>(throwed, cells, cells.size());

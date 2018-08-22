@@ -362,7 +362,17 @@ void LSSApp::updateMap() {
 
     } else if (auto d = std::dynamic_pointer_cast<Door>(o);
                d && hero->canSee(ec)) {
-      state->fragments[index] = std::make_shared<DoorSign>(d->opened);
+      if (!d->opened && d->hidden) {
+        auto fake_wall = std::make_shared<Cell>(CellType::WALL);
+        fake_wall->visibilityState = ec->visibilityState;
+        fake_wall->lightSources = ec->lightSources;
+        fake_wall->features = ec->features;
+        fake_wall->illuminated = ec->illuminated;
+        fake_wall->illumination = ec->illumination;
+        state->fragments[index] = std::make_shared<CellSign>(fake_wall);
+      } else {
+        state->fragments[index] = std::make_shared<DoorSign>(d->opened);
+      }
       state->fragments[index]->setAlpha(ec->illumination);
     } else if (auto i = std::dynamic_pointer_cast<Item>(o);
                i && hero->canSee(ec)) {

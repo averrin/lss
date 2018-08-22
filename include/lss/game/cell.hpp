@@ -85,11 +85,9 @@ public:
   bool hasFeature(CellFeature f) {
     return std::find(features.begin(), features.end(), f) != features.end();
   }
-  void addFeature(CellFeature f) {
-      features.push_back(f);
-  }
+  void addFeature(CellFeature f) { features.push_back(f); }
   void removeFeature(CellFeature f) {
-    if (std::find(features.begin(), features.end(),f) != features.end()) {
+    if (std::find(features.begin(), features.end(), f) != features.end()) {
       features.erase(std::remove(features.begin(), features.end(), f));
     }
   }

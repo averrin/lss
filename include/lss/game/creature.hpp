@@ -137,33 +137,33 @@ public:
     return hasTrait(trait);
   }
 
-    std::optional<std::shared_ptr<Creature>> getNearestTarget(float distance) {
-      std::optional<std::shared_ptr<Creature>> target = std::nullopt;
-      auto cells = getInRadius(distance);
-      std::vector<std::shared_ptr<Creature>> targets;
-      for (auto c : cells) {
-        auto objects = currentLocation->getObjects(c);
-        auto enemies =
-            utils::castObjects<Creature>(objects);
-        if (enemies.size() != 0) {
-          targets.push_back(enemies.front());
-        }
+  std::optional<std::shared_ptr<Creature>> getNearestTarget(float distance) {
+    std::optional<std::shared_ptr<Creature>> target = std::nullopt;
+    auto cells = getInRadius(distance);
+    std::vector<std::shared_ptr<Creature>> targets;
+    for (auto c : cells) {
+      auto objects = currentLocation->getObjects(c);
+      auto enemies = utils::castObjects<Creature>(objects);
+      if (enemies.size() != 0) {
+        targets.push_back(enemies.front());
       }
-      auto d = distance;
-      auto cc = currentCell;
-      for (auto e : targets) {
-        if (e->currentCell == nullptr)  {
-          throw std::runtime_error(fmt::format("{} -> nullptr current cell again", e->name));
-        }
-        auto td = sqrt(pow(cc->x - e->currentCell->x, 2) +
-                       pow(cc->y - e->currentCell->y, 2));
-        if (td <= d) {
-          target = std::make_optional<std::shared_ptr<Creature>>(e);
-          d = td;
-        }
-      }
-      return target;
     }
+    auto d = distance;
+    auto cc = currentCell;
+    for (auto e : targets) {
+      if (e->currentCell == nullptr) {
+        throw std::runtime_error(
+            fmt::format("{} -> nullptr current cell again", e->name));
+      }
+      auto td = sqrt(pow(cc->x - e->currentCell->x, 2) +
+                     pow(cc->y - e->currentCell->y, 2));
+      if (td <= d) {
+        target = std::make_optional<std::shared_ptr<Creature>>(e);
+        d = td;
+      }
+    }
+    return target;
+  }
 
   std::optional<LightSpec> getGlow() override {
     std::optional<LightSpec> result = std::nullopt;
