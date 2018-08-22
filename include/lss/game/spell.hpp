@@ -84,6 +84,13 @@ public:
                   std::shared_ptr<Cell>);
 };
 
+class DrillSpell : public DamageSpell {
+public:
+  DrillSpell(std::string n): DamageSpell(n, DamageSpec(0,0,0, DamageType::BASIC), TerrainType::DRILL, true) {}
+  void applySpell(std::shared_ptr<Creature> caster, std::shared_ptr<Location>,
+                  std::shared_ptr<Cell>);
+};
+
 class RadiusSpell : public Spell {
 public:
   RadiusSpell(std::string n, int l, std::shared_ptr<Spell> s, float r, int c)

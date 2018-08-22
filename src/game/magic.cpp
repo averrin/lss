@@ -134,7 +134,7 @@ void Magic::castLineSpell(std::shared_ptr<Creature> caster,
     auto cells = std::vector<std::shared_ptr<Cell>>{cell};
     for (auto n = 0; n < lspell->length - 1; n++) {
       cell = hero->currentLocation->getCell(cell, dir);
-      if (!cell->passThrough)
+      if (!cell->passThrough && !std::dynamic_pointer_cast<DrillSpell>(lspell->spell))
         break;
       cells.push_back(cell);
     }
@@ -221,10 +221,8 @@ void DamageSpell::applySpell(std::shared_ptr<Creature> caster,
                              std::shared_ptr<Location> location,
                              std::shared_ptr<Cell> c) {
   auto objects = location->getObjects(c);
-  fmt::print("objects: {} {}.{}\n", objects.size(), c->x, c->y);
   for (auto o : objects) {
     if (auto creature = std::dynamic_pointer_cast<Creature>(o)) {
-      fmt::print("apply spell to {}\n", creature->name);
       creature->applyDamage(
           std::dynamic_pointer_cast<Object>(location->player),
           damage.getDamage(caster->INTELLIGENCE(caster.get())));
@@ -237,6 +235,18 @@ void DamageSpell::applySpell(std::shared_ptr<Creature> caster,
         std::dynamic_pointer_cast<Object>(location->player),
         damage.getDamage(caster->INTELLIGENCE(caster.get())));
   }
+  applyEffect(location, c);
+}
+
+void DrillSpell::applySpell(std::shared_ptr<Creature> caster,
+                             std::shared_ptr<Location> location,
+                             std::shared_ptr<Cell> c) {
+  auto objects = location->getObjects(c);
+  for (auto o : objects) {
+    location->removeObject(o);
+  }
+  DigEvent de(caster, c);
+  eb::EventBus::FireEvent(de);
   applyEffect(location, c);
 }
 

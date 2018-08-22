@@ -143,9 +143,11 @@ void Location::onEvent(DigEvent &e) {
   e.cell->passThrough = true;
   e.cell->seeThrough = true;
 
-  auto rock = std::make_shared<Item>(ItemType::ROCK);
-  rock->setCurrentCell(e.cell);
-  addObject(rock);
+  if (R::R() < 0.6f) {
+    auto rock = std::make_shared<Item>(ItemType::ROCK);
+    rock->setCurrentCell(e.cell);
+    addObject(rock);
+  }
 
   for (auto c : getNeighbors(e.cell)) {
     if (c->type == CellType::UNKNOWN) {

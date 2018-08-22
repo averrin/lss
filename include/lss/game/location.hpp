@@ -53,6 +53,11 @@ public:
   std::shared_ptr<Player> player;
   int depth = 0;
 
+  template <typename T> void addObject(std::shared_ptr<T> o, std::shared_ptr<T> cc) {
+    o->setCurrentCell(cc);
+    addObject<T>(o);
+  }
+
   template <typename T> void addObject(std::shared_ptr<T> o) {
     if (o->currentCell == nullptr) {
       throw std::runtime_error("you cannot add object without currentCell");

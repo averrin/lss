@@ -52,6 +52,11 @@ const auto FIRESTREAM = std::make_shared<LineSpell>(
                                   TerrainType::FIREBALL, true),
     4, 20);
 
+const auto DRILL = std::make_shared<LineSpell>(
+    "Drill", 2,
+    std::make_shared<DrillSpell>("Drill"),
+    4, 20);
+
 const auto FROSTSTREAM = std::make_shared<LineSpell>(
     "Froststream", 2,
     std::make_shared<DamageSpell>("Ice damage",
@@ -152,6 +157,7 @@ const std::vector<std::shared_ptr<Spell>> USABLE = {
     ACID_LIGHT_FOREVER,
     DARKNESS,
     DARKNESS_CLOUD,
+    DRILL,
 
     SUMMON_THING,
     RESTORE_MANA,
