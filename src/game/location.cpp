@@ -21,7 +21,8 @@ void Location::invalidateVisibilityCache(std::shared_ptr<Cell> cell) {
   std::vector<std::pair<std::shared_ptr<Cell>, float>> hits;
   for (auto ls : cell->lightSources) {
     for (auto [lsk, _] : visibilityCache) {
-      if (lsk.first != nullptr && lsk.first != ls->currentCell && lsk.first != player->currentCell)
+      if (lsk.first != nullptr && lsk.first != ls->currentCell &&
+          lsk.first != player->currentCell)
         continue;
       hits.push_back(lsk);
     }
@@ -119,7 +120,7 @@ void Location::onEvent(EnemyDiedEvent &e) {
     auto loot = enemy->drop();
     if (loot != std::nullopt) {
       for (auto item : *loot) {
-        item->currentCell = enemy->currentCell;
+        item->setCurrentCell(enemy->currentCell);
         addObject(item);
       }
     }
@@ -130,9 +131,7 @@ void Location::onEvent(EnemyDiedEvent &e) {
   needUpdateLight = true;
 }
 
-void Location::onEvent(ItemTakenEvent &e) {
-  removeObject(e.item);
-}
+void Location::onEvent(ItemTakenEvent &e) { removeObject(e.item); }
 
 void Location::reveal() {
   for (auto r : cells) {
@@ -149,7 +148,7 @@ void Location::onEvent(DigEvent &e) {
   e.cell->seeThrough = true;
 
   auto rock = std::make_shared<Item>(ItemType::ROCK);
-  rock->currentCell = e.cell;
+  rock->setCurrentCell(e.cell);
   addObject(rock);
 
   for (auto c : getNeighbors(e.cell)) {
@@ -178,7 +177,7 @@ void Location::onEvent(EnterCellEvent &e) {
     if (t->type == TerrainType::BUSH && e.cell == t->currentCell) {
       removeObject(t);
       auto grass = Prototype::GRASS->clone();
-      grass->currentCell = e.cell;
+      grass->setCurrentCell(e.cell);
       addObject(grass);
     }
   }
@@ -192,7 +191,7 @@ void Location::onEvent(LeaveCellEvent &e) { invalidateVisibilityCache(e.cell); }
 void Location::enter(std::shared_ptr<Player> hero, std::shared_ptr<Cell> cell) {
   needUpdateLight = true;
   player = hero;
-  hero->currentCell = cell;
+  hero->setCurrentCell(cell);
 
   for (auto o : objects) {
     if (auto enemy = std::dynamic_pointer_cast<Enemy>(o)) {
@@ -389,7 +388,7 @@ void Location::AdjacentCost(void *state,
 void Location::PrintStateInfo(void *state){};
 
 Objects Location::getObjects(std::shared_ptr<Cell> cell) {
-  if (cell == nullptr)  {
+  if (cell == nullptr) {
     throw std::runtime_error("who the fuck call like this?");
   }
   if (cellObjects.find(cell) != cellObjects.end()) {

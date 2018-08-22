@@ -121,7 +121,7 @@ bool NormalMode::processKey(KeyEvent event) {
     break;
   case SDL_SCANCODE_R:
     if (!event.isShiftDown()) {
-      app->hero->currentCell = app->hero->currentLocation->exitCell;
+      app->hero->setCurrentCell(app->hero->currentLocation->exitCell);
       app->processCommand("down");
     } else {
       app->objectSelectMode->setHeader(F("Lootbox for open: "));
@@ -148,7 +148,7 @@ bool NormalMode::processKey(KeyEvent event) {
       app->objectSelectMode->setCallback([&](std::shared_ptr<Object> o) {
         auto box = std::dynamic_pointer_cast<LootBoxHolder>(o)->box;
         for (auto item : box.open()) {
-          item->currentCell = app->hero->currentCell;
+          item->setCurrentCell(app->hero->currentCell);
           app->hero->currentLocation->addObject<Item>(item);
         }
         app->modeManager.toNormal();
@@ -187,7 +187,7 @@ bool NormalMode::processKey(KeyEvent event) {
         app->objectSelectMode->setCallback([&](std::shared_ptr<Object> o) {
           auto sh = std::dynamic_pointer_cast<EnemySpecHolder>(o);
           auto enemy = std::make_shared<Enemy>(sh->spec);
-          enemy->currentCell = app->hero->currentCell;
+          enemy->setCurrentCell(app->hero->currentCell);
           enemy->currentLocation = app->hero->currentLocation;
 
           enemy->handlers.push_back(
@@ -222,7 +222,7 @@ bool NormalMode::processKey(KeyEvent event) {
 
         app->objectSelectMode->setCallback([&](std::shared_ptr<Object> o) {
           auto item = std::dynamic_pointer_cast<Item>(o)->roll();
-          item->currentCell = app->hero->currentCell;
+          item->setCurrentCell(app->hero->currentCell);
           app->hero->currentLocation->addObject<Item>(item);
           app->modeManager.toNormal();
           return true;

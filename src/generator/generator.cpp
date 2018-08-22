@@ -442,7 +442,7 @@ void placeDoors(std::shared_ptr<Location> location) {
             if (nd)
               continue;
             auto door = std::make_shared<Door>();
-            door->currentCell = c;
+            door->setCurrentCell(c);
             c->seeThrough = false;
             location->addObject<Door>(door);
             d++;
@@ -455,11 +455,11 @@ void placeDoors(std::shared_ptr<Location> location) {
 
 std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Location> location,
                                  std::shared_ptr<Cell> c, EnemySpec type) {
-  if (c == nullptr)  {
+  if (c == nullptr) {
     throw std::runtime_error("nullptr cell for enemy");
   }
   auto enemy = std::make_shared<Enemy>(type);
-  enemy->currentCell = c;
+  enemy->setCurrentCell(c);
   enemy->currentLocation = location;
   return enemy;
 }
@@ -505,7 +505,7 @@ void placeLoot(std::shared_ptr<Location> location, int threat) {
       auto new_item = item->roll();
       // fmt::print("Place {} at {}.{}\n", new_item->getTitle(true), c->x,
       // c->y);
-      new_item->currentCell = c;
+      new_item->setCurrentCell(c);
       location->addObject<Item>(new_item);
     }
   }
@@ -641,18 +641,18 @@ void placeTorches(std::shared_ptr<Location> location) {
         }) == ngs.end())
       continue;
     auto torch = std::make_shared<Terrain>(TerrainType::TORCH_STAND);
-    torch->currentCell = cell;
+    torch->setCurrentCell(cell);
     location->addObject<Terrain>(torch);
     n++;
   }
   auto nbrs = location->getNeighbors(location->exitCell);
   auto torch = std::make_shared<Terrain>(TerrainType::TORCH_STAND);
-  torch->currentCell = nbrs[rand() % nbrs.size()];
+  torch->setCurrentCell(nbrs[rand() % nbrs.size()]);
   location->addObject<Terrain>(torch);
 
   nbrs = location->getNeighbors(location->enterCell);
   torch = std::make_shared<Terrain>(TerrainType::TORCH_STAND);
-  torch->currentCell = nbrs[rand() % nbrs.size()];
+  torch->setCurrentCell(nbrs[rand() % nbrs.size()]);
   location->addObject<Terrain>(torch);
 
   // fmt::print("Torches: {}\n", n);
@@ -869,7 +869,7 @@ void placeCaves(std::shared_ptr<Location> location) {
       } else if (fn != 8) {
         if (c->type == CellType::FLOOR && R::R() < P::CAVE_ROCK) {
           auto rock = Prototype::ROCK->clone();
-          rock->currentCell = c;
+          rock->setCurrentCell(c);
           location->addObject<Item>(rock);
           continue;
         }
@@ -880,11 +880,11 @@ void placeCaves(std::shared_ptr<Location> location) {
               return t.size() == 1 && t.front()->type == TerrainType::BUSH;
             }) != n.end()) {
           auto s = std::make_shared<Terrain>(TerrainType::BUSH);
-          s->currentCell = c;
+          s->setCurrentCell(c);
           location->addObject<Terrain>(s);
         } else {
           auto grass = Prototype::GRASS->clone();
-          grass->currentCell = c;
+          grass->setCurrentCell(c);
           location->addObject<Item>(grass);
         }
         continue;
@@ -911,16 +911,16 @@ void makeCavePassage(std::shared_ptr<Location> location) {
     for (auto c : newRoom->cells) {
       if (c->type == CellType::FLOOR && R::R() < P::CAVE_ROCK) {
         auto rock = Prototype::ROCK->clone();
-        rock->currentCell = c;
+        rock->setCurrentCell(c);
         location->addObject<Item>(rock);
       } else if (c->type == CellType::FLOOR && R::R() < P::CAVE_GRASS) {
         if (R::R() < P::CAVE_BUSH) {
           auto s = std::make_shared<Terrain>(TerrainType::BUSH);
-          s->currentCell = c;
+          s->setCurrentCell(c);
           location->addObject<Terrain>(s);
         } else {
           auto grass = Prototype::GRASS->clone();
-          grass->currentCell = c;
+          grass->setCurrentCell(c);
           location->addObject<Item>(grass);
         }
         continue;
@@ -943,13 +943,13 @@ void placeStatue(std::shared_ptr<Location> location) {
 
   room->features.push_back(RoomFeature::STATUE);
   auto s = std::make_shared<Terrain>(TerrainType::STATUE);
-  s->currentCell = cell;
+  s->setCurrentCell(cell);
   location->addObject<Terrain>(s);
   for (auto n : location->getNeighbors(cell)) {
     n->features.push_back(CellFeature::BLOOD);
     if (R::R() < 0.2 && n->type == CellType::FLOOR) {
       auto bones = std::make_shared<Item>(ItemType::BONES, 1);
-      bones->currentCell = n;
+      bones->setCurrentCell(n);
       location->addObject<Item>(bones);
     }
   }
@@ -969,7 +969,7 @@ void placeAltar(std::shared_ptr<Location> location) {
 
   room->features.push_back(RoomFeature::ALTAR);
   auto s = std::make_shared<Terrain>(TerrainType::ALTAR);
-  s->currentCell = cell;
+  s->setCurrentCell(cell);
   location->addObject<Terrain>(s);
   if (R::R() < 0.5) {
     for (auto n : location->getNeighbors(cell)) {
@@ -1204,7 +1204,7 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
         c->features.push_back(CellFeature::BLOOD);
       } else if (c->type == CellType::FLOOR && R::R() < P::BONES) {
         auto bones = std::make_shared<Item>(ItemType::BONES, 1);
-        bones->currentCell = c;
+        bones->setCurrentCell(c);
         location->addObject<Item>(bones);
       }
       for (auto cf : location->type.cellFeatures) {

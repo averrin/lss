@@ -7,7 +7,7 @@ int MoveAnimation::tick() {
   // fmt::print("{}\n", counter);
   auto d = steps / path.size();
   if (counter < steps) {
-    object->currentCell = path.at(counter / d);
+    object->setCurrentCell(path.at(counter / d));
     if (frameCallback != nullptr) {
       frameCallback(counter);
     }
