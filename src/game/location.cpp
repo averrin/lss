@@ -148,9 +148,13 @@ void Location::onEvent(DigEvent &e) {
   addObject(rock);
 
   for (auto c : getNeighbors(e.cell)) {
-    c->type = CellType::WALL;
+    if (c->type == CellType::UNKNOWN) {
+      c->type = CellType::WALL;
+    }
   }
-  needUpdateLight = true;
+  invalidate();
+  LocationChangeEvent ec(nullptr);
+  eb::EventBus::FireEvent(ec);
 }
 
 ItemsFoundEvent::ItemsFoundEvent(eb::ObjectPtr s, Items i)
@@ -228,7 +232,21 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
   auto heroVD = hero->VISIBILITY_DISTANCE(hero.get());
   auto enemies = utils::castObjects<Enemy>(objects);
   std::vector<std::shared_ptr<Object>> torches;
+
+  std::vector<std::shared_ptr<Cell>> darkness;
+  for (auto t : utils::castObjects<Terrain>(objects)) {
+    if (t->type == TerrainType::DARKNESS) {
+      darkness.push_back(t->currentCell);
+    }
+  }
+
+  auto heroInDark = std::find(darkness.begin(), darkness.end(), hero->currentCell) != darkness.end();
+
   for (auto ts : objects) {
+    if (std::find(darkness.begin(), darkness.end(), ts->currentCell) !=
+        darkness.end()) {
+      continue;
+    }
     if (ts->getGlow()) {
       torches.push_back(ts);
     }
@@ -256,7 +274,7 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
       }
       c->illuminated = false;
       // FIXME: not in distance, but only visible
-      if (hero->getGlow() && getDistance(c, hero->currentCell) <= heroVD) {
+      if (!heroInDark && hero->getGlow() && getDistance(c, hero->currentCell) <= heroVD) {
         c->illuminated = true;
         c->lightSources.insert(hero);
         continue;
@@ -264,19 +282,8 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
     }
   }
 
-  std::vector<std::shared_ptr<Cell>> darkness;
-  for (auto t : utils::castObjects<Terrain>(objects)) {
-    if (t->type == TerrainType::DARKNESS) {
-      darkness.push_back(t->currentCell);
-    }
-  }
-
   std::vector<std::shared_ptr<Object>> ts;
   for (auto t : torches) {
-    if (std::find(darkness.begin(), darkness.end(), t->currentCell) !=
-        darkness.end()) {
-      continue;
-    }
     ts.push_back(t);
     auto glow = *t->getGlow();
     for (auto c : getVisible(t->currentCell, glow.distance)) {

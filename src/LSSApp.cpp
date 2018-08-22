@@ -361,7 +361,7 @@ void LSSApp::updateMap() {
       state->fragments[index]->setAlpha(ec->illumination);
 
     } else if (auto d = std::dynamic_pointer_cast<Door>(o);
-               d && hero->canSee(ec)) {
+               d && (hero->canSee(ec) || ec->visibilityState == VisibilityState::SEEN)) {
       if (!d->opened && d->hidden) {
         auto fake_wall = std::make_shared<Cell>(CellType::WALL);
         fake_wall->visibilityState = ec->visibilityState;
