@@ -48,13 +48,20 @@ public:
                    std::shared_ptr<Cell> c) {
     auto fb = std::make_shared<Terrain>(spec, 8);
     fb->currentCell = c;
-    location->objects.push_back(fb);
+    location->addObject(fb);
 
     if (spec == TerrainType::FROSTBALL) {
-      c->features.push_back(CellFeature::FROST);
+      c->addFeature(CellFeature::FROST);
       for (auto n : location->getNeighbors(c)) {
-        n->features.push_back(CellFeature::FROST);
+        n->addFeature(CellFeature::FROST);
       }
+    } else 
+    if (spec == TerrainType::FIREBALL) {
+        c->removeFeature(CellFeature::FROST);
+        for (auto n : location->getNeighbors(c)) {
+          n->removeFeature(CellFeature::FROST);
+        }
+
     }
 
     location->invalidate();

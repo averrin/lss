@@ -521,6 +521,7 @@ bool LSSApp::processCommand(std::string cmd) {
   } else if (auto e = std::dynamic_pointer_cast<LightCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
   }
+  invalidate();
   return true;
 }
 

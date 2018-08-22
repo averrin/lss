@@ -90,8 +90,7 @@ void Location::onEvent(CommitEvent &e) {
     if (o->apLeft > 0) {
       o->apLeft -= e.actionPoints;
       if (o->apLeft <= 0) {
-        objects.erase(std::remove(objects.begin(), objects.end(), o),
-                      objects.end());
+        removeObject(o);
       }
     }
   }
@@ -106,7 +105,7 @@ void Location::onEvent(DropEvent &e) {
   auto item = e.item->clone();
   item->currentCell =
       std::dynamic_pointer_cast<Creature>(e.getSender())->currentCell;
-  objects.push_back(item);
+  addObject(item);
 }
 
 void Location::onEvent(EnemyDiedEvent &e) {
@@ -117,21 +116,18 @@ void Location::onEvent(EnemyDiedEvent &e) {
     if (loot != std::nullopt) {
       for (auto item : *loot) {
         item->currentCell = enemy->currentCell;
-        objects.push_back(item);
+        addObject(item);
       }
     }
     invalidateVisibilityCache(enemy->currentCell);
-    enemy->currentCell = nullptr;
-    objects.erase(std::remove(objects.begin(), objects.end(), sender),
-                  objects.end());
+    removeObject(enemy);
   }
 
   needUpdateLight = true;
 }
 
 void Location::onEvent(ItemTakenEvent &e) {
-  objects.erase(std::remove(objects.begin(), objects.end(), e.item),
-                objects.end());
+  removeObject(e.item);
 }
 
 void Location::reveal() {
@@ -150,7 +146,7 @@ void Location::onEvent(DigEvent &e) {
 
   auto rock = std::make_shared<Item>(ItemType::ROCK);
   rock->currentCell = e.cell;
-  objects.push_back(rock);
+  addObject(rock);
 
   for (auto c : getNeighbors(e.cell)) {
     c->type = CellType::WALL;
@@ -176,10 +172,10 @@ void Location::onEvent(EnterCellEvent &e) {
   }
   for (auto t : utils::castObjects<Terrain>(objects)) {
     if (t->type == TerrainType::BUSH && e.cell == t->currentCell) {
-      objects.erase(std::remove(objects.begin(), objects.end(), t));
+      removeObject(t);
       auto grass = Prototype::GRASS->clone();
       grass->currentCell = e.cell;
-      objects.push_back(grass);
+      addObject(grass);
     }
   }
   // if (e.cell->illuminated) {
@@ -389,7 +385,10 @@ void Location::AdjacentCost(void *state,
 void Location::PrintStateInfo(void *state){};
 
 Objects Location::getObjects(std::shared_ptr<Cell> cell) {
-  return cellObjects[cell];
+  if (cellObjects.find(cell) != cellObjects.end())
+    return cellObjects[cell];
+  else
+    return {};
 }
 
 std::vector<std::shared_ptr<Cell>>

@@ -441,7 +441,7 @@ bool Creature::throwItem(std::shared_ptr<Item> item,
     throwed = item->clone();
     throwed->count = 1;
   }
-  currentLocation->objects.push_back(throwed);
+  currentLocation->addObject(throwed);
   auto cells = currentLocation->getLine(currentCell, cell);
   auto a = std::make_shared<MoveAnimation>(throwed, cells, cells.size());
   a->animationCallback = [=]() {
@@ -452,7 +452,7 @@ bool Creature::throwItem(std::shared_ptr<Item> item,
     if (e != item->effects.end()) {
       auto objects = currentLocation->getObjects(cell);
       if (currentLocation->player->currentCell == cell) {
-        objects.push_back(currentLocation->player);
+        currentLocation->addObject(currentLocation->player);
       }
       for (auto o : objects) {
         if (auto creature = std::dynamic_pointer_cast<Creature>(o)) {
@@ -486,7 +486,7 @@ AiState Creature::getAiState(std::shared_ptr<Object> target) {
     return s;
   }
 
-  if (!s.canSeeTargetCell) {
+  if (!s.canSeeTargetCell && path.size() > 2) {
     auto it = path.end() - 2;
     for (auto n = 0; n < path.size() - 2; n++) {
       if (it == path.begin()) {

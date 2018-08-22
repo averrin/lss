@@ -102,7 +102,7 @@ const auto DARKNESS = std::make_shared<TargetSpell>(
     "Darkness", 0,
     std::make_shared<CellSpell>("Darkness", TerrainType::DARKNESS), 6, 10);
 const auto DARKNESS_CLOUD = std::make_shared<RadiusSpell>(
-    "Cloud of Darkness", 0,
+    "Cloud of Darkness", 1,
     std::make_shared<CellSpell>("Darkness", TerrainType::DARKNESS), 2.5, 10);
 
 /* DEBUG */

@@ -289,10 +289,7 @@ void Player::onEvent(PickCommandEvent &e) {
     if (auto t = std::dynamic_pointer_cast<Terrain>(*item);
         t && t->type == TerrainType::TORCH_STAND) {
       pick(Prototype::TORCH->clone());
-      currentLocation->objects.erase(
-          std::remove(currentLocation->objects.begin(),
-                      currentLocation->objects.end(), *item),
-          currentLocation->objects.end());
+      currentLocation->removeObject(*item);
     } else {
       pick(std::dynamic_pointer_cast<Item>(*item));
     }

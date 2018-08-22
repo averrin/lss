@@ -62,6 +62,12 @@ public:
     }
 
     void removeObject(std::shared_ptr<Object> o) {
+        objects.erase(std::remove(objects.begin(), objects.end(), o),
+                      objects.end());
+        auto co = getObjects(o->currentCell);
+        co.erase(std::remove(co.begin(), co.end(), o),
+                      co.end());
+        o->currentCell = nullptr;
       
     }
 

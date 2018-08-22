@@ -87,7 +87,7 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
     auto lt = LootBox{1, {Prototype::POTION_MANA}};
     auto items = lt.open();
     items.front()->currentCell = c;
-    hero->currentLocation->objects.push_back(items.front());
+    hero->currentLocation->addObject(items.front());
     hero->commit("summon thing", 0);
   } else if (*spell == *Spells::HEAL_LESSER) {
     heal(caster, 10, 25);
@@ -121,6 +121,14 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
     auto cells = caster->getInRadius(rspell->radius);
     applySpellOnCells(caster, rspell->spell, cells);
   } else if (auto lspell = std::dynamic_pointer_cast<LineSpell>(spell)) {
+    castLineSpell(caster, lspell);
+  } else if (auto tspell = std::dynamic_pointer_cast<TargetSpell>(spell)) {
+    castTargetSpell(caster, tspell);
+  }
+}
+
+void Magic::castLineSpell(std::shared_ptr<Creature> caster,
+                      std::shared_ptr<LineSpell> lspell) {
     DirectionEvent de([=](auto dir) {
       auto cell = hero->currentLocation->getCell(caster->currentCell, dir);
       auto cells = std::vector<std::shared_ptr<Cell>>{cell};
@@ -133,8 +141,10 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
       applySpellOnCells(caster, lspell->spell, cells);
     });
     eb::EventBus::FireEvent(de);
-  } else if (auto tspell = std::dynamic_pointer_cast<TargetSpell>(spell)) {
+  }
 
+void Magic::castTargetSpell(std::shared_ptr<Creature> caster,
+                      std::shared_ptr<TargetSpell> tspell) {
     auto cells = caster->getInRadius(tspell->length);
     std::vector<std::shared_ptr<Enemy>> targets;
     for (auto c : cells) {
@@ -144,6 +154,7 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
         targets.push_back(enemies.front());
       }
     }
+    fmt::print("before targeting \n");
     auto d = tspell->length;
     std::shared_ptr<Cell> target;
     if (std::dynamic_pointer_cast<DamageSpell>(tspell->spell)) {
@@ -158,12 +169,13 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
       }
     }
 
+    fmt::print("before event \n");
     TargetEvent de(
         target,
         [=](auto cell) {
           auto spell = std::dynamic_pointer_cast<CellSpell>(tspell->spell);
           auto fb = std::make_shared<Terrain>(spell->spec, 8);
-          hero->currentLocation->objects.push_back(fb);
+          hero->currentLocation->addObject(fb);
           auto cells = hero->currentLocation->getLine(hero->currentCell, cell);
           auto a = std::make_shared<MoveAnimation>(fb, cells, cells.size());
           a->animationCallback = [=]() {
@@ -190,7 +202,6 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
         });
     eb::EventBus::FireEvent(de);
   }
-}
 
 void Magic::applySpellOnCells(std::shared_ptr<Creature> caster,
                               std::shared_ptr<Spell> spell,
@@ -228,9 +239,7 @@ void DamageSpell::applySpell(std::shared_ptr<Creature> caster,
     if (auto creature = std::dynamic_pointer_cast<Creature>(o)) {
       creature->applyDamage(location->player, damage.getDamage());
     } else if (o->destructable && destroyObjects) {
-      location->objects.erase(
-          std::remove(location->objects.begin(), location->objects.end(), o),
-          location->objects.end());
+      location->removeObject(o);
     }
   }
   if (c == location->player->currentCell) {

@@ -85,6 +85,14 @@ public:
   bool hasFeature(CellFeature f) {
     return std::find(features.begin(), features.end(), f) != features.end();
   }
+  void addFeature(CellFeature f) {
+      features.push_back(f);
+  }
+  void removeFeature(CellFeature f) {
+    if (std::find(features.begin(), features.end(),f) != features.end()) {
+      features.erase(std::remove(features.begin(), features.end(), f));
+    }
+  }
   static const int DEFAULT_LIGHT = 60;
   static const int MINIMUM_LIGHT = 5;
   int illumination = DEFAULT_LIGHT;
