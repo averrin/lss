@@ -49,8 +49,21 @@ public:
   LocationSpec type;
   Cells cells;
   Objects objects{};
+  std::map<std::shared_ptr<Cell>, Objects> cellObjects;
   std::shared_ptr<Player> player;
   int depth = 0;
+
+    void addObject(std::shared_ptr<Object> o) {
+      objects.push_back(o);
+      if (cellObjects.find(o->currentCell) == cellObjects.end()) {
+        cellObjects[o->currentCell] = {}; 
+      }
+      cellObjects[o->currentCell].push_back(o);
+    }
+
+    void removeObject(std::shared_ptr<Object> o) {
+      
+    }
 
   std::shared_ptr<Cell> enterCell;
   std::shared_ptr<Cell> exitCell;

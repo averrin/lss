@@ -389,24 +389,7 @@ void Location::AdjacentCost(void *state,
 void Location::PrintStateInfo(void *state){};
 
 Objects Location::getObjects(std::shared_ptr<Cell> cell) {
-  Objects cellObjects(objects.size());
-  auto it = std::copy_if(objects.begin(), objects.end(), cellObjects.begin(),
-                         [cell](std::shared_ptr<Object> o) {
-                           // return o->currentCell == cell;
-                           try {
-                             return o->currentCell->x == cell->x &&
-                                    o->currentCell->y == cell->y;
-                           } catch (std::exception &e) {
-                             fmt::print("BUG: ghost cell!!!\n");
-                             return false;
-                           }
-                         });
-  if (it == objects.end()) {
-    return {};
-  }
-
-  cellObjects.resize(std::distance(cellObjects.begin(), it));
-  return cellObjects;
+  return cellObjects[cell];
 }
 
 std::vector<std::shared_ptr<Cell>>
