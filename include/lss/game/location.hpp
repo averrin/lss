@@ -204,6 +204,31 @@ public:
     return cell;
   }
 
+    std::optional<Direction> getDirFromCell(std::shared_ptr<Cell> start, std::shared_ptr<Cell> end) {
+      std::optional<Direction> dir = std::nullopt;
+      if (start == nullptr || end == nullptr) {
+        return dir;
+      }
+      if (start->x == end->x && start->y < end->y) {
+        dir = Direction::N;
+      } else if (start->x == end->x && start->y > end->y) {
+        dir = Direction::S;
+      } else if (start->x < end->x && start->y == end->y) {
+        dir = Direction::W;
+      } else if (start->x > end->x && start->y == end->y) {
+        dir = Direction::E;
+      } else if (start->x < end->x && start->y > end->y) {
+        dir = Direction::NW;
+      } else if (start->x > end->x && start->y > end->y) {
+        dir = Direction::NE;
+      } else if (start->x < end->x && start->y < end->y) {
+        dir = Direction::SW;
+      } else if (start->x > end->x && start->y < end->y) {
+        dir = Direction::SE;
+      }
+      return dir;
+    }
+
   float getDistance(std::shared_ptr<Cell> c, std::shared_ptr<Cell> cc) {
     return sqrt(pow(cc->x - c->x, 2) + pow(cc->y - c->y, 2));
   }
