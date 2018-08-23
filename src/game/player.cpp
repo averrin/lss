@@ -230,7 +230,7 @@ void Player::onEvent(DigCommandEvent &e) {
 
   auto cell = currentLocation->getCell(currentCell, e.direction);
 
-  DigEvent de(shared_from_this(), cell);
+  DigEvent de(shared_from_this(), *cell);
   eb::EventBus::FireEvent(de);
 }
 
@@ -258,9 +258,9 @@ void Player::onEvent(WalkCommandEvent &e) {
                                    return canSee(e->currentCell);
                                  }) != enemies.end();
     auto nc = currentLocation->getCell(currentCell, e.direction);
-    if (item != currentLocation->objects.end() || seeEnemy ||
+    if (!nc || item != currentLocation->objects.end() || seeEnemy ||
         currentCell->type != CellType::FLOOR ||
-        (nc->room != currentCell->room && step > 1)) {
+        ((*nc)->room != currentCell->room && step > 1)) {
       break;
     }
     auto nbrs = currentLocation->getNeighbors(currentCell);

@@ -86,13 +86,14 @@ bool TargetMode::processKey(KeyEvent event) {
         app->hero->currentLocation
             ->cells[app->state->cursor.y][app->state->cursor.x],
         *utils::getDirectionByName(*d));
+    if (!nc) break;
     auto location = app->hero->currentLocation;
-    auto line = location->getLine(app->hero->currentCell, nc);
+    auto line = location->getLine(app->hero->currentCell, *nc);
     if (!checkTarget(line))
       break;
 
     app->state->selection.clear();
-    app->state->cursor = {nc->x, nc->y};
+    app->state->cursor = {(*nc)->x, (*nc)->y};
     auto cell = location->cells[app->state->cursor.y][app->state->cursor.x];
     for (auto c : line) {
       app->state->selection.push_back({{c->x, c->y}, "#6c6d79"});

@@ -178,9 +178,9 @@ void LSSApp::startGame() {
         for (auto n = 1; n < MAX_LEVELS; n++) {
           l = generator->getRandomLocation(hero, n, l->exitCell);
           locations[n] = l;
-          MessageEvent me(nullptr, fmt::format("Generated location count: {}",
-                                               locations.size()));
-          eb::EventBus::FireEvent(me);
+          // MessageEvent me(nullptr, fmt::format("Generated location count: {}",
+                                               // locations.size()));
+          // eb::EventBus::FireEvent(me);
         }
       },
       l));

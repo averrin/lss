@@ -131,12 +131,14 @@ void Magic::castLineSpell(std::shared_ptr<Creature> caster,
                           std::shared_ptr<LineSpell> lspell) {
   DirectionEvent de([=](auto dir) {
     auto cell = hero->currentLocation->getCell(caster->currentCell, dir);
-    auto cells = std::vector<std::shared_ptr<Cell>>{cell};
+    if(!cell) return;
+
+    auto cells = std::vector<std::shared_ptr<Cell>>{*cell};
     for (auto n = 0; n < lspell->length - 1; n++) {
-      cell = hero->currentLocation->getCell(cell, dir);
-      if (!cell->passThrough && !std::dynamic_pointer_cast<DrillSpell>(lspell->spell))
+      cell = hero->currentLocation->getCell(*cell, dir);
+      if (!cell || (!(*cell)->passThrough && !std::dynamic_pointer_cast<DrillSpell>(lspell->spell)))
         break;
-      cells.push_back(cell);
+      cells.push_back(*cell);
     }
     applySpellOnCells(caster, lspell->spell, cells);
   });

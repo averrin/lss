@@ -173,31 +173,43 @@ public:
   std::vector<std::shared_ptr<Cell>> getLine(std::shared_ptr<Cell> c1,
                                              std::shared_ptr<Cell> c2);
 
-  std::shared_ptr<Cell> getCell(std::shared_ptr<Cell> cc, Direction d) {
-    std::shared_ptr<Cell> cell;
+  std::optional<std::shared_ptr<Cell>> getCell(std::shared_ptr<Cell> cc, Direction d) {
+    std::optional<std::shared_ptr<Cell>> cell;
     switch (d) {
     case N:
+      if (cc->y == 0) break;
       cell = cells[cc->y - 1][cc->x];
       break;
     case E:
+      if (cc->x == cells.front().size()) break;
       cell = cells[cc->y][cc->x + 1];
       break;
     case S:
+      if (cc->y == cells.size()) break;
       cell = cells[cc->y + 1][cc->x];
       break;
     case W:
+      if (cc->x == 0) break;
       cell = cells[cc->y][cc->x - 1];
       break;
     case NW:
+      if (cc->y == 0) break;
+      if (cc->x == 0) break;
       cell = cells[cc->y - 1][cc->x - 1];
       break;
     case NE:
+      if (cc->y == 0) break;
+      if (cc->x == cells.front().size()) break;
       cell = cells[cc->y - 1][cc->x + 1];
       break;
     case SW:
+      if (cc->y == cells.size()) break;
+      if (cc->x == 0) break;
       cell = cells[cc->y + 1][cc->x - 1];
       break;
     case SE:
+      if (cc->y == cells.size()) break;
+      if (cc->x == cells.front().size()) break;
       cell = cells[cc->y + 1][cc->x + 1];
       break;
     }
