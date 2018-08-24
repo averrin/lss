@@ -625,12 +625,12 @@ void LSSApp::update() {
     return;
   }
 
-  auto t0 = std::chrono::system_clock::now();
+  // auto t0 = std::chrono::system_clock::now();
   s->render(gameFrame);
-  auto t1 = std::chrono::system_clock::now();
-  milliseconds ms = t1 - t0;
-  std::cout << "state render time taken: " << rang::fg::green << ms.count()
-            << rang::style::reset << std::endl;
+  // auto t1 = std::chrono::system_clock::now();
+  // milliseconds ms = t1 - t0;
+  // std::cout << "state render time taken: " << rang::fg::green << ms.count()
+            // << rang::style::reset << std::endl;
 
   lastMode = modeManager.modeFlags->currentMode;
   needRedraw = true;

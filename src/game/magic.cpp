@@ -63,6 +63,9 @@ void heal(std::shared_ptr<Creature> caster, int min, int max) {
   if (auto hero = std::dynamic_pointer_cast<Player>(caster)) {
     hero->commit("heal", 0);
   }
+  auto a = std::make_shared<ColorAnimation>(caster, Color("#2222ff"), 8, true);
+  AnimationEvent ae(a);
+  eb::EventBus::FireEvent(ae);
 }
 
 void Magic::castSpell(std::shared_ptr<Creature> caster,
