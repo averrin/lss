@@ -53,9 +53,7 @@ const auto FIRESTREAM = std::make_shared<LineSpell>(
     4, 20);
 
 const auto DRILL = std::make_shared<LineSpell>(
-    "Drill", 2,
-    std::make_shared<DrillSpell>("Drill"),
-    4, 20);
+    "Drill", 2, std::make_shared<DrillSpell>("Drill"), 4, 20);
 
 const auto FROSTSTREAM = std::make_shared<LineSpell>(
     "Froststream", 2,

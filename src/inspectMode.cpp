@@ -23,7 +23,8 @@ bool InspectMode::processKey(KeyEvent event) {
         app->hero->currentLocation
             ->cells[app->state->cursor.y][app->state->cursor.x],
         *utils::getDirectionByName(*d));
-    if(!nc) break;
+    if (!nc)
+      break;
     app->state->cursor = {(*nc)->x, (*nc)->y};
     app->state->invalidate();
     render();

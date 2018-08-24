@@ -86,7 +86,8 @@ bool TargetMode::processKey(KeyEvent event) {
         app->hero->currentLocation
             ->cells[app->state->cursor.y][app->state->cursor.x],
         *utils::getDirectionByName(*d));
-    if (!nc) break;
+    if (!nc)
+      break;
     auto location = app->hero->currentLocation;
     auto line = location->getLine(app->hero->currentCell, *nc);
     if (!checkTarget(line))

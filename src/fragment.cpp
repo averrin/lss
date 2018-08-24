@@ -27,8 +27,12 @@ Fragment::Fragment(std::string t, bool n) : template_str(t), needRender(n){};
 Fragment::~Fragment(){};
 
 std::string Fragment::render(State *state) {
-  if (!needRender) {
-    return template_str;
+  if (!needRender && !damaged) {
+    if (cache == "") {
+      damaged = true;
+      render(state);
+    }
+    return cache;
   }
   if (!damaged) {
     return cache;

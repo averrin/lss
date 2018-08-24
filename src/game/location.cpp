@@ -132,7 +132,7 @@ void Location::onEvent(ItemTakenEvent &e) { removeObject(e.item); }
 void Location::reveal() {
   for (auto r : cells) {
     for (auto c : r) {
-      c->visibilityState = VisibilityState::VISIBLE;
+      c->setVisibilityState(VisibilityState::VISIBLE);
     }
   }
   needUpdateLight = true;
@@ -162,6 +162,7 @@ void Location::onEvent(DigEvent &e) {
 ItemsFoundEvent::ItemsFoundEvent(eb::ObjectPtr s, Items i)
     : eb::Event(s), items(i) {}
 void Location::onEvent(EnterCellEvent &e) {
+  e.cell->damaged = true;
   if (auto hero = std::dynamic_pointer_cast<Player>(e.getSender())) {
     Objects items(objects.size());
     auto it = std::copy_if(objects.begin(), objects.end(), items.begin(),
@@ -188,7 +189,10 @@ void Location::onEvent(EnterCellEvent &e) {
   needUpdateLight = true;
   // }
 }
-void Location::onEvent(LeaveCellEvent &e) { invalidateVisibilityCache(e.cell); }
+void Location::onEvent(LeaveCellEvent &e) {
+  e.cell->damaged = true;
+  invalidateVisibilityCache(e.cell);
+}
 
 void Location::enter(std::shared_ptr<Player> hero, std::shared_ptr<Cell> cell) {
   needUpdateLight = true;
@@ -242,7 +246,8 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
     }
   }
 
-  auto heroInDark = std::find(darkness.begin(), darkness.end(), hero->currentCell) != darkness.end();
+  auto heroInDark = std::find(darkness.begin(), darkness.end(),
+                              hero->currentCell) != darkness.end();
 
   for (auto ts : objects) {
     if (std::find(darkness.begin(), darkness.end(), ts->currentCell) !=
@@ -276,7 +281,8 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
       }
       c->illuminated = false;
       // FIXME: not in distance, but only visible
-      if (!heroInDark && hero->getGlow() && getDistance(c, hero->currentCell) <= heroVD) {
+      if (!heroInDark && hero->getGlow() &&
+          getDistance(c, hero->currentCell) <= heroVD) {
         c->illuminated = true;
         c->lightSources.insert(hero);
         continue;
@@ -362,9 +368,9 @@ void Location::updateView(std::shared_ptr<Player> hero) {
       if (c->type == CellType::UNKNOWN)
         continue;
       if (hero->canSee(c) || hero->hasTrait(Traits::MIND_SIGHT)) {
-        c->visibilityState = VisibilityState::VISIBLE;
+        c->setVisibilityState(VisibilityState::VISIBLE);
       } else if (c->visibilityState == VisibilityState::VISIBLE) {
-        c->visibilityState = VisibilityState::SEEN;
+        c->setVisibilityState(VisibilityState::SEEN);
       }
     }
   }

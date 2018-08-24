@@ -32,6 +32,8 @@ public:
   virtual ~Fragment();
   bool needRender = true;
   bool damaged = true;
+  void invalidate() { damaged = true; }
+
   std::string cache;
   int alpha = Cell::DEFAULT_LIGHT;
   int bgAlpha = 0;
@@ -39,25 +41,33 @@ public:
   std::string fgColor = COLORS::FG;
 
   void setAlpha(int a) {
-    alpha = a;
-    damaged = true;
+    if (alpha != a) {
+      alpha = a;
+      invalidate();
+    }
   }
   void setBgAlpha(int a) {
-    bgAlpha = a;
-    damaged = true;
+    if (bgAlpha != a) {
+      bgAlpha = a;
+      invalidate();
+    }
   }
   void setBgColor(std::string c) {
+    if (bgColor == c)
+      return;
     bgColor = c;
     if (bgColor != COLORS::BG) {
       bgAlpha = 100;
     } else {
       bgAlpha = 0;
     }
-    damaged = true;
+    invalidate();
   }
   void setFgColor(std::string c) {
+    if (fgColor == c)
+      return;
     fgColor = c;
-    damaged = true;
+    invalidate();
   }
 
   friend bool operator==(Fragment &t1, const Fragment &t2) {

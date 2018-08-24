@@ -250,7 +250,8 @@ bool Creature::pick(std::shared_ptr<Item> item) {
 
 bool Creature::attack(Direction d) {
   auto nc = currentLocation->getCell(currentCell, d);
-  if(!nc) return false;
+  if (!nc)
+    return false;
   auto opit = std::find_if(
       currentLocation->objects.begin(), currentLocation->objects.end(),
       [&](std::shared_ptr<Object> o) {
@@ -330,7 +331,8 @@ std::optional<std::shared_ptr<Slot>> Creature::getSlot(WearableType type,
 bool Creature::move(Direction d, bool autoAction) {
   auto cc = currentCell;
   auto nc = currentLocation->getCell(currentCell, d);
-  if(!nc) return false;
+  if (!nc)
+    return false;
 
   if (hasTrait(Traits::JUMPY) && R::R() < 0.01) {
     auto room = currentLocation->rooms[rand() % currentLocation->rooms.size()];
@@ -340,11 +342,11 @@ bool Creature::move(Direction d, bool autoAction) {
     eb::EventBus::FireEvent(me);
   }
 
-  auto obstacle = std::find_if(currentLocation->objects.begin(),
-                               currentLocation->objects.end(),
-                               [&](std::shared_ptr<Object> o) {
-                                 return o->currentCell == *nc && !o->passThrough;
-                               });
+  auto obstacle = std::find_if(
+      currentLocation->objects.begin(), currentLocation->objects.end(),
+      [&](std::shared_ptr<Object> o) {
+        return o->currentCell == *nc && !o->passThrough;
+      });
   auto hasObstacles = obstacle != currentLocation->objects.end();
   auto hasPlayer = currentLocation->player->currentCell == *nc;
   // fmt::print("{} - {} - {}.{} -> {}.{}\n", d, hasObstacles, cc->x, cc->y,

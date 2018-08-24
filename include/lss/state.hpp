@@ -25,6 +25,7 @@ public:
   void setContent(Fragments);
   void appendContent(Fragments);
   void appendContent(std::shared_ptr<Fragment>);
+  void setFragment(int, std::shared_ptr<Fragment>);
   void invalidate();
   void setSelect(bool);
   void clear();

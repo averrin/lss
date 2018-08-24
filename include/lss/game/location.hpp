@@ -53,7 +53,8 @@ public:
   std::shared_ptr<Player> player;
   int depth = 0;
 
-  template <typename T> void addObject(std::shared_ptr<T> o, std::shared_ptr<T> cc) {
+  template <typename T>
+  void addObject(std::shared_ptr<T> o, std::shared_ptr<T> cc) {
     o->setCurrentCell(cc);
     addObject<T>(o);
   }
@@ -173,73 +174,87 @@ public:
   std::vector<std::shared_ptr<Cell>> getLine(std::shared_ptr<Cell> c1,
                                              std::shared_ptr<Cell> c2);
 
-  std::optional<std::shared_ptr<Cell>> getCell(std::shared_ptr<Cell> cc, Direction d) {
+  std::optional<std::shared_ptr<Cell>> getCell(std::shared_ptr<Cell> cc,
+                                               Direction d) {
     std::optional<std::shared_ptr<Cell>> cell;
     switch (d) {
     case N:
-      if (cc->y == 0) break;
+      if (cc->y == 0)
+        break;
       cell = cells[cc->y - 1][cc->x];
       break;
     case E:
-      if (cc->x == cells.front().size()) break;
+      if (cc->x == cells.front().size())
+        break;
       cell = cells[cc->y][cc->x + 1];
       break;
     case S:
-      if (cc->y == cells.size()) break;
+      if (cc->y == cells.size())
+        break;
       cell = cells[cc->y + 1][cc->x];
       break;
     case W:
-      if (cc->x == 0) break;
+      if (cc->x == 0)
+        break;
       cell = cells[cc->y][cc->x - 1];
       break;
     case NW:
-      if (cc->y == 0) break;
-      if (cc->x == 0) break;
+      if (cc->y == 0)
+        break;
+      if (cc->x == 0)
+        break;
       cell = cells[cc->y - 1][cc->x - 1];
       break;
     case NE:
-      if (cc->y == 0) break;
-      if (cc->x == cells.front().size()) break;
+      if (cc->y == 0)
+        break;
+      if (cc->x == cells.front().size())
+        break;
       cell = cells[cc->y - 1][cc->x + 1];
       break;
     case SW:
-      if (cc->y == cells.size()) break;
-      if (cc->x == 0) break;
+      if (cc->y == cells.size())
+        break;
+      if (cc->x == 0)
+        break;
       cell = cells[cc->y + 1][cc->x - 1];
       break;
     case SE:
-      if (cc->y == cells.size()) break;
-      if (cc->x == cells.front().size()) break;
+      if (cc->y == cells.size())
+        break;
+      if (cc->x == cells.front().size())
+        break;
       cell = cells[cc->y + 1][cc->x + 1];
       break;
     }
     return cell;
   }
 
-    std::optional<Direction> getDirFromCell(std::shared_ptr<Cell> start, std::shared_ptr<Cell> end) {
-      std::optional<Direction> dir = std::nullopt;
-      if (start == nullptr || end == nullptr) {
-        return dir;
-      }
-      if (start->x == end->x && start->y < end->y) {
-        dir = Direction::N;
-      } else if (start->x == end->x && start->y > end->y) {
-        dir = Direction::S;
-      } else if (start->x < end->x && start->y == end->y) {
-        dir = Direction::W;
-      } else if (start->x > end->x && start->y == end->y) {
-        dir = Direction::E;
-      } else if (start->x < end->x && start->y > end->y) {
-        dir = Direction::NW;
-      } else if (start->x > end->x && start->y > end->y) {
-        dir = Direction::NE;
-      } else if (start->x < end->x && start->y < end->y) {
-        dir = Direction::SW;
-      } else if (start->x > end->x && start->y < end->y) {
-        dir = Direction::SE;
-      }
+  std::optional<Direction> getDirFromCell(std::shared_ptr<Cell> start,
+                                          std::shared_ptr<Cell> end) {
+    std::optional<Direction> dir = std::nullopt;
+    if (start == nullptr || end == nullptr) {
       return dir;
     }
+    if (start->x == end->x && start->y < end->y) {
+      dir = Direction::N;
+    } else if (start->x == end->x && start->y > end->y) {
+      dir = Direction::S;
+    } else if (start->x < end->x && start->y == end->y) {
+      dir = Direction::W;
+    } else if (start->x > end->x && start->y == end->y) {
+      dir = Direction::E;
+    } else if (start->x < end->x && start->y > end->y) {
+      dir = Direction::NW;
+    } else if (start->x > end->x && start->y > end->y) {
+      dir = Direction::NE;
+    } else if (start->x < end->x && start->y < end->y) {
+      dir = Direction::SW;
+    } else if (start->x > end->x && start->y < end->y) {
+      dir = Direction::SE;
+    }
+    return dir;
+  }
 
   float getDistance(std::shared_ptr<Cell> c, std::shared_ptr<Cell> cc) {
     return sqrt(pow(cc->x - c->x, 2) + pow(cc->y - c->y, 2));

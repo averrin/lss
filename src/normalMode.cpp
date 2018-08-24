@@ -18,7 +18,7 @@ bool NormalMode::processKey(KeyEvent event) {
     break;
   case SDL_SCANCODE_F1:
     app->debug = !app->debug;
-    app->hero->commit("toggle debug", 0);
+    app->invalidate();
     break;
   case SDL_SCANCODE_J:
   case SDL_SCANCODE_H:

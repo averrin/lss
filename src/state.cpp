@@ -31,6 +31,10 @@ void State::appendContent(std::shared_ptr<Fragment> content) {
   damaged = true;
 };
 
+void State::setFragment(int i, std::shared_ptr<Fragment> f) {
+  fragments[i] = f;
+}
+
 void State::render(pango::SurfaceRef surface) {
   if (!damaged) {
     surface->setDefaultTextColor(currentPalette.fgColor);
@@ -48,6 +52,7 @@ void State::render(pango::SurfaceRef surface) {
 
   std::string content;
   auto n = 0;
+  // auto r = 0;
   // auto t0 = std::chrono::system_clock::now();
   for (auto f : fragments) {
     std::string fContent;
@@ -58,8 +63,8 @@ void State::render(pango::SurfaceRef surface) {
         });
     auto hasBg = isCursor || (select && selectionIt != selection.end());
     auto currentBg = f->bgColor;
+    auto color = "#5b4650"s;
     if (hasBg) {
-      auto color = "#5b4650"s;
       if (!isCursor && selectionIt != selection.end()) {
         color = (*selectionIt).color;
       }
@@ -71,7 +76,11 @@ void State::render(pango::SurfaceRef surface) {
       fContent = f->render(this);
     }
     if (hasBg) {
-      f->setBgColor(currentBg);
+      if (f->needRender) {
+        f->setBgColor(currentBg);
+      } else {
+        fContent = fmt::format("<span bgcolor='{}'>{}</span>", color, fContent);
+      }
     }
     content.append(fContent);
     n++;
@@ -79,9 +88,10 @@ void State::render(pango::SurfaceRef surface) {
   // auto t1 = std::chrono::system_clock::now();
   // using milliseconds = std::chrono::duration<double, std::milli>;
   // milliseconds ms = t1 - t0;
-  // // if (ms.count() > 15) {
+  // // // if (ms.count() > 15) {
   //   std::cout << "template render time taken: " << rang::fg::green
-  //             << ms.count() << rang::style::reset << '\n';
+  //             << ms.count() << rang::style::reset << fmt::format(" ({})", r)
+  //             << std::endl;
   // }
   // std::cout << cache << std::endl;
 

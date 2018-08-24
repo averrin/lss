@@ -68,6 +68,15 @@ public:
   bool passThrough = false;
   bool seeThrough = false;
 
+  bool damaged = true;
+  void invalidate() { damaged = true; }
+  void setVisibilityState(VisibilityState vs) {
+    if (visibilityState != vs) {
+      visibilityState = vs;
+      invalidate();
+    }
+  }
+
   bool canPass(std::vector<Trait> traits) {
     if (passThrough)
       return true;

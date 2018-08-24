@@ -13,6 +13,8 @@
 #include "lss/keyEvent.hpp"
 #include "lss/utils.hpp"
 
+using milliseconds = std::chrono::duration<double, std::milli>;
+
 std::string VERSION = "0.1.1 by Averrin";
 
 int HOffset = 24;
@@ -178,8 +180,8 @@ void LSSApp::startGame() {
         for (auto n = 1; n < MAX_LEVELS; n++) {
           l = generator->getRandomLocation(hero, n, l->exitCell);
           locations[n] = l;
-          // MessageEvent me(nullptr, fmt::format("Generated location count: {}",
-                                               // locations.size()));
+          // MessageEvent me(nullptr, fmt::format("Generated location count:
+          // {}", locations.size()));
           // eb::EventBus::FireEvent(me);
         }
       },
@@ -213,36 +215,37 @@ void LSSApp::frameBg() {
   std::lock_guard<std::mutex> lock(exec_mutex);
   auto lightMap = hero->getLightMap();
 
-  std::map<std::shared_ptr<Object>, int> ld;
-  for (auto [ls, cells] : lightMap) {
-    auto glow = ls->getGlow();
-    if (!glow || glow->stable)
-      continue;
-    if (ld.find(ls) == ld.end()) {
-      ld[ls] = R::N(0, 2);
-    }
-    auto d = ld[ls];
-    for (auto c : cells) {
-      auto cd = R::N(0, 1);
-      auto f =
-          state->fragments[c->y * (hero->currentLocation->cells.front().size() +
-                                   1) +
-                           c->x];
-      auto a = f->alpha + d + cd;
-      if (c->hasFeature(CellFeature::FROST)) {
-        a = 100 - R::N(0, 5);
+  if (lightMap.size() > 0) {
+    std::map<std::shared_ptr<Object>, int> ld;
+    for (auto [ls, cells] : lightMap) {
+      auto glow = ls->getGlow();
+      if (!glow || glow->stable)
+        continue;
+      if (ld.find(ls) == ld.end()) {
+        ld[ls] = R::N(0, 2);
       }
-      auto ml = 25 + 5 * c->lightSources.size();
-      if (a < ml)
-        a = ml;
-      if (a > 100)
-        a = 100;
-      f->setAlpha(a);
+      auto d = ld[ls];
+      for (auto c : cells) {
+        auto cd = R::N(0, 1);
+        auto f = state->fragments
+                     [c->y * (hero->currentLocation->cells.front().size() + 1) +
+                      c->x];
+        auto a = f->alpha + d + cd;
+        if (c->hasFeature(CellFeature::FROST)) {
+          a = 100 - R::N(0, 5);
+        }
+        auto ml = 25 + 5 * c->lightSources.size();
+        if (a < ml)
+          a = ml;
+        if (a > 100)
+          a = 100;
+        f->setAlpha(a);
+      }
     }
+    state->invalidate();
   }
 
   playAnimations();
-  state->invalidate();
 }
 
 void LSSApp::serveBg() {
@@ -279,6 +282,7 @@ void LSSApp::playAnimations() {
     changed = true;
   }
   if (changed) {
+    state->invalidate();
     invalidate();
   }
 }
@@ -291,33 +295,42 @@ void LSSApp::updateMap() {
   auto cc = hero->currentCell;
   auto uc = std::make_shared<Cell>(CellType::UNKNOWN);
   auto us = std::make_shared<CellSign>(uc);
+  auto nd = 0;
   for (auto r : hero->currentLocation->cells) {
     auto column = 0;
     for (auto c : r) {
-      auto f = state->fragments[index];
+      if (!c->damaged) {
+        nd++;
+      }
+      auto f = std::make_shared<CellSign>(c);
       switch (c->visibilityState) {
       case VisibilityState::UNKNOWN:
         if (hero->monsterSense &&
             !std::dynamic_pointer_cast<CellSign>(state->fragments[index])) {
-          state->fragments[index] = std::make_shared<CellSign>(c);
+          state->setFragment(index, f);
         }
-        state->fragments[index] = us;
+        if (!c->damaged)
+          break;
+        state->setFragment(index, us);
         break;
       case VisibilityState::SEEN:
-        state->fragments[index] = std::make_shared<CellSign>(c);
-        state->fragments[index]->setAlpha(Cell::DEFAULT_LIGHT);
+        if (!c->damaged)
+          break;
+        state->setFragment(index, f);
+        f->setAlpha(Cell::DEFAULT_LIGHT);
         break;
       case VisibilityState::VISIBLE:
-        state->fragments[index] = std::make_shared<CellSign>(c);
-        state->fragments[index]->setAlpha(c->illumination);
+        state->setFragment(index, f);
+        f->setAlpha(c->illumination);
         break;
       }
       column++;
       index++;
+      c->damaged = false;
     }
     auto f = state->fragments[index];
     if (f != State::END_LINE.front()) {
-      state->fragments[index] = State::END_LINE.front();
+      state->setFragment(index, State::END_LINE.front());
     }
     index++;
     row++;
@@ -350,18 +363,21 @@ void LSSApp::updateMap() {
           // auto dot = static_cast<Cell *>(ptr);
           auto i = dot->y * (hero->currentLocation->cells.front().size() + 1) +
                    dot->x;
-          state->fragments[i] = std::make_shared<ItemSign>(ItemType::ROCK);
+          state->setFragment(i, std::make_shared<ItemSign>(ItemType::ROCK));
         }
       }
 
       if (!hero->canSee(ec) && !hero->monsterSense)
         continue;
 
-      state->fragments[index] = std::make_shared<EnemySign>(e->type);
-      state->fragments[index]->setAlpha(ec->illumination);
+      auto f = std::make_shared<EnemySign>(e->type);
+      state->setFragment(index, f);
+      f->setAlpha(ec->illumination);
 
     } else if (auto d = std::dynamic_pointer_cast<Door>(o);
-               d && (hero->canSee(ec) || ec->visibilityState == VisibilityState::SEEN)) {
+               d && (hero->canSee(ec) ||
+                     ec->visibilityState == VisibilityState::SEEN)) {
+      std::shared_ptr<Fragment> f = std::make_shared<DoorSign>(d->opened);
       if (!d->opened && d->hidden) {
         auto fake_wall = std::make_shared<Cell>(CellType::WALL);
         fake_wall->visibilityState = ec->visibilityState;
@@ -369,21 +385,22 @@ void LSSApp::updateMap() {
         fake_wall->features = ec->features;
         fake_wall->illuminated = ec->illuminated;
         fake_wall->illumination = ec->illumination;
-        state->fragments[index] = std::make_shared<CellSign>(fake_wall);
-      } else {
-        state->fragments[index] = std::make_shared<DoorSign>(d->opened);
+        f = std::make_shared<CellSign>(fake_wall);
       }
-      state->fragments[index]->setAlpha(ec->illumination);
+      state->setFragment(index, f);
+      f->setAlpha(ec->illumination);
     } else if (auto i = std::dynamic_pointer_cast<Item>(o);
                i && hero->canSee(ec)) {
-      state->fragments[index] = std::make_shared<ItemSign>(i->type);
-      state->fragments[index]->setAlpha(ec->illumination);
+      auto f = std::make_shared<ItemSign>(i->type);
+      state->setFragment(index, f);
+      f->setAlpha(ec->illumination);
     } else if (auto t = std::dynamic_pointer_cast<Terrain>(o);
                t && hero->canSee(ec)) {
-      state->fragments[index] = std::make_shared<TerrainSign>(t->type);
-      state->fragments[index]->setAlpha(ec->illumination);
+      auto f = std::make_shared<TerrainSign>(t->type);
+      state->setFragment(index, f);
+      f->setAlpha(ec->illumination);
       if (t->getGlow()) {
-        state->fragments[index]->setAlpha(100);
+        f->setAlpha(100);
       }
     }
   }
@@ -391,8 +408,8 @@ void LSSApp::updateMap() {
   auto hc = hero->currentCell;
   index = hc->y * (hero->currentLocation->cells.front().size() + 1) + hc->x;
   if (!std::dynamic_pointer_cast<HeroSign>(state->fragments[index])) {
-    state->fragments[index] =
-        std::make_shared<HeroSign>(!debug ? palettes::DARK.hero_color : "red");
+    state->setFragment(index, std::make_shared<HeroSign>(
+                                  !debug ? palettes::DARK.hero_color : "red"));
   }
 
   state->width = hero->currentLocation->cells.front().size();
@@ -531,6 +548,7 @@ bool LSSApp::processCommand(std::string cmd) {
   } else if (auto e = std::dynamic_pointer_cast<LightCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
   }
+  state->invalidate();
   invalidate();
   return true;
 }
@@ -607,7 +625,12 @@ void LSSApp::update() {
     return;
   }
 
+  auto t0 = std::chrono::system_clock::now();
   s->render(gameFrame);
+  auto t1 = std::chrono::system_clock::now();
+  milliseconds ms = t1 - t0;
+  std::cout << "state render time taken: " << rang::fg::green << ms.count()
+            << rang::style::reset << std::endl;
 
   lastMode = modeManager.modeFlags->currentMode;
   needRedraw = true;
