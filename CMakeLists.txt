@@ -94,6 +94,7 @@ set( SRC_FILES
 	${SRC_DIR}/LSSApp.cpp
 
 	${SRC_DIR}/SDLPango.cpp
+	${SRC_DIR}/TextGrid.cpp
     ${INC_DIR}/gl2/Context.cpp
 
     )

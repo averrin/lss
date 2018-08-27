@@ -47,6 +47,7 @@ void EventReactor::onEvent(StairEvent &e) {
         app->hero->currentLocation->cells.size() *
             (app->hero->currentLocation->cells.front().size() + 1),
         std::make_shared<CellSign>(std::make_shared<Cell>(CellType::UNKNOWN)));
+    app->gameGrid->clear();
     app->hero->commit("up in er", 0);
     app->invalidate("enter");
   } else if (app->hero->currentCell->type == CellType::DOWNSTAIRS &&
@@ -71,6 +72,7 @@ void EventReactor::onEvent(StairEvent &e) {
             (app->hero->currentLocation->cells.front().size() + 1),
         std::make_shared<CellSign>(std::make_shared<Cell>(CellType::UNKNOWN)));
 
+    app->gameGrid->clear();
     app->hero->currentLocation->updateView(app->hero);
     app->hero->commit("down in er", 0);
   } else {

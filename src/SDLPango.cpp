@@ -133,7 +133,6 @@ void Surface::setText(std::string text) {
 }
 
 SDL_Surface *Surface::getTexture() {
-  // TODO nullptr check?
   return mSurface;
 }
 

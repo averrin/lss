@@ -35,27 +35,9 @@ void State::setFragment(int i, std::shared_ptr<Fragment> f) {
   fragments[i] = f;
 }
 
-void State::render(pango::SurfaceRef surface) {
-  if (!damaged) {
-    surface->setDefaultTextColor(currentPalette.fgColor);
-
-    surface->setText(cache);
-    // auto t0 = std::chrono::system_clock::now();
-    surface->render();
-    // auto t1 = std::chrono::system_clock::now();
-    // using milliseconds = std::chrono::duration<double, std::milli>;
-    // milliseconds ms = t1 - t0;
-    // std::cout << "settext + render time taken: " << rang::fg::green
-    // << ms.count() << rang::style::reset << '\n';
-    return;
-  }
-
-  std::string content;
-  auto n = 0;
-  // auto r = 0;
-  // auto t0 = std::chrono::system_clock::now();
-  for (auto f : fragments) {
+std::string State::renderFragment(std::shared_ptr<Fragment> f) {
     std::string fContent;
+    auto n = std::distance(fragments.begin(), std::find(fragments.begin(), fragments.end(), f));
     auto isCursor = select && n == cursor.y * (width + 1) + cursor.x;
     auto selectionIt =
         std::find_if(selection.begin(), selection.end(), [&](Selection s) {
@@ -82,7 +64,16 @@ void State::render(pango::SurfaceRef surface) {
         fContent = fmt::format("<span bgcolor='{}'>{}</span>", color, fContent);
       }
     }
-    content.append(fContent);
+    return fContent;
+}
+
+std::string State::render() {
+  std::string content;
+  auto n = 0;
+  // auto r = 0;
+  // auto t0 = std::chrono::system_clock::now();
+  for (auto f : fragments) {
+    content.append(renderFragment(f));
     n++;
   }
   // auto t1 = std::chrono::system_clock::now();
@@ -98,6 +89,49 @@ void State::render(pango::SurfaceRef surface) {
   // std::string DEFAULT_FONT = "Fira Code";
   // cache = fmt::format("<span font='{}'>{}</span>", DEFAULT_FONT, content);
   cache = fmt::format("<tt>{}</tt>", content);
+  return cache;
+}
+
+void State::render(std::shared_ptr<TextGrid> grid) {
+  if (!damaged) {
+    auto x = 0;
+    auto y = 0;
+    auto n = 0;
+    for (auto f : fragments) {
+      if (f->damaged) {
+        grid->setFragment(x, y, renderFragment(f));
+      }
+      x++;
+      n++;
+      if (fragments[n] == END_LINE.front()) {
+        x = 0;
+        y++;
+      }
+    }
+    grid->render();
+    return;
+  }
+
+  damaged = false;
+  render(grid);
+}
+
+void State::render(pango::SurfaceRef surface) {
+  if (!damaged) {
+    surface->setDefaultTextColor(currentPalette.fgColor);
+
+    surface->setText(cache);
+    // auto t0 = std::chrono::system_clock::now();
+    surface->render();
+    // auto t1 = std::chrono::system_clock::now();
+    // using milliseconds = std::chrono::duration<double, std::milli>;
+    // milliseconds ms = t1 - t0;
+    // std::cout << "settext + render time taken: " << rang::fg::green
+    // << ms.count() << rang::style::reset << '\n';
+    return;
+  }
+  render();
+
 
   damaged = false;
   render(surface);

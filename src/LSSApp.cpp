@@ -79,6 +79,9 @@ void LSSApp::setup() {
   gameFrame->setMaxSize(gameWidth, gameHeight);
   gameFrame->disableWrap();
 
+  gameGrid = std::make_shared<TextGrid>(renderer);
+  gameGrid->setSize(gameWidth, gameHeight);
+
   statusFrame = pango::Surface::create(renderer);
   statusFrame->setMinSize(getWindowWidth(), StatusLine::HEIGHT);
   statusFrame->setMaxSize(getWindowWidth(), StatusLine::HEIGHT);
@@ -162,6 +165,7 @@ void LSSApp::initStates() {
 
 void LSSApp::startGame() {
   initStates();
+  gameGrid->clear();
 
   bgRunning = true;
   hero = std::make_shared<Player>();
@@ -626,7 +630,11 @@ void LSSApp::update() {
   }
 
   // auto t0 = std::chrono::system_clock::now();
-  s->render(gameFrame);
+  if (s != state) {
+    s->render(gameFrame);
+  } else {
+    state->render(gameGrid);
+  }
   // auto t1 = std::chrono::system_clock::now();
   // milliseconds ms = t1 - t0;
   // std::cout << "state render time taken: " << rang::fg::green << ms.count()
@@ -639,6 +647,14 @@ void LSSApp::update() {
 void LSSApp::drawFrame(pango::SurfaceRef frame, SDL_Rect dst) {
   auto t = SDL_CreateTextureFromSurface(renderer, frame->getTexture());
   SDL_RenderCopyEx(renderer, t, NULL, &dst, 0, NULL, SDL_FLIP_VERTICAL);
+  SDL_DestroyTexture(t);
+  // frame->free();
+}
+
+void LSSApp::drawGrid(std::shared_ptr<TextGrid> frame, SDL_Rect dst) {
+  auto t = SDL_CreateTextureFromSurface(renderer, frame->getTexture());
+  SDL_RenderCopyEx(renderer, t, NULL, &dst, 0, NULL, SDL_FLIP_VERTICAL);
+  // SDL_RenderCopy(renderer, t, NULL, &dst);
   SDL_DestroyTexture(t);
   // frame->free();
 }
@@ -656,12 +672,12 @@ void LSSApp::draw() {
   case Modes::INSPECT:
   case Modes::PAUSE:
   case Modes::TARGET:
-  case Modes::HERO:
   case Modes::NORMAL:
   case Modes::INSERT:
   case Modes::DIRECTION:
-  case Modes::HINTS:
-  case Modes::LEADER:
+    drawGrid(gameGrid, dstG);
+    break;
+  case Modes::HERO:
   case Modes::HELP:
   case Modes::OBJECTSELECT:
   case Modes::INVENTORY:
@@ -718,6 +734,7 @@ LSSApp::~LSSApp() {
   for (auto t = 0; t < threads.size(); t++) {
     threads[t].join();
   }
+  gameGrid->free();
 }
 
 int main(int argc, char *argv[]) {

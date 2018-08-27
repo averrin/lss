@@ -21,6 +21,7 @@
 #include <fmt/format.h>
 #include <rang.hpp>
 
+#include <TextGrid.hpp>
 #include "lss/animation.hpp"
 #include "lss/commands.hpp"
 #include "lss/keyEvent.hpp"
@@ -69,6 +70,7 @@ public:
   int gameWidth, gameHeight;
   std::mutex exec_mutex;
 
+  std::shared_ptr<TextGrid> gameGrid;
   pango::SurfaceRef gameFrame;
   pango::SurfaceRef statusFrame;
   pango::SurfaceRef heroFrame;
@@ -76,6 +78,7 @@ public:
   pango::SurfaceRef logFrame;
 
   void drawFrame(pango::SurfaceRef, SDL_Rect);
+  void drawGrid(std::shared_ptr<TextGrid>, SDL_Rect);
 
   void updateMap();
   void invalidate() { damaged = true; }

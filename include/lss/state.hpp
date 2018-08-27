@@ -2,6 +2,7 @@
 #define __STATE_H_
 #include "lss/fragment.hpp"
 #include "lss/palette.hpp"
+#include <TextGrid.hpp>
 #include <SDLPango.hpp>
 #include <string>
 #include <vector>
@@ -19,7 +20,10 @@ struct Selection {
 class State {
 public:
   Palette currentPalette;
+  std::string render();
+  std::string renderFragment(std::shared_ptr<Fragment>);
   void render(pango::SurfaceRef);
+  void render(std::shared_ptr<TextGrid>);
   std::string renderStatus();
 
   void setContent(Fragments);
