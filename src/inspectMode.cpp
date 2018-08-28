@@ -44,7 +44,7 @@ void InspectMode::render() {
 
   auto line = location->getLine(app->hero->currentCell, cell);
   for (auto c : line) {
-    app->state->selection.push_back({{c->x, c->y}, "#11f"});
+    app->state->selection.push_back({{c->x, c->y}, "#33f"});
   }
 
   app->inspectState->setContent(

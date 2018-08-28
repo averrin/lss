@@ -13,8 +13,6 @@
 #include "lss/keyEvent.hpp"
 #include "lss/utils.hpp"
 
-using milliseconds = std::chrono::duration<double, std::milli>;
-
 std::string VERSION = "0.1.1 by Averrin";
 
 int HOffset = 24;
@@ -39,18 +37,6 @@ void LSSApp::setup() {
       SDL_CreateWindow("Long Story Short", SDL_WINDOWPOS_UNDEFINED,
                        SDL_WINDOWPOS_UNDEFINED, dm.w, dm.h, SDL_WINDOW_OPENGL);
   assert(window);
-  // SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-  // SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-  // SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-  // SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-
-  // SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
-
-  // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-  // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
-
-  // SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-  // glEnable(GL_MULTISAMPLE);
 
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
   SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
@@ -498,6 +484,7 @@ void LSSApp::keyDown(KeyEvent event) {
 }
 
 bool LSSApp::processCommand(std::string cmd) {
+
   // fmt::print("Command: {}\n", cmd);
   auto s = utils::split(cmd, ' ').front();
   auto c = std::find_if(commands.begin(), commands.end(),
@@ -514,6 +501,7 @@ bool LSSApp::processCommand(std::string cmd) {
   if (event == std::nullopt)
     return false;
 
+  T->start("APP", "process command");
   std::lock_guard<std::mutex> lock(exec_mutex);
   // TODO: do it automagicaly
   if (auto e = std::dynamic_pointer_cast<MoveCommandEvent>(*event)) {
@@ -552,6 +540,8 @@ bool LSSApp::processCommand(std::string cmd) {
   } else if (auto e = std::dynamic_pointer_cast<LightCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
   }
+  T->stop("process command");
+
   state->invalidate();
   invalidate();
   return true;
@@ -629,16 +619,11 @@ void LSSApp::update() {
     return;
   }
 
-  // auto t0 = std::chrono::system_clock::now();
   if (s != state) {
     s->render(gameFrame);
   } else {
     state->render(gameGrid);
   }
-  // auto t1 = std::chrono::system_clock::now();
-  // milliseconds ms = t1 - t0;
-  // std::cout << "state render time taken: " << rang::fg::green << ms.count()
-            // << rang::style::reset << std::endl;
 
   lastMode = modeManager.modeFlags->currentMode;
   needRedraw = true;

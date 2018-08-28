@@ -9,6 +9,7 @@
 #include "lss/game/damageSpec.hpp"
 #include "lss/game/item.hpp"
 #include "lss/game/lootBox.hpp"
+#include "lss/profiler.hpp"
 #include "micropather/micropather.h"
 
 struct EnemySpec {

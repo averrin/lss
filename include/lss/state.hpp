@@ -2,8 +2,8 @@
 #define __STATE_H_
 #include "lss/fragment.hpp"
 #include "lss/palette.hpp"
-#include <TextGrid.hpp>
 #include <SDLPango.hpp>
+#include <TextGrid.hpp>
 #include <string>
 #include <vector>
 

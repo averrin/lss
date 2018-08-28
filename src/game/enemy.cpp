@@ -164,12 +164,12 @@ std::optional<int> Enemy::execAiAggressive(int ap) {
       auto directionToTarget = getDirFromCell(currentCell, s.targetCell.get());
       attack(directionToTarget);
       cost = attackCost;
-      fmt::print("attack\n");
+      // fmt::print("attack\n");
     }
   }
   if (!cost && ap >= throwCost) {
     if (!s.nearTarget && s.targetInTargetCell && s.canThrow) {
-      fmt::print("throw\n");
+      // fmt::print("throw\n");
       auto t = std::find_if(inventory.begin(), inventory.end(), [](auto i) {
         return i->type.category == ItemCategories::THROWABLE;
       });
@@ -184,13 +184,13 @@ std::optional<int> Enemy::execAiAggressive(int ap) {
       move(direction);
       cost = stepCost;
 
-      fmt::print("move\n");
+      // fmt::print("move\n");
     }
   }
 
   if (!cost && ap >= waitCost) {
     cost = waitCost;
-    fmt::print("wait\n");
+    // fmt::print("wait\n");
   }
   return cost;
 }
@@ -219,9 +219,10 @@ void Enemy::onEvent(CommitEvent &e) {
   if (HP(this) <= 0 || HP(hero.get()) <= 0)
     return;
 
-  auto t0 = std::chrono::system_clock::now();
+  T->start("ENEMY", "react", true);
   calcViewField();
   if (e.actionPoints == 0) {
+    T->stop("react", 5.f);
     return;
   }
 
@@ -236,12 +237,7 @@ void Enemy::onEvent(CommitEvent &e) {
   if (spent > 0) {
     actionPoints = ap;
   }
-  auto t1 = std::chrono::system_clock::now();
-  using milliseconds = std::chrono::duration<double, std::milli>;
-  milliseconds ms = t1 - t0;
-  std::cout << "onCommit: " << rang::fg::red << "enemy" << rang::style::reset
-            << ": " << rang::fg::green << ms.count() << rang::style::reset
-            << '\n';
+  T->stop("react", 5.f);
 }
 
 bool Enemy::randomPath() { return true; }

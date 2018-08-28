@@ -21,12 +21,13 @@
 #include <fmt/format.h>
 #include <rang.hpp>
 
-#include <TextGrid.hpp>
 #include "lss/animation.hpp"
 #include "lss/commands.hpp"
 #include "lss/keyEvent.hpp"
 #include "lss/modes.hpp"
+#include "lss/profiler.hpp"
 #include "lss/state.hpp"
+#include <TextGrid.hpp>
 
 #include "lss/game/door.hpp"
 #include "lss/game/enemy.hpp"
@@ -84,13 +85,7 @@ public:
   void invalidate() { damaged = true; }
   void invalidate(std::string reason) {
     fmt::print("Invalidate reason: {}\n", reason);
-    auto t0 = std::chrono::system_clock::now();
     invalidate();
-    auto t1 = std::chrono::system_clock::now();
-    using milliseconds = std::chrono::duration<double, std::milli>;
-    milliseconds ms = t1 - t0;
-    // std::cout << "invalidate: " << rang::fg::green << ms.count()
-    // << rang::style::reset << '\n';
   }
   bool processCommand(std::string);
   void setListeners();

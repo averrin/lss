@@ -1,5 +1,6 @@
 #ifndef __PLAYER_H_
 #define __PLAYER_H_
+#include "lss/profiler.hpp"
 #include <map>
 #include <memory>
 

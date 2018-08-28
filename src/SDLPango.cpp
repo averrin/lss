@@ -132,9 +132,7 @@ void Surface::setText(std::string text) {
   }
 }
 
-SDL_Surface *Surface::getTexture() {
-  return mSurface;
-}
+SDL_Surface *Surface::getTexture() { return mSurface; }
 
 void Surface::free() {
   if (mSurface == nullptr)

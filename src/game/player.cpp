@@ -150,16 +150,13 @@ void Player::commit(std::string reason, int ap, bool s) {
     }
   }
 
-  auto t0 = std::chrono::system_clock::now();
+  auto label = fmt::format("commit {} [{}]", utils::blue(reason),
+                           utils::magenta(fmt::format("{}", ap)));
+  T->start("HERO", label);
   auto ptr = shared_from_this();
   CommitEvent e(ptr, ap, s);
   eb::EventBus::FireEvent(e);
-  auto t1 = std::chrono::system_clock::now();
-  using milliseconds = std::chrono::duration<double, std::milli>;
-  milliseconds ms = t1 - t0;
-  std::cout << "commit " << rang::fg::blue << reason << rang::style::reset
-            << " [" << ap << "]: " << rang::fg::green << ms.count()
-            << rang::style::reset << '\n';
+  T->stop(label);
 }
 
 bool Player::unequip(std::shared_ptr<Slot> slot) {

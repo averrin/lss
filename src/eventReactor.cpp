@@ -82,13 +82,6 @@ void EventReactor::onEvent(StairEvent &e) {
   }
 }
 
-void EventReactor::onEvent(CommitEvent &e) {
-  if (e.silent) {
-    return;
-  }
-  app->invalidate("commit");
-}
-
 void EventReactor::onEvent(LocationChangeEvent &e) {
   app->invalidate("location change");
 }

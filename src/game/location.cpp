@@ -44,8 +44,8 @@ void Location::onEvent(DoorOpenedEvent &e) {
 
 void Location::onEvent(CommitEvent &e) {
   // auto t0 = std::chrono::system_clock::now();
-  player->calcViewField();
-  updateView(player);
+  // player->calcViewField();
+  // updateView(player);
   // auto t1 = std::chrono::system_clock::now();
   // using milliseconds = std::chrono::duration<double, std::milli>;
   // milliseconds ms = t1 - t0;
@@ -164,15 +164,9 @@ ItemsFoundEvent::ItemsFoundEvent(eb::ObjectPtr s, Items i)
 void Location::onEvent(EnterCellEvent &e) {
   e.cell->damaged = true;
   if (auto hero = std::dynamic_pointer_cast<Player>(e.getSender())) {
-    Objects items(objects.size());
-    auto it = std::copy_if(objects.begin(), objects.end(), items.begin(),
-                           [e](std::shared_ptr<Object> o) {
-                             return std::dynamic_pointer_cast<Item>(o) &&
-                                    o->currentCell == e.cell;
-                           });
-    items.resize(std::distance(items.begin(), it));
+    auto items = utils::castObjects<Item>(getObjects(e.cell));
     if (items.size() > 0) {
-      ItemsFoundEvent ie(nullptr, utils::castObjects<Item>(items));
+      ItemsFoundEvent ie(nullptr, items);
       eb::EventBus::FireEvent(ie);
     }
   }

@@ -9,6 +9,9 @@
 #include <string>
 #include <vector>
 
+#include <fmt/format.h>
+#include <rang.hpp>
+
 #include <SDL.h>
 
 #include <lss/game/direction.hpp>
@@ -17,6 +20,22 @@ using namespace std::string_literals;
 
 class utils {
 public:
+  static std::string color(rang::fg c, std::string m) {
+    return fmt::format("\033[{}m{}\033[0m", static_cast<int>(c), m);
+  }
+  static std::string black(std::string m) { return color(rang::fg::black, m); }
+  static std::string red(std::string m) { return color(rang::fg::red, m); }
+  static std::string green(std::string m) { return color(rang::fg::green, m); }
+  static std::string yellow(std::string m) {
+    return color(rang::fg::yellow, m);
+  }
+  static std::string blue(std::string m) { return color(rang::fg::blue, m); }
+  static std::string magenta(std::string m) {
+    return color(rang::fg::magenta, m);
+  }
+  static std::string cyan(std::string m) { return color(rang::fg::cyan, m); }
+  static std::string gray(std::string m) { return color(rang::fg::gray, m); }
+
   template <typename T>
   static std::string join(const T &array, const std::string &delimiter) {
     std::string res;

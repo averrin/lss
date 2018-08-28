@@ -36,58 +36,39 @@ void State::setFragment(int i, std::shared_ptr<Fragment> f) {
 }
 
 std::string State::renderFragment(std::shared_ptr<Fragment> f) {
-    std::string fContent;
-    auto n = std::distance(fragments.begin(), std::find(fragments.begin(), fragments.end(), f));
-    auto isCursor = select && n == cursor.y * (width + 1) + cursor.x;
-    auto selectionIt =
-        std::find_if(selection.begin(), selection.end(), [&](Selection s) {
-          return s.pos.y * (width + 1) + s.pos.x == n;
-        });
-    auto hasBg = isCursor || (select && selectionIt != selection.end());
-    auto currentBg = f->bgColor;
-    auto color = "#5b4650"s;
-    if (hasBg) {
-      if (!isCursor && selectionIt != selection.end()) {
-        color = (*selectionIt).color;
-      }
-      f->setBgColor(color);
+  std::string fContent;
+  auto n = std::distance(fragments.begin(),
+                         std::find(fragments.begin(), fragments.end(), f));
+  auto isCursor = select && n == cursor.y * (width + 1) + cursor.x;
+  auto selectionIt =
+      std::find_if(selection.begin(), selection.end(), [&](Selection s) {
+        return s.pos.y * (width + 1) + s.pos.x == n;
+      });
+  auto hasBg = isCursor || (select && selectionIt != selection.end());
+  auto currentBg = f->bgColor;
+  auto color = "#5b4650"s;
+  if (hasBg) {
+    if (!isCursor && selectionIt != selection.end()) {
+      color = (*selectionIt).color;
     }
-    if (!f->damaged) {
-      fContent = f->cache;
-    } else {
-      fContent = f->render(this);
-    }
-    if (hasBg) {
-      if (f->needRender) {
-        f->setBgColor(currentBg);
-      } else {
-        fContent = fmt::format("<span bgcolor='{}'>{}</span>", color, fContent);
-      }
-    }
-    return fContent;
+    f->setBgColor(color);
+  }
+  fContent = f->render(this);
+  if (hasBg) {
+    // if (f->needRender) {
+    f->setBgColor(currentBg);
+    // } else {
+    // fContent = fmt::format("<span bgcolor='{}'>{}</span>", color, fContent);
+    // }
+  }
+  return fContent;
 }
 
 std::string State::render() {
   std::string content;
-  auto n = 0;
-  // auto r = 0;
-  // auto t0 = std::chrono::system_clock::now();
   for (auto f : fragments) {
     content.append(renderFragment(f));
-    n++;
   }
-  // auto t1 = std::chrono::system_clock::now();
-  // using milliseconds = std::chrono::duration<double, std::milli>;
-  // milliseconds ms = t1 - t0;
-  // // // if (ms.count() > 15) {
-  //   std::cout << "template render time taken: " << rang::fg::green
-  //             << ms.count() << rang::style::reset << fmt::format(" ({})", r)
-  //             << std::endl;
-  // }
-  // std::cout << cache << std::endl;
-
-  // std::string DEFAULT_FONT = "Fira Code";
-  // cache = fmt::format("<span font='{}'>{}</span>", DEFAULT_FONT, content);
   cache = fmt::format("<tt>{}</tt>", content);
   return cache;
 }
@@ -131,7 +112,6 @@ void State::render(pango::SurfaceRef surface) {
     return;
   }
   render();
-
 
   damaged = false;
   render(surface);

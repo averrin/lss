@@ -530,10 +530,10 @@ AiState Creature::getAiState(std::shared_ptr<Object> target) {
                                !c->canPass(getTraits());
                       }) == s.path.end();
   if (!s.canReachTarget) {
-    fmt::print("can reach: {} (will use pather)\n", s.canReachTarget);
+    // fmt::print("can reach: {} (will use pather)\n", s.canReachTarget);
     s.path = findPath(s.targetCell);
     s.canReachTarget = s.path.size() > 1;
-    fmt::print("can reach: {}\n", s.canReachTarget);
+    // fmt::print("can reach: {}\n", s.canReachTarget);
   }
 
   return s;
@@ -555,7 +555,6 @@ Creature::findPath(std::shared_ptr<Cell> targetCell) {
       auto c = (Cell *)(raw_path[i]);
       auto ptr = currentLocation->cells[c->y][c->x];
       if (ptr != nullptr) {
-        fmt::print("{}.{}\n", c->x, c->y);
         resultPath.push_back(ptr);
       }
     }
