@@ -501,7 +501,9 @@ bool LSSApp::processCommand(std::string cmd) {
   if (event == std::nullopt)
     return false;
 
-  T->start("APP", "process command");
+  auto label = fmt::format("command [{}]", utils::magenta(cmd));
+  T->start("MAIN", label);
+
   std::lock_guard<std::mutex> lock(exec_mutex);
   // TODO: do it automagicaly
   if (auto e = std::dynamic_pointer_cast<MoveCommandEvent>(*event)) {
@@ -540,7 +542,7 @@ bool LSSApp::processCommand(std::string cmd) {
   } else if (auto e = std::dynamic_pointer_cast<LightCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
   }
-  T->stop("process command");
+  T->stop(label);
 
   state->invalidate();
   invalidate();

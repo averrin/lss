@@ -28,7 +28,7 @@ class Profiler {
     if (_aliases.find(label) != _aliases.end()) {
       pName = _aliases[label];
     }
-    return utils::cyan(fmt::format("{:6}", pName));
+    return utils::cyan(fmt::format(" {:6}", pName));
   }
 
 public:

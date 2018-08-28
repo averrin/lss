@@ -84,7 +84,7 @@ public:
   void updateMap();
   void invalidate() { damaged = true; }
   void invalidate(std::string reason) {
-    fmt::print("Invalidate reason: {}\n", reason);
+    // fmt::print("Invalidate reason: {}\n", reason);
     invalidate();
   }
   bool processCommand(std::string);
