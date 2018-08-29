@@ -2,12 +2,14 @@
 #include "lss/fragment.hpp"
 #include <fmt/format.h>
 
-int MoveAnimation::tick() {
+std::vector<std::shared_ptr<Cell>> MoveAnimation::tick() {
+  std::vector<std::shared_ptr<Cell>> ret = {object->currentCell};
   counter++;
   // fmt::print("{}\n", counter);
   auto d = steps / path.size();
   if (counter < steps) {
     object->setCurrentCell(path.at(counter / d));
+    ret.push_back(object->currentCell);
     if (frameCallback != nullptr) {
       frameCallback(counter);
     }
@@ -21,10 +23,11 @@ int MoveAnimation::tick() {
       animationCallback();
     }
   }
-  return counter;
+  return ret;
 };
 
-int ColorAnimation::tick() {
+std::vector<std::shared_ptr<Cell>> ColorAnimation::tick() {
+  std::vector<std::shared_ptr<Cell>> ret = {object->currentCell};
   counter++;
   if (counter < steps) {
     auto c = initColor;
@@ -40,7 +43,7 @@ int ColorAnimation::tick() {
       targetColor = initColor;
       initColor = t;
       wayback = true;
-      return counter;
+      return ret;
     }
     if (endless) {
       counter = 0;
@@ -51,5 +54,5 @@ int ColorAnimation::tick() {
       animationCallback();
     }
   }
-  return counter;
+  return ret;
 }

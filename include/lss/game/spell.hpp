@@ -62,7 +62,7 @@ public:
       }
     }
 
-    location->invalidate();
+    location->invalidate("apply spell effect");
   }
   virtual void applySpell(std::shared_ptr<Creature> caster,
                           std::shared_ptr<Location> location,

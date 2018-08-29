@@ -1,3 +1,4 @@
+#include "lss/logger.hpp"
 #include <TextGrid.hpp>
 
 const int w = 12;
@@ -34,6 +35,11 @@ void TextGrid::setFragment(int x, int y, std::string f) {
 }
 
 void TextGrid::render() {
+  if (damage.size() == 0)
+    return;
+  std::string label = fmt::format(
+      "render [{}]", utils::magenta(fmt::format("{}", damage.size())));
+  L().start(utils::cyan("GRID"), label, true);
   for (auto [x, y] : damage) {
     auto s = fragments[y][x];
     s->render();
@@ -43,8 +49,8 @@ void TextGrid::render() {
     SDL_FillRect(surface, &dst, c);
     SDL_BlitSurface(s->getTexture(), NULL, surface, &dst);
   }
-  // fmt::print("{} fragments updated\n", damage.size());
   damage.clear();
+  L().stop(label, 50.f);
 }
 
 void TextGrid::clear() {

@@ -169,6 +169,7 @@ public:
     }
   }
 
+  void invalidate(std::string reason);
   void invalidate() { needUpdateLight = true; }
 
   std::vector<std::shared_ptr<Cell>> getLine(std::shared_ptr<Cell> c1,
@@ -259,10 +260,9 @@ public:
   float getDistance(std::shared_ptr<Cell> c, std::shared_ptr<Cell> cc) {
     return sqrt(pow(cc->x - c->x, 2) + pow(cc->y - c->y, 2));
   }
-
-private:
   bool needUpdateLight = true;
 
+private:
   virtual void onEvent(EnemyDiedEvent &e) override;
   virtual void onEvent(ItemTakenEvent &e) override;
   virtual void onEvent(EnterCellEvent &e) override;

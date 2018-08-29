@@ -26,7 +26,7 @@ bool InspectMode::processKey(KeyEvent event) {
     if (!nc)
       break;
     app->state->cursor = {(*nc)->x, (*nc)->y};
-    app->state->invalidate();
+    app->state->invalidate("move inspect cursor");
     render();
     return true;
   } break;
@@ -49,6 +49,15 @@ void InspectMode::render() {
 
   app->inspectState->setContent(
       {F(fmt::format("Selected cell: <b>{}.{}</b>", cell->x, cell->y))});
+  app->inspectState->appendContent(State::END_LINE);
+  auto vs = "UNKNOWN";
+  if (cell->visibilityState == VisibilityState::SEEN) {
+    vs = "SEEN";
+  } else if (cell->visibilityState == VisibilityState::VISIBLE) {
+    vs = "VISISBLE";
+  }
+  app->inspectState->setContent(
+      {F(fmt::format("Visibility state: <b>{}</b>", vs))});
   app->inspectState->appendContent(State::END_LINE);
 
   if (!app->debug && !app->hero->canSee(cell)) {

@@ -99,7 +99,7 @@ bool TargetMode::processKey(KeyEvent event) {
     for (auto c : line) {
       app->state->selection.push_back({{c->x, c->y}, "#6c6d79"});
     }
-    app->state->invalidate();
+    app->state->invalidate("move target cursor");
     // render();
     return true;
   } break;

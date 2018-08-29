@@ -6,6 +6,7 @@
 #include "lss/game/enemy.hpp"
 #include "lss/game/player.hpp"
 #include "lss/generator/room.hpp"
+#include "lss/logger.hpp"
 #include "lss/utils.hpp"
 
 Enemy::Enemy(EnemySpec t) : Creature(), type(t) {
@@ -219,10 +220,12 @@ void Enemy::onEvent(CommitEvent &e) {
   if (HP(this) <= 0 || HP(hero.get()) <= 0)
     return;
 
-  T->start("ENEMY", "react", true);
+  std::string label = fmt::format("react [{}@{}.{}]", utils::magenta(name),
+                                  currentCell->x, currentCell->y);
+  L().start(utils::red("ENEMY"), label, true);
   calcViewField();
   if (e.actionPoints == 0) {
-    T->stop("react", 5.f);
+    L().stop(label, 5.f);
     return;
   }
 
@@ -237,7 +240,7 @@ void Enemy::onEvent(CommitEvent &e) {
   if (spent > 0) {
     actionPoints = ap;
   }
-  T->stop("react", 5.f);
+  L().stop(label, 5.f);
 }
 
 bool Enemy::randomPath() { return true; }

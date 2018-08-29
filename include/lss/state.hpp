@@ -30,6 +30,7 @@ public:
   void appendContent(Fragments);
   void appendContent(std::shared_ptr<Fragment>);
   void setFragment(int, std::shared_ptr<Fragment>);
+  void invalidate(std::string reason);
   void invalidate();
   void setSelect(bool);
   void clear();
@@ -40,6 +41,9 @@ public:
   int width;
   int height;
   bool select = false;
+
+  std::shared_ptr<CellSign> US =
+      std::make_shared<CellSign>(std::make_shared<Cell>(CellType::UNKNOWN));
 
   static const Fragments normal_mode;
   static const Fragments hints_mode;

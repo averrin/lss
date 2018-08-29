@@ -18,7 +18,8 @@ bool NormalMode::processKey(KeyEvent event) {
     break;
   case SDL_SCANCODE_F1:
     app->debug = !app->debug;
-    app->invalidate();
+    app->hero->currentCell->invalidate("toggle debug");
+    app->invalidate("toggle debug");
     break;
   case SDL_SCANCODE_J:
   case SDL_SCANCODE_H:
@@ -109,7 +110,7 @@ bool NormalMode::processKey(KeyEvent event) {
       app->state->cursor = {app->hero->currentCell->x,
                             app->hero->currentCell->y};
       app->state->setSelect(true);
-      app->state->invalidate();
+      app->state->invalidate("enter inspect mode");
       app->inspectMode->render();
       app->hero->commit("inspect", 0);
     } else {

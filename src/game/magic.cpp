@@ -217,7 +217,7 @@ void Magic::pauseAndEraseFireballs() {
     hero->commit("cast spell", 1);
 
     hero->currentLocation->invalidateVisibilityCache(hero->currentCell);
-    hero->currentLocation->invalidate();
+    hero->currentLocation->invalidate("cast spell");
     hero->calcViewField();
     hero->commit("cast spell", 0);
   });

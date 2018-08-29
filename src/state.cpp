@@ -2,6 +2,7 @@
 #include <rang.hpp>
 
 #include "Jinja2CppLight.h"
+#include "lss/logger.hpp"
 #include "lss/state.hpp"
 
 using namespace Jinja2CppLight;
@@ -117,6 +118,11 @@ void State::render(pango::SurfaceRef surface) {
   render(surface);
 };
 
+void State::invalidate(std::string reason) {
+  L().info("STATE",
+           fmt::format("state invalidate [{}]", utils::magenta(reason)));
+  invalidate();
+}
 void State::invalidate() { damaged = true; }
 
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };

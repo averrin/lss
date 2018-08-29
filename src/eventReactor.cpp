@@ -333,7 +333,7 @@ void EventReactor::onEvent(TargetEvent &e) {
     }
   }
   app->state->setSelect(true);
-  app->state->invalidate();
+  app->state->invalidate("target event");
   app->modeManager.toTarget();
 }
 
@@ -428,12 +428,10 @@ void EventReactor::onEvent(LightCommandEvent &e) {
       app->hero->equip(slot, *torch);
     }
   }
-  app->hero->currentLocation->invalidate();
-  app->hero->commit("equip light", 0);
+  app->hero->currentLocation->invalidate("equip light");
   app->hero->calcViewField();
   app->hero->currentLocation->updateView(app->hero);
-  app->hero->commit("equip light", 0);
-  app->invalidate();
+  app->invalidate("equip light");
 }
 
 void EventReactor::onEvent(ThrowCommandEvent &e) {
@@ -492,7 +490,7 @@ void EventReactor::onEvent(ThrowCommandEvent &e) {
                           [](auto c) { return c->type.passThrough; });
     app->state->cursor = {(*s)->x, (*s)->y};
     app->state->setSelect(true);
-    app->state->invalidate();
+    app->state->invalidate("throw event");
     return true;
   });
 

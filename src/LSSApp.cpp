@@ -174,6 +174,7 @@ void LSSApp::startGame() {
           // {}", locations.size()));
           // eb::EventBus::FireEvent(me);
         }
+        L().info("MAIN", utils::green("locations done"));
       },
       l));
 
@@ -232,7 +233,7 @@ void LSSApp::frameBg() {
         f->setAlpha(a);
       }
     }
-    state->invalidate();
+    state->invalidate(); // illumination
   }
 
   playAnimations();
@@ -246,7 +247,7 @@ void LSSApp::serveBg() {
 }
 
 void LSSApp::playAnimations() {
-  auto changed = false;
+  std::vector<std::shared_ptr<Cell>> changed;
   auto _anims = animations;
   for (auto a : _anims) {
     if (a->stopped) {
@@ -267,145 +268,131 @@ void LSSApp::playAnimations() {
         ca->initColor = Color(f->fgColor);
       }
       ca->fragment = f;
+    } else if (auto ma = std::dynamic_pointer_cast<MoveAnimation>(a)) {
+      hero->currentLocation->invalidate("move animation");
     }
-    a->tick();
-    changed = true;
+    auto cells = a->tick();
+    changed.insert(changed.end(), cells.begin(), cells.end());
   }
-  if (changed) {
-    state->invalidate();
-    invalidate();
+  if (changed.size()) {
+    for (auto c : changed) {
+      updateCell(c);
+    }
+    state->invalidate("animations");
   }
 }
 
 void LSSApp::setListeners() { reactor = std::make_shared<EventReactor>(this); }
 
-void LSSApp::updateMap() {
-  auto row = 0;
-  auto index = 0;
-  auto cc = hero->currentCell;
-  auto uc = std::make_shared<Cell>(CellType::UNKNOWN);
-  auto us = std::make_shared<CellSign>(uc);
-  auto nd = 0;
-  for (auto r : hero->currentLocation->cells) {
-    auto column = 0;
-    for (auto c : r) {
-      if (!c->damaged) {
-        nd++;
-      }
-      auto f = std::make_shared<CellSign>(c);
-      switch (c->visibilityState) {
-      case VisibilityState::UNKNOWN:
-        if (hero->monsterSense &&
-            !std::dynamic_pointer_cast<CellSign>(state->fragments[index])) {
-          state->setFragment(index, f);
-        }
-        if (!c->damaged)
-          break;
-        state->setFragment(index, us);
-        break;
-      case VisibilityState::SEEN:
-        if (!c->damaged)
-          break;
+void LSSApp::updateCell(std::shared_ptr<Cell> c) {
+  if (!c->damaged)
+    return;
+  auto objects = hero->currentLocation->getObjects(c);
+  auto index = c->y * (hero->currentLocation->cells.front().size() + 1) + c->x;
+  auto currentFragment = state->fragments[index];
+  if (objects.size() == 0) {
+    auto f = std::make_shared<CellSign>(c);
+    switch (c->visibilityState) {
+    case VisibilityState::UNKNOWN:
+      if (hero->monsterSense &&
+          !std::dynamic_pointer_cast<CellSign>(currentFragment)) {
         state->setFragment(index, f);
-        f->setAlpha(Cell::DEFAULT_LIGHT);
-        break;
-      case VisibilityState::VISIBLE:
+      }
+      state->setFragment(index, state->US);
+      break;
+    case VisibilityState::SEEN:
+      state->setFragment(index, f);
+      f->setAlpha(Cell::DEFAULT_LIGHT);
+      break;
+    case VisibilityState::VISIBLE:
+      state->setFragment(index, f);
+      f->setAlpha(c->illumination);
+      break;
+    }
+  } else {
+    std::sort(objects.begin(), objects.end(),
+              [](auto a, auto b) { return a->zIndex < b->zIndex; });
+    for (auto o : objects) {
+      if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
+        if (debug) {
+          unsigned size = e->path.size();
+          for (int k = 0; k < size; ++k) {
+            auto dot = e->path[k];
+            auto i =
+                dot->y * (hero->currentLocation->cells.front().size() + 1) +
+                dot->x;
+            state->setFragment(i, std::make_shared<ItemSign>(ItemType::ROCK));
+          }
+        }
+
+        if (!hero->canSee(c) && !hero->monsterSense)
+          continue;
+
+        auto f = std::make_shared<EnemySign>(e->type);
         state->setFragment(index, f);
         f->setAlpha(c->illumination);
-        break;
-      }
-      column++;
-      index++;
-      c->damaged = false;
-    }
-    auto f = state->fragments[index];
-    if (f != State::END_LINE.front()) {
-      state->setFragment(index, State::END_LINE.front());
-    }
-    index++;
-    row++;
-  }
 
-  auto objects = hero->currentLocation->objects;
-  std::sort(objects.begin(), objects.end(),
-            [](auto a, auto b) { return a->zIndex < b->zIndex; });
-
-  for (auto o : objects) {
-    auto ec = o->currentCell;
-    auto index =
-        ec->y * (hero->currentLocation->cells.front().size() + 1) + ec->x;
-
-    if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
-      if (debug) {
-        // for (auto dot : e->viewField) {
-        //   if (dot == e->currentCell)
-        //     continue;
-        //   auto i = dot->y * (hero->currentLocation->cells.front().size() + 1)
-        //   +
-        //            dot->x;
-        //   dot->visibilityState = VisibilityState::VISIBLE;
-        //   dot->features = {CellFeature::BLOOD};
-        //   state->fragments[i] = std::make_shared<CellSign>(dot);
-        // }
-        unsigned size = e->path.size();
-        for (int k = 0; k < size; ++k) {
-          auto dot = e->path[k];
-          // auto dot = static_cast<Cell *>(ptr);
-          auto i = dot->y * (hero->currentLocation->cells.front().size() + 1) +
-                   dot->x;
-          state->setFragment(i, std::make_shared<ItemSign>(ItemType::ROCK));
+      } else if (auto d = std::dynamic_pointer_cast<Door>(o);
+                 d && (hero->canSee(c) ||
+                       c->visibilityState == VisibilityState::SEEN)) {
+        std::shared_ptr<Fragment> f = std::make_shared<DoorSign>(d->opened);
+        if (!d->opened && d->hidden) {
+          auto fake_wall = std::make_shared<Cell>(CellType::WALL);
+          fake_wall->visibilityState = c->visibilityState;
+          fake_wall->lightSources = c->lightSources;
+          fake_wall->features = c->features;
+          fake_wall->illuminated = c->illuminated;
+          fake_wall->illumination = c->illumination;
+          f = std::make_shared<CellSign>(fake_wall);
+        }
+        state->setFragment(index, f);
+        f->setAlpha(c->illumination);
+      } else if (auto i = std::dynamic_pointer_cast<Item>(o);
+                 i && hero->canSee(c)) {
+        auto f = std::make_shared<ItemSign>(i->type);
+        state->setFragment(index, f);
+        f->setAlpha(c->illumination);
+      } else if (auto t = std::dynamic_pointer_cast<Terrain>(o);
+                 t && hero->canSee(c)) {
+        auto f = std::make_shared<TerrainSign>(t->type);
+        state->setFragment(index, f);
+        f->setAlpha(c->illumination);
+        if (t->getGlow()) {
+          f->setAlpha(100);
         }
       }
-
-      if (!hero->canSee(ec) && !hero->monsterSense)
-        continue;
-
-      auto f = std::make_shared<EnemySign>(e->type);
-      state->setFragment(index, f);
-      f->setAlpha(ec->illumination);
-
-    } else if (auto d = std::dynamic_pointer_cast<Door>(o);
-               d && (hero->canSee(ec) ||
-                     ec->visibilityState == VisibilityState::SEEN)) {
-      std::shared_ptr<Fragment> f = std::make_shared<DoorSign>(d->opened);
-      if (!d->opened && d->hidden) {
-        auto fake_wall = std::make_shared<Cell>(CellType::WALL);
-        fake_wall->visibilityState = ec->visibilityState;
-        fake_wall->lightSources = ec->lightSources;
-        fake_wall->features = ec->features;
-        fake_wall->illuminated = ec->illuminated;
-        fake_wall->illumination = ec->illumination;
-        f = std::make_shared<CellSign>(fake_wall);
-      }
-      state->setFragment(index, f);
-      f->setAlpha(ec->illumination);
-    } else if (auto i = std::dynamic_pointer_cast<Item>(o);
-               i && hero->canSee(ec)) {
-      auto f = std::make_shared<ItemSign>(i->type);
-      state->setFragment(index, f);
-      f->setAlpha(ec->illumination);
-    } else if (auto t = std::dynamic_pointer_cast<Terrain>(o);
-               t && hero->canSee(ec)) {
-      auto f = std::make_shared<TerrainSign>(t->type);
-      state->setFragment(index, f);
-      f->setAlpha(ec->illumination);
-      if (t->getGlow()) {
-        f->setAlpha(100);
-      }
     }
   }
 
-  auto hc = hero->currentCell;
-  index = hc->y * (hero->currentLocation->cells.front().size() + 1) + hc->x;
-  if (!std::dynamic_pointer_cast<HeroSign>(state->fragments[index])) {
+  if (c == hero->currentCell) {
     state->setFragment(index, std::make_shared<HeroSign>(
                                   !debug ? palettes::DARK.hero_color : "red"));
   }
 
+  c->damaged = false;
+}
+
+void LSSApp::updateMap() {
+  std::string label = "update map";
+  L().start("MAIN", label);
+  auto index = 0;
+  auto cc = hero->currentCell;
+  for (auto r : hero->currentLocation->cells) {
+    for (auto c : r) {
+      updateCell(c);
+      index = c->y * (hero->currentLocation->cells.front().size() + 1) + c->x;
+    }
+    index++;
+    auto f = state->fragments[index];
+    if (f != State::END_LINE.front()) {
+      state->setFragment(index, State::END_LINE.front());
+    }
+  }
+
   state->width = hero->currentLocation->cells.front().size();
   state->height = hero->currentLocation->cells.size();
-  invalidate();
   startBg();
+  L().stop(label);
 }
 
 void LSSApp::repeatTimer() {
@@ -501,8 +488,8 @@ bool LSSApp::processCommand(std::string cmd) {
   if (event == std::nullopt)
     return false;
 
-  auto label = fmt::format("command [{}]", utils::magenta(cmd));
-  T->start("MAIN", label);
+  auto label = fmt::format("cmd {}", utils::magenta(cmd));
+  L().start("MAIN", label);
 
   std::lock_guard<std::mutex> lock(exec_mutex);
   // TODO: do it automagicaly
@@ -542,21 +529,22 @@ bool LSSApp::processCommand(std::string cmd) {
   } else if (auto e = std::dynamic_pointer_cast<LightCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
   }
-  T->stop(label);
+  L().stop(label);
 
-  state->invalidate();
-  invalidate();
+  state->invalidate("process command");
   return true;
 }
 
 void LSSApp::update() {
+  std::lock_guard<std::mutex> lock(exec_mutex);
   if (damaged) {
     bgRunning = false;
     bgThread.join();
     hero->currentLocation->invalidateVisibilityCache(hero->currentCell);
-    hero->currentLocation->invalidate();
-    hero->calcViewField();
-    hero->currentLocation->updateView(hero);
+    if (hero->currentLocation->needUpdateLight) {
+      hero->calcViewField();
+      hero->currentLocation->updateView(hero);
+    }
     updateMap();
     damaged = false;
   }
@@ -647,6 +635,9 @@ void LSSApp::drawGrid(std::shared_ptr<TextGrid> frame, SDL_Rect dst) {
 }
 
 void LSSApp::draw() {
+  if (!needRedraw) {
+    return;
+  }
   SDL_SetRenderDrawColor(renderer, 0x0d, 0x0f, 0x12, 255);
   SDL_RenderClear(renderer);
 
@@ -758,12 +749,20 @@ int main(int argc, char *argv[]) {
         break;
       }
       }
+      app->needRedraw = true;
     }
 
     // Update the view
     if (app->running) {
+
+      auto lu = "update";
+      auto ld = "draw";
+      L().start("MAIN", lu, true);
       app->update();
+      L().stop(lu, 60.f);
+      L().start("MAIN", ld, true);
       app->draw();
+      L().stop(ld, 50.f);
     }
   }
 

@@ -18,7 +18,7 @@ public:
   bool endless = false;
   FrameCallback frameCallback = nullptr;
   AnimationCallback animationCallback = nullptr;
-  virtual int tick() = 0;
+  virtual std::vector<std::shared_ptr<Cell>> tick() = 0;
 };
 
 class MoveAnimation : public Animation {
@@ -28,7 +28,7 @@ public:
       : Animation(s), object(o), path(c) {}
   std::shared_ptr<Object> object;
   std::vector<std::shared_ptr<Cell>> path;
-  int tick();
+  std::vector<std::shared_ptr<Cell>> tick();
 };
 
 class ColorAnimation : public Animation {
@@ -41,7 +41,7 @@ public:
   std::shared_ptr<Fragment> fragment;
   bool pulse;
   bool wayback = false;
-  int tick();
+  std::vector<std::shared_ptr<Cell>> tick();
 };
 
 #endif // __ANIMATION_H_

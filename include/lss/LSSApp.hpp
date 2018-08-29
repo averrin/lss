@@ -25,7 +25,6 @@
 #include "lss/commands.hpp"
 #include "lss/keyEvent.hpp"
 #include "lss/modes.hpp"
-#include "lss/profiler.hpp"
 #include "lss/state.hpp"
 #include <TextGrid.hpp>
 
@@ -44,6 +43,8 @@
 
 #include "EventBus.hpp"
 #include "EventHandler.hpp"
+
+#include "lss/logger.hpp"
 
 class EventReactor;
 class LSSApp {
@@ -82,9 +83,11 @@ public:
   void drawGrid(std::shared_ptr<TextGrid>, SDL_Rect);
 
   void updateMap();
+  void updateCell(std::shared_ptr<Cell> c);
+
   void invalidate() { damaged = true; }
   void invalidate(std::string reason) {
-    // fmt::print("Invalidate reason: {}\n", reason);
+    L().info("MAIN", fmt::format("invalidate [{}]", utils::magenta(reason)));
     invalidate();
   }
   bool processCommand(std::string);

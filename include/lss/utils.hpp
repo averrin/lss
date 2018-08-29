@@ -23,6 +23,12 @@ public:
   static std::string color(rang::fg c, std::string m) {
     return fmt::format("\033[{}m{}\033[0m", static_cast<int>(c), m);
   }
+  static std::string style(rang::style c, std::string m) {
+    return fmt::format("\033[{}m{}\033[0m", static_cast<int>(c), m);
+  }
+  static std::string bg(rang::bg c, std::string m) {
+    return fmt::format("\033[{}m{}\033[0m", static_cast<int>(c), m);
+  }
   static std::string black(std::string m) { return color(rang::fg::black, m); }
   static std::string red(std::string m) { return color(rang::fg::red, m); }
   static std::string green(std::string m) { return color(rang::fg::green, m); }
@@ -35,6 +41,18 @@ public:
   }
   static std::string cyan(std::string m) { return color(rang::fg::cyan, m); }
   static std::string gray(std::string m) { return color(rang::fg::gray, m); }
+  static std::string bold(std::string m) { return style(rang::style::bold, m); }
+
+  static std::string blackBg(std::string m) { return bg(rang::bg::black, m); }
+  static std::string redBg(std::string m) { return bg(rang::bg::red, m); }
+  static std::string greenBg(std::string m) { return bg(rang::bg::green, m); }
+  static std::string yellowBg(std::string m) { return bg(rang::bg::yellow, m); }
+  static std::string blueBg(std::string m) { return bg(rang::bg::blue, m); }
+  static std::string magentaBg(std::string m) {
+    return bg(rang::bg::magenta, m);
+  }
+  static std::string cyanBg(std::string m) { return bg(rang::bg::cyan, m); }
+  static std::string grayBg(std::string m) { return bg(rang::bg::gray, m); }
 
   template <typename T>
   static std::string join(const T &array, const std::string &delimiter) {

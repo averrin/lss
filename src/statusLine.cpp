@@ -25,7 +25,6 @@ StatusLine::~StatusLine() {
 }
 
 void StatusLine::setModeLine(Modes::ModeName mode) {
-  fmt::print("call set mode line\n");
   switch (mode) {
   case Modes::NORMAL:
     setContent(State::normal_mode);

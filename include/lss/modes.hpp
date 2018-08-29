@@ -8,6 +8,7 @@ namespace sml = boost::sml;
 
 #include "lss/actions.hpp"
 #include "lss/keyEvent.hpp"
+#include "lss/logger.hpp"
 #include "lss/state.hpp"
 
 #include <SDL.h>
@@ -17,14 +18,6 @@ class LSSApp;
 struct modes {
   auto operator()() const noexcept {
     using namespace sml;
-    auto is_hints = [](KeyPressedEvent e) {
-      return false;
-      // return e.key.getCode() == SDL_SCANCODE_f;
-    };
-    auto is_leader = [](KeyPressedEvent e) {
-      return false;
-      // return e.key.getCode() == SDL_SCANCODE_SPACE;
-    };
     auto is_esc = [](KeyPressedEvent e) {
       return e.key.getCode() == SDL_SCANCODE_ESCAPE;
     };
@@ -63,64 +56,54 @@ struct modes {
       return e.mode == Modes::HERO;
     };
 
-    auto set_hints = [](std::shared_ptr<Modes> m) {
-      std::cout << "Set HINTS mode" << std::endl;
-      m->currentMode = Modes::HINTS;
-    };
-    auto set_leader = [](std::shared_ptr<Modes> m) {
-      std::cout << "Set LEADER mode" << std::endl;
-      m->currentMode = Modes::LEADER;
-    };
     auto set_normal = [](std::shared_ptr<Modes> m) {
-      std::cout << "Set NORMAL mode" << std::endl;
+      L().info("MODE", utils::magenta("NORMAL"));
       m->currentMode = Modes::NORMAL;
     };
     auto set_insert = [](std::shared_ptr<Modes> m) {
-      std::cout << "Set INSERT mode" << std::endl;
+      L().info("MODE", utils::magenta("INSERT"));
       m->currentMode = Modes::INSERT;
     };
     auto set_direction = [](std::shared_ptr<Modes> m) {
-      std::cout << "Set DIRECTION mode" << std::endl;
+      L().info("MODE", utils::magenta("DIRECTION"));
       m->currentMode = Modes::DIRECTION;
     };
     auto set_object_select = [](std::shared_ptr<Modes> m) {
-      std::cout << "Set OBJECTSELECT mode" << std::endl;
+      L().info("MODE", utils::magenta("SELECT"));
       m->currentMode = Modes::OBJECTSELECT;
     };
     auto set_inventory = [](std::shared_ptr<Modes> m) {
-      std::cout << "Set INVENTORY mode" << std::endl;
+      L().info("MODE", utils::magenta("INVENTORY"));
       m->currentMode = Modes::INVENTORY;
     };
     auto set_help = [](std::shared_ptr<Modes> m) {
-      std::cout << "Set HELP mode" << std::endl;
+      L().info("MODE", utils::magenta("HELP"));
       m->currentMode = Modes::HELP;
     };
     auto set_go = [](std::shared_ptr<Modes> m) {
-      std::cout << "Set GAMEOVER mode" << std::endl;
+      L().info("MODE", utils::magenta("GAME OVER"));
       m->currentMode = Modes::GAMEOVER;
     };
     auto set_inspect = [](std::shared_ptr<Modes> m) {
-      std::cout << "Set INSPECT mode" << std::endl;
+      L().info("MODE", utils::magenta("INSPECT"));
       m->currentMode = Modes::INSPECT;
     };
     auto set_pause = [](std::shared_ptr<Modes> m) {
-      std::cout << "Set PAUSE mode" << std::endl;
+      L().info("MODE", utils::magenta("PAUSE"));
       m->currentMode = Modes::PAUSE;
     };
     auto set_target = [](std::shared_ptr<Modes> m) {
-      std::cout << "Set TARGET mode" << std::endl;
+      L().info("MODE", utils::magenta("TARGET"));
       m->currentMode = Modes::TARGET;
     };
     auto set_hero = [](std::shared_ptr<Modes> m) {
-      std::cout << "Set HERO mode" << std::endl;
+      L().info("MODE", utils::magenta("HERO"));
       m->currentMode = Modes::HERO;
     };
 
     // clang-format off
         return make_transition_table(
-            * "normal"_s + event<KeyPressedEvent> [is_hints] / set_hints  = "hints"_s
-            , "normal"_s + event<KeyPressedEvent> [is_leader] / set_leader  = "leader"_s
-            , "normal"_s + event<KeyPressedEvent> [is_insert] / set_insert  = "insert"_s
+            * "normal"_s + event<KeyPressedEvent> [is_insert] / set_insert  = "insert"_s
             , "normal"_s + event<EnableModeEvent> [is_direction_event] / set_direction  = "direction"_s
             , "normal"_s + event<EnableModeEvent> [is_object_select_event] / set_object_select  = "object_select"_s
             , "normal"_s + event<EnableModeEvent> [is_inventory_event] / set_inventory  = "inventory"_s
@@ -136,8 +119,6 @@ struct modes {
             , "object_select"_s + event<EnableModeEvent> [is_target_event] / set_target  = "target"_s
             , "normal"_s + event<EnableModeEvent> [is_hero_event] / set_hero  = "hero"_s
 
-            , "hints"_s + event<KeyPressedEvent> [is_esc] / set_normal = "normal"_s
-            , "leader"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
             , "insert"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
             , "direction"_s + event<KeyPressedEvent> [is_esc] / set_normal  = "normal"_s
             , "object_select"_s + event<KeyPressedEvent> [is_esc_or_z] / set_normal  = "normal"_s
@@ -149,8 +130,6 @@ struct modes {
 
             , "insert"_s + event<KeyPressedEvent> [is_insert] / set_normal  = "normal"_s
 
-            , "hints"_s + event<ModeExitedEvent> / set_normal = "normal"_s
-            , "leader"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
             , "insert"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
             , "direction"_s + event<ModeExitedEvent> / set_normal  = "normal"_s
             , "object_select"_s + event<ModeExitedEvent> / set_normal  = "normal"_s

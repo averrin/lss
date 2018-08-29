@@ -13,6 +13,7 @@
 #include "lss/generator/generator.hpp"
 #include "lss/generator/room.hpp"
 #include "lss/generator/spawnTable.hpp"
+#include "lss/logger.hpp"
 #include "lss/utils.hpp"
 
 Generator::Generator() {}
@@ -707,7 +708,7 @@ bool placeStairs(std::shared_ptr<Location> location) {
                            &path, &totalCost);
     i++;
     if (i == 30) {
-      fmt::print("cannot place exit\n");
+      L().warn(utils::green("MAPGEN"), "cannot place exit");
       return false;
     }
   }
@@ -1153,7 +1154,7 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   start = std::chrono::system_clock::now();
   auto success = placeStairs(location);
   if (!success) {
-    fmt::print("regen location\n");
+    L().info(utils::green("MAPGEN"), "regen location");
     return getLocation(spec);
   }
   end = std::chrono::system_clock::now();

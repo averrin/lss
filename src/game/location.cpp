@@ -9,6 +9,7 @@
 #include "lss/game/location.hpp"
 #include "lss/game/player.hpp"
 #include "lss/game/terrain.hpp"
+#include "lss/logger.hpp"
 #include "lss/utils.hpp"
 
 float getDistance(std::shared_ptr<Cell> c, std::shared_ptr<Cell> cc) {
@@ -36,23 +37,18 @@ void Location::invalidateVisibilityCache(std::shared_ptr<Cell> cell) {
 }
 
 void Location::onEvent(DoorOpenedEvent &e) {
-  fmt::print("on door open\n");
-  needUpdateLight = true;
+  invalidate("door open");
   player->calcViewField(true);
   updateView(player);
 }
 
-void Location::onEvent(CommitEvent &e) {
-  // auto t0 = std::chrono::system_clock::now();
-  // player->calcViewField();
-  // updateView(player);
-  // auto t1 = std::chrono::system_clock::now();
-  // using milliseconds = std::chrono::duration<double, std::milli>;
-  // milliseconds ms = t1 - t0;
-  // std::cout << "onCommit: " << rang::fg::yellow << "location"
-  //           << rang::style::reset << ": " << rang::fg::green << ms.count()
-  //           << rang::style::reset << '\n';
+void Location::invalidate(std::string reason) {
+  L().info(utils::yellow("MAP"),
+           fmt::format("location invalidate [{}]", utils::magenta(reason)));
+  invalidate();
+}
 
+void Location::onEvent(CommitEvent &e) {
   // TODO: and all enemies on location (not only this maybe)
   auto effects = player->activeEffects;
   for (auto ef : effects) {
@@ -124,7 +120,7 @@ void Location::onEvent(EnemyDiedEvent &e) {
     removeObject(enemy);
   }
 
-  needUpdateLight = true;
+  invalidate("enemy died");
 }
 
 void Location::onEvent(ItemTakenEvent &e) { removeObject(e.item); }
@@ -135,7 +131,7 @@ void Location::reveal() {
       c->setVisibilityState(VisibilityState::VISIBLE);
     }
   }
-  needUpdateLight = true;
+  invalidate("reveal");
 };
 
 void Location::onEvent(DigEvent &e) {
@@ -161,8 +157,8 @@ void Location::onEvent(DigEvent &e) {
 
 ItemsFoundEvent::ItemsFoundEvent(eb::ObjectPtr s, Items i)
     : eb::Event(s), items(i) {}
+
 void Location::onEvent(EnterCellEvent &e) {
-  e.cell->damaged = true;
   if (auto hero = std::dynamic_pointer_cast<Player>(e.getSender())) {
     auto items = utils::castObjects<Item>(getObjects(e.cell));
     if (items.size() > 0) {
@@ -178,18 +174,14 @@ void Location::onEvent(EnterCellEvent &e) {
       addObject(grass);
     }
   }
-  // if (e.cell->illuminated) {
   invalidateVisibilityCache(e.cell);
-  needUpdateLight = true;
-  // }
+  updateView(player);
+  invalidate("enter cell");
 }
-void Location::onEvent(LeaveCellEvent &e) {
-  e.cell->damaged = true;
-  invalidateVisibilityCache(e.cell);
-}
+void Location::onEvent(LeaveCellEvent &e) { invalidateVisibilityCache(e.cell); }
 
 void Location::enter(std::shared_ptr<Player> hero, std::shared_ptr<Cell> cell) {
-  needUpdateLight = true;
+  invalidate("enter location");
   player = hero;
   hero->setCurrentCell(cell);
 
@@ -228,7 +220,8 @@ void Location::leave(std::shared_ptr<Player> hero) {
 void Location::updateLight(std::shared_ptr<Player> hero) {
   if (!needUpdateLight)
     return;
-  // auto t0 = std::chrono::system_clock::now();
+  std::string label = utils::yellow("update light");
+  L().start(utils::yellow("MAP"), label);
   auto heroVD = hero->VISIBILITY_DISTANCE(hero.get());
   auto enemies = utils::castObjects<Enemy>(objects);
   std::vector<std::shared_ptr<Object>> torches;
@@ -346,12 +339,7 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
     }
   }
 
-  // auto t1 = std::chrono::system_clock::now();
-  // using milliseconds = std::chrono::duration<double, std::milli>;
-  // milliseconds ms = t1 - t0;
-  // std::cout << rang::fg::yellow << "update light" << rang::style::reset << ":
-  // "
-  // << rang::fg::green << ms.count() << rang::style::reset << '\n';
+  L().stop(label);
   needUpdateLight = false;
 }
 

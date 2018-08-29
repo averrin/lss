@@ -38,7 +38,9 @@ public:
   std::shared_ptr<Cell> currentCell;
 
   void removeCell() {
-    fmt::print("somebody remove cell from {}\n", name);
+    if (currentCell != nullptr) {
+      currentCell->invalidate("remove cell");
+    }
     currentCell = nullptr;
   }
   void setCurrentCell(std::shared_ptr<Cell> c) {
@@ -46,7 +48,13 @@ public:
       throw std::runtime_error(fmt::format(
           "you trying to set nullptr as current cell for {}", name));
     }
+    if (currentCell != nullptr) {
+      currentCell->invalidate("old cell");
+    }
     currentCell = c;
+    if (currentCell != nullptr) {
+      currentCell->invalidate("new cell");
+    }
   }
 
   virtual bool interact(std::shared_ptr<Object> actor) { return false; };

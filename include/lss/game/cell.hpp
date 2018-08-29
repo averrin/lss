@@ -69,6 +69,7 @@ public:
   bool seeThrough = false;
 
   bool damaged = true;
+  void invalidate(std::string reason);
   void invalidate() { damaged = true; }
   void setVisibilityState(VisibilityState vs) {
     if (visibilityState != vs) {
