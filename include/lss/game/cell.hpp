@@ -56,6 +56,12 @@ public:
   CellSpec type;
   VisibilityState visibilityState = VisibilityState::UNKNOWN;
   bool illuminated = false;
+    void setIlluminated(bool v) {
+      if (illuminated != v) {
+        illuminated = v;
+        invalidate();
+      }
+    }
   std::vector<CellFeature> features;
 
   std::set<std::shared_ptr<Object>> lightSources;
@@ -104,6 +110,13 @@ public:
   static const int DEFAULT_LIGHT = 60;
   static const int MINIMUM_LIGHT = 5;
   int illumination = DEFAULT_LIGHT;
+
+    void setIllumination(int v) {
+      if (illumination != v) {
+        illumination = v;
+        invalidate();
+      }
+    }
 };
 
 typedef std::vector<std::shared_ptr<Cell>> CellRow;

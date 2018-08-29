@@ -266,11 +266,11 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
           c == player->currentCell) {
         c->passThrough = false;
       }
-      c->illuminated = false;
+      c->setIlluminated(false);
       // FIXME: not in distance, but only visible
       if (!heroInDark && hero->getGlow() &&
           getDistance(c, hero->currentCell) <= heroVD) {
-        c->illuminated = true;
+        c->setIlluminated(true);
         c->lightSources.insert(hero);
         continue;
       }
@@ -286,7 +286,7 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
                     pow(t->currentCell->y - c->y, 2));
       if (d <= glow.distance) {
         c->lightSources.insert(t);
-        c->illuminated = true;
+        c->setIlluminated(true);
       }
     }
   }
@@ -295,7 +295,7 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
       auto glow = *e->getGlow();
       for (auto c : getVisible(e->currentCell, glow.distance)) {
         c->lightSources.insert(e);
-        c->illuminated = true;
+        c->setIlluminated(true);
       }
     }
   }
@@ -303,7 +303,7 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
   for (auto r : cells) {
     for (auto c : r) {
       if (!c->illuminated) {
-        c->illumination = Cell::DEFAULT_LIGHT;
+        c->setIllumination(Cell::DEFAULT_LIGHT);
         continue;
       }
       std::vector<std::shared_ptr<Object>> lss;
@@ -314,7 +314,7 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
       }
       auto d = std::numeric_limits<int>::max();
       if (lss.size() == 0) {
-        c->illumination = Cell::DEFAULT_LIGHT;
+        c->setIllumination(Cell::DEFAULT_LIGHT);
         continue;
       }
       for (auto ls : lss) {
@@ -328,13 +328,12 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
         if (ls == player) {
           strength = TORCH_DISTANCE;
         }
-        c->illumination =
-            ((strength - td) / strength * 80) + Cell::DEFAULT_LIGHT;
+        c->setIllumination(((strength - td) / strength * 80) + Cell::DEFAULT_LIGHT);
       }
       if (c->illumination < Cell::MINIMUM_LIGHT) {
-        c->illumination = Cell::MINIMUM_LIGHT;
+        c->setIllumination(Cell::MINIMUM_LIGHT);
       } else if (c->illumination > 100) {
-        c->illumination = 100;
+        c->setIllumination(100);
       }
     }
   }

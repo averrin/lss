@@ -53,7 +53,7 @@ public:
     }
     currentCell = c;
     if (currentCell != nullptr) {
-      currentCell->invalidate("new cell");
+      currentCell->invalidate(/*"new cell"*/); //too many prints on location init
     }
   }
 
