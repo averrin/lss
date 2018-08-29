@@ -203,7 +203,7 @@ void LSSApp::startBg() {
 }
 
 void LSSApp::frameBg() {
-  std::lock_guard<std::mutex> lock(exec_mutex);
+  // std::lock_guard<std::mutex> lock(exec_mutex);
   auto lightMap = hero->getLightMap();
 
   if (lightMap.size() > 0) {
@@ -536,7 +536,7 @@ bool LSSApp::processCommand(std::string cmd) {
 }
 
 void LSSApp::update() {
-  std::lock_guard<std::mutex> lock(exec_mutex);
+  // std::lock_guard<std::mutex> lock(exec_mutex);
   if (damaged) {
     bgRunning = false;
     bgThread.join();
