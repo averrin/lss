@@ -16,8 +16,11 @@ class Logger {
       _start;
   std::map<std::string, std::string> _aliases;
 
-  std::string getOffset() {
+  std::string getOffset(int d = 0) {
     std::string offset = "";
+    for (auto n = 0; n < d; n++) {
+      offset += "| ";
+    }
     if (_start.size() == 0) {
       return offset;
     }
@@ -54,17 +57,17 @@ public:
   std::string name;
   void warn(std::string msg) { warn(name, msg); }
   void warn(std::string alias, std::string msg) {
-    fmt::print(" {} ≫ {}[{}] ⊸  {}\n", fill(alias, 6), getOffset(),
+    fmt::print(" {} ≫ {}[{}] ⊸  {}\n", fill(alias, 6), getOffset(1),
                utils::yellowBg(utils::black("WARN")), msg);
   }
   void info(std::string msg) { info(name, msg); }
   void info(std::string alias, std::string msg) {
-    fmt::print(" {} ≫ {}[{}] ⊸  {}\n", fill(alias, 6), getOffset(),
+    fmt::print(" {} ≫ {}[{}] ⊸  {}\n", fill(alias, 6), getOffset(1),
                utils::blueBg(utils::black("INFO")), msg);
   }
   void error(std::string msg) { error(name, msg); }
   void error(std::string alias, std::string msg) {
-    fmt::print(" {} ≫ [{}] ⊸  {}{}\n", fill(alias, 6), getOffset(),
+    fmt::print(" {} ≫ [{}] ⊸  {}{}\n", fill(alias, 6), getOffset(1),
                utils::redBg("!ERR"), msg);
   }
   void start(std::string alias, std::string label, bool silent = false) {

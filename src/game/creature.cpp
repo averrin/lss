@@ -10,6 +10,7 @@
 #include "lss/game/player.hpp"
 #include "lss/generator/room.hpp"
 #include "lss/utils.hpp"
+#include "lss/logger.hpp"
 
 #include "EventBus.hpp"
 
@@ -474,6 +475,8 @@ bool Creature::throwItem(std::shared_ptr<Item> item,
 }
 
 AiState Creature::getAiState(std::shared_ptr<Object> target) {
+  std::string label = "get ai state";
+  L().start(utils::red("ENEMY"), label, true);
   AiState s;
   s.exit = false;
   s.target = target;
@@ -488,6 +491,7 @@ AiState Creature::getAiState(std::shared_ptr<Object> target) {
   }
   if (s.targetCell == nullptr || s.targetCell == currentCell) {
     s.exit = true;
+    L().stop(label, 20.f);
     return s;
   }
 
@@ -536,6 +540,7 @@ AiState Creature::getAiState(std::shared_ptr<Object> target) {
     // fmt::print("can reach: {}\n", s.canReachTarget);
   }
 
+  L().stop(label, 20.f);
   return s;
 }
 

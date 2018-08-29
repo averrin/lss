@@ -144,6 +144,7 @@ std::optional<int> Enemy::execAiPassive(int ap) {
 // TODO: add magic cast and pause mode
 // TODO: use traits wisely
 std::optional<int> Enemy::execAiAggressive(int ap) {
+  std::string label = "exec action";
   std::optional<int> cost;
   auto stepCost = ap_cost::STEP / speed;
   auto attackCost = ap_cost::ATTACK / speed;
@@ -158,6 +159,7 @@ std::optional<int> Enemy::execAiAggressive(int ap) {
   if (s.exit) {
     return cost;
   }
+  L().start(utils::red("ENEMY"), label);
   path = s.path;
 
   if (!cost && ap >= attackCost) {
@@ -165,12 +167,12 @@ std::optional<int> Enemy::execAiAggressive(int ap) {
       auto directionToTarget = getDirFromCell(currentCell, s.targetCell.get());
       attack(directionToTarget);
       cost = attackCost;
-      // fmt::print("attack\n");
+      L().info(utils::red("ENEMY"), "attack");
     }
   }
   if (!cost && ap >= throwCost) {
     if (!s.nearTarget && s.targetInTargetCell && s.canThrow) {
-      // fmt::print("throw\n");
+      L().info(utils::red("ENEMY"), "throw");
       auto t = std::find_if(inventory.begin(), inventory.end(), [](auto i) {
         return i->type.category == ItemCategories::THROWABLE;
       });
@@ -184,15 +186,15 @@ std::optional<int> Enemy::execAiAggressive(int ap) {
       auto direction = getDirFromCell(currentCell, nextCell.get());
       move(direction);
       cost = stepCost;
-
-      // fmt::print("move\n");
+      L().info(utils::red("ENEMY"), "move");
     }
   }
 
   if (!cost && ap >= waitCost) {
     cost = waitCost;
-    // fmt::print("wait\n");
+      L().info(utils::red("ENEMY"), "wait");
   }
+  L().stop(label, 20.f);
   return cost;
 }
 
