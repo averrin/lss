@@ -36,10 +36,13 @@ class Enemy : public Creature, public eb::EventHandler<CommitEvent> {
 public:
   Enemy(EnemySpec);
   ~Enemy();
+
+  std::string getId() {return fmt::format("{}@{}.{}", lu::magenta(name),
+                                  currentCell->x, currentCell->y);}
+
   std::optional<Items> drop();
 
   Direction cd = Direction::W;
-  int actionPoints = 0;
   EnemySpec type;
   int step;
   bool randomPath();
@@ -47,10 +50,13 @@ public:
   void onDie() override;
   bool interact(std::shared_ptr<Object> actor);
   void commit(int ap);
-  std::optional<int> execAction(int ap);
-  std::optional<int> execAiNone(int ap);
-  std::optional<int> execAiPassive(int ap);
-  std::optional<int> execAiAggressive(int ap);
+  void prepareAiState();
+
+  std::optional<AiAction> execAction();
+  std::optional<AiAction> execAction(int ap);
+  std::optional<AiAction> execAiNone(int ap);
+  std::optional<AiAction> execAiPassive(int ap);
+  std::optional<AiAction> execAiAggressive(int ap);
 
   virtual void onEvent(CommitEvent &e) override;
 };

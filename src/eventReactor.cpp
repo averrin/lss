@@ -429,7 +429,8 @@ void EventReactor::onEvent(LightCommandEvent &e) {
     }
   }
   app->hero->currentLocation->invalidate("equip light");
-  app->hero->calcViewField();
+  app->hero->viewField = app->hero->calcViewField();
+  app->hero->currentLocation->updateLight(app->hero);
   app->hero->currentLocation->updateView(app->hero);
   app->invalidate("equip light");
 }

@@ -367,26 +367,21 @@ bool Creature::move(Direction d, bool autoAction) {
   eb::EventBus::FireEvent(le);
   EnterCellEvent ee(shared_from_this(), currentCell);
   eb::EventBus::FireEvent(ee);
-  calcViewField();
   return true;
 }
 
 // FIXME: fix doors!
-void Creature::calcViewField(bool force) {
+std::vector<std::shared_ptr<Cell>> Creature::calcViewField(bool force) {
   // if (cachedCell == currentCell && !force) {
   //   return;
   // }
-  currentLocation->updateLight(currentLocation->player);
+  // currentLocation->updateLight(currentLocation->player);
   auto vd = VISIBILITY_DISTANCE(this);
   if (hasTrait(Traits::NIGHT_VISION)) {
     vd = NIGHT_VISION_DISTANCE;
   }
-  viewField = currentLocation->getVisible(currentCell, vd);
+  return currentLocation->getVisible(currentCell, vd);
 
-  // cachedCell = currentCell;
-  for (auto c : viewField) {
-    c->lightSources.insert(shared_from_this());
-  }
 }
 
 // TODO: migrate to emit
@@ -475,13 +470,14 @@ bool Creature::throwItem(std::shared_ptr<Item> item,
 
 AiState Creature::getAiState(std::shared_ptr<Object> target) {
   std::string label = "get ai state";
-  log.start(lu::red("ENEMY"), label, true);
+  // log.start(lu::red("ENEMY"), label, true);
   AiState s;
   s.exit = false;
   s.target = target;
-  s.canSeeTarget = canSee(target->currentCell);
+  s.viewField = calcViewField();
+  s.canSeeTarget = canSee(target->currentCell, s.viewField);
   s.targetCell = target->currentCell;
-  s.canSeeTargetCell = canSee(s.targetCell);
+  s.canSeeTargetCell = canSee(s.targetCell, s.viewField);
 
   if (s.canSeeTarget) {
     lastTargetCell = s.targetCell;
@@ -490,7 +486,7 @@ AiState Creature::getAiState(std::shared_ptr<Object> target) {
   }
   if (s.targetCell == nullptr || s.targetCell == currentCell) {
     s.exit = true;
-    log.stop(label, 20.f);
+    // log.stop(label, 20.f);
     return s;
   }
 
@@ -502,7 +498,7 @@ AiState Creature::getAiState(std::shared_ptr<Object> target) {
         return s;
       }
       auto cell = *it;
-      if (canSee(cell)) {
+      if (canSee(cell, s.viewField)) {
         s.targetCell = cell;
         break;
       }
@@ -539,7 +535,7 @@ AiState Creature::getAiState(std::shared_ptr<Object> target) {
     // fmt::print("can reach: {}\n", s.canReachTarget);
   }
 
-  log.stop(label, 20.f);
+  // log.stop(label, 20.f);
   return s;
 }
 

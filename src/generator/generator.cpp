@@ -15,11 +15,14 @@
 #include "lss/generator/spawnTable.hpp"
 #include "lss/utils.hpp"
 
+#ifndef GEN_DEBUG
+#define GEN_DEBUG false
+#endif
+
 Generator::Generator() {}
 
-bool DEBUG = false;
 void dlog(std::string msg) {
-  if (DEBUG)
+  if (GEN_DEBUG)
     fmt::print("{}\n", msg);
 }
 
@@ -708,6 +711,7 @@ bool placeStairs(std::shared_ptr<Location> location) {
     i++;
     if (i == 30) {
       location->log.warn(lu::green("MAPGEN"), "cannot place exit");
+      delete pather;
       return false;
     }
   }
@@ -1083,7 +1087,7 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
 
   auto location = std::make_shared<Location>(spec);
   location->depth = spec.threat;
-  if (DEBUG) {
+  if (GEN_DEBUG) {
     std::cout << rang::fg::yellow
               << (spec.type == LocationType::DUNGEON ? "DUN" : "CAV")
               << location->getFeaturesTag() << "  " << location->depth
@@ -1153,7 +1157,8 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   start = std::chrono::system_clock::now();
   auto success = placeStairs(location);
   if (!success) {
-    log.info(lu::green("MAPGEN"), "regen location");
+    // log.info(lu::green("MAPGEN"), "regen location");
+    dlog("regen location");
     return getLocation(spec);
   }
   end = std::chrono::system_clock::now();
@@ -1232,7 +1237,7 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   auto t1 = std::chrono::system_clock::now();
   using milliseconds = std::chrono::duration<double, std::milli>;
   milliseconds ms = t1 - t0;
-  if (DEBUG) {
+  if (GEN_DEBUG) {
     std::cout << rang::fg::blue
               << (spec.type == LocationType::DUNGEON ? "DUN" : "CAV")
               << location->getFeaturesTag() << "  " << location->depth

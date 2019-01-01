@@ -19,6 +19,7 @@ class Creature : public Object {
   LibLog::Logger &log = LibLog::Logger::getInstance();
 public:
   Creature();
+  std::string getId() {return name;}
   std::vector<std::shared_ptr<Cell>> viewField;
   std::shared_ptr<Location> currentLocation;
   std::vector<Trait> traits;
@@ -28,6 +29,9 @@ public:
   bool move(Direction, bool autoAction = false);
   bool attack(Direction);
   bool canSee(std::shared_ptr<Cell> c) {
+    return canSee(c, viewField);
+  };
+  bool canSee(std::shared_ptr<Cell> c, std::vector<std::shared_ptr<Cell>> vf) {
     for (auto t : utils::castObjects<Terrain>(
              currentLocation->getObjects(currentCell))) {
       if (t->type == TerrainType::DARKNESS) {
@@ -35,11 +39,11 @@ public:
       }
     }
 
-    return std::find(viewField.begin(), viewField.end(), c) !=
-               viewField.end() ||
+    return std::find(vf.begin(), vf.end(), c) !=
+               vf.end() ||
            hasTrait(Traits::MIND_SIGHT);
   };
-  void calcViewField(bool force = false);
+  std::vector<std::shared_ptr<Cell>> calcViewField(bool force = false);
   bool interact(std::shared_ptr<Object>);
   std::shared_ptr<Damage> getDamage(std::shared_ptr<Object>);
 
@@ -80,6 +84,15 @@ public:
 
   int mp = 0;
   int mp_max = 0;
+
+  int actionPoints = 0;
+
+  std::optional<AiAction> execAction() {
+    log.warn("call execAction on creature");
+    log.info(fmt::format("creature [{}@{}.{}]", lu::magenta(name),
+                                  currentCell->x, currentCell->y));
+    return std::nullopt;
+  }
 
   std::optional<std::tuple<std::shared_ptr<Slot>, DamageSpec>> getPrimaryDmg();
   std::optional<std::tuple<std::shared_ptr<Slot>, DamageSpec>>
@@ -199,6 +212,8 @@ public:
     return effects;
   }
 
+  void prepareAiState();
+
   float intelligence = 1.f;
   float strength = 1.f;
 
@@ -227,6 +242,7 @@ public:
   std::vector<std::shared_ptr<Cell>> findPath(std::shared_ptr<Cell>);
 
   AiState getAiState(std::shared_ptr<Object>);
+  AiState lastAiState;
 
 private:
   std::shared_ptr<Cell> cachedCell;

@@ -124,82 +124,80 @@ Direction getDirFromCell(std::shared_ptr<Cell> c, Cell *nc) {
 
 void Enemy::commit(int ap) { actionPoints -= ap; }
 
-std::optional<int> Enemy::execAiNone(int ap) {
-  std::optional<int> cost;
-  if (ap >= ap_cost::WAIT) {
-    cost = ap_cost::WAIT;
-  }
-  return cost;
-}
+std::optional<AiAction> Enemy::execAiNone(int ap) { return WaitAction(ap); }
 
-std::optional<int> Enemy::execAiPassive(int ap) {
-  std::optional<int> cost;
-  if (ap >= ap_cost::WAIT) {
-    cost = ap_cost::WAIT;
-  }
-  return cost;
-}
+std::optional<AiAction> Enemy::execAiPassive(int ap) { return WaitAction(ap); }
 
 // TODO: add magic cast and pause mode
 // TODO: use traits wisely
-std::optional<int> Enemy::execAiAggressive(int ap) {
-  std::string label = "exec action";
-  std::optional<int> cost;
+std::optional<AiAction> Enemy::execAiAggressive(int ap) {
   auto stepCost = ap_cost::STEP / speed;
   auto attackCost = ap_cost::ATTACK / speed;
   auto waitCost = ap_cost::WAIT;
   auto throwCost = ap_cost::THROW / speed;
 
-  auto target = currentLocation->player;
-  if (lastTarget == nullptr || lastTarget != target) {
-    lastTarget = target;
+  auto s = lastAiState;
+  viewField = s.viewField;
+  for (auto c : viewField) {
+    c->lightSources.insert(shared_from_this());
   }
-  auto s = getAiState(target);
+
   if (s.exit) {
-    return cost;
+    return IdleAction(ap);
   }
-  log.start(lu::red("ENEMY"), label);
   path = s.path;
 
-  if (!cost && ap >= attackCost) {
+  if (ap >= attackCost) {
     if (s.nearTarget) {
       auto directionToTarget = getDirFromCell(currentCell, s.targetCell.get());
       attack(directionToTarget);
-      cost = attackCost;
-      log.info(lu::red("ENEMY"), "attack");
+      return AttackAction(attackCost);
     }
   }
-  if (!cost && ap >= throwCost) {
+  if (ap >= throwCost) {
     if (!s.nearTarget && s.targetInTargetCell && s.canThrow) {
-      log.info(lu::red("ENEMY"), "throw");
       auto t = std::find_if(inventory.begin(), inventory.end(), [](auto i) {
         return i->type.category == ItemCategories::THROWABLE;
       });
       throwItem(*t, s.targetCell);
+      return ThrowAction(throwCost);
     }
   }
 
-  if (!cost && ap >= stepCost) {
+  if (ap >= stepCost) {
     if (!s.nearTarget && s.canReachTarget) {
       auto nextCell = path[1];
       auto direction = getDirFromCell(currentCell, nextCell.get());
       move(direction);
-      cost = stepCost;
-      log.info(lu::red("ENEMY"), "move");
+      return MoveAction(stepCost);
     }
   }
 
-  if (!cost && ap >= waitCost) {
-    cost = waitCost;
-      log.info(lu::red("ENEMY"), "wait");
+  if (ap >= waitCost) {
+    return WaitAction(waitCost);
   }
-  log.stop(label, 20.f);
-  return cost;
+  return std::nullopt;
 }
 
-std::optional<int> Enemy::execAction(int ap) {
-  std::optional<int> cost;
+std::optional<AiAction> Enemy::execAction() {
+  auto hero = currentLocation->player;
+  if (actionPoints == 0 || HP(this) <= 0 || HP(hero.get()) <= 0)
+    return std::nullopt;
 
+  std::string label = fmt::format("react [{}]", getId());
+  log.start(lu::red("ENEMY"), label, true);
+  auto action = execAction(actionPoints);
+  if (action) {
+    log.info(lu::red("ENEMY"),
+             fmt::format("action: {}, cost: {}", action->name,
+             lu::yellow(fmt::format("{}", action->cost))));
+    commit(action->cost);
+  }
+  log.stop(label);
+  return action;
+}
+
+std::optional<AiAction> Enemy::execAction(int ap) {
   switch (type.aiType) {
   case AIType::NONE:
     return execAiNone(ap);
@@ -210,39 +208,22 @@ std::optional<int> Enemy::execAction(int ap) {
   }
 
   if (ap >= ap_cost::WAIT) {
-    cost = ap_cost::WAIT;
+    return WaitAction(ap_cost::WAIT);
   }
-  return cost;
+  return std::nullopt;
 }
 
-// TODO: refactor. Divide by actions;
-void Enemy::onEvent(CommitEvent &e) {
-  auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
-  if (HP(this) <= 0 || HP(hero.get()) <= 0)
-    return;
-
-  std::string label = fmt::format("react [{}@{}.{}]", lu::magenta(name),
-                                  currentCell->x, currentCell->y);
-  log.start(lu::red("ENEMY"), label, true);
-  calcViewField();
-  if (e.actionPoints == 0) {
-    log.stop(label, 5.f);
-    return;
+void Enemy::prepareAiState() {
+  if (type.aiType == AIType::AGGRESSIVE) {
+    auto target = currentLocation->player;
+    if (lastTarget == nullptr || lastTarget != target) {
+      lastTarget = target;
+    }
+    lastAiState = getAiState(target);
   }
-
-  auto ap = actionPoints + e.actionPoints;
-  auto spent = 0;
-
-  while (auto cost = execAction(ap)) {
-    ap -= *cost;
-    spent += *cost;
-  }
-  commit(spent);
-  if (spent > 0) {
-    actionPoints = ap;
-  }
-  log.stop(label, 5.f);
 }
+
+void Enemy::onEvent(CommitEvent &e) {}
 
 bool Enemy::randomPath() { return true; }
 

@@ -193,7 +193,6 @@ bool NormalMode::processKey(KeyEvent event) {
 
           enemy->handlers.push_back(
               eb::EventBus::AddHandler<CommitEvent>(*enemy, app->hero));
-          enemy->calcViewField();
           app->hero->currentLocation->addObject<Enemy>(enemy);
           app->modeManager.toNormal();
           return true;

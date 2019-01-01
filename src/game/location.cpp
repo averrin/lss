@@ -9,6 +9,7 @@
 #include "lss/game/location.hpp"
 #include "lss/game/player.hpp"
 #include "lss/game/terrain.hpp"
+#include <lss/game/aiManager.hpp>
 #include "lss/utils.hpp"
 
 float getDistance(std::shared_ptr<Cell> c, std::shared_ptr<Cell> cc) {
@@ -36,8 +37,10 @@ void Location::invalidateVisibilityCache(std::shared_ptr<Cell> cell) {
 }
 
 void Location::onEvent(DoorOpenedEvent &e) {
+  invalidateVisibilityCache(player->currentCell);
   invalidate("door open");
-  player->calcViewField(true);
+  player->viewField = player->calcViewField(true);
+  updateLight(player);
   updateView(player);
 }
 
@@ -89,6 +92,10 @@ void Location::onEvent(CommitEvent &e) {
         removeObject(o);
       }
     }
+  }
+
+  if (e.actionPoints > 0) {
+    aiManager->processCommit(creatures, e.actionPoints);
   }
 
   LocationChangeEvent ec(nullptr);
@@ -188,10 +195,9 @@ void Location::enter(std::shared_ptr<Player> hero, std::shared_ptr<Cell> cell) {
     if (auto enemy = std::dynamic_pointer_cast<Enemy>(o)) {
       enemy->handlers.push_back(
           eb::EventBus::AddHandler<CommitEvent>(*enemy, hero));
-      enemy->calcViewField();
     }
   }
-  hero->calcViewField();
+  hero->viewField = hero->calcViewField();
   updateView(hero);
 
   hero->commit("location enter", 0);
@@ -204,6 +210,8 @@ void Location::enter(std::shared_ptr<Player> hero, std::shared_ptr<Cell> cell) {
   handlers.push_back(eb::EventBus::AddHandler<DigEvent>(*this, hero));
   handlers.push_back(eb::EventBus::AddHandler<DropEvent>(*this));
   handlers.push_back(eb::EventBus::AddHandler<DoorOpenedEvent>(*this));
+
+  aiManager = std::make_shared<AiManager>(hero->currentLocation);
 }
 
 void Location::leave(std::shared_ptr<Player> hero) {
@@ -342,7 +350,6 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
 }
 
 void Location::updateView(std::shared_ptr<Player> hero) {
-  updateLight(hero);
   for (auto r : cells) {
     for (auto c : r) {
       if (c->type == CellType::UNKNOWN)

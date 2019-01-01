@@ -70,6 +70,7 @@ set( SRC_FILES
 
 	${SRC_DIR}/game/cell.cpp
 	${SRC_DIR}/game/fov.cpp
+	${SRC_DIR}/game/aiManager.cpp
 	${SRC_DIR}/game/location.cpp
 	${SRC_DIR}/game/object.cpp
 	${SRC_DIR}/game/effect.cpp

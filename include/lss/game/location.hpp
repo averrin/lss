@@ -33,6 +33,7 @@ struct LocationSpec {
 
 class Player;
 class Room;
+class AiManager;
 class Location : public Object,
                  public micropather::Graph,
                  public eb::EventHandler<EnemyDiedEvent>,
@@ -53,6 +54,7 @@ public:
   std::map<std::shared_ptr<Cell>, Objects> cellObjects;
   std::shared_ptr<Player> player;
   int depth = 0;
+  std::shared_ptr<AiManager> aiManager;
 
   template <typename T>
   void addObject(std::shared_ptr<T> o, std::shared_ptr<T> cc) {

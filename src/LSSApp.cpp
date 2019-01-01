@@ -265,7 +265,7 @@ void LSSApp::playAnimations() {
                            c->y * (hero->currentLocation->cells.front().size() +
                                    1)];
       if (ca->fragment == nullptr) {
-        ca->initColor = Color::fromHexString(f->fgColor);
+        ca->initColor = Color::fromString(f->fgColor);
       }
       ca->fragment = f;
     } else if (auto ma = std::dynamic_pointer_cast<MoveAnimation>(a)) {
@@ -542,7 +542,8 @@ void LSSApp::update() {
     bgThread.join();
     hero->currentLocation->invalidateVisibilityCache(hero->currentCell);
     if (hero->currentLocation->needUpdateLight) {
-      hero->calcViewField();
+      hero->viewField = hero->calcViewField();
+      hero->currentLocation->updateLight(hero);
       hero->currentLocation->updateView(hero);
     }
     updateMap();
