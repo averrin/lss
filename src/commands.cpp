@@ -36,7 +36,7 @@ WalkCommandEvent::WalkCommandEvent(Direction d)
 WalkCommand::WalkCommand() : Command({"walk"}) {}
 std::optional<std::shared_ptr<CommandEvent>>
 WalkCommand::getEvent(std::string cmd) {
-  auto tokens = utils::split(cmd, ' ');
+  auto tokens = lu::split(cmd, ' ');
   std::string dirString = tokens.front();
   if (tokens.size() > 1) {
     dirString = tokens[1];
@@ -56,7 +56,7 @@ DigCommandEvent::DigCommandEvent(Direction d)
     : CommandEvent(nullptr), direction(d) {}
 std::optional<std::shared_ptr<CommandEvent>>
 DigCommand::getEvent(std::string cmd) {
-  auto tokens = utils::split(cmd, ' ');
+  auto tokens = lu::split(cmd, ' ');
   std::string dirString = tokens.front();
   if (tokens.size() > 1) {
     dirString = tokens[1];
@@ -75,7 +75,7 @@ MoveCommandEvent::MoveCommandEvent(Direction d)
     : CommandEvent(nullptr), direction(d) {}
 std::optional<std::shared_ptr<CommandEvent>>
 MoveCommand::getEvent(std::string cmd) {
-  auto tokens = utils::split(cmd, ' ');
+  auto tokens = lu::split(cmd, ' ');
   std::string dirString = tokens.front();
   if (tokens.size() > 1) {
     dirString = tokens[1];
@@ -94,7 +94,7 @@ AttackCommandEvent::AttackCommandEvent(Direction d)
     : CommandEvent(nullptr), direction(d) {}
 std::optional<std::shared_ptr<CommandEvent>>
 AttackCommand::getEvent(std::string cmd) {
-  auto tokens = utils::split(cmd, ' ');
+  auto tokens = lu::split(cmd, ' ');
   std::string dirString = tokens.front();
   if (tokens.size() > 1) {
     dirString = tokens[1];

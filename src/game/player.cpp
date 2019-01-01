@@ -12,7 +12,6 @@
 #include "lss/game/slot.hpp"
 #include "lss/game/spell.hpp"
 #include "lss/game/terrain.hpp"
-#include "lss/logger.hpp"
 #include "lss/utils.hpp"
 
 DigEvent::DigEvent(eb::ObjectPtr s, std::shared_ptr<Cell> c)
@@ -151,13 +150,13 @@ void Player::commit(std::string reason, int ap, bool s) {
     }
   }
 
-  auto label = fmt::format("commit {} [{}]", utils::blue(reason),
-                           utils::magenta(fmt::format("{}", ap)));
-  L().start(utils::blue("HERO"), label);
+  auto label = fmt::format("commit {} [{}]", lu::blue(reason),
+                           lu::magenta(fmt::format("{}", ap)));
+  log.start(lu::blue("HERO"), label);
   auto ptr = shared_from_this();
   CommitEvent e(ptr, ap, s);
   eb::EventBus::FireEvent(e);
-  L().stop(label);
+  log.stop(label);
 }
 
 bool Player::unequip(std::shared_ptr<Slot> slot) {

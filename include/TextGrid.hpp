@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include <SDLPango.hpp>
 #include <fmt/format.h>
+#include <liblog/liblog.hpp>
 
 class TextGrid {
     std::map<std::string, pango::SurfaceRef> cache = {};
@@ -11,6 +12,8 @@ class TextGrid {
     std::vector<std::vector<pango::SurfaceRef>> fragments = {};
 	SDL_Renderer* renderer;
     std::vector<std::pair<int, int>> damage = {};
+
+    LibLog::Logger &log = LibLog::Logger::getInstance();
 public:
     TextGrid(SDL_Renderer*);
     int width = 0;

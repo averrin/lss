@@ -4,6 +4,7 @@
 #include "lss/game/location.hpp"
 
 class Generator {
+  LibLog::Logger &log = LibLog::Logger::getInstance();
 public:
   Generator();
   std::shared_ptr<Location> getLocation(LocationSpec);

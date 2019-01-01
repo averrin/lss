@@ -6,7 +6,6 @@
 #include "lss/game/enemy.hpp"
 #include "lss/game/player.hpp"
 #include "lss/generator/room.hpp"
-#include "lss/logger.hpp"
 #include "lss/utils.hpp"
 
 Enemy::Enemy(EnemySpec t) : Creature(), type(t) {
@@ -159,7 +158,7 @@ std::optional<int> Enemy::execAiAggressive(int ap) {
   if (s.exit) {
     return cost;
   }
-  L().start(utils::red("ENEMY"), label);
+  log.start(lu::red("ENEMY"), label);
   path = s.path;
 
   if (!cost && ap >= attackCost) {
@@ -167,12 +166,12 @@ std::optional<int> Enemy::execAiAggressive(int ap) {
       auto directionToTarget = getDirFromCell(currentCell, s.targetCell.get());
       attack(directionToTarget);
       cost = attackCost;
-      L().info(utils::red("ENEMY"), "attack");
+      log.info(lu::red("ENEMY"), "attack");
     }
   }
   if (!cost && ap >= throwCost) {
     if (!s.nearTarget && s.targetInTargetCell && s.canThrow) {
-      L().info(utils::red("ENEMY"), "throw");
+      log.info(lu::red("ENEMY"), "throw");
       auto t = std::find_if(inventory.begin(), inventory.end(), [](auto i) {
         return i->type.category == ItemCategories::THROWABLE;
       });
@@ -186,15 +185,15 @@ std::optional<int> Enemy::execAiAggressive(int ap) {
       auto direction = getDirFromCell(currentCell, nextCell.get());
       move(direction);
       cost = stepCost;
-      L().info(utils::red("ENEMY"), "move");
+      log.info(lu::red("ENEMY"), "move");
     }
   }
 
   if (!cost && ap >= waitCost) {
     cost = waitCost;
-      L().info(utils::red("ENEMY"), "wait");
+      log.info(lu::red("ENEMY"), "wait");
   }
-  L().stop(label, 20.f);
+  log.stop(label, 20.f);
   return cost;
 }
 
@@ -222,12 +221,12 @@ void Enemy::onEvent(CommitEvent &e) {
   if (HP(this) <= 0 || HP(hero.get()) <= 0)
     return;
 
-  std::string label = fmt::format("react [{}@{}.{}]", utils::magenta(name),
+  std::string label = fmt::format("react [{}@{}.{}]", lu::magenta(name),
                                   currentCell->x, currentCell->y);
-  L().start(utils::red("ENEMY"), label, true);
+  log.start(lu::red("ENEMY"), label, true);
   calcViewField();
   if (e.actionPoints == 0) {
-    L().stop(label, 5.f);
+    log.stop(label, 5.f);
     return;
   }
 
@@ -242,7 +241,7 @@ void Enemy::onEvent(CommitEvent &e) {
   if (spent > 0) {
     actionPoints = ap;
   }
-  L().stop(label, 5.f);
+  log.stop(label, 5.f);
 }
 
 bool Enemy::randomPath() { return true; }

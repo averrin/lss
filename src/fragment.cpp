@@ -101,7 +101,7 @@ std::string getColor(std::shared_ptr<Cell> cell) {
 
     // fmt::print("base color: {}\n", color);
     if (cell->illuminated) {
-      auto fg = Color(color);
+      auto fg = Color::fromHexString(color);
       float n = 0;
       for (auto ls : cell->lightSources) {
         auto glow = ls->getGlow();
@@ -113,10 +113,10 @@ std::string getColor(std::shared_ptr<Cell> cell) {
         auto glow = ls->getGlow();
         if (!glow)
           continue;
-        auto lc = Color(lightColors.at((*glow).type));
+        auto lc = Color::fromHexString(lightColors.at((*glow).type));
         fg.blend(lc, 1 / (n + 1));
       }
-      color = fg.getString();
+      color = fg.hex();
     }
     // fmt::print("result color: {}\n", color);
   }

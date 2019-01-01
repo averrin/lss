@@ -32,7 +32,7 @@ std::vector<std::shared_ptr<Cell>> ColorAnimation::tick() {
   if (counter < steps) {
     auto c = initColor;
     c.blend(targetColor, (1.f / steps) * counter);
-    fragment->setFgColor(c.getString());
+    fragment->setFgColor(c.hex());
     if (frameCallback != nullptr) {
       frameCallback(counter);
     }

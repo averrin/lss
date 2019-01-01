@@ -2,6 +2,7 @@
 #define __CREATURE_H_
 #include <algorithm>
 #include <thread>
+#include <liblog/liblog.hpp>
 
 #include "lss/game/content/traits.hpp"
 #include "lss/game/damage.hpp"
@@ -15,6 +16,7 @@
 #include <lss/game/location.hpp>
 
 class Creature : public Object {
+  LibLog::Logger &log = LibLog::Logger::getInstance();
 public:
   Creature();
   std::vector<std::shared_ptr<Cell>> viewField;

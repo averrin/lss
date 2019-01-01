@@ -72,7 +72,7 @@ void StatusLine::onEvent(ItemsFoundEvent &e) {
     itemNames.push_back(item->getFullTitle());
   }
   setContent({F(fmt::format("Here lies items: {}",
-                            utils::join(itemNames, std::string(", "))))});
+                            LibLog::utils::join(itemNames, std::string(", "))))});
 }
 
 void StatusLine::onEvent(MessageEvent &e) { setContent({F(e.message)}); }

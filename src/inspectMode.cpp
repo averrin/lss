@@ -257,7 +257,7 @@ void InspectMode::render() {
         }
       }
       app->inspectState->appendContent({F(
-          fmt::format("Enemies: <b>{}</b>", utils::join(enemyNames, ", ")))});
+          fmt::format("Enemies: <b>{}</b>", LibLog::utils::join(enemyNames, ", ")))});
       app->inspectState->appendContent(State::END_LINE);
     }
     auto items = utils::castObjects<Item>(objects);
@@ -267,7 +267,7 @@ void InspectMode::render() {
         itemNames.push_back(i->getFullTitle());
       }
       app->inspectState->appendContent(
-          {F(fmt::format("Items: <b>{}</b>", utils::join(itemNames, ", ")))});
+          {F(fmt::format("Items: <b>{}</b>", LibLog::utils::join(itemNames, ", ")))});
       app->inspectState->appendContent(State::END_LINE);
     }
   }

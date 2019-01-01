@@ -14,7 +14,6 @@ struct AiState {
   bool canSeeTarget;
   std::shared_ptr<Cell> targetCell;
   bool canSeeTargetCell = false;
-  ;
   std::vector<std::shared_ptr<Cell>> path;
   bool nearTargetCell = false;
   bool nearTarget = false;

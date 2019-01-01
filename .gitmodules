@@ -19,3 +19,9 @@
 [submodule "backward-cpp"]
 	path = backward-cpp
 	url = https://github.com/bombela/backward-cpp.git
+[submodule "include/libcolor"]
+	path = include/libcolor
+	url = https://github.com/averrin/libcolor
+[submodule "include/liblog"]
+	path = include/liblog
+	url = https://github.com/averrin/liblog

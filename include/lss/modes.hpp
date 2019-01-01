@@ -8,14 +8,15 @@ namespace sml = boost::sml;
 
 #include "lss/actions.hpp"
 #include "lss/keyEvent.hpp"
-#include "lss/logger.hpp"
 #include "lss/state.hpp"
 
 #include <SDL.h>
+#include <liblog/liblog.hpp>
 
 // TODO: add exit method for modes;
 class LSSApp;
 struct modes {
+  // LibLog::Logger &L = LibLog::Logger::getInstance();
   auto operator()() const noexcept {
     using namespace sml;
     auto is_esc = [](KeyPressedEvent e) {
@@ -57,47 +58,47 @@ struct modes {
     };
 
     auto set_normal = [](std::shared_ptr<Modes> m) {
-      L().info("MODE", utils::magenta("NORMAL"));
+      // L.info("MODE", lu::magenta("NORMAL"));
       m->currentMode = Modes::NORMAL;
     };
     auto set_insert = [](std::shared_ptr<Modes> m) {
-      L().info("MODE", utils::magenta("INSERT"));
+      // L.info("MODE", lu::magenta("INSERT"));
       m->currentMode = Modes::INSERT;
     };
     auto set_direction = [](std::shared_ptr<Modes> m) {
-      L().info("MODE", utils::magenta("DIRECTION"));
+      // L.info("MODE", lu::magenta("DIRECTION"));
       m->currentMode = Modes::DIRECTION;
     };
     auto set_object_select = [](std::shared_ptr<Modes> m) {
-      L().info("MODE", utils::magenta("SELECT"));
+      // L.info("MODE", lu::magenta("SELECT"));
       m->currentMode = Modes::OBJECTSELECT;
     };
     auto set_inventory = [](std::shared_ptr<Modes> m) {
-      L().info("MODE", utils::magenta("INVENTORY"));
+      // L.info("MODE", lu::magenta("INVENTORY"));
       m->currentMode = Modes::INVENTORY;
     };
     auto set_help = [](std::shared_ptr<Modes> m) {
-      L().info("MODE", utils::magenta("HELP"));
+      // L.info("MODE", lu::magenta("HELP"));
       m->currentMode = Modes::HELP;
     };
     auto set_go = [](std::shared_ptr<Modes> m) {
-      L().info("MODE", utils::magenta("GAME OVER"));
+      // L.info("MODE", lu::magenta("GAME OVER"));
       m->currentMode = Modes::GAMEOVER;
     };
     auto set_inspect = [](std::shared_ptr<Modes> m) {
-      L().info("MODE", utils::magenta("INSPECT"));
+      // L.info("MODE", lu::magenta("INSPECT"));
       m->currentMode = Modes::INSPECT;
     };
     auto set_pause = [](std::shared_ptr<Modes> m) {
-      L().info("MODE", utils::magenta("PAUSE"));
+      // L.info("MODE", lu::magenta("PAUSE"));
       m->currentMode = Modes::PAUSE;
     };
     auto set_target = [](std::shared_ptr<Modes> m) {
-      L().info("MODE", utils::magenta("TARGET"));
+      // L.info("MODE", lu::magenta("TARGET"));
       m->currentMode = Modes::TARGET;
     };
     auto set_hero = [](std::shared_ptr<Modes> m) {
-      L().info("MODE", utils::magenta("HERO"));
+      // L.info("MODE", lu::magenta("HERO"));
       m->currentMode = Modes::HERO;
     };
 

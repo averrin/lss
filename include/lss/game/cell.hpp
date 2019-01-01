@@ -1,11 +1,15 @@
 #ifndef __CELL_H_
 #define __CELL_H_
 #include "lss/game/content/traits.hpp"
+#include <liblog/liblog.hpp>
 #include <algorithm>
 #include <cmath>
 #include <memory>
 #include <set>
 #include <vector>
+
+namespace ll = LibLog;
+using lu = ll::utils;
 
 const float TORCH_DISTANCE = 4.5f;
 
@@ -45,6 +49,7 @@ enum class VisibilityState { UNKNOWN, SEEN, VISIBLE };
 enum class CellFeature { BLOOD, CAVE, FROST, MARK1, MARK2 };
 
 class Cell {
+  LibLog::Logger &log = LibLog::Logger::getInstance();
 public:
   Cell(CellSpec t) : type(t) {}
   Cell(int _x, int _y, CellSpec t)

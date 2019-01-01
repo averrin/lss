@@ -6,6 +6,7 @@
 #include <TextGrid.hpp>
 #include <string>
 #include <vector>
+#include <liblog/liblog.hpp>
 
 struct Position {
   int x;
@@ -18,6 +19,7 @@ struct Selection {
 };
 
 class State {
+  LibLog::Logger &log = LibLog::Logger::getInstance();
 public:
   Palette currentPalette;
   std::string render();

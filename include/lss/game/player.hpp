@@ -21,6 +21,7 @@ class Player : public Creature,
                public eb::EventHandler<ZapCommandEvent>,
                public eb::EventHandler<ThrowCommandEvent>,
                public eb::EventHandler<PickCommandEvent> {
+  LibLog::Logger &log = LibLog::Logger::getInstance();
 public:
   Player();
   ~Player();

@@ -11,62 +11,18 @@
 
 #include <fmt/format.h>
 #include <rang.hpp>
+#include <liblog/liblog.hpp>
 
 #include <SDL.h>
 
 #include <lss/game/direction.hpp>
 
+namespace ll = LibLog;
+using lu = ll::utils;
 using namespace std::string_literals;
 
 class utils {
 public:
-  static std::string color(rang::fg c, std::string m) {
-    return fmt::format("\033[{}m{}\033[0m", static_cast<int>(c), m);
-  }
-  static std::string style(rang::style c, std::string m) {
-    return fmt::format("\033[{}m{}\033[0m", static_cast<int>(c), m);
-  }
-  static std::string bg(rang::bg c, std::string m) {
-    return fmt::format("\033[{}m{}\033[0m", static_cast<int>(c), m);
-  }
-  static std::string black(std::string m) { return color(rang::fg::black, m); }
-  static std::string red(std::string m) { return color(rang::fg::red, m); }
-  static std::string green(std::string m) { return color(rang::fg::green, m); }
-  static std::string yellow(std::string m) {
-    return color(rang::fg::yellow, m);
-  }
-  static std::string blue(std::string m) { return color(rang::fg::blue, m); }
-  static std::string magenta(std::string m) {
-    return color(rang::fg::magenta, m);
-  }
-  static std::string cyan(std::string m) { return color(rang::fg::cyan, m); }
-  static std::string gray(std::string m) { return color(rang::fg::gray, m); }
-  static std::string bold(std::string m) { return style(rang::style::bold, m); }
-
-  static std::string blackBg(std::string m) { return bg(rang::bg::black, m); }
-  static std::string redBg(std::string m) { return bg(rang::bg::red, m); }
-  static std::string greenBg(std::string m) { return bg(rang::bg::green, m); }
-  static std::string yellowBg(std::string m) { return bg(rang::bg::yellow, m); }
-  static std::string blueBg(std::string m) { return bg(rang::bg::blue, m); }
-  static std::string magentaBg(std::string m) {
-    return bg(rang::bg::magenta, m);
-  }
-  static std::string cyanBg(std::string m) { return bg(rang::bg::cyan, m); }
-  static std::string grayBg(std::string m) { return bg(rang::bg::gray, m); }
-
-  template <typename T>
-  static std::string join(const T &array, const std::string &delimiter) {
-    std::string res;
-    for (auto &element : array) {
-      if (!res.empty()) {
-        res += delimiter;
-      }
-
-      res += element;
-    }
-
-    return res;
-  }
 
   template <typename rT, typename iT>
   static std::vector<std::shared_ptr<rT>>
@@ -82,17 +38,6 @@ public:
       result.resize(std::distance(result.begin(), it));
     }
     return result;
-  }
-
-  static std::vector<std::string> split(std::string strToSplit,
-                                        char delimeter) {
-    std::stringstream ss(strToSplit);
-    std::string item;
-    std::vector<std::string> splittedStrings;
-    while (std::getline(ss, item, delimeter)) {
-      splittedStrings.push_back(item);
-    }
-    return splittedStrings;
   }
 
   static std::optional<Direction>

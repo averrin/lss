@@ -62,7 +62,6 @@ set( SRC_FILES
 	${SRC_DIR}/palette.cpp
 	${SRC_DIR}/state.cpp
 	${SRC_DIR}/animation.cpp
-	${SRC_DIR}/logger.cpp
 
 	${SRC_DIR}/modes.cpp
 	${SRC_DIR}/inspectMode.cpp

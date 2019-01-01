@@ -20,6 +20,7 @@
 #include <assert.h>
 #include <fmt/format.h>
 #include <rang.hpp>
+#include <liblog/liblog.hpp>
 
 #include "lss/animation.hpp"
 #include "lss/commands.hpp"
@@ -44,11 +45,10 @@
 #include "EventBus.hpp"
 #include "EventHandler.hpp"
 
-#include "lss/logger.hpp"
-
 class EventReactor;
 class LSSApp {
 public:
+  LibLog::Logger &log = LibLog::Logger::getInstance();
   static const int MAX_LEVELS = 10;
 
   ~LSSApp();
@@ -87,7 +87,7 @@ public:
 
   void invalidate() { damaged = true; }
   void invalidate(std::string reason) {
-    L().info("MAIN", fmt::format("invalidate [{}]", utils::magenta(reason)));
+    log.info("MAIN", fmt::format("invalidate [{}]", lu::magenta(reason)));
     invalidate();
   }
   bool processCommand(std::string);

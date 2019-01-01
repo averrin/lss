@@ -23,10 +23,10 @@ std::string Item::getTitle(bool force) {
       "{}{}{}{}", (identified || force) ? name : unidName,
       specialPostfix.size() == 0
           ? ""
-          : fmt::format(" {}", utils::join(specialPostfix, " ")),
+          : fmt::format(" {}", lu::join(specialPostfix, " ")),
       effectNames.size() == 0 || (!identified && !force)
           ? ""
-          : fmt::format(" {{{}}}", utils::join(effectNames, ", ")),
+          : fmt::format(" {{{}}}", lu::join(effectNames, ", ")),
       durability == -1
           ? ""
           : fmt::format(" &lt;{}&gt;", durability != 0

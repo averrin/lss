@@ -32,6 +32,7 @@ public:
 };
 
 class Enemy : public Creature, public eb::EventHandler<CommitEvent> {
+  LibLog::Logger &log = LibLog::Logger::getInstance();
 public:
   Enemy(EnemySpec);
   ~Enemy();

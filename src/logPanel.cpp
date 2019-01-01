@@ -71,7 +71,7 @@ void LogPanel::onEvent(EnemyTakeDamageEvent &e) {
       for (auto t : e.damage->defTraits) {
         traitNames.push_back(fmt::format("<i>{}</i>", t.name));
       }
-      tags = fmt::format(" &lt;{}&gt;", utils::join(traitNames, ", "));
+      tags = fmt::format(" &lt;{}&gt;", lu::join(traitNames, ", "));
     }
     appendLine(
         {F(fmt::format("You <b>hit</b> {}: <b>{}</b> dmg{}{}", enemy->type.name,
@@ -105,7 +105,7 @@ void LogPanel::onEvent(HeroTakeDamageEvent &e) {
       for (auto t : e.damage->defTraits) {
         traitNames.push_back(fmt::format("<i>{}</i>", t.name));
       }
-      tags = fmt::format(" &lt;{}&gt;", utils::join(traitNames, ", "));
+      tags = fmt::format(" &lt;{}&gt;", lu::join(traitNames, ", "));
     }
     appendLine({F(fmt::format(
         "You take <span color='{}'><b>{}{}</b></span> dmg from {}{}{}",

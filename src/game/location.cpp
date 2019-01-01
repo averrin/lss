@@ -9,7 +9,6 @@
 #include "lss/game/location.hpp"
 #include "lss/game/player.hpp"
 #include "lss/game/terrain.hpp"
-#include "lss/logger.hpp"
 #include "lss/utils.hpp"
 
 float getDistance(std::shared_ptr<Cell> c, std::shared_ptr<Cell> cc) {
@@ -43,8 +42,8 @@ void Location::onEvent(DoorOpenedEvent &e) {
 }
 
 void Location::invalidate(std::string reason) {
-  L().info(utils::yellow("MAP"),
-           fmt::format("location invalidate [{}]", utils::magenta(reason)));
+  log.info(lu::yellow("MAP"),
+           fmt::format("location invalidate [{}]", lu::magenta(reason)));
   invalidate();
 }
 
@@ -220,8 +219,8 @@ void Location::leave(std::shared_ptr<Player> hero) {
 void Location::updateLight(std::shared_ptr<Player> hero) {
   if (!needUpdateLight)
     return;
-  std::string label = utils::yellow("update light");
-  L().start(utils::yellow("MAP"), label);
+  std::string label = lu::yellow("update light");
+  log.start(lu::yellow("MAP"), label);
   auto heroVD = hero->VISIBILITY_DISTANCE(hero.get());
   auto enemies = utils::castObjects<Enemy>(objects);
   std::vector<std::shared_ptr<Object>> torches;
@@ -338,7 +337,7 @@ void Location::updateLight(std::shared_ptr<Player> hero) {
     }
   }
 
-  L().stop(label);
+  log.stop(label);
   needUpdateLight = false;
 }
 

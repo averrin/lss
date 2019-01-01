@@ -174,7 +174,7 @@ void LSSApp::startGame() {
           // {}", locations.size()));
           // eb::EventBus::FireEvent(me);
         }
-        L().info("MAIN", utils::green("locations done"));
+        log.info("MAIN", lu::green("locations done"));
       },
       l));
 
@@ -265,7 +265,7 @@ void LSSApp::playAnimations() {
                            c->y * (hero->currentLocation->cells.front().size() +
                                    1)];
       if (ca->fragment == nullptr) {
-        ca->initColor = Color(f->fgColor);
+        ca->initColor = Color::fromHexString(f->fgColor);
       }
       ca->fragment = f;
     } else if (auto ma = std::dynamic_pointer_cast<MoveAnimation>(a)) {
@@ -374,7 +374,7 @@ void LSSApp::updateCell(std::shared_ptr<Cell> c) {
 
 void LSSApp::updateMap() {
   std::string label = "update map";
-  L().start("MAIN", label);
+  log.start("MAIN", label);
   auto index = 0;
   auto cc = hero->currentCell;
   for (auto r : hero->currentLocation->cells) {
@@ -392,7 +392,7 @@ void LSSApp::updateMap() {
   state->width = hero->currentLocation->cells.front().size();
   state->height = hero->currentLocation->cells.size();
   startBg();
-  L().stop(label);
+  log.stop(label);
 }
 
 void LSSApp::repeatTimer() {
@@ -473,7 +473,7 @@ void LSSApp::keyDown(KeyEvent event) {
 bool LSSApp::processCommand(std::string cmd) {
 
   // fmt::print("Command: {}\n", cmd);
-  auto s = utils::split(cmd, ' ').front();
+  auto s = lu::split(cmd, ' ').front();
   auto c = std::find_if(commands.begin(), commands.end(),
                         [s](std::shared_ptr<Command> c) {
                           return std::find(c->aliases.begin(), c->aliases.end(),
@@ -488,8 +488,8 @@ bool LSSApp::processCommand(std::string cmd) {
   if (event == std::nullopt)
     return false;
 
-  auto label = fmt::format("cmd {}", utils::magenta(cmd));
-  L().start("MAIN", label);
+  auto label = fmt::format("cmd {}", lu::magenta(cmd));
+  log.start("MAIN", label);
 
   std::lock_guard<std::mutex> lock(exec_mutex);
   // TODO: do it automagicaly
@@ -529,7 +529,7 @@ bool LSSApp::processCommand(std::string cmd) {
   } else if (auto e = std::dynamic_pointer_cast<LightCommandEvent>(*event)) {
     eb::EventBus::FireEvent(*e);
   }
-  L().stop(label);
+  log.stop(label);
 
   state->invalidate("process command");
   return true;
@@ -755,14 +755,14 @@ int main(int argc, char *argv[]) {
     // Update the view
     if (app->running) {
 
-      auto lu = "update";
+      auto lup = "update";
       auto ld = "draw";
-      L().start("MAIN", lu, true);
+      app->log.start("MAIN", lup, true);
       app->update();
-      L().stop(lu, 60.f);
-      L().start("MAIN", ld, true);
+      app->log.stop(lup, 60.f);
+      app->log.start("MAIN", ld, true);
       app->draw();
-      L().stop(ld, 50.f);
+      app->log.stop(ld, 50.f);
     }
   }
 

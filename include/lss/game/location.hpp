@@ -44,6 +44,7 @@ class Location : public Object,
                  public eb::EventHandler<LeaveCellEvent>,
                  public eb::EventHandler<EnterCellEvent> {
 public:
+  LibLog::Logger &log = LibLog::Logger::getInstance();
   Location(LocationSpec t) : Object(), type(t), features(t.features) {}
   ~Location();
   LocationSpec type;

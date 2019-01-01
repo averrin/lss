@@ -1,5 +1,5 @@
-#include "lss/logger.hpp"
 #include <TextGrid.hpp>
+#include "lss/utils.hpp"
 
 const int w = 12;
 const int h = 16;
@@ -38,8 +38,8 @@ void TextGrid::render() {
   if (damage.size() == 0)
     return;
   std::string label = fmt::format(
-      "render [{}]", utils::magenta(fmt::format("{}", damage.size())));
-  L().start(utils::cyan("GRID"), label, true);
+      "render [{}]", lu::magenta(fmt::format("{}", damage.size())));
+  log.start(lu::cyan("GRID"), label, true);
   for (auto [x, y] : damage) {
     auto s = fragments[y][x];
     s->render();
@@ -50,7 +50,7 @@ void TextGrid::render() {
     SDL_BlitSurface(s->getTexture(), NULL, surface, &dst);
   }
   damage.clear();
-  L().stop(label, 50.f);
+  log.stop(label, 50.f);
 }
 
 void TextGrid::clear() {
