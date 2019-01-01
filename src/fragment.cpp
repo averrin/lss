@@ -123,13 +123,30 @@ std::string getColor(std::shared_ptr<Cell> cell) {
   return color;
 }
 
+std::tuple<std::string, int> getBgColor(std::shared_ptr<Cell> cell) {
+  if (cell->hasFeature(CellFeature::ACID)) {
+    return {"#2da02f", 70};
+  }
+  if (cell->hasFeature(CellFeature::BLOOD)) {
+    return {"#602d2f", 50};
+  }
+  if (cell->hasFeature(CellFeature::FROST)) {
+    return {"#2d2f60", 50};
+  }
+
+  return {"#0d0f12", 100};
+}
+
 std::map<std::string, tpl_arg> getCellArgs(std::shared_ptr<Cell> cell) {
   if (cell->type == CellType::UNKNOWN) {
     return {};
   }
+  auto [bgc, bga] = getBgColor(cell);
   return {
       {"sign", cellSigns.at(cell->type)},
       {"color", getColor(cell)},
+      {"bgColor", bgc},
+      {"bgAlpha", bga},
       {"weight", cellWeights.at(cell->type)},
   };
 }
@@ -145,31 +162,48 @@ CellSign::CellSign(std::shared_ptr<Cell> cell)
                getCellArgs(cell),
                !(cell->type == CellType::UNKNOWN ||
                  cell->visibilityState == VisibilityState::UNKNOWN)) {}
-HeroSign::HeroSign(std::string color)
+HeroSign::HeroSign(std::shared_ptr<Cell> cell, std::string color)
     : Fragment("<span color='{{color}}' alpha='100%' bgalpha='{{bgAlpha}}%' "
                "bgcolor='{{bgColor}}' "
                "weight='bold'>@</span>",
-               {{"color", color}}) {}
-EnemySign::EnemySign(EnemySpec type)
+               {
+                   {"color", color},
+                   {"bgColor", std::get<0>(getBgColor(cell))},
+                   {"bgAlpha", std::get<1>(getBgColor(cell))},
+               }) {}
+EnemySign::EnemySign(std::shared_ptr<Cell> cell, EnemySpec type)
     : Fragment(
           "<span color='{{color}}' alpha='{{alpha}}%' bgalpha='{{bgAlpha}}%' "
           "bgcolor='{{bgColor}}' "
           "weight='bold'>{{sign}}</span>",
-          {{"sign", enemySigns.at(type)}, {"color", enemyColors.at(type)}}) {}
+          {
+              {"sign", enemySigns.at(type)},
+              {"color", enemyColors.at(type)},
+              {"bgColor", std::get<0>(getBgColor(cell))},
+              {"bgAlpha", std::get<1>(getBgColor(cell))},
+          }) {}
 DoorSign::DoorSign(bool opened)
     : Fragment("<span weight='bold' alpha='{{alpha}}%' bgalpha='{{bgAlpha}}%' "
                "bgcolor='{{bgColor}}' "
                "color='#8B5F20'>{{sign}}</span>",
                {{"sign", opened ? "/"s : "+"s}}) {}
-ItemSign::ItemSign(ItemSpec type)
+ItemSign::ItemSign(std::shared_ptr<Cell> cell, ItemSpec type)
     : Fragment("<span color='{{color}}' alpha='{{alpha}}%' "
                "bgcolor='{{bgColor}}' "
                "bgalpha='{{bgAlpha}}%'>{{sign}}</span>",
-               {{"sign", itemSigns.at(type)}, {"color", itemColors.at(type)}}) {
-}
-TerrainSign::TerrainSign(TerrainSpec type)
+               {
+                   {"sign", itemSigns.at(type)},
+                   {"color", itemColors.at(type)},
+                   {"bgColor", std::get<0>(getBgColor(cell))},
+                   {"bgAlpha", std::get<1>(getBgColor(cell))},
+               }) {}
+TerrainSign::TerrainSign(std::shared_ptr<Cell> cell, TerrainSpec type)
     : Fragment("<span color='{{color}}' alpha='{{alpha}}%' "
                "bgcolor='{{bgColor}}' "
                "bgalpha='{{bgAlpha}}%'>{{sign}}</span>",
-               {{"sign", terrainSigns.at(type)},
+               {{"sign", terrainSigns.find(type) != terrainSigns.end()
+                             ? terrainSigns.at(type)
+                             : cellSigns.at(cell->type)},
+                {"bgColor", std::get<0>(getBgColor(cell))},
+                {"bgAlpha", std::get<1>(getBgColor(cell))},
                 {"color", terrainColors.at(type)}}) {}

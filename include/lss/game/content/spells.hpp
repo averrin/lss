@@ -76,6 +76,13 @@ const auto FIRESTRIKE = std::make_shared<TargetSpell>(
                                   TerrainType::FIREBALL, true),
     4, 15);
 
+const auto ACIDPOOL = std::make_shared<TargetSpell>(
+    "Acid pool", 0,
+    std::make_shared<DamageSpell>("Acid damage",
+                                  DamageSpec(0, 2, 6, DamageType::ACID),
+                                  TerrainType::ACIDPOOL, true),
+    4, 20);
+
 const auto FROSTSTRIKE = std::make_shared<TargetSpell>(
     "Froststrike", 0,
     std::make_shared<DamageSpell>("Ice damage",
@@ -147,6 +154,7 @@ const std::vector<std::shared_ptr<Spell>> USABLE = {
     FIRESTREAM,
     FROSTSTREAM,
     FIRESTRIKE,
+    ACIDPOOL,
     FROSTSTRIKE,
 
     FLASH,

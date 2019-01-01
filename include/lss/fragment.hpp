@@ -86,12 +86,12 @@ public:
 
 class HeroSign : public Fragment {
 public:
-  HeroSign(std::string);
+  HeroSign(std::shared_ptr<Cell>, std::string);
 };
 
 class EnemySign : public Fragment {
 public:
-  EnemySign(EnemySpec);
+  EnemySign(std::shared_ptr<Cell>, EnemySpec);
 };
 
 class DoorSign : public Fragment {
@@ -101,12 +101,12 @@ public:
 
 class ItemSign : public Fragment {
 public:
-  ItemSign(ItemSpec);
+  ItemSign(std::shared_ptr<Cell>, ItemSpec);
 };
 
 class TerrainSign : public Fragment {
 public:
-  TerrainSign(TerrainSpec);
+  TerrainSign(std::shared_ptr<Cell>, TerrainSpec);
 };
 
 typedef std::vector<std::shared_ptr<Fragment>> Fragments;

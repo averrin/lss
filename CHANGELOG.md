@@ -1,5 +1,9 @@
 ## Changelog
 
+### 0.1.2 Im back (i love df)
+- slightly faster AI
+- cell bg color
+
 ### 0.1.1 Feature Freeze
 - more content
 - pagination in object select mode

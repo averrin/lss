@@ -112,6 +112,14 @@ void InspectMode::render() {
       app->inspectState->appendContent(
           {F(fmt::format("CAVE: [<b>{}</b>]", check))});
     }
+    if (f == CellFeature::ACID) {
+      app->inspectState->appendContent(
+          {F(fmt::format("ACID: [<b>{}</b>]", check))});
+    }
+    if (f == CellFeature::FROST) {
+      app->inspectState->appendContent(
+          {F(fmt::format("FROST: [<b>{}</b>]", check))});
+    }
     app->inspectState->appendContent(State::END_LINE);
   }
   app->inspectState->appendContent(State::END_LINE);

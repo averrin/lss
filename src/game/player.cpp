@@ -150,6 +150,10 @@ void Player::commit(std::string reason, int ap, bool s) {
     }
   }
 
+  if (HP(this) / HP_MAX(this) < 0.2f) {
+    currentCell->addFeature(CellFeature::BLOOD);
+  }
+
   auto label = fmt::format("commit {} [{}]", lu::blue(reason),
                            lu::magenta(fmt::format("{}", ap)));
   log.start(lu::blue("HERO"), label);

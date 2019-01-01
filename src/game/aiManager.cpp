@@ -1,8 +1,8 @@
-#include <algorithm>
-#include <future>
 #include "lss/game/aiManager.hpp"
 #include "lss/game/ai.hpp"
 #include "lss/game/enemy.hpp"
+#include <algorithm>
+#include <future>
 
 AiManager::AiManager(std::shared_ptr<Location> l) : currentLocation(l) {}
 
@@ -12,6 +12,7 @@ void AiManager::processCommit(std::vector<std::shared_ptr<Creature>> creatures,
     return;
   }
 
+  log.setThreshold(100);
   auto label = "aiManager process";
   log.start(lu::cyan("AI"), label, true);
   for (auto creature : creatures) {
@@ -26,9 +27,11 @@ void AiManager::processCommit(std::vector<std::shared_ptr<Creature>> creatures,
     for (auto creature : creatures) {
       auto enemy = std::dynamic_pointer_cast<Enemy>(creature);
       if (enemy) {
-        handles.push_back(std::thread([](std::shared_ptr<Enemy> enemy){
-          return enemy->prepareAiState();
-        }, enemy));
+        handles.push_back(std::thread(
+            [](std::shared_ptr<Enemy> enemy) {
+              return enemy->prepareAiState();
+            },
+            enemy));
       }
     }
     auto n = 0;
@@ -44,4 +47,5 @@ void AiManager::processCommit(std::vector<std::shared_ptr<Creature>> creatures,
   }
   currentLocation->updateLight(currentLocation->player);
   log.stop(label);
+  log.setThreshold(50);
 }

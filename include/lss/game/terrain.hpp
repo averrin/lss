@@ -72,6 +72,9 @@ const auto FROSTBALL = TerrainSpec{
 const auto ACIDBALL =
     TerrainSpec{"acidball", true,  true,
                 1,          false, LightSpec{TORCH_DISTANCE, LightType::ACID}};
+const auto ACIDPOOL =
+    TerrainSpec{"acidpool", true,  true,
+                -1,          false, LightSpec{1.5, LightType::ACID}};
 const auto MAGIC_LIGHT = TerrainSpec{
     "light", true, true, 1, false, LightSpec{2.5, LightType::MAGIC, true}};
 const auto MAGIC_LIGHT_LONG = TerrainSpec{

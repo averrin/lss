@@ -46,7 +46,7 @@ const CellSpec VOID = CellSpec{"void", false, true, {Traits::FLY}};
 }; // namespace CellType
 
 enum class VisibilityState { UNKNOWN, SEEN, VISIBLE };
-enum class CellFeature { BLOOD, CAVE, FROST, MARK1, MARK2 };
+enum class CellFeature { BLOOD, CAVE, FROST, MARK1, MARK2, ACID };
 
 class Cell {
   LibLog::Logger &log = LibLog::Logger::getInstance();

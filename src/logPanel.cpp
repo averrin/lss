@@ -138,6 +138,8 @@ void LogPanel::onEvent(EnterCellEvent &e) {
     appendLine({F("The floor is splattered with blood.")});
   } else if (e.cell->hasFeature(CellFeature::FROST)) {
     appendLine({F("The floor is covered with hoarfrost.")});
+  } else if (e.cell->hasFeature(CellFeature::ACID)) {
+    appendLine({F("The floor is covered with acid pool.")});
   }
   if (auto t = utils::castObjects<Terrain>(
           hero->currentLocation->getObjects(e.cell));

@@ -13,7 +13,7 @@
 #include "lss/keyEvent.hpp"
 #include "lss/utils.hpp"
 
-std::string VERSION = "0.1.1 by Averrin";
+std::string VERSION = "0.1.2 by Averrin";
 
 int HOffset = 24;
 int VOffset = 24;
@@ -321,14 +321,14 @@ void LSSApp::updateCell(std::shared_ptr<Cell> c) {
             auto i =
                 dot->y * (hero->currentLocation->cells.front().size() + 1) +
                 dot->x;
-            state->setFragment(i, std::make_shared<ItemSign>(ItemType::ROCK));
+            state->setFragment(i, std::make_shared<ItemSign>(c, ItemType::ROCK));
           }
         }
 
         if (!hero->canSee(c) && !hero->monsterSense)
           continue;
 
-        auto f = std::make_shared<EnemySign>(e->type);
+        auto f = std::make_shared<EnemySign>(c, e->type);
         state->setFragment(index, f);
         f->setAlpha(c->illumination);
 
@@ -349,12 +349,12 @@ void LSSApp::updateCell(std::shared_ptr<Cell> c) {
         f->setAlpha(c->illumination);
       } else if (auto i = std::dynamic_pointer_cast<Item>(o);
                  i && hero->canSee(c)) {
-        auto f = std::make_shared<ItemSign>(i->type);
+        auto f = std::make_shared<ItemSign>(c, i->type);
         state->setFragment(index, f);
         f->setAlpha(c->illumination);
       } else if (auto t = std::dynamic_pointer_cast<Terrain>(o);
                  t && hero->canSee(c)) {
-        auto f = std::make_shared<TerrainSign>(t->type);
+        auto f = std::make_shared<TerrainSign>(c, t->type);
         state->setFragment(index, f);
         f->setAlpha(c->illumination);
         if (t->getGlow()) {
@@ -365,7 +365,7 @@ void LSSApp::updateCell(std::shared_ptr<Cell> c) {
   }
 
   if (c == hero->currentCell) {
-    state->setFragment(index, std::make_shared<HeroSign>(
+    state->setFragment(index, std::make_shared<HeroSign>(c,
                                   !debug ? palettes::DARK.hero_color : "red"));
   }
 

@@ -35,6 +35,7 @@ const std::map<TerrainSpec, std::string> terrainColors = {
     {TerrainType::BUSH, "#228b22"},
     {TerrainType::DRILL, "#11cc11"},
     {TerrainType::DARKNESS, "#000"},
+    {TerrainType::ACIDPOOL, "#11cc11"},
 };
 
 const std::map<ItemSpec, std::string> itemSigns = {
