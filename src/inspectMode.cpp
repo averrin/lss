@@ -56,7 +56,7 @@ void InspectMode::render() {
   } else if (cell->visibilityState == VisibilityState::VISIBLE) {
     vs = "VISISBLE";
   }
-  app->inspectState->setContent(
+  app->inspectState->appendContent(
       {F(fmt::format("Visibility state: <b>{}</b>", vs))});
   app->inspectState->appendContent(State::END_LINE);
 

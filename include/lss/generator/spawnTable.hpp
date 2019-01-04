@@ -5,7 +5,7 @@
 #include <map>
 
 namespace SpawnTable {
-std::map<int, std::map<const EnemySpec, float>> DUNGEON = {
+const std::map<int, std::map<const EnemySpec, float>> DUNGEON = {
     {0,
      {
          {EnemyType::RAT, 0.4},
@@ -108,7 +108,7 @@ std::map<int, std::map<const EnemySpec, float>> DUNGEON = {
 }
 
 namespace LootTable {
-std::map<int, LootBox> DUNGEON = {
+const std::map<int, LootBox> DUNGEON = {
     {0, LootBox(0.08, LootBoxes::DUNGEON_0)},
     {1, LootBox(0.10, LootBoxes::DUNGEON_0)},
     {2, LootBox(0.12, LootBoxes::DUNGEON_1)},

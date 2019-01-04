@@ -264,6 +264,7 @@ public:
     return sqrt(pow(cc->x - c->x, 2) + pow(cc->y - c->y, 2));
   }
   bool needUpdateLight = true;
+  int apAccomulator = 0;
 
 private:
   virtual void onEvent(EnemyDiedEvent &e) override;

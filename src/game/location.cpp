@@ -11,6 +11,8 @@
 #include "lss/game/terrain.hpp"
 #include <lss/game/aiManager.hpp>
 #include "lss/utils.hpp"
+#include "lss/generator/room.hpp"
+#include "lss/generator/spawnTable.hpp"
 
 float getDistance(std::shared_ptr<Cell> c, std::shared_ptr<Cell> cc) {
   return sqrt(pow(cc->x - c->x, 2) + pow(cc->y - c->y, 2));
@@ -92,6 +94,29 @@ void Location::onEvent(CommitEvent &e) {
         removeObject(o);
       }
     }
+  }
+  apAccomulator += e.actionPoints;
+  if (apAccomulator >= 100000 / (type.threat+1) && !player->hasTrait(Traits::MIND_SIGHT)) {
+    apAccomulator = 0;
+    auto room = rooms[rand() % rooms.size()];
+    auto c = room->cells[rand() % room->cells.size()];
+    if (player->canSee(c)) {
+      while(player->canSee(c)) {
+        room = rooms[rand() % rooms.size()];
+        c = room->cells[rand() % room->cells.size()];
+      }
+    }
+    auto table = SpawnTable::DUNGEON.at(type.threat);
+    auto item = table.begin();
+    std::advance(item, rand() % table.size());
+    auto [etype, _] = *item;
+
+    auto enemy = std::make_shared<Enemy>(etype);
+    enemy->setCurrentCell(c);
+    enemy->currentLocation = player->currentLocation;
+    addObject<Enemy>(enemy);
+    log.info(lu::yellow("MAP"),
+           fmt::format("new enemy spawned at {}.{}", c->x, c->y));
   }
 
   if (e.actionPoints > 0) {

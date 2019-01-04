@@ -477,12 +477,12 @@ void placeLoot(std::shared_ptr<Location> location, int threat) {
   if (location->type.type == int(LocationType::DUNGEON)) {
     if (threat >= LootTable::DUNGEON.size())
       threat = LootTable::DUNGEON.size() - 1;
-    table = LootTable::DUNGEON[threat];
+    table = LootTable::DUNGEON.at(threat);
   } else if (location->type.type == LocationType::CAVERN) {
     // TODO: use cavern table
     if (threat >= int(LootTable::DUNGEON.size()))
       threat = LootTable::DUNGEON.size() - 1;
-    table = LootTable::DUNGEON[threat];
+    table = LootTable::DUNGEON.at(threat);
   }
 
   // TODO: gen count and get loot from 100% lootbox
@@ -528,12 +528,12 @@ void placeEnemies(std::shared_ptr<Location> location, int threat) {
   if (location->type.type == LocationType::DUNGEON) {
     if (threat >= int(SpawnTable::DUNGEON.size()))
       threat = SpawnTable::DUNGEON.size() - 1;
-    table = SpawnTable::DUNGEON[threat];
+    table = SpawnTable::DUNGEON.at(threat);
   } else if (location->type.type == LocationType::CAVERN) {
     // TODO: use cavern table
     if (threat >= int(SpawnTable::DUNGEON.size()))
       threat = SpawnTable::DUNGEON.size() - 1;
-    table = SpawnTable::DUNGEON[threat];
+    table = SpawnTable::DUNGEON.at(threat);
   }
   for (auto room : location->rooms) {
     if (room->type == RoomType::PASSAGE)

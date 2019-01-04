@@ -299,6 +299,10 @@ void HeroMode::render(std::shared_ptr<State> state) {
     state->appendContent(State::END_LINE);
   }
   state->appendContent(State::END_LINE);
+
+  state->appendContent(
+      F(fmt::format("AP commited:     <b>{}</b>", hero->report.apCommited)));
+  state->appendContent(State::END_LINE);
 }
 
 void GameOverMode::render(std::shared_ptr<State> state) {

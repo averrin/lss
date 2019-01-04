@@ -15,7 +15,8 @@ void AiManager::processCommit(std::vector<std::shared_ptr<Creature>> creatures,
   log.setThreshold(100);
   auto label = "aiManager process";
   log.start(lu::cyan("AI"), label, true);
-  for (auto creature : creatures) {
+  auto enemies = utils::castObjects<Enemy>(creatures);
+  for (auto creature : enemies) {
     creature->actionPoints += ap;
   }
 
@@ -24,8 +25,7 @@ void AiManager::processCommit(std::vector<std::shared_ptr<Creature>> creatures,
     currentLocation->updateLight(currentLocation->player);
     done = true;
     std::vector<std::thread*> handles;
-    for (auto creature : creatures) {
-      auto enemy = std::dynamic_pointer_cast<Enemy>(creature);
+    for (auto enemy : enemies) {
       if (enemy) {
         handles.push_back(new std::thread(
             [](std::shared_ptr<Enemy> enemy) {
@@ -35,13 +35,12 @@ void AiManager::processCommit(std::vector<std::shared_ptr<Creature>> creatures,
       }
     }
     auto n = 0;
-    for (auto creature : creatures) {
+    for (auto enemy : enemies) {
       auto t = handles.at(n);
       if (t->joinable()) {
         t->join();
       }
       n++;
-      auto enemy = std::dynamic_pointer_cast<Enemy>(creature);
       auto action = enemy->execAction();
       done = done ? action == std::nullopt : false;
     }
