@@ -45,21 +45,15 @@ std::string State::renderFragment(std::shared_ptr<Fragment> f) {
         return s.pos.y * (width + 1) + s.pos.x == n;
       });
   auto hasBg = isCursor || (select && selectionIt != selection.end());
-  auto currentBg = f->bgColor;
-  auto color = "#5b4650"s;
   if (hasBg) {
+    auto color = COLORS::CURSOR;
     if (!isCursor && selectionIt != selection.end()) {
       color = (*selectionIt).color;
     }
-    f->setBgColor(color);
-  }
-  fContent = f->render(this);
-  if (hasBg) {
-    // if (f->needRender) {
-    f->setBgColor(currentBg);
-    // } else {
-    // fContent = fmt::format("<span bgcolor='{}'>{}</span>", color, fContent);
-    // }
+    fContent = f->render(this, {{"bgColor", color}});
+  } else {
+    fContent = f->render(this);
+    // std::cout << fContent <<std::endl;
   }
   return fContent;
 }
@@ -116,6 +110,21 @@ void State::render(pango::SurfaceRef surface) {
   damaged = false;
   render(surface);
 };
+
+void State::invalidate(std::string reason, int index) {
+  fragments.at(index)->invalidate();
+  invalidate(reason);
+}
+
+void State::invalidateSelection(std::string reason) {
+  auto ci = cursor.y * (width + 1) + cursor.x;
+  fragments.at(ci)->invalidate();
+  for (auto s : selection) {
+    auto si = s.pos.y * (width + 1) + s.pos.x;
+    fragments.at(si)->invalidate();
+  }
+  invalidate(reason);
+}
 
 void State::invalidate(std::string reason) {
   log.info("STATE",

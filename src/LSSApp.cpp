@@ -112,17 +112,17 @@ void LSSApp::setup() {
 }
 
 void LSSApp::initModes() {
-  normalMode = std::make_shared<NormalMode>(this);
-  directionMode = std::make_shared<DirectionMode>(this);
-  insertMode = std::make_shared<InsertMode>(this);
-  objectSelectMode = std::make_shared<ObjectSelectMode>(this);
-  helpMode = std::make_shared<HelpMode>(this);
-  gameOverMode = std::make_shared<GameOverMode>(this);
-  inspectMode = std::make_shared<InspectMode>(this);
-  inventoryMode = std::make_shared<InventoryMode>(this);
-  pauseMode = std::make_shared<PauseMode>(this);
-  targetMode = std::make_shared<TargetMode>(this);
-  heroMode = std::make_shared<HeroMode>(this);
+  normalMode = std::make_shared<NormalMode>(shared_from_this());
+  directionMode = std::make_shared<DirectionMode>(shared_from_this());
+  insertMode = std::make_shared<InsertMode>(shared_from_this());
+  objectSelectMode = std::make_shared<ObjectSelectMode>(shared_from_this());
+  helpMode = std::make_shared<HelpMode>(shared_from_this());
+  gameOverMode = std::make_shared<GameOverMode>(shared_from_this());
+  inspectMode = std::make_shared<InspectMode>(shared_from_this());
+  inventoryMode = std::make_shared<InventoryMode>(shared_from_this());
+  pauseMode = std::make_shared<PauseMode>(shared_from_this());
+  targetMode = std::make_shared<TargetMode>(shared_from_this());
+  heroMode = std::make_shared<HeroMode>(shared_from_this());
 }
 
 void LSSApp::initStates() {
@@ -429,6 +429,7 @@ void LSSApp::keyDown(KeyEvent event) {
     typedCommand = "";
   }
   if (modeManager.modeFlags->currentMode != prevMode) {
+    state->invalidateSelection("mode exited");
     objectSelectMode->currentPage = 0;
     statusLine->setModeLine(modeManager.modeFlags->currentMode);
     return;
@@ -717,7 +718,7 @@ LSSApp::~LSSApp() {
 }
 
 int main(int argc, char *argv[]) {
-  auto app = new LSSApp();
+  auto app = std::make_shared<LSSApp>();
   app->setup();
   Uint32 lastTick = SDL_GetTicks();
   while (app->running) {
@@ -767,6 +768,5 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  delete app;
   return 0;
 }

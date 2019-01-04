@@ -5,7 +5,7 @@
 
 class InspectMode : public Mode {
 public:
-  InspectMode(LSSApp *app) : Mode(app){};
+  InspectMode(std::shared_ptr<LSSApp> app) : Mode(app){};
   bool processKey(KeyEvent e);
   void render();
 };

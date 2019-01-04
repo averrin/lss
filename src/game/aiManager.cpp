@@ -23,11 +23,11 @@ void AiManager::processCommit(std::vector<std::shared_ptr<Creature>> creatures,
   while (!done) {
     currentLocation->updateLight(currentLocation->player);
     done = true;
-    std::vector<std::thread> handles;
+    std::vector<std::thread*> handles;
     for (auto creature : creatures) {
       auto enemy = std::dynamic_pointer_cast<Enemy>(creature);
       if (enemy) {
-        handles.push_back(std::thread(
+        handles.push_back(new std::thread(
             [](std::shared_ptr<Enemy> enemy) {
               return enemy->prepareAiState();
             },
@@ -36,8 +36,9 @@ void AiManager::processCommit(std::vector<std::shared_ptr<Creature>> creatures,
     }
     auto n = 0;
     for (auto creature : creatures) {
-      if (handles[n].joinable()) {
-        handles[n].join();
+      auto t = handles.at(n);
+      if (t->joinable()) {
+        t->join();
       }
       n++;
       auto enemy = std::dynamic_pointer_cast<Enemy>(creature);

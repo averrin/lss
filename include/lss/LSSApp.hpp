@@ -46,7 +46,7 @@
 #include "EventHandler.hpp"
 
 class EventReactor;
-class LSSApp {
+class LSSApp : public std::enable_shared_from_this<LSSApp> {
 public:
   LibLog::Logger &log = LibLog::Logger::getInstance();
   static const int MAX_LEVELS = 10;

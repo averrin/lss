@@ -5,7 +5,7 @@
 
 class NormalMode : public Mode {
 public:
-  NormalMode(LSSApp *app) : Mode(app){};
+  NormalMode(std::shared_ptr<LSSApp> app) : Mode(app){};
   bool processKey(KeyEvent e);
 };
 

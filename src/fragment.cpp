@@ -26,7 +26,7 @@ Fragment::Fragment(std::string t, bool n) : template_str(t), needRender(n){};
 
 Fragment::~Fragment(){};
 
-std::string Fragment::render(State *state) {
+std::string Fragment::render(State *state, std::map<std::string, tpl_arg> overrides) {
   if (!needRender && !damaged) {
     if (cache == "") {
       damaged = true;
@@ -63,6 +63,10 @@ std::string Fragment::render(State *state) {
   }
   if (fgColor != COLORS::FG) {
     tpl.setValue("color", fgColor);
+  }
+
+  for (auto [key, value] : overrides) {
+    std::visit([&](auto const &val) { tpl.setValue(key, val); }, value);
   }
 
   auto content = tpl.render();
@@ -133,8 +137,11 @@ std::tuple<std::string, int> getBgColor(std::shared_ptr<Cell> cell) {
   if (cell->hasFeature(CellFeature::FROST)) {
     return {"#2d2f60", 50};
   }
+  if (cell->type == CellType::WATER) {
+    return {"#8d8fc0", 50};
+  }
 
-  return {"#0d0f12", 100};
+  return {COLORS::BG, 100};
 }
 
 std::map<std::string, tpl_arg> getCellArgs(std::shared_ptr<Cell> cell) {

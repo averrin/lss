@@ -191,12 +191,11 @@ void Player::onEvent(MoveCommandEvent &e) {
     auto d = ds[rand() % ds.size()];
     e.direction = *utils::getDirectionByName(d);
   }
+  auto res = move(e.direction, true);
   viewField = calcViewField();
-  if (move(e.direction, true)) {
-    commit("move", ap_cost::STEP / SPEED(this));
-  } else {
-    commit("move", 0);
-  }
+  currentLocation->updateLight(currentLocation->player);
+  currentLocation->updateView(currentLocation->player);
+  commit("move", res ? ap_cost::STEP / SPEED(this) : 0);
 }
 
 void Player::onEvent(AttackCommandEvent &e) {
@@ -248,6 +247,8 @@ void Player::onEvent(WalkCommandEvent &e) {
   auto enemies = utils::castObjects<Enemy>(currentLocation->objects);
   auto step = 0;
   while (move(e.direction)) {
+    viewField = calcViewField();
+    currentLocation->updateLight(currentLocation->player);
     auto lastHP = HP(this);
     commit("walk move", ap_cost::STEP / SPEED(this), true);
     if (HP(this) != lastHP) {
@@ -280,8 +281,6 @@ void Player::onEvent(WalkCommandEvent &e) {
     }
     step++;
   }
-  viewField = calcViewField();
-  currentLocation->updateLight(currentLocation->player);
   currentLocation->updateView(currentLocation->player);
   commit("walk end", 0);
 }

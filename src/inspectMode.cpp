@@ -25,8 +25,8 @@ bool InspectMode::processKey(KeyEvent event) {
         *utils::getDirectionByName(*d));
     if (!nc)
       break;
+    app->state->invalidateSelection("move inspect cursor");
     app->state->cursor = {(*nc)->x, (*nc)->y};
-    app->state->invalidate("move inspect cursor");
     render();
     return true;
   } break;
@@ -145,7 +145,7 @@ void InspectMode::render() {
     app->inspectState->appendContent(State::END_LINE);
     if (app->debug) {
       for (auto c : cell->room->cells) {
-        app->state->selection.push_back({{c->x, c->y}, "#f11"});
+        app->state->selection.push_back({{c->x, c->y}, "#811"});
       }
     }
 
@@ -279,4 +279,5 @@ void InspectMode::render() {
       app->inspectState->appendContent(State::END_LINE);
     }
   }
+  app->state->invalidateSelection("move inspect cursor");
 }

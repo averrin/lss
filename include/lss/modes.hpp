@@ -169,29 +169,29 @@ private:
 
 class Mode {
 public:
-  Mode(LSSApp *);
+  Mode(std::shared_ptr<LSSApp> );
   bool processKey(KeyEvent e) { return false; };
   bool activated = false;
 
 protected:
-  LSSApp *app;
+  std::shared_ptr<LSSApp> app;
 };
 
 class HintsMode : public Mode {
 public:
-  HintsMode(LSSApp *app) : Mode(app){};
+  HintsMode(std::shared_ptr<LSSApp> app) : Mode(app){};
   bool processKey(KeyEvent e);
   void processEvent(std::shared_ptr<LssEvent> e);
 };
 
 class LeaderMode : public Mode {
-  LeaderMode(LSSApp *app) : Mode(app){};
+  LeaderMode(std::shared_ptr<LSSApp> app) : Mode(app){};
   bool processKey(KeyEvent e);
 };
 
 class DirectionMode : public Mode {
 public:
-  DirectionMode(LSSApp *app) : Mode(app){};
+  DirectionMode(std::shared_ptr<LSSApp> app) : Mode(app){};
   bool processKey(KeyEvent e);
   void setCallback(DirectionCallback c) { callback = c; };
   DirectionCallback callback;
@@ -199,7 +199,7 @@ public:
 
 class InsertMode : public Mode {
 public:
-  InsertMode(LSSApp *app) : Mode(app){};
+  InsertMode(std::shared_ptr<LSSApp> app) : Mode(app){};
   bool processKey(KeyEvent e);
 };
 
@@ -209,7 +209,7 @@ typedef std::function<bool(std::shared_ptr<Object>)> SelectCallback;
 
 class TextMode : public Mode {
 public:
-  TextMode(LSSApp *app) : Mode(app){};
+  TextMode(std::shared_ptr<LSSApp> app) : Mode(app){};
   void setHeader(std::shared_ptr<Fragment> h) { header = h; }
   std::shared_ptr<Fragment> header;
   bool processKey(KeyEvent e);
@@ -218,7 +218,7 @@ public:
 
 class PauseMode : public Mode {
 public:
-  PauseMode(LSSApp *app) : Mode(app){};
+  PauseMode(std::shared_ptr<LSSApp> app) : Mode(app){};
   bool processKey(KeyEvent e);
   void setCallback(PauseCallback c) { callback = c; };
   PauseCallback callback;
@@ -226,7 +226,7 @@ public:
 
 class ObjectSelectMode : public TextMode {
 public:
-  ObjectSelectMode(LSSApp *app) : TextMode(app){};
+  ObjectSelectMode(std::shared_ptr<LSSApp> app) : TextMode(app){};
   bool processKey(KeyEvent e);
 
   void setObjects(Objects o) { objects = o; }
@@ -247,7 +247,7 @@ public:
 
 class InventoryMode : public TextMode {
 public:
-  InventoryMode(LSSApp *app) : TextMode(app){};
+  InventoryMode(std::shared_ptr<LSSApp> app) : TextMode(app){};
   void render(std::shared_ptr<State>);
 
   void setObjects(Objects o) { objects = o; }
@@ -256,27 +256,27 @@ public:
 
 class HelpMode : public TextMode {
 public:
-  HelpMode(LSSApp *app) : TextMode(app){};
+  HelpMode(std::shared_ptr<LSSApp> app) : TextMode(app){};
   void render(std::shared_ptr<State>);
 };
 
 class HeroMode : public TextMode {
 public:
-  HeroMode(LSSApp *app) : TextMode(app){};
+  HeroMode(std::shared_ptr<LSSApp> app) : TextMode(app){};
   void render(std::shared_ptr<State>);
   bool processKey(KeyEvent e);
 };
 
 class GameOverMode : public TextMode {
 public:
-  GameOverMode(LSSApp *app) : TextMode(app){};
+  GameOverMode(std::shared_ptr<LSSApp> app) : TextMode(app){};
   void render(std::shared_ptr<State>);
   bool processKey(KeyEvent e);
 };
 
 class TargetMode : public Mode {
 public:
-  TargetMode(LSSApp *app) : Mode(app){};
+  TargetMode(std::shared_ptr<LSSApp> app) : Mode(app){};
   bool processKey(KeyEvent e);
   void setCallback(TargetCallback c) { callback = c; };
   TargetCallback callback;

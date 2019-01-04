@@ -63,7 +63,7 @@ void ModeManager::toTarget() {
 
 void HintsMode::processEvent(std::shared_ptr<LssEvent> event) {}
 
-Mode::Mode(LSSApp *a) : app(a){};
+Mode::Mode(std::shared_ptr<LSSApp> a) : app(a){};
 
 bool HintsMode::processKey(KeyEvent event) { return false; }
 

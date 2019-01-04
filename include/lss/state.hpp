@@ -32,7 +32,9 @@ public:
   void appendContent(Fragments);
   void appendContent(std::shared_ptr<Fragment>);
   void setFragment(int, std::shared_ptr<Fragment>);
+  void invalidateSelection(std::string reason);
   void invalidate(std::string reason);
+  void invalidate(std::string reason, int index);
   void invalidate();
   void setSelect(bool);
   void clear();

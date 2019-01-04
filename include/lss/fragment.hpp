@@ -25,7 +25,7 @@ public:
   Fragment(std::string t, std::map<std::string, tpl_arg>, bool needRender);
   Fragment(std::string t, bool needRender);
   Fragment(std::string t);
-  std::string render(State *s);
+  std::string render(State *s, std::map<std::string, tpl_arg> = {});
   int index;
   int length;
 
