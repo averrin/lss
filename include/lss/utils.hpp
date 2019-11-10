@@ -29,7 +29,9 @@ public:
   castObjects(std::vector<std::shared_ptr<iT>> input, bool unique = false) {
     std::vector<std::shared_ptr<rT>> result;
     for (auto input_object : input) {
+      fmt::print("{}\n", input_object->name);
       if (auto casted_object = std::dynamic_pointer_cast<rT>(input_object)) {
+        fmt::print("> {}\n", input_object->name);
         result.push_back(casted_object);
       }
     }

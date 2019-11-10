@@ -84,7 +84,7 @@ void EventReactor::onEvent(StairEvent &e) {
 
 void EventReactor::onEvent(LocationChangeEvent &e) {
   for (auto c : app->hero->viewField) {
-    if (!c->trigger) {
+    if (c->trigger == nullptr) {
       continue;
     }
     auto a =
@@ -119,34 +119,46 @@ void EventReactor::onEvent(InventoryCommandEvent &e) {
 }
 
 void EventReactor::onEvent(UseCommandEvent &e) {
-  if (auto c = std::dynamic_pointer_cast<Consumable>(e.item);
+  if (auto c = std::dynamic_pointer_cast<Usable>(e.item);
       c && e.item != nullptr) {
-    auto spell = c->spell;
-
-    app->hero->identify(e.item);
-    std::for_each(app->hero->inventory.begin(), app->hero->inventory.end(),
-                  [&](auto item) {
-                    if (item->getTitle(true) == e.item->getTitle(true)) {
-                      app->hero->identify(item);
-                    }
-                  });
-
-    app->hero->inventory.erase(std::remove(app->hero->inventory.begin(),
-                                           app->hero->inventory.end(), e.item));
 
     auto me = std::make_shared<MessageEvent>(
         nullptr, fmt::format("You use {}", e.item->getTitle()));
     eb::EventBus::FireEvent(*me);
     // auto caster = std::dynamic_pointer_cast<Creature>(e.getSender());
-    return app->magic->castSpell(app->hero, spell);
+
+    if (std::dynamic_pointer_cast<Usable>(e.item) &&
+        app->hero->currentCell->trigger != nullptr) {
+      auto trigger = std::dynamic_pointer_cast<UseTrigger>(app->hero->currentCell->trigger);
+      if (trigger && trigger->item == e.item->type) {
+        trigger->activate();
+      }
+    }
+    if (auto cons = std::dynamic_pointer_cast<Consumable>(e.item)) {
+      app->hero->identify(e.item);
+      std::for_each(app->hero->inventory.begin(), app->hero->inventory.end(),
+                    [&](auto item) {
+                      if (item->getTitle(true) == e.item->getTitle(true)) {
+                        app->hero->identify(item);
+                      }
+                    });
+
+      app->hero->inventory.erase(std::remove(app->hero->inventory.begin(),
+                                           app->hero->inventory.end(), e.item));
+
+      auto spell = cons->spell;
+      return app->magic->castSpell(app->hero, spell);
+    }
   }
   app->objectSelectMode->setHeader(F("Items to use: "));
 
-  auto usable = utils::castObjects<Consumable>(app->hero->inventory);
+  fmt::print("\n--\n");
+  auto usable = utils::castObjects<Usable>(app->hero->inventory);
+  fmt::print("\n--\n");
   app->objectSelectMode->setObjects(utils::castObjects<Object>(usable));
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
-    if (auto item = std::dynamic_pointer_cast<Consumable>(o)) {
+    if (auto item = std::dynamic_pointer_cast<Usable>(o)) {
       return fmt::format("<span weight='bold'>{}</span> - {}", letter,
                          item->getFullTitle());
     }
@@ -155,7 +167,7 @@ void EventReactor::onEvent(UseCommandEvent &e) {
   app->objectSelectMode->setFormatter(formatter);
 
   app->objectSelectMode->setCallback([&](std::shared_ptr<Object> o) {
-    auto item = std::dynamic_pointer_cast<Consumable>(o);
+    auto item = std::dynamic_pointer_cast<Usable>(o);
     UseCommandEvent e(item);
     eb::EventBus::FireEvent(e);
     app->modeManager.toNormal();

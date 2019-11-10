@@ -53,6 +53,8 @@ const auto ROCK =
                                DamageSpec(1, 0, 0, DamageType::WEAPON))});
 const auto PICK_AXE = std::make_shared<Item>(ItemType::PICK_AXE);
 
+const auto QUEST_ITEM = std::make_shared<Usable>(ItemType::EMPTY);
+
 /* Kits */
 const std::vector<std::shared_ptr<Item>> LOOT_0 = {
     DAGGER,

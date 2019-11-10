@@ -87,6 +87,10 @@ Player::Player() : Creature() {
   knives->count = 5;
   inventory.push_back(knives);
 
+  auto questItem = Prototype::QUEST_ITEM->clone();
+  questItem->count = 1;
+  inventory.push_back(questItem);
+
   getSlot(sword->type.wearableType)->equip(sword);
   getSlot(armor->type.wearableType)->equip(armor);
 

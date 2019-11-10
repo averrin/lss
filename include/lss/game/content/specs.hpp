@@ -3,6 +3,7 @@
 #include "lss/game/itemSpec.hpp"
 
 namespace ItemType {
+ItemSpec const EMPTY = {"strange item", ItemCategories::USABLE};
 ItemSpec const GRASS = {"herb", ItemCategories::CONSUMABLES};
 ItemSpec const SCROLL = {"scroll", ItemCategories::CONSUMABLES};
 ItemSpec const POTION = {"potion", ItemCategories::CONSUMABLES};

@@ -1,6 +1,7 @@
 #ifndef __CELL_H_
 #define __CELL_H_
 #include "lss/game/content/traits.hpp"
+#include "lss/game/trigger.hpp"
 #include <liblog/liblog.hpp>
 #include <algorithm>
 #include <cmath>
@@ -73,12 +74,12 @@ public:
   std::shared_ptr<Object> nearestLightEmitter;
   std::shared_ptr<Room> room;
 
-  int x;
-  int y;
+  int x = 0;
+  int y = 0;
 
   bool passThrough = false;
   bool seeThrough = false;
-  bool trigger = false;
+  std::shared_ptr<Trigger> trigger = nullptr;
 
   bool damaged = true;
   void invalidate(std::string reason);

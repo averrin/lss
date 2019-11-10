@@ -78,11 +78,17 @@ public:
   }
 };
 
-class Consumable : public Item {
+class Usable : public Item {
+public:
+    Usable(ItemSpec t): Item(t) {}
+    Usable(std::string un, std::string n, ItemSpec t) : Item(un, n, t) {}
+};
+
+class Consumable : public Usable {
 public:
   Consumable(std::string un, std::string n, ItemSpec t,
              std::shared_ptr<Spell> s)
-      : Item(un, n, t), spell(s) {}
+      : Usable(un, n, t), spell(s) {}
   std::shared_ptr<Spell> spell;
   std::shared_ptr<Item> clone() { return std::make_shared<Consumable>(*this); }
   std::shared_ptr<Item> roll() { return std::make_shared<Consumable>(*this); }
