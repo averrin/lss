@@ -83,6 +83,15 @@ void EventReactor::onEvent(StairEvent &e) {
 }
 
 void EventReactor::onEvent(LocationChangeEvent &e) {
+  for (auto c : app->hero->viewField) {
+    if (!c->trigger) {
+      continue;
+    }
+    auto a =
+        // std::make_shared<ColorAnimation>(c, Color::fromHexString("#eaa"), 8, true, true);
+        std::make_shared<ColorAnimation>(c, Color::fromHexString("#1d1f32"), 8, true, true);
+    app->animations.push_back(a);
+  }
   app->invalidate("location change");
 }
 

@@ -33,14 +33,19 @@ public:
 
 class ColorAnimation : public Animation {
 public:
-  ColorAnimation(std::shared_ptr<Object> o, Color c, int s, bool p)
-      : Animation(s), object(o), targetColor(c), pulse(p) {}
-  std::shared_ptr<Object> object;
+  ColorAnimation(std::shared_ptr<Object> o, Color c, int s, bool p, bool b = false)
+      : Animation(s), object(o), cell(o->currentCell), targetColor(c), pulse(p), bg(b) {}
+
+  ColorAnimation(std::shared_ptr<Cell> _cell, Color c, int s, bool p, bool b = false)
+      : Animation(s), cell(_cell), targetColor(c), pulse(p), bg(b) {}
+  std::shared_ptr<Cell> cell;
+  std::shared_ptr<Object> object = nullptr;
   Color targetColor;
   Color initColor;
   std::shared_ptr<Fragment> fragment;
   bool pulse;
   bool wayback = false;
+  bool bg = false;
   std::vector<std::shared_ptr<Cell>> tick();
 };
 

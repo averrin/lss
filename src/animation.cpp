@@ -27,12 +27,22 @@ std::vector<std::shared_ptr<Cell>> MoveAnimation::tick() {
 };
 
 std::vector<std::shared_ptr<Cell>> ColorAnimation::tick() {
-  std::vector<std::shared_ptr<Cell>> ret = {object->currentCell};
+  std::vector<std::shared_ptr<Cell>> ret = {};
+  if (object != nullptr) {
+    ret.push_back(object->currentCell);
+  } else {
+    ret.push_back(cell);
+  }
   counter++;
   if (counter < steps) {
     auto c = initColor;
     c.blend(targetColor, (1.f / steps) * counter);
-    fragment->setFgColor(c.hex());
+
+    if (bg) {
+      fragment->setBgColor(c.hex());
+    } else {
+      fragment->setFgColor(c.hex());
+    }
     if (frameCallback != nullptr) {
       frameCallback(counter);
     }

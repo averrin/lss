@@ -78,6 +78,7 @@ public:
 
   bool passThrough = false;
   bool seeThrough = false;
+  bool trigger = false;
 
   bool damaged = true;
   void invalidate(std::string reason);

@@ -1212,6 +1212,8 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
     for (auto c : r) {
       if (c->type == CellType::FLOOR && R::R() < P::BLOOD) {
         c->features.push_back(CellFeature::BLOOD);
+      // } else if (c->type == CellType::FLOOR && R::R() < 0.6) {
+        // c->trigger = true;
       } else if (c->type == CellType::FLOOR && R::R() < P::BONES) {
         auto bones = std::make_shared<Item>(ItemType::BONES, 1);
         bones->setCurrentCell(c);

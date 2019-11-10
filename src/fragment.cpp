@@ -65,6 +65,10 @@ std::string Fragment::render(State *state, std::map<std::string, tpl_arg> overri
     tpl.setValue("color", fgColor);
   }
 
+  if (bgColor != COLORS::BG) {
+    tpl.setValue("bgColor", bgColor);
+  }
+
   for (auto [key, value] : overrides) {
     std::visit([&](auto const &val) { tpl.setValue(key, val); }, value);
   }
@@ -128,6 +132,9 @@ std::string getColor(std::shared_ptr<Cell> cell) {
 }
 
 std::tuple<std::string, int> getBgColor(std::shared_ptr<Cell> cell) {
+  // if (cell->trigger && cell->visibilityState == VisibilityState::VISIBLE) {
+  //   return {"#aae", 40};
+  // }
   if (cell->hasFeature(CellFeature::ACID)) {
     return {"#2da02f", 70};
   }

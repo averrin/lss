@@ -1,7 +1,7 @@
 [requires]
-sdl2/2.0.8@bincrafters/stable
+sdl2/2.0.10@bincrafters/stable
 glm/0.9.9.0@g-truc/stable
-fmt/5.1.0@bincrafters/stable
+fmt/5.3.0@bincrafters/stable
 rang/3.1.0@rang/stable
 
 [generators]

@@ -255,17 +255,21 @@ void LSSApp::playAnimations() {
       continue;
     }
     if (auto ca = std::dynamic_pointer_cast<ColorAnimation>(a)) {
-      if (ca->object == nullptr || ca->object->currentCell == nullptr) {
+      if (ca->cell == nullptr || (ca->object != nullptr && ca->object->currentCell == nullptr)) {
         animations.erase(std::remove(animations.begin(), animations.end(), a));
         continue;
       };
-      auto c = ca->object->currentCell;
+      auto c = ca->cell;
       auto f =
           state->fragments[c->x +
                            c->y * (hero->currentLocation->cells.front().size() +
                                    1)];
       if (ca->fragment == nullptr) {
-        ca->initColor = Color::fromString(f->fgColor);
+        if (ca->bg) {
+          ca->initColor = Color::fromString(f->bgColor);
+        } else {
+          ca->initColor = Color::fromString(f->fgColor);
+        }
       }
       ca->fragment = f;
     } else if (auto ma = std::dynamic_pointer_cast<MoveAnimation>(a)) {
