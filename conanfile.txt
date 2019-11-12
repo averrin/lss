@@ -1,8 +1,13 @@
 [requires]
-sdl2/2.0.10@bincrafters/stable
 glm/0.9.9.0@g-truc/stable
 fmt/5.3.0@bincrafters/stable
 rang/3.1.0@rang/stable
+harfbuzz/2.6.2@bincrafters/stable
+freetype/2.10.0@bincrafters/stable
+zlib/1.2.11
+bzip2/1.0.8
+sdl2/2.0.10@bincrafters/stable
+cairo/1.17.2@bincrafters/stable
 
 [generators]
 cmake
