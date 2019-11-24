@@ -79,7 +79,7 @@ public:
 
   bool passThrough = false;
   bool seeThrough = false;
-  std::shared_ptr<Trigger> trigger = nullptr;
+    std::vector<std::shared_ptr<Trigger>> triggers = std::vector<std::shared_ptr<Trigger>>{};
 
   bool damaged = true;
   void invalidate(std::string reason);

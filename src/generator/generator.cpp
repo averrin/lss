@@ -1217,9 +1217,9 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
       if (c->type == CellType::FLOOR && R::R() < P::BLOOD) {
         c->features.push_back(CellFeature::BLOOD);
       } else if (c->type == CellType::FLOOR && R::R() < 0.1) {
-        c->trigger = std::make_shared<UseTrigger>(Prototype::QUEST_ITEM->type, [=]{
+        c->triggers.push_back(std::make_shared<UseTrigger>(Prototype::QUEST_ITEM->type, [=]{
           return testTrigger(c, location);
-        });
+        }));
       } else if (c->type == CellType::FLOOR && R::R() < P::BONES) {
         auto bones = std::make_shared<Item>(ItemType::BONES, 1);
         bones->setCurrentCell(c);

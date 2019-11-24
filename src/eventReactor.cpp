@@ -84,7 +84,9 @@ void EventReactor::onEvent(StairEvent &e) {
 
 void EventReactor::onEvent(LocationChangeEvent &e) {
   for (auto c : app->hero->viewField) {
-    if (c->trigger == nullptr || !c->trigger->enabled) {
+    if (c->triggers.size() == 0 || std::count_if(c->triggers.begin(), c->triggers.end(), [](std::shared_ptr<Trigger> t){
+          return t->enabled;
+        }) == 0) {
       continue;
     }
     auto a =
@@ -128,10 +130,12 @@ void EventReactor::onEvent(UseCommandEvent &e) {
     // auto caster = std::dynamic_pointer_cast<Creature>(e.getSender());
 
     if (std::dynamic_pointer_cast<Usable>(e.item) &&
-        app->hero->currentCell->trigger != nullptr) {
-      auto trigger = std::dynamic_pointer_cast<UseTrigger>(app->hero->currentCell->trigger);
-      if (trigger && trigger->item == e.item->type) {
-        trigger->activate();
+        app->hero->currentCell->triggers.size() != 0) {
+      for (auto t : app->hero->currentCell->triggers) {
+        auto trigger = std::dynamic_pointer_cast<UseTrigger>(t);
+        if (trigger && trigger->item == e.item->type) {
+          trigger->activate();
+        }
       }
     }
     if (auto cons = std::dynamic_pointer_cast<Consumable>(e.item)) {
@@ -516,4 +520,15 @@ void EventReactor::onEvent(ThrowCommandEvent &e) {
 
   app->objectSelectMode->render(app->objectSelectState);
   app->modeManager.toObjectSelect();
+}
+
+void EventReactor::onEvent(EnterCellEvent &e) {
+    if (e.cell->triggers.size() > 0) {
+      for (auto t : e.cell->triggers) {
+        auto trigger = std::dynamic_pointer_cast<EnterTrigger>(t);
+        if (trigger) {
+          trigger->activate();
+        }
+      }
+    }
 }
