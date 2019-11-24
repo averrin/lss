@@ -5,13 +5,16 @@
 
 #include "lss/game/itemSpec.hpp"
 
-typedef std::function<void()> TriggerCallback;
+typedef std::function<bool()> TriggerCallback;
 class Trigger {
     TriggerCallback callback;
 public:
         Trigger(TriggerCallback cb) : callback(cb) {}
+        bool enabled = true;
         void activate() {
-            callback();
+            if (enabled) {
+                enabled = callback();
+            }
         }
     virtual ~Trigger() = default;
 };

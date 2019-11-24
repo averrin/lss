@@ -17,6 +17,8 @@
 #include "lss/generator/spawnTable.hpp"
 #include "lss/utils.hpp"
 
+#include "../src/generator/triggers.cpp"
+
 #ifndef GEN_DEBUG
 #define GEN_DEBUG false
 #endif
@@ -1216,8 +1218,7 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
         c->features.push_back(CellFeature::BLOOD);
       } else if (c->type == CellType::FLOOR && R::R() < 0.1) {
         c->trigger = std::make_shared<UseTrigger>(Prototype::QUEST_ITEM->type, [=]{
-          MessageEvent me(nullptr, "Test trigger here.");
-          eb::EventBus::FireEvent(me);
+          return testTrigger(c, location);
         });
       } else if (c->type == CellType::FLOOR && R::R() < P::BONES) {
         auto bones = std::make_shared<Item>(ItemType::BONES, 1);

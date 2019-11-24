@@ -84,7 +84,7 @@ void EventReactor::onEvent(StairEvent &e) {
 
 void EventReactor::onEvent(LocationChangeEvent &e) {
   for (auto c : app->hero->viewField) {
-    if (c->trigger == nullptr) {
+    if (c->trigger == nullptr || !c->trigger->enabled) {
       continue;
     }
     auto a =
@@ -152,9 +152,7 @@ void EventReactor::onEvent(UseCommandEvent &e) {
   }
   app->objectSelectMode->setHeader(F("Items to use: "));
 
-  fmt::print("\n--\n");
   auto usable = utils::castObjects<Usable>(app->hero->inventory);
-  fmt::print("\n--\n");
   app->objectSelectMode->setObjects(utils::castObjects<Object>(usable));
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {

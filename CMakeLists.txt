@@ -44,10 +44,10 @@ if(NOT WIN32)
     find_package(OpenGL REQUIRED)
 endif()
 
-add_subdirectory(backward-cpp)
+# add_subdirectory(backward-cpp)
 
 set( SRC_FILES
-    ${BACKWARD_ENABLE}
+    # ${BACKWARD_ENABLE}
     ${BUS_DIR}/EventBus.cpp
     ${BUS_DIR}/EventRegisttration.cpp
     
@@ -86,6 +86,7 @@ set( SRC_FILES
 	${SRC_DIR}/game/door.cpp
 	${SRC_DIR}/game/damageSpec.cpp
 
+	# ${SRC_DIR}/generator/triggers.cpp
 	${SRC_DIR}/generator/generator.cpp
 
 	${SRC_DIR}/statusLine.cpp
@@ -111,7 +112,7 @@ include_directories(
     ${OPENGL_INCLUDE_DIR}
     ${CMAKE_BINARY_DIR})
 add_executable(${EXE_NAME} ${SRC_FILES})
-add_backward(${PROJECT_NAME})
+# add_backward(${PROJECT_NAME})
 target_link_libraries(${EXE_NAME}
   ${PANGO_LIBRARIES}
   ${OPENGL_LIBRARIES}

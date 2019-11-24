@@ -82,6 +82,8 @@ class Usable : public Item {
 public:
     Usable(ItemSpec t): Item(t) {}
     Usable(std::string un, std::string n, ItemSpec t) : Item(un, n, t) {}
+    std::shared_ptr<Item> clone() { return std::make_shared<Usable>(*this); }
+    std::shared_ptr<Item> roll() {  return std::make_shared<Usable>(*this); }
 };
 
 class Consumable : public Usable {
