@@ -29,3 +29,17 @@ bool testTrigger(std::shared_ptr<Cell> c, std::shared_ptr<Location> location) {
     return false;
 }
 
+
+bool bushTrigger(std::shared_ptr<Cell> c, std::shared_ptr<Location> location) {
+  for (auto t : utils::castObjects<Terrain>(location->objects)) {
+    if (t->type == TerrainType::BUSH && c == t->currentCell) {
+      location->removeObject(t);
+      auto grass = Prototype::GRASS->clone();
+      grass->setCurrentCell(c);
+      location->addObject(grass);
+      return false;
+    }
+  }
+  return true;
+
+}

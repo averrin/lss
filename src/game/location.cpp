@@ -197,14 +197,6 @@ void Location::onEvent(EnterCellEvent &e) {
       eb::EventBus::FireEvent(ie);
     }
   }
-  for (auto t : utils::castObjects<Terrain>(objects)) {
-    if (t->type == TerrainType::BUSH && e.cell == t->currentCell) {
-      removeObject(t);
-      auto grass = Prototype::GRASS->clone();
-      grass->setCurrentCell(e.cell);
-      addObject(grass);
-    }
-  }
   invalidateVisibilityCache(e.cell);
   updateView(player);
   invalidate("enter cell");

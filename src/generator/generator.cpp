@@ -895,6 +895,9 @@ void placeCaves(std::shared_ptr<Location> location) {
           auto s = std::make_shared<Terrain>(TerrainType::BUSH);
           s->setCurrentCell(c);
           location->addObject<Terrain>(s);
+          c->triggers.push_back(std::make_shared<EnterTrigger>([=](){
+            return bushTrigger(c, location);
+          }));
         } else {
           auto grass = Prototype::GRASS->clone();
           grass->setCurrentCell(c);

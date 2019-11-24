@@ -523,7 +523,8 @@ void EventReactor::onEvent(ThrowCommandEvent &e) {
 }
 
 void EventReactor::onEvent(EnterCellEvent &e) {
-    if (e.cell->triggers.size() > 0) {
+    auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
+    if (hero && e.cell->triggers.size() > 0) {
       for (auto t : e.cell->triggers) {
         auto trigger = std::dynamic_pointer_cast<EnterTrigger>(t);
         if (trigger) {
