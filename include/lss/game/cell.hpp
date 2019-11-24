@@ -1,7 +1,6 @@
 #ifndef __CELL_H_
 #define __CELL_H_
 #include "lss/game/content/traits.hpp"
-#include "lss/game/trigger.hpp"
 #include <liblog/liblog.hpp>
 #include <algorithm>
 #include <cmath>
@@ -16,6 +15,7 @@ const float TORCH_DISTANCE = 4.5f;
 
 class Room;
 class Object;
+class Trigger;
 struct CellSpec {
   std::string name;
 

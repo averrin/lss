@@ -119,6 +119,21 @@ EnemySpec const GOBLIN_ROGUE = {
     {Traits::NIGHT_VISION, Traits::DEADLY_SHADOWS, Traits::CAN_SWIM, Traits::SHADOW_RUNNER, Traits::MOB, Traits::DUAL_WIELD},
     Items{Prototype::POISON_DAGGER, Prototype::GOBLIN_DAGGER, Prototype::THROWING_AXES->setCount(5)}
 };
+
+
+EnemySpec const CULTIST = {
+    "cultist", 2,
+    1, 50, 0, 2,
+    DamageSpec(1, 1, 6, DamageType::WEAPON),
+    LootBox(1, {Prototype::TORCH}, {
+        LootBox(0.40, {Prototype::POTION_HEAL}),
+        LootBox(0.40, LootBoxes::SCROLLS),
+        LootBox(0.80, LootBoxes::LOOT_TIER_1),
+        LootBox(0.90, {Prototype::GOLD->setCount(100)})
+    }, false),
+    {}, Items{Prototype::TORCH, Prototype::POISON_DAGGER}
+};
+
 EnemySpec const ORK = {
     "ork", 2,
     1, 55, 0, 2,

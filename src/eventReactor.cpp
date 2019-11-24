@@ -1,6 +1,7 @@
 #include "lss/eventReactor.hpp"
 #include "lss/game/cell.hpp"
 #include "lss/game/spell.hpp"
+#include "lss/game/trigger.hpp"
 #include "lss/generator/room.hpp"
 #include "lss/state.hpp"
 #include "lss/utils.hpp"

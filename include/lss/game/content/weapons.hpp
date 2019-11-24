@@ -48,6 +48,7 @@ const auto DAGGER = std::make_shared<Item>(
     "dagger", ItemType::LIGHT_WEAPON,
     Effects{std::make_shared<MeleeDamage>(
         DamageSpec(R::I(-2, 2), 1, R::I(1, 3), DamageType::WEAPON))});
+
 const auto THROWING_KNIVES =
     std::make_shared<Item>(ItemType::THROWING_KNIVES, 1,
                            Effects{std::make_shared<MeleeDamage>(
