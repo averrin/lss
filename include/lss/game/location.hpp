@@ -9,6 +9,7 @@
 #include <cmath>
 #include <iostream>
 #include <map>
+#include <optional>
 
 enum LocationFeature {
   CAVE_PASSAGE,
@@ -55,6 +56,19 @@ public:
   std::shared_ptr<Player> player;
   int depth = 0;
   std::shared_ptr<AiManager> aiManager;
+
+  template <typename T>
+  std::optional<std::shared_ptr<T>> getObject(std::string name) {
+    for (auto o : objects) {
+      if (auto casted_object = std::dynamic_pointer_cast<T>(o)) {
+        if (casted_object->name == name) {
+          return casted_object;
+        }
+      }
+    }
+    return std::nullopt;
+  }
+
 
   template <typename T>
   void addObject(std::shared_ptr<T> o, std::shared_ptr<T> cc) {

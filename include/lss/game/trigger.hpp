@@ -63,6 +63,11 @@ namespace Triggers {
     };
 
     const auto ALTAR_TRIGGER = [](std::shared_ptr<Cell> c, std::shared_ptr<Location> location) {
+        auto statue = *location->getObject<Terrain>("statue");
+        auto rock = Prototype::ROCK->clone();
+        rock->setCurrentCell(statue->currentCell);
+        location->removeObject(statue);
+        location->addObject<Item>(rock);
         MessageEvent me(nullptr, "Suddenly, bloody runes enter the walls and floor slabs.");
         eb::EventBus::FireEvent(me);
 
@@ -73,7 +78,7 @@ namespace Triggers {
             n->invalidate();
 
             n->triggers.push_back(std::make_shared<EnterTrigger>([=]{
-            return TEST_ENTER_TRIGGER(n, location);
+                return TEST_ENTER_TRIGGER(n, location);
             }));
         }
         location->player->commit("trigger effect", 0);

@@ -84,6 +84,7 @@ namespace RoomTemplates {
       cell = room->getCell(3, 1);
       s = std::make_shared<Terrain>(TerrainType::STATUE);
       s->setCurrentCell(cell);
+      s->setName("statue");
       location->addObject<Terrain>(s);
       room->features.push_back(RoomFeature::STATUE);
 

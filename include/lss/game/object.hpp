@@ -25,6 +25,9 @@ public:
   bool passThrough = true;
   bool seeThrough = true;
   std::string name;
+  void setName(std::string n) {
+    name = n;
+  }
   int zIndex = 0;
 
   LightSpec light;

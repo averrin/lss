@@ -49,6 +49,7 @@ float SECRET_DOOR = 0.2;
 
 float STATUE = 0.1;
 float ALTAR = 0.1;
+// float ALTAR = 1.0;
 float VOID = 0.5;
 float LAKE = 0.5;
 
