@@ -97,51 +97,6 @@ Player::Player() : Creature() {
   // inventory.push_back(axe);
 }
 
-// TODO: fix shields
-std::string Player::getDmgDesc() {
-  auto primaryDmg = getPrimaryDmg();
-
-  auto haveLeft =
-      std::count_if(
-          equipment->slots.begin(), equipment->slots.end(),
-          [](std::shared_ptr<Slot> s) {
-            return s->item != nullptr &&
-                   s->item->type.wearableType !=
-                       WearableType::WEAPON_TWOHANDED &&
-                   std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
-                             WEAPON_LIGHT) != s->acceptTypes.end() &&
-                   std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
-                             WEAPON) == s->acceptTypes.end();
-          }) > 0;
-
-  if (primaryDmg != std::nullopt && haveLeft) {
-    auto [primarySlot, spec] = *primaryDmg;
-    auto secondaryDmg = getSecondaryDmg(primarySlot);
-    if (secondaryDmg != std::nullopt) {
-      auto [secondarySlot, spec2] = *secondaryDmg;
-      return fmt::format("{:+d} {}d{}{}", spec.modifier, spec.dices, spec.edges,
-                         hasTrait(Traits::DUAL_WIELD)
-                             ? fmt::format(" ({:+d} {}d{})", spec2.modifier,
-                                           spec2.dices, spec2.edges)
-                             : fmt::format(" ({:+d})", spec2.modifier));
-    }
-  } else if (haveLeft) {
-    auto secondaryDmg = getSecondaryDmg(nullptr);
-    if (secondaryDmg != std::nullopt) {
-      auto [secondarySlot, spec2] = *secondaryDmg;
-      return hasTrait(Traits::DUAL_WIELD)
-                 ? fmt::format("~ {:+d} {}d{}", spec2.modifier, spec2.dices,
-                               spec2.edges)
-                 : fmt::format("~ {:+d}", spec2.modifier);
-    }
-  } else if (primaryDmg != std::nullopt) {
-    auto [primarySlot, spec] = *primaryDmg;
-    return fmt::format("{:+d} {}d{}", spec.modifier, spec.dices, spec.edges);
-  }
-  return fmt::format("{:+d} {}d{}", dmgSpec.modifier, dmgSpec.dices,
-                     dmgSpec.edges);
-}
-
 void Player::commit(std::string reason, int ap, bool s) {
   if (hasLight() && !hasTrait(Traits::MAGIC_TORCH)) {
     auto lightSlot = getSlot(WearableType::LIGHT);
@@ -196,6 +151,7 @@ void Player::onEvent(MoveCommandEvent &e) {
     e.direction = *utils::getDirectionByName(d);
   }
   auto res = move(e.direction, true);
+  fmt::print("move after: {}.{}\n", currentCell->x, currentCell->y);
   viewField = calcViewField();
   currentLocation->updateLight(currentLocation->player);
   currentLocation->updateView(currentLocation->player);

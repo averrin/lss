@@ -41,7 +41,20 @@ public:
 
   Fragments fragments;
   Position cursor;
+  void setCursor(Position c) {
+    cursor = c;
+    invalidate();
+  }
   std::vector<Selection> selection;
+  void setSelection(Selection s) {
+    selection.push_back(s);
+    invalidate();
+  }
+  void selectionClear() {
+    invalidateSelection("clear");
+    selection.clear();
+  }
+
   int width;
   int height;
   bool select = false;

@@ -289,7 +289,7 @@ void LSSApp::playAnimations() {
 void LSSApp::setListeners() { reactor = std::make_shared<EventReactor>(this); }
 
 void LSSApp::updateCell(std::shared_ptr<Cell> c) {
-  if (!c->damaged)
+  if (!c->damaged && !state->select)
     return;
   auto objects = hero->currentLocation->getObjects(c);
   auto index = c->y * (hero->currentLocation->cells.front().size() + 1) + c->x;
@@ -302,7 +302,15 @@ void LSSApp::updateCell(std::shared_ptr<Cell> c) {
           !std::dynamic_pointer_cast<CellSign>(currentFragment)) {
         state->setFragment(index, f);
       }
-      state->setFragment(index, state->US);
+      if (state->select) {
+        if (debug) {
+          state->setFragment(index, f);
+        } else {
+          state->setFragment(index, std::make_shared<CellSign>(std::make_shared<Cell>(CellType::UNKNOWN)));
+        }
+      } else {
+        state->setFragment(index, state->US);
+      }
       break;
     case VisibilityState::SEEN:
       state->setFragment(index, f);

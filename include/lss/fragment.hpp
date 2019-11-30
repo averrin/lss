@@ -33,6 +33,7 @@ public:
   bool needRender = true;
   bool damaged = true;
   void invalidate() { damaged = true; }
+  void invalidate(bool killCache) { damaged = true; if(killCache) cache = ""; }
 
   std::string cache;
   int alpha = Cell::DEFAULT_LIGHT;

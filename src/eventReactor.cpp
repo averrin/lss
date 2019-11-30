@@ -345,10 +345,11 @@ void EventReactor::onEvent(TargetEvent &e) {
   app->targetMode->setCheckTarget(e.checkTarget);
   app->statusLine->setContent(State::target_mode);
 
+  app->state->invalidateSelection("move target cursor");
   if (e.startTarget == nullptr) {
-    app->state->cursor = {app->hero->currentCell->x, app->hero->currentCell->y};
+    app->state->setCursor({app->hero->currentCell->x, app->hero->currentCell->y});
   } else {
-    app->state->cursor = {e.startTarget->x, e.startTarget->y};
+    app->state->setCursor({e.startTarget->x, e.startTarget->y});
 
     auto location = app->hero->currentLocation;
     auto line = location->getLine(app->hero->currentCell, e.startTarget);

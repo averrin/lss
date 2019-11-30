@@ -58,9 +58,6 @@ std::string Fragment::render(State *state, std::map<std::string, tpl_arg> overri
   tpl.setValue("orange", state->currentPalette.orange);
   tpl.setValue("bgColor", bgColor);
 
-  for (auto [key, value] : args) {
-    std::visit([&](auto const &val) { tpl.setValue(key, val); }, value);
-  }
   if (fgColor != COLORS::FG) {
     tpl.setValue("color", fgColor);
   }
@@ -69,6 +66,9 @@ std::string Fragment::render(State *state, std::map<std::string, tpl_arg> overri
     tpl.setValue("bgColor", bgColor);
   }
 
+  for (auto [key, value] : args) {
+    std::visit([&](auto const &val) { tpl.setValue(key, val); }, value);
+  }
   for (auto [key, value] : overrides) {
     std::visit([&](auto const &val) { tpl.setValue(key, val); }, value);
   }
@@ -84,7 +84,9 @@ std::string Fragment::render(State *state, std::map<std::string, tpl_arg> overri
 
 std::string getColor(std::shared_ptr<Cell> cell) {
   std::string color;
-  if (cell->visibilityState == VisibilityState::SEEN) {
+  if (cell->visibilityState == VisibilityState::UNKNOWN) {
+    color = COLORS::BG;
+  } else if (cell->visibilityState == VisibilityState::SEEN) {
     color = cellColors.at(cell->type).at(true);
   } else {
     color = cellColors.at(cell->type).at(false);
@@ -152,9 +154,6 @@ std::tuple<std::string, int> getBgColor(std::shared_ptr<Cell> cell) {
 }
 
 std::map<std::string, tpl_arg> getCellArgs(std::shared_ptr<Cell> cell) {
-  if (cell->type == CellType::UNKNOWN) {
-    return {};
-  }
   auto [bgc, bga] = getBgColor(cell);
   return {
       {"sign", cellSigns.at(cell->type)},
@@ -166,10 +165,7 @@ std::map<std::string, tpl_arg> getCellArgs(std::shared_ptr<Cell> cell) {
 }
 
 CellSign::CellSign(std::shared_ptr<Cell> cell)
-    : Fragment(cell->type == CellType::UNKNOWN ||
-                       cell->visibilityState == VisibilityState::UNKNOWN
-                   ? cellSigns.at(cell->type)
-                   : "<span color='{{color}}' alpha='{{alpha}}%' "
+    : Fragment("<span color='{{color}}' alpha='{{alpha}}%' "
                      "bgcolor='{{bgColor}}' "
                      "bgalpha='{{bgAlpha}}%' "
                      "weight='{{weight}}'>{{sign}}</span>",

@@ -45,15 +45,17 @@ std::string State::renderFragment(std::shared_ptr<Fragment> f) {
         return s.pos.y * (width + 1) + s.pos.x == n;
       });
   auto hasBg = isCursor || (select && selectionIt != selection.end());
+
   if (hasBg) {
     auto color = COLORS::CURSOR;
     if (!isCursor && selectionIt != selection.end()) {
       color = (*selectionIt).color;
     }
-    fContent = f->render(this, {{"bgColor", color}});
+    f->invalidate(true);
+    fContent = f->render(this, {{"bgColor", color}, {"bgAlpha", 100}});
+    // std::cout << fContent << " override bgColor: " << color <<std::endl;
   } else {
     fContent = f->render(this);
-    // std::cout << fContent <<std::endl;
   }
   return fContent;
 }
@@ -73,7 +75,12 @@ void State::render(std::shared_ptr<TextGrid> grid) {
     auto y = 0;
     auto n = 0;
     for (auto f : fragments) {
-      if (f->damaged) {
+      auto selectionIt =
+          std::find_if(selection.begin(), selection.end(), [&](Selection s) {
+            return s.pos.y * (width + 1) + s.pos.x == n;
+          });
+      auto isCursor = (x == cursor.x && y == cursor.y) || selectionIt != selection.end();
+      if (f->damaged || isCursor) {
         grid->setFragment(x, y, renderFragment(f));
       }
       x++;

@@ -8,9 +8,25 @@ auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 
 bool InspectMode::processKey(KeyEvent event) {
   switch (event.getCode()) {
+  case SDL_SCANCODE_S:
+    highlightWhoCanSee = !highlightWhoCanSee;
+    app->state->invalidateSelection("change view mode");
+    render();
+    return true;
+  case SDL_SCANCODE_R:
+    showRooms = !showRooms;
+    app->state->invalidateSelection("change view mode");
+    render();
+    return true;
   case SDL_SCANCODE_J:
   case SDL_SCANCODE_H:
   case SDL_SCANCODE_L:
+    if (event.isShiftDown()) {
+      showLightSources = !showLightSources;
+      app->state->invalidateSelection("change view mode");
+      render();
+      return true;
+    }
   case SDL_SCANCODE_K:
   case SDL_SCANCODE_Y:
   case SDL_SCANCODE_U:
@@ -25,8 +41,8 @@ bool InspectMode::processKey(KeyEvent event) {
         *utils::getDirectionByName(*d));
     if (!nc)
       break;
-    app->state->invalidateSelection("move inspect cursor");
-    app->state->cursor = {(*nc)->x, (*nc)->y};
+    app->state->selectionClear();
+    app->state->setCursor({(*nc)->x, (*nc)->y});
     render();
     return true;
   } break;
@@ -44,9 +60,8 @@ void InspectMode::render() {
 
   auto line = location->getLine(app->hero->currentCell, cell);
   for (auto c : line) {
-    app->state->selection.push_back({{c->x, c->y}, COLORS::CURSOR_TRACE});
+    app->state->setSelection({{c->x, c->y}, COLORS::CURSOR_TRACE});
   }
-
   app->inspectState->setContent(
       {F(fmt::format("Selected cell: <b>{}.{}</b>", cell->x, cell->y))});
   app->inspectState->appendContent(State::END_LINE);
@@ -143,7 +158,7 @@ void InspectMode::render() {
     app->inspectState->appendContent({F(fmt::format(
         "Room features count: <b>{}</b>", cell->room->features.size()))});
     app->inspectState->appendContent(State::END_LINE);
-    if (app->debug) {
+    if (app->debug && showRooms) {
       for (auto c : cell->room->cells) {
         app->state->selection.push_back({{c->x, c->y}, "#811"});
       }
@@ -170,9 +185,11 @@ void InspectMode::render() {
   app->inspectState->appendContent(
       {F(fmt::format("Light sources: <b>{}</b>", cell->lightSources.size()))});
 
-  for (auto ls : cell->lightSources) {
-    auto c = ls->currentCell;
-    app->state->selection.push_back({{c->x, c->y}, "#1f1"});
+  if (showLightSources) {
+    for (auto ls : cell->lightSources) {
+      auto c = ls->currentCell;
+      app->state->selection.push_back({{c->x, c->y}, "#1f1"});
+    }
   }
   app->inspectState->appendContent(State::END_LINE);
   app->inspectState->appendContent(State::END_LINE);
@@ -198,13 +215,13 @@ void InspectMode::render() {
 
   auto allEnemies = utils::castObjects<Enemy>(location->objects);
   for (auto e : allEnemies) {
-    if (e->canSee(cell)) {
+    if (e->canSee(cell) && highlightWhoCanSee) {
       app->inspectState->appendContent(
           {F(fmt::format("<b>{} @ {}.{}</b> can see: [<b>{}</b>]", e->type.name,
                          e->currentCell->x, e->currentCell->y,
                          e->canSee(cell) ? check : " "))});
       app->state->selection.push_back(
-          {{e->currentCell->x, e->currentCell->y}, "#fff"});
+          {{e->currentCell->x, e->currentCell->y}, "#aaaa88"});
       app->inspectState->appendContent(State::END_LINE);
     }
   }
@@ -247,6 +264,24 @@ void InspectMode::render() {
                              (*glow).stable))});
           app->inspectState->appendContent(State::END_LINE);
         }
+        app->inspectState->appendContent({F(fmt::format(
+            "<b>HP</b>:                {:d}/{:d} ({:d})", int(e->HP(e.get())),
+            int(e->HP_MAX(e.get())), int(e->hp_max * e->strength)))});
+        app->inspectState->appendContent(State::END_LINE);
+        app->inspectState->appendContent(F(fmt::format(
+          "<b>MP</b>:                {:d}/{:d} ({:d})", int(e->MP(e.get())),
+          int(e->MP_MAX(e.get())), int(e->mp_max * e->intelligence))));
+        app->inspectState->appendContent(State::END_LINE);
+        app->inspectState->appendContent(F(fmt::format("<b>Speed</b>:             {} ({})",
+                                          e->SPEED(e.get()), e->speed)));
+        app->inspectState->appendContent(State::END_LINE);
+        app->inspectState->appendContent(F(fmt::format("<b>Defence</b>:           {:d}",
+                                          int(e->DEF(e.get())))));
+        app->inspectState->appendContent(State::END_LINE);
+        app->inspectState->appendContent(
+          F(fmt::format("<b>Damage</b>:            {}", e->getDmgDesc())));
+        app->inspectState->appendContent(State::END_LINE);
+
         app->inspectState->appendContent({F("Traits:")});
         app->inspectState->appendContent(State::END_LINE);
         for (auto t : e->traits) {

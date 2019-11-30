@@ -34,7 +34,6 @@ public:
   void commit(std::string reason, int ap, bool s = false);
   bool interact(std::shared_ptr<Object> actor) override;
 
-  std::string getDmgDesc();
   void onDamage(std::shared_ptr<Creature>, std::shared_ptr<Damage>) override;
   void onDie() override;
   void increaseIntelligence(float val);

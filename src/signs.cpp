@@ -189,6 +189,7 @@ const std::map<LightType, std::string> lightColors = {
 };
 
 const std::map<CellSpec, std::string> cellWeights = {
+    {CellType::UNKNOWN, "normal"},
     {CellType::FLOOR, "normal"},    {CellType::WALL, "bold"},
     {CellType::DOWNSTAIRS, "bold"}, {CellType::UPSTAIRS, "bold"},
     {CellType::WATER, "normal"},    {CellType::VOID, "normal"},

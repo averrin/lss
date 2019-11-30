@@ -4,7 +4,7 @@
 bool Item::interact(std::shared_ptr<Object> actor) { return false; }
 
 std::string Item::getFullTitle() {
-  return fmt::format("{}{}", count == 0 ? "" : fmt::format("{} ", count),
+  return fmt::format("{}{}", count <= 0 ? "" : fmt::format("{} ", count),
                      getTitle());
 }
 
@@ -21,7 +21,7 @@ std::string Item::getTitle(bool force) {
   }
   return fmt::format(
       "{}{}{}{}", (identified || force) ? name : unidName,
-      specialPostfix.size() == 0
+      specialPostfix.size() <= 0
           ? ""
           : fmt::format(" {}", lu::join(specialPostfix, " ")),
       effectNames.size() == 0 || (!identified && !force)

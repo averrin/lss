@@ -375,11 +375,12 @@ std::vector<std::shared_ptr<Cell>> Creature::calcViewField(bool force) {
   // if (cachedCell == currentCell && !force) {
   //   return;
   // }
-  // currentLocation->updateLight(currentLocation->player);
+  currentLocation->updateLight(currentLocation->player);
   auto vd = VISIBILITY_DISTANCE(this);
   if (hasTrait(Traits::NIGHT_VISION)) {
     vd = NIGHT_VISION_DISTANCE;
   }
+  // fmt::print("gv: {}.{}\n", currentCell->x, currentCell->y);
   return currentLocation->getVisible(currentCell, vd);
 
 }
@@ -413,7 +414,7 @@ void Creature::applyEoT(EoT eot, int modifier) {
   }
 }
 
-// TODO: get not vissible, but reachable
+// TODO: get not visible, but reachable
 std::vector<std::shared_ptr<Cell>> Creature::getInRadius(float distance) {
   std::vector<std::shared_ptr<Cell>> cells(viewField.size());
   auto it = std::copy_if(
@@ -561,4 +562,49 @@ Creature::findPath(std::shared_ptr<Cell> targetCell) {
   }
 
   return resultPath;
+}
+
+// TODO: fix shields
+std::string Creature::getDmgDesc() {
+  auto primaryDmg = getPrimaryDmg();
+
+  auto haveLeft =
+      std::count_if(
+          equipment->slots.begin(), equipment->slots.end(),
+          [](std::shared_ptr<Slot> s) {
+            return s->item != nullptr &&
+                   s->item->type.wearableType !=
+                       WearableType::WEAPON_TWOHANDED &&
+                   std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
+                             WEAPON_LIGHT) != s->acceptTypes.end() &&
+                   std::find(s->acceptTypes.begin(), s->acceptTypes.end(),
+                             WEAPON) == s->acceptTypes.end();
+          }) > 0;
+
+  if (primaryDmg != std::nullopt && haveLeft) {
+    auto [primarySlot, spec] = *primaryDmg;
+    auto secondaryDmg = getSecondaryDmg(primarySlot);
+    if (secondaryDmg != std::nullopt) {
+      auto [secondarySlot, spec2] = *secondaryDmg;
+      return fmt::format("{:+d} {}d{}{}", spec.modifier, spec.dices, spec.edges,
+                         hasTrait(Traits::DUAL_WIELD)
+                             ? fmt::format(" ({:+d} {}d{})", spec2.modifier,
+                                           spec2.dices, spec2.edges)
+                             : fmt::format(" ({:+d})", spec2.modifier));
+    }
+  } else if (haveLeft) {
+    auto secondaryDmg = getSecondaryDmg(nullptr);
+    if (secondaryDmg != std::nullopt) {
+      auto [secondarySlot, spec2] = *secondaryDmg;
+      return hasTrait(Traits::DUAL_WIELD)
+                 ? fmt::format("~ {:+d} {}d{}", spec2.modifier, spec2.dices,
+                               spec2.edges)
+                 : fmt::format("~ {:+d}", spec2.modifier);
+    }
+  } else if (primaryDmg != std::nullopt) {
+    auto [primarySlot, spec] = *primaryDmg;
+    return fmt::format("{:+d} {}d{}", spec.modifier, spec.dices, spec.edges);
+  }
+  return fmt::format("{:+d} {}d{}", dmgSpec.modifier, dmgSpec.dices,
+                     dmgSpec.edges);
 }

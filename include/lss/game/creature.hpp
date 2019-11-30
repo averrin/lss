@@ -46,6 +46,7 @@ public:
   std::vector<std::shared_ptr<Cell>> calcViewField(bool force = false);
   bool interact(std::shared_ptr<Object>);
   std::shared_ptr<Damage> getDamage(std::shared_ptr<Object>);
+  std::string getDmgDesc();
 
   std::string name = "Unnamed";
 

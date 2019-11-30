@@ -125,39 +125,49 @@ bool NormalMode::processKey(KeyEvent event) {
       app->hero->setCurrentCell(app->hero->currentLocation->exitCell);
       app->processCommand("down");
     } else {
-      app->objectSelectMode->setHeader(F("Lootbox for open: "));
 
-      std::vector<std::shared_ptr<LootBoxHolder>> boxes;
-      boxes.resize(LootBoxes::ALL.size());
-      std::transform(LootBoxes::ALL.begin(), LootBoxes::ALL.end(),
-                     boxes.begin(),
-                     [](auto b) { return std::make_shared<LootBoxHolder>(b); });
-      app->objectSelectMode->setObjects(
-          utils::castObjects<Object>(boxes, true));
+      if (app->debug) {
+        app->objectSelectMode->setHeader(F("Lootbox for open: "));
 
-      Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
-        if (auto h = std::dynamic_pointer_cast<LootBoxHolder>(o)) {
-          return fmt::format(
-              "<span weight='bold'>{}</span> - {} items, {} children, {}",
-              letter, h->box.items.size(), h->box.children.size(),
-              h->box.exclusive);
+        std::vector<std::shared_ptr<LootBoxHolder>> boxes;
+        boxes.resize(LootBoxes::ALL.size());
+        std::transform(LootBoxes::ALL.begin(), LootBoxes::ALL.end(),
+                      boxes.begin(),
+                      [](auto b) { return std::make_shared<LootBoxHolder>(b); });
+        app->objectSelectMode->setObjects(
+            utils::castObjects<Object>(boxes, true));
+
+        Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
+          if (auto h = std::dynamic_pointer_cast<LootBoxHolder>(o)) {
+            return fmt::format(
+                "<span weight='bold'>{}</span> - {} items, {} children, {}",
+                letter, h->box.items.size(), h->box.children.size(),
+                h->box.exclusive);
+          }
+          return "Unknown error"s;
+        };
+        app->objectSelectMode->setFormatter(formatter);
+
+        app->objectSelectMode->setCallback([&](std::shared_ptr<Object> o) {
+          auto box = std::dynamic_pointer_cast<LootBoxHolder>(o)->box;
+          for (auto item : box.open()) {
+            item->setCurrentCell(app->hero->currentCell);
+            app->hero->currentLocation->addObject<Item>(item);
+          }
+          app->modeManager.toNormal();
+          return true;
+        });
+
+        app->objectSelectMode->render(app->objectSelectState);
+        app->modeManager.toObjectSelect();
+      } else {
+        auto cells = app->hero->currentLocation->cells;
+        for (auto r : cells) {
+          for (auto c : r) {
+            c->invalidate();
+          }
         }
-        return "Unknown error"s;
-      };
-      app->objectSelectMode->setFormatter(formatter);
-
-      app->objectSelectMode->setCallback([&](std::shared_ptr<Object> o) {
-        auto box = std::dynamic_pointer_cast<LootBoxHolder>(o)->box;
-        for (auto item : box.open()) {
-          item->setCurrentCell(app->hero->currentCell);
-          app->hero->currentLocation->addObject<Item>(item);
-        }
-        app->modeManager.toNormal();
-        return true;
-      });
-
-      app->objectSelectMode->render(app->objectSelectState);
-      app->modeManager.toObjectSelect();
+      }
     }
     break;
   case SDL_SCANCODE_SLASH:

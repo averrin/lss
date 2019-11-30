@@ -437,7 +437,6 @@ Location::getVisible(std::shared_ptr<Cell> start, float distance) {
   auto os = start->seeThrough;
   start->seeThrough = true;
   auto field = fov::refresh(creaturePoint, bounds, cells);
-  // fmt::print("{}.{} : {}\n", start->x, start->y, field.size());
   for (auto v : field) {
     auto c = cells.at(v.y).at(v.x);
     auto d = sqrt(pow(start->x - c->x, 2) + pow(start->y - c->y, 2));
