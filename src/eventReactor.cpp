@@ -154,25 +154,47 @@ void EventReactor::onEvent(UseCommandEvent &e) {
       auto spell = cons->spell;
       return app->magic->castSpell(app->hero, spell);
     }
+  } else if (auto c = std::dynamic_pointer_cast<UsableTerrain>(e.terrain);
+      c && e.terrain != nullptr) {
+
+    if (auto t = std::dynamic_pointer_cast<Terrain>(e.terrain); t) {
+      for (auto trg : t->triggers) {
+        auto trigger = std::dynamic_pointer_cast<UseTrigger>(trg);
+        if (trigger) {
+          trigger->activate(app->hero);
+        }
+      }
+    }
   }
   app->objectSelectMode->setHeader(F("Items to use: "));
 
   auto usable = utils::castObjects<Usable>(app->hero->inventory);
-  app->objectSelectMode->setObjects(utils::castObjects<Object>(usable));
+  auto usableTerrain = utils::castObjects<UsableTerrain>(app->hero->currentLocation->getObjects(app->hero->currentCell));
+  auto objects = utils::castObjects<Object>(usable);
+  objects.insert(objects.end(), usableTerrain.begin(), usableTerrain.end());
+  app->objectSelectMode->setObjects(objects);
 
   Formatter formatter = [](std::shared_ptr<Object> o, std::string letter) {
     if (auto item = std::dynamic_pointer_cast<Usable>(o)) {
       return fmt::format("<span weight='bold'>{}</span> - {}", letter,
                          item->getFullTitle());
     }
+    if (auto t = std::dynamic_pointer_cast<UsableTerrain>(o)) {
+      return fmt::format("<span weight='bold'>{}</span> - {}", letter,
+                         t->type.name);
+    }
     return "Unknown error"s;
   };
   app->objectSelectMode->setFormatter(formatter);
 
   app->objectSelectMode->setCallback([&](std::shared_ptr<Object> o) {
-    auto item = std::dynamic_pointer_cast<Usable>(o);
-    UseCommandEvent e(item);
-    eb::EventBus::FireEvent(e);
+    if(auto item = std::dynamic_pointer_cast<Usable>(o); item) {
+        UseCommandEvent e(item);
+        eb::EventBus::FireEvent(e);
+    } else if(auto t = std::dynamic_pointer_cast<UsableTerrain>(o); t) {
+        UseCommandEvent e(t);
+        eb::EventBus::FireEvent(e);
+    }
     app->modeManager.toNormal();
     return true;
   });

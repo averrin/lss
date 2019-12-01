@@ -47,6 +47,7 @@ class PickTrigger : public Trigger {
 };
 class UseTrigger : public Trigger {
     public: UseTrigger(TriggerCallback cb) : Trigger(cb) {}
+    public: UseTrigger(TriggerHeroCallback cb) : Trigger(cb) {}
 };
 class UseItemTrigger : public Trigger {
     public:
@@ -100,8 +101,18 @@ namespace Triggers {
     };
 
     const auto TORCH_STAND_TRIGGER = [](std::shared_ptr<Player> hero, std::shared_ptr<Terrain> terrain) {
-        hero->pick(Prototype::TORCH->clone());
         hero->currentLocation->removeObject(terrain);
+        hero->pick(Prototype::TORCH->clone());
+        return false;
+    };
+
+    const auto HEAL_STAND_TRIGGER = [](std::shared_ptr<Player> hero, std::shared_ptr<UsableTerrain> terrain) {
+        Creature::heal(hero, 50, 100);
+
+        auto light = *hero->currentLocation->getObject<Terrain>("heal_light");
+        hero->currentLocation->removeObject(light);
+        hero->currentLocation->updateLight(hero);
+        hero->commit("trigger effect", 0);
         return false;
     };
 }

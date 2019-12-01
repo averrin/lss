@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <thread>
 #include <liblog/liblog.hpp>
+#include "EventBus.hpp"
 
 #include "lss/game/content/traits.hpp"
 #include "lss/game/damage.hpp"
@@ -244,6 +245,23 @@ public:
 
   AiState getAiState(std::shared_ptr<Object>);
   AiState lastAiState;
+
+  void commit(std::string reason, int ap, bool s = false);
+
+  //TODO: make method
+  static void heal(std::shared_ptr<Creature> caster, int min, int max) {
+    auto heal = R::Z(caster->HP_MAX(caster.get()) / 100 * min,
+                    caster->HP_MAX(caster.get()) / 100 * max);
+    caster->hp += heal;
+    if (caster->HP(caster.get()) > caster->HP_MAX(caster.get())) {
+      caster->hp = caster->HP_MAX(caster.get());
+    }
+    caster->commit("heal", 0);
+    auto a = std::make_shared<ColorAnimation>(caster, Color::fromHexString("#2222ff"), 8, true);
+    AnimationEvent ae(a);
+    eb::EventBus::FireEvent(ae);
+  }
+
 
 private:
   std::shared_ptr<Cell> cachedCell;

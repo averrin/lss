@@ -1116,6 +1116,7 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
 
   // placeTemplateInRoom(location, RoomTemplates::BONES);
   placeTemplate(location, RoomTemplates::ICE);
+  placeTemplateInRoom(location, RoomTemplates::HEAL_STAND_ROOM);
 
   start = std::chrono::system_clock::now();
   placeWalls(location);

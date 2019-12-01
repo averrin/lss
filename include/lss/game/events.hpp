@@ -8,6 +8,7 @@
 #include "Event.hpp"
 
 class Item;
+class UsableTerrain;
 typedef std::vector<std::shared_ptr<Item>> Items;
 class Slot;
 class Cell;
@@ -226,8 +227,10 @@ public:
 class UseCommandEvent : public CommandEvent {
 public:
   UseCommandEvent(std::shared_ptr<Item>);
+  UseCommandEvent(std::shared_ptr<UsableTerrain>);
   UseCommandEvent();
   std::shared_ptr<Item> item;
+  std::shared_ptr<UsableTerrain> terrain;
 };
 
 class WaitCommandEvent : public CommandEvent {

@@ -61,7 +61,7 @@ public:
 
 class UsableTerrain: public Terrain {
   public:
-    UsableTerrain(TerrainSpec t, std::vector<std::shared_ptr<Trigger>> ts): Terrain(t, ts) {}
+    UsableTerrain(TerrainSpec t) : Terrain(t) {}
 };
 
 namespace TerrainType {

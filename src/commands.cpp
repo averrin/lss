@@ -197,6 +197,8 @@ DownCommand::getEvent(std::string s) {
 UseCommandEvent::UseCommandEvent() : CommandEvent(nullptr) {}
 UseCommandEvent::UseCommandEvent(std::shared_ptr<Item> i)
     : CommandEvent(nullptr), item(i) {}
+UseCommandEvent::UseCommandEvent(std::shared_ptr<UsableTerrain> i)
+    : CommandEvent(nullptr), terrain(i) {}
 std::optional<std::shared_ptr<CommandEvent>>
 UseCommand::getEvent(std::string s) {
   return std::make_shared<UseCommandEvent>();

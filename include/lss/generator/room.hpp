@@ -272,6 +272,32 @@ namespace RoomTemplates {
       return room;
     });
 
+  const auto HEAL_STAND_ROOM = std::make_shared<RoomTemplate>(
+    /*
+            .*.
+            .&.
+            ...
+    */
+    [](std::shared_ptr<Location> location) {
+      auto room = Room::makeRoom(3, 3, 3, 3, CellType::FLOOR);
+      auto cell = room->getCell(1, 1);
+      auto s = std::make_shared<UsableTerrain>(TerrainType::ALTAR);
+      s->setCurrentCell(cell);
+      location->addObject<Terrain>(s);
+
+      cell = room->getCell(1, 0);
+      auto fb = std::make_shared<Terrain>(TerrainType::ACID_LIGHT_FOREVER, -1);
+      fb->setCurrentCell(cell);
+      fb->setName("heal_light");
+      location->addObject(fb);
+
+      s->triggers.push_back(std::make_shared<UseTrigger>([=](std::shared_ptr<Player> hero){
+        return Triggers::HEAL_STAND_TRIGGER(hero, s);
+      }));
+
+      return room;
+    });
+
   const auto BONES = std::make_shared<RoomTemplate>(
     /*
              %%

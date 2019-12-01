@@ -22,7 +22,9 @@ Creature::Creature() {
   zIndex = 2;
 }
 
-// TOD: implement attribute setter (for hp_boost spell)
+void Creature::commit(std::string reason, int ap, bool s) {}
+
+// TODO: implement attribute setter (for hp_boost spell)
 float Attribute::operator()(Creature *c) {
   float base = 0;
   switch (type) {

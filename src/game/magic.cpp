@@ -53,21 +53,6 @@ void applyEffect(std::shared_ptr<Creature> caster,
     hero->commit("apply effect", 0);
   }
 }
-void heal(std::shared_ptr<Creature> caster, int min, int max) {
-  auto heal = R::Z(caster->HP_MAX(caster.get()) / 100 * min,
-                   caster->HP_MAX(caster.get()) / 100 * max);
-  caster->hp += heal;
-  if (caster->HP(caster.get()) > caster->HP_MAX(caster.get())) {
-    caster->hp = caster->HP_MAX(caster.get());
-  }
-  if (auto hero = std::dynamic_pointer_cast<Player>(caster)) {
-    hero->commit("heal", 0);
-  }
-  auto a = std::make_shared<ColorAnimation>(caster, Color::fromHexString("#2222ff"), 8, true);
-  AnimationEvent ae(a);
-  eb::EventBus::FireEvent(ae);
-}
-
 void Magic::castSpell(std::shared_ptr<Creature> caster,
                       std::shared_ptr<Spell> spell) {
   if (*spell == *Spells::REVEAL) {
@@ -93,11 +78,11 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
     hero->currentLocation->addObject(items.front());
     hero->commit("summon thing", 0);
   } else if (*spell == *Spells::HEAL_LESSER) {
-    heal(caster, 10, 25);
+    Creature::heal(caster, 10, 25);
   } else if (*spell == *Spells::HEAL) {
-    heal(caster, 25, 50);
+    Creature::heal(caster, 25, 50);
   } else if (*spell == *Spells::HEAL_GREATER) {
-    heal(caster, 50, 100);
+    Creature::heal(caster, 50, 100);
   } else if (*spell == *Spells::RESTORE_MANA) {
     auto heal = R::Z(caster->MP_MAX(caster.get()) / 100 * 25,
                      caster->MP_MAX(caster.get()) / 100 * 50);

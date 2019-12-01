@@ -56,6 +56,7 @@ std::string State::renderFragment(std::shared_ptr<Fragment> f) {
     // std::cout << fContent << " override bgColor: " << color <<std::endl;
   } else {
     fContent = f->render(this);
+    // std::cout << fContent <<std::endl;
   }
   return fContent;
 }

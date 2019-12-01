@@ -249,6 +249,7 @@ void LSSApp::serveBg() {
   }
 }
 
+//TODO: fix colorAnimations
 void LSSApp::playAnimations() {
   std::vector<std::shared_ptr<Cell>> changed;
   auto _anims = animations;
