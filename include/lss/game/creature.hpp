@@ -247,6 +247,7 @@ public:
   AiState lastAiState;
 
   void commit(std::string reason, int ap, bool s = false);
+  int waitedAP = 0;
 
   //TODO: make method
   static void heal(std::shared_ptr<Creature> caster, int min, int max) {

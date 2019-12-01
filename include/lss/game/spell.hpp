@@ -103,24 +103,24 @@ public:
 
 class RadiusSpell : public Spell {
 public:
-  RadiusSpell(std::string n, int l, std::shared_ptr<Spell> s, float r, int c)
-      : Spell(n, l, c), spell(s), radius(r) {}
+  RadiusSpell(std::string n, int a, int l, std::shared_ptr<Spell> s, float r, int c)
+      : Spell(n, l, c, a), spell(s), radius(r) {}
   std::shared_ptr<Spell> spell;
   float radius;
 };
 
 class LineSpell : public Spell {
 public:
-  LineSpell(std::string n, int l, std::shared_ptr<Spell> s, int le, int c)
-      : Spell(n, l, c), spell(s), length(le) {}
+  LineSpell(std::string n, int a, int l, std::shared_ptr<Spell> s, int le, int c)
+      : Spell(n, l, c, a), spell(s), length(le) {}
   std::shared_ptr<Spell> spell;
   int length;
 };
 
 class TargetSpell : public Spell {
 public:
-  TargetSpell(std::string n, int l, std::shared_ptr<Spell> s, int le, int c)
-      : Spell(n, l, c), spell(s), length(le) {}
+  TargetSpell(std::string n, int a, int l, std::shared_ptr<Spell> s, int le, int c)
+      : Spell(n, l, c, a), spell(s), length(le) {}
   std::shared_ptr<Spell> spell;
   int length;
 };

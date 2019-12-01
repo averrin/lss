@@ -84,7 +84,7 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
   } else if (*spell == *Spells::HEAL_GREATER) {
     Creature::heal(caster, 50, 100);
   } else if (*spell == *Spells::RESTORE_MANA) {
-    Creature::heal(caster, 25, 50);
+    Creature::restoreMana(caster, 25, 50);
   } else if (*spell == *Spells::TELEPORT_RANDOM) {
     auto room = caster->currentLocation
                     ->rooms[rand() % caster->currentLocation->rooms.size()];
@@ -196,7 +196,7 @@ void Magic::pauseAndEraseFireballs() {
     hero->currentLocation->invalidateVisibilityCache(hero->currentCell);
     hero->currentLocation->invalidate("cast spell");
     hero->calcViewField();
-    hero->commit("cast spell", 0);
+    hero->commitWaited("cast spell");
   });
   eb::EventBus::FireEvent(me);
 }

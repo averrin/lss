@@ -98,6 +98,11 @@ Player::Player() : Creature() {
   // inventory.push_back(axe);
 }
 
+void Player::commitWaited(std::string reason) {
+  commit(reason, waitedAP);
+  waitedAP = 0;
+}
+
 void Player::commit(std::string reason, int ap, bool s) {
   if (hasLight() && !hasTrait(Traits::MAGIC_TORCH)) {
     auto lightSlot = getSlot(WearableType::LIGHT);
@@ -152,7 +157,6 @@ void Player::onEvent(MoveCommandEvent &e) {
     e.direction = *utils::getDirectionByName(d);
   }
   auto res = move(e.direction, true);
-  fmt::print("move after: {}.{}\n", currentCell->x, currentCell->y);
   viewField = calcViewField();
   currentLocation->updateLight(currentLocation->player);
   currentLocation->updateView(currentLocation->player);
@@ -286,10 +290,11 @@ void Player::onEvent(ZapCommandEvent &e) {
   if (e.spell == nullptr)
     return;
   // TODO: do it before applying spell
-  commit("zap", e.spell->ap);
+  // commit("zap", e.spell->ap);
+  waitedAP += e.spell->ap;
   mp -= e.spell->cost;
   commit("after zap", 0, true);
-  increaseIntelligence(e.spell->cost);
+  increaseIntelligence(e.spell->cost * 4);
 }
 
 // TODO: move to creature

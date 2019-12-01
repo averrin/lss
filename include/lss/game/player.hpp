@@ -32,6 +32,7 @@ public:
   bool equip(std::shared_ptr<Item>);
   bool unequip(std::shared_ptr<Slot>);
   void commit(std::string reason, int ap, bool s = false);
+  void commitWaited(std::string reason);
   bool interact(std::shared_ptr<Object> actor) override;
 
   void onDamage(std::shared_ptr<Creature>, std::shared_ptr<Damage>) override;
