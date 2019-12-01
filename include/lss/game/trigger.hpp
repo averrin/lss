@@ -103,6 +103,9 @@ namespace Triggers {
     const auto TORCH_STAND_TRIGGER = [](std::shared_ptr<Player> hero, std::shared_ptr<Terrain> terrain) {
         hero->currentLocation->removeObject(terrain);
         hero->pick(Prototype::TORCH->clone());
+        hero->currentLocation->invalidate();
+        hero->currentLocation->updateLight(hero);
+        hero->commit("trigger effect", 0);
         return false;
     };
 
@@ -111,6 +114,7 @@ namespace Triggers {
 
         auto light = *hero->currentLocation->getObject<Terrain>("heal_light");
         hero->currentLocation->removeObject(light);
+        hero->currentLocation->invalidate();
         hero->currentLocation->updateLight(hero);
         hero->commit("trigger effect", 0);
         return false;
@@ -122,6 +126,7 @@ namespace Triggers {
 
         auto light = *hero->currentLocation->getObject<Terrain>("mana_light");
         hero->currentLocation->removeObject(light);
+        hero->currentLocation->invalidate();
         hero->currentLocation->updateLight(hero);
         hero->commit("trigger effect", 0);
         return false;

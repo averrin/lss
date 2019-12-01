@@ -116,40 +116,26 @@ public:
   void leave(std::shared_ptr<Player>);
   Objects getObjects(std::shared_ptr<Cell>);
   std::string getFeaturesTag() {
-    std::string locationFeatures = "___________";
-    if (hasFeature(LocationFeature::TORCHES)) {
-      locationFeatures[0] = 'T';
+    std::map<LocationFeature, std::string> featureMap = {
+    {LocationFeature::TORCHES, "T"},
+    {LocationFeature::CAVE_PASSAGE, "C"},
+    {LocationFeature::RIVER, "R"},
+    {LocationFeature::STATUE, "S"},
+    {LocationFeature::ALTAR, "A"},
+    {LocationFeature::VOID, "V"},
+    {LocationFeature::LAKE, "L"},
+    {LocationFeature::ICE, "I"},
+    {LocationFeature::HEAL, "H"},
+    {LocationFeature::MANA, "M"},
+    {LocationFeature::TREASURE_SMALL, "t"}
+  };
+    std::string locationFeatures = "";
+    for (auto [f, l] : featureMap) {
+      if (hasFeature(f)) {
+        locationFeatures += l;
+      }
     }
-    if (hasFeature(LocationFeature::CAVE_PASSAGE)) {
-      locationFeatures[1] = 'C';
-    }
-    if (hasFeature(LocationFeature::RIVER)) {
-      locationFeatures[2] = 'R';
-    }
-    if (hasFeature(LocationFeature::STATUE)) {
-      locationFeatures[3] = 'S';
-    }
-    if (hasFeature(LocationFeature::ALTAR)) {
-      locationFeatures[4] = 'A';
-    }
-    if (hasFeature(LocationFeature::VOID)) {
-      locationFeatures[5] = 'V';
-    }
-    if (hasFeature(LocationFeature::LAKE)) {
-      locationFeatures[6] = 'L';
-    }
-    if (hasFeature(LocationFeature::ICE)) {
-      locationFeatures[6] = 'I';
-    }
-    if (hasFeature(LocationFeature::HEAL)) {
-      locationFeatures[6] = 'H';
-    }
-    if (hasFeature(LocationFeature::MANA)) {
-      locationFeatures[6] = 'M';
-    }
-    if (hasFeature(LocationFeature::TREASURE_SMALL)) {
-      locationFeatures[6] = 't';
-    }
+
     return locationFeatures;
   }
 

@@ -224,7 +224,7 @@ namespace RoomTemplates {
         }
       }
 
-      if (R::R() < 0.3) {
+      if (R::R() < 0.5) {
         cell = room->getCell(2, 3);
         auto enemy = mapUtils::makeEnemy(location, cell, EnemyType::CULTIST);
         location->addObject<Enemy>(enemy);

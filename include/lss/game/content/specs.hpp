@@ -28,6 +28,8 @@ ItemSpec const AMULET = {"amulet", ItemCategories::JEWELLERY,
                          WearableType::NECK};
 ItemSpec const TORCH = {"torch", ItemCategories::LIGHT, WearableType::LIGHT,
                         30000};
+ItemSpec const CANDLE = {"candle", ItemCategories::LIGHT, WearableType::LIGHT,
+                        45000};
 ItemSpec const LANTERN = {"lantern", ItemCategories::LIGHT, WearableType::LIGHT,
                           60000};
 ItemSpec const GOLD_COINS = {"gold coins", ItemCategories::MISC};

@@ -51,6 +51,7 @@ const std::map<ItemSpec, std::string> itemSigns = {
     {ItemType::RING, "="},          {ItemType::AMULET, "'"},
 
     {ItemType::TORCH, "]"},         {ItemType::LANTERN, "]"},
+    {ItemType::CANDLE, "]"},
     {ItemType::GOLD_COINS, "$"},    {ItemType::PLATE, "["},
     {ItemType::CUIRASS, "["},
 
@@ -77,6 +78,7 @@ const std::map<ItemSpec, std::string> itemColors = {
     {ItemType::LIGHT_WEAPON, COLORS::GRAY},
     {ItemType::TORCH, "#ffa500"},
     {ItemType::LANTERN, "#a5a500"},
+    {ItemType::CANDLE, "#bba500"},
     {ItemType::GRASS, "#006400"},
 
     {ItemType::TWO_HAND, COLORS::WHITE},
@@ -105,6 +107,7 @@ const std::map<EnemySpec, std::string> enemySigns = {
     {EnemyType::BAT_LARGE, "B"},
     {EnemyType::GOBLIN_ROCKTHROWER, "g"},
     {EnemyType::GOBLIN, "g"},
+    {EnemyType::CULTIST, "k"},
     {EnemyType::ORK_BLACK, "o"},
     {EnemyType::ORK, "o"},
     {EnemyType::ORK_BERSERK, "o"},
@@ -139,6 +142,7 @@ const std::map<EnemySpec, std::string> enemyColors = {
     {EnemyType::BAT_LARGE, "#a9a9a9"},
     {EnemyType::GOBLIN_ROCKTHROWER, "#5050e0"},
     {EnemyType::GOBLIN, "#00f000"},
+    {EnemyType::CULTIST, "#881111"},
     {EnemyType::ORK, "#22aa22"},
     {EnemyType::ORK_BERSERK, "#aa2222"},
     {EnemyType::ORK_BLACK, "#555"},

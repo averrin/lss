@@ -125,13 +125,13 @@ EnemySpec const CULTIST = {
     "cultist", 2,
     1, 50, 0, 2,
     DamageSpec(1, 1, 6, DamageType::WEAPON),
-    LootBox(1, {Prototype::TORCH}, {
+    LootBox(1, {Prototype::CANDLE, Prototype::POISON_DAGGER}, {
         LootBox(0.40, {Prototype::POTION_HEAL}),
         LootBox(0.40, LootBoxes::SCROLLS),
         LootBox(0.80, LootBoxes::LOOT_TIER_1),
         LootBox(0.90, {Prototype::GOLD->setCount(100)})
     }, false),
-    {}, Items{Prototype::TORCH, Prototype::POISON_DAGGER}
+    {}, Items{Prototype::CANDLE, Prototype::POISON_DAGGER}
 };
 
 EnemySpec const ORK = {

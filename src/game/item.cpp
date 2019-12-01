@@ -3,9 +3,9 @@
 
 bool Item::interact(std::shared_ptr<Object> actor) { return false; }
 
-std::string Item::getFullTitle() {
+std::string Item::getFullTitle(bool force) {
   return fmt::format("{}{}", count <= 0 ? "" : fmt::format("{} ", count),
-                     getTitle());
+                     getTitle(force));
 }
 
 std::string Item::getTitle(bool force) {

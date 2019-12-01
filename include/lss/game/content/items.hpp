@@ -20,6 +20,9 @@ const auto GOLD = std::make_shared<Item>(ItemType::GOLD_COINS, 1);
 const auto TORCH = std::make_shared<Item>(
     ItemType::TORCH, Effects{std::make_shared<VisibilityModifier>(
                          LightSpec{4.5f, LightType::FIRE})});
+const auto CANDLE = std::make_shared<Item>(
+    ItemType::CANDLE, Effects{std::make_shared<VisibilityModifier>(
+                         LightSpec{2.5f, LightType::FIRE})});
 const auto LANTERN = std::make_shared<Item>(
     ItemType::LANTERN, Effects{std::make_shared<VisibilityModifier>(
                            LightSpec{3.2f, LightType::FIRE})});
@@ -130,6 +133,7 @@ const std::vector<std::shared_ptr<Item>> WEAPONS_3 = {
 
 const std::vector<std::shared_ptr<Item>> LIGHT = {
     TORCH,
+    CANDLE,
     LANTERN,
     MAGIC_TORCH,
 };

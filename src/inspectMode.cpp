@@ -295,7 +295,7 @@ void InspectMode::render() {
         for (auto s : e->equipment->slots) {
           app->inspectState->appendContent({F(fmt::format(
               "    * {} -- {}", s->name,
-              s->item != nullptr ? s->item->getTitle() : "empty"))});
+              s->item != nullptr ? s->item->getTitle(true) : "empty"))});
           app->inspectState->appendContent(State::END_LINE);
         }
       }
@@ -307,7 +307,7 @@ void InspectMode::render() {
     if (items.size() > 0) {
       std::vector<std::string> itemNames;
       for (auto i : items) {
-        itemNames.push_back(i->getFullTitle());
+        itemNames.push_back(i->getFullTitle(true));
       }
       app->inspectState->appendContent(
           {F(fmt::format("Items: <b>{}</b>", LibLog::utils::join(itemNames, ", ")))});

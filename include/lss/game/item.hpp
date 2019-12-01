@@ -54,7 +54,7 @@ public:
 
   bool interact(std::shared_ptr<Object>);
   std::string getTitle(bool force = false);
-  std::string getFullTitle();
+  std::string getFullTitle(bool force = false);
 
   virtual std::shared_ptr<Item> clone() {
     return std::make_shared<Item>(*this);
