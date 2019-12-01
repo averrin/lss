@@ -262,6 +262,18 @@ public:
     eb::EventBus::FireEvent(ae);
   }
 
+  static void restoreMana(std::shared_ptr<Creature> caster, int min, int max) {
+    auto heal = R::Z(caster->MP_MAX(caster.get()) / 100 * min,
+                    caster->MP_MAX(caster.get()) / 100 * max);
+    caster->mp += heal;
+    if (caster->MP(caster.get()) > caster->MP_MAX(caster.get())) {
+      caster->mp = caster->MP_MAX(caster.get());
+    }
+    caster->commit("manaRestore", 0);
+    auto a = std::make_shared<ColorAnimation>(caster, Color::fromHexString("#2222ff"), 8, true);
+    AnimationEvent ae(a);
+    eb::EventBus::FireEvent(ae);
+  }
 
 private:
   std::shared_ptr<Cell> cachedCell;

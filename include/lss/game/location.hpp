@@ -18,7 +18,11 @@ enum LocationFeature {
   STATUE,
   ALTAR,
   LAKE,
-  VOID
+  VOID,
+  ICE,
+  HEAL,
+  MANA,
+  TREASURE_SMALL
 };
 
 enum LocationType { DUNGEON, CAVERN };
@@ -112,7 +116,7 @@ public:
   void leave(std::shared_ptr<Player>);
   Objects getObjects(std::shared_ptr<Cell>);
   std::string getFeaturesTag() {
-    std::string locationFeatures = "_______";
+    std::string locationFeatures = "___________";
     if (hasFeature(LocationFeature::TORCHES)) {
       locationFeatures[0] = 'T';
     }
@@ -133,6 +137,18 @@ public:
     }
     if (hasFeature(LocationFeature::LAKE)) {
       locationFeatures[6] = 'L';
+    }
+    if (hasFeature(LocationFeature::ICE)) {
+      locationFeatures[6] = 'I';
+    }
+    if (hasFeature(LocationFeature::HEAL)) {
+      locationFeatures[6] = 'H';
+    }
+    if (hasFeature(LocationFeature::MANA)) {
+      locationFeatures[6] = 'M';
+    }
+    if (hasFeature(LocationFeature::TREASURE_SMALL)) {
+      locationFeatures[6] = 't';
     }
     return locationFeatures;
   }

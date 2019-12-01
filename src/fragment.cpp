@@ -58,6 +58,10 @@ std::string Fragment::render(State *state, std::map<std::string, tpl_arg> overri
   tpl.setValue("orange", state->currentPalette.orange);
   tpl.setValue("bgColor", bgColor);
 
+  for (auto [key, value] : args) {
+    std::visit([&](auto const &val) { tpl.setValue(key, val); }, value);
+  }
+
   if (fgColor != COLORS::FG) {
     tpl.setValue("color", fgColor);
   }
@@ -66,9 +70,6 @@ std::string Fragment::render(State *state, std::map<std::string, tpl_arg> overri
     tpl.setValue("bgColor", bgColor);
   }
 
-  for (auto [key, value] : args) {
-    std::visit([&](auto const &val) { tpl.setValue(key, val); }, value);
-  }
   for (auto [key, value] : overrides) {
     std::visit([&](auto const &val) { tpl.setValue(key, val); }, value);
   }

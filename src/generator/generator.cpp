@@ -53,6 +53,11 @@ float ALTAR = 0.1;
 float VOID = 0.5;
 float LAKE = 0.5;
 
+float ICE = 0.2;
+float HEAL = 0.1;
+float MANA = 0.1;
+float TREASURE_SMALL = 0.1;
+
 // float CAVERN = 1;
 // float VOID = 1;
 } // namespace P
@@ -211,25 +216,6 @@ void makePassageBetweenRooms(std::shared_ptr<Location> location,
   }
 }
 
-void makeFloor(std::shared_ptr<Cell> cell) {
-  cell->type = CellType::FLOOR;
-  cell->seeThrough = true;
-  cell->passThrough = true;
-}
-
-void makeFloor(std::shared_ptr<Cell> cell, std::vector<CellFeature> features) {
-  cell->features = features;
-  makeFloor(cell);
-}
-
-void updateCell(std::shared_ptr<Cell> cell, CellSpec type,
-                std::vector<CellFeature> features) {
-  cell->type = type;
-  cell->seeThrough = type.seeThrough;
-  cell->passThrough = type.passThrough;
-  cell->features = features;
-}
-
 std::pair<std::shared_ptr<Cell>, Cells>
 dig(std::shared_ptr<Cell> start, Direction dir, int length, int minWidth,
     int jWidth, int wind = 0, CellSpec type = CellType::FLOOR) {
@@ -310,6 +296,7 @@ std::pair<std::shared_ptr<Cell>, Cells> randomDig(std::shared_ptr<Cell> start,
   return dig(start, dir, length, minWidth, jWidth, wind);
 }
 
+//TODO: better room merge
 void fixOverlapped(std::shared_ptr<Location> location) {
   dlog("fix overlapped");
   std::map<std::shared_ptr<Room>, std::vector<std::shared_ptr<Cell>>> cache;
@@ -318,6 +305,9 @@ void fixOverlapped(std::shared_ptr<Location> location) {
   }
   for (auto r = 0; r < HEIGHT; r++) {
     for (auto c = 0; c < WIDTH; c++) {
+      if (location->cells[r][c]->type == CellType::UNKNOWN) {
+        continue;
+      }
       std::vector<std::shared_ptr<Room>> rooms(location->rooms.size());
       auto it = std::copy_if(location->rooms.begin(), location->rooms.end(),
                              rooms.begin(), [&](auto room) {
@@ -557,8 +547,20 @@ Generator::getRandomLocation(std::shared_ptr<Player> hero, int depth,
   if (spec.type == LocationType::DUNGEON && R::R() < P::ALTAR) {
     spec.features.push_back(LocationFeature::ALTAR);
   }
+  if (spec.type == LocationType::DUNGEON && R::R() < P::TREASURE_SMALL) {
+    spec.features.push_back(LocationFeature::TREASURE_SMALL);
+  }
   if (R::R() < P::VOID) {
     spec.features.push_back(LocationFeature::VOID);
+  }
+  if (R::R() < P::ICE) {
+    spec.features.push_back(LocationFeature::ICE);
+  }
+  if (R::R() < P::HEAL) {
+    spec.features.push_back(LocationFeature::HEAL);
+  }
+  if (R::R() < P::MANA) {
+    spec.features.push_back(LocationFeature::MANA);
   }
   if (spec.type == LocationType::CAVERN && R::R() < P::LAKE) {
     spec.features.push_back(LocationFeature::LAKE);
@@ -1115,8 +1117,21 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   }
 
   // placeTemplateInRoom(location, RoomTemplates::BONES);
-  placeTemplate(location, RoomTemplates::ICE);
-  placeTemplateInRoom(location, RoomTemplates::HEAL_STAND_ROOM);
+  if (location->hasFeature(LocationFeature::ICE)) {
+    placeTemplate(location, RoomTemplates::ICE);
+  }
+  if (location->hasFeature(LocationFeature::HEAL)) {
+    placeTemplateInRoom(location, RoomTemplates::HEAL_STAND_ROOM);
+  }
+  if (location->hasFeature(LocationFeature::MANA)) {
+    placeTemplateInRoom(location, RoomTemplates::MANA_STAND_ROOM);
+  }
+  // if (location->hasFeature(LocationFeature::ICE)) {
+  //   placeTemplateInRoom(location, RoomTemplates::TREASURE_ROOM);
+  // }
+  if (location->hasFeature(LocationFeature::TREASURE_SMALL)) {
+    placeTemplate(location, RoomTemplates::TREASURE_ROOM);
+  }
 
   start = std::chrono::system_clock::now();
   placeWalls(location);

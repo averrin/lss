@@ -84,15 +84,7 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
   } else if (*spell == *Spells::HEAL_GREATER) {
     Creature::heal(caster, 50, 100);
   } else if (*spell == *Spells::RESTORE_MANA) {
-    auto heal = R::Z(caster->MP_MAX(caster.get()) / 100 * 25,
-                     caster->MP_MAX(caster.get()) / 100 * 50);
-    caster->mp += heal;
-    if (caster->MP(caster.get()) > caster->MP_MAX(caster.get())) {
-      caster->mp = caster->MP_MAX(caster.get());
-    }
-    if (auto hero = std::dynamic_pointer_cast<Player>(caster)) {
-      hero->commit("mana", 0);
-    }
+    Creature::heal(caster, 25, 50);
   } else if (*spell == *Spells::TELEPORT_RANDOM) {
     auto room = caster->currentLocation
                     ->rooms[rand() % caster->currentLocation->rooms.size()];

@@ -272,6 +272,26 @@ namespace RoomTemplates {
       return room;
     });
 
+  const auto TREASURE_ROOM = std::make_shared<RoomTemplate>(
+    /*
+            ###
+            #(#
+            ###
+    */
+    [](std::shared_ptr<Location> location) {
+      auto room = Room::makeRoom(3, 3, 3, 3, CellType::WALL);
+      auto cell = room->getCell(1, 1);
+      mapUtils::makeFloor(cell);
+
+      auto box = LootBoxes::LOOT_TIER_3;
+      for (auto item : box.open(true)) {
+        item->setCurrentCell(cell);
+        location->addObject<Item>(item);
+      }
+
+      return room;
+    });
+
   const auto HEAL_STAND_ROOM = std::make_shared<RoomTemplate>(
     /*
             .*.
@@ -293,6 +313,32 @@ namespace RoomTemplates {
 
       s->triggers.push_back(std::make_shared<UseTrigger>([=](std::shared_ptr<Player> hero){
         return Triggers::HEAL_STAND_TRIGGER(hero, s);
+      }));
+
+      return room;
+    });
+
+  const auto MANA_STAND_ROOM = std::make_shared<RoomTemplate>(
+    /*
+            .*.
+            .&.
+            ...
+    */
+    [](std::shared_ptr<Location> location) {
+      auto room = Room::makeRoom(3, 3, 3, 3, CellType::FLOOR);
+      auto cell = room->getCell(1, 1);
+      auto s = std::make_shared<UsableTerrain>(TerrainType::ALTAR);
+      s->setCurrentCell(cell);
+      location->addObject<Terrain>(s);
+
+      cell = room->getCell(1, 0);
+      auto fb = std::make_shared<Terrain>(TerrainType::MAGIC_LIGHT_FOREVER, -1);
+      fb->setCurrentCell(cell);
+      fb->setName("mana_light");
+      location->addObject(fb);
+
+      s->triggers.push_back(std::make_shared<UseTrigger>([=](std::shared_ptr<Player> hero){
+        return Triggers::MANA_STAND_TRIGGER(hero, s);
       }));
 
       return room;

@@ -115,6 +115,17 @@ namespace Triggers {
         hero->commit("trigger effect", 0);
         return false;
     };
+
+    //TODO: fix glow from removed light source
+    const auto MANA_STAND_TRIGGER = [](std::shared_ptr<Player> hero, std::shared_ptr<UsableTerrain> terrain) {
+        Creature::restoreMana(hero, 25, 50);
+
+        auto light = *hero->currentLocation->getObject<Terrain>("mana_light");
+        hero->currentLocation->removeObject(light);
+        hero->currentLocation->updateLight(hero);
+        hero->commit("trigger effect", 0);
+        return false;
+    };
 }
 
 #endif // __TRIGGER_H_

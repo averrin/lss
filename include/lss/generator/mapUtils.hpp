@@ -67,5 +67,24 @@ static std::shared_ptr<Enemy> makeEnemy(std::shared_ptr<Location> location,
 }
 
 
+static void makeFloor(std::shared_ptr<Cell> cell) {
+  cell->type = CellType::FLOOR;
+  cell->seeThrough = true;
+  cell->passThrough = true;
+}
+
+static void makeFloor(std::shared_ptr<Cell> cell, std::vector<CellFeature> features) {
+  cell->features = features;
+  makeFloor(cell);
+}
+
+static void updateCell(std::shared_ptr<Cell> cell, CellSpec type,
+                std::vector<CellFeature> features) {
+  cell->type = type;
+  cell->seeThrough = type.seeThrough;
+  cell->passThrough = type.passThrough;
+  cell->features = features;
+}
+
 };
 #endif // __MAPUTILS_H_
