@@ -44,6 +44,24 @@ public:
     return cells[x + y * width];
   }
 
+std::optional<std::shared_ptr<Cell>> getRandomCell(CellSpec type) {
+  std::vector<std::shared_ptr<Cell>> result(cells.size());
+  auto it = std::copy_if(cells.begin(), cells.end(), result.begin(),
+                         [type](auto cell) { return cell->type == type; });
+  result.resize(std::distance(result.begin(), it));
+  if (result.size() == 0) {
+    // std::cout << rang::fg::red << "FATAL: " << "cannot get random cell with this type" << rang::style::reset << std::endl;
+    return std::nullopt;
+  }
+
+  auto cell = result[rand() % result.size()];
+  while (cell->type != type) {
+    cell = result[rand() % result.size()];
+  }
+  return cell;
+}
+
+
   static std::shared_ptr<Room> makeRoom(int hMax = 11, int hMin = 3, int wMax = 15,
                                 int wMin = 3, CellSpec type = CellType::FLOOR) {
     auto rh = R::Z(hMin, hMax);
@@ -51,6 +69,9 @@ public:
 
     auto cells = mapUtils::fill(rh, rw, type);
     auto room = std::make_shared<Room>(RoomType::HALL, cells);
+    for (auto c: room->cells) {
+      c->room = room;
+    }
     return room;
   }
 
@@ -170,6 +191,10 @@ public:
         fmt::print(".");
       } else if (c->type == CellType::UNKNOWN) {
         fmt::print(" ");
+      } else if (c->type == CellType::VOID) {
+        fmt::print("⌄");
+      } else if (c->type == CellType::WATER) {
+        fmt::print("=");
       } else {
         fmt::print("?");
       }
@@ -279,15 +304,23 @@ namespace RoomTemplates {
             ###
     */
     [](std::shared_ptr<Location> location) {
-      auto room = Room::makeRoom(3, 3, 3, 3, CellType::WALL);
-      auto cell = room->getCell(1, 1);
-      mapUtils::makeFloor(cell);
+      auto innerRoom = Room::makeRoom(3, 1, 3, 1, CellType::FLOOR);
+      auto room = Room::makeRoom(innerRoom->height+2, innerRoom->height+2, innerRoom->width+2, innerRoom->width+2, CellType::WALL);
+
+      Room::paste(innerRoom, room, 1, 1);
+      // room->print();
+
+      auto cell = room->getRandomCell(CellType::FLOOR);
 
       auto box = LootBoxes::LOOT_TIER_3;
       for (auto item : box.open(true)) {
-        item->setCurrentCell(cell);
+        item->setCurrentCell(*cell);
         location->addObject<Item>(item);
       }
+
+      // for (auto c: innerRoom->cells) {
+      //   mapUtils::updateCell(c, CellType::FLOOR, {CellFeature::BLOOD});
+      // }
 
       return room;
     });
@@ -351,7 +384,7 @@ namespace RoomTemplates {
              %%%
     */
     [](std::shared_ptr<Location> location) {
-      auto room = Room::makeBlob(location, 2, 5, 2, 5, CellType::FLOOR, CellType::UNKNOWN, false);
+      auto room = Room::makeBlob(location, 7, 2, 7, 2, CellType::FLOOR, CellType::UNKNOWN, false);
       for (auto c : room->cells) {
         if (c->type != CellType::FLOOR) {
           continue;
@@ -370,7 +403,7 @@ namespace RoomTemplates {
              %%%
     */
     [](std::shared_ptr<Location> location) {
-      auto room = Room::makeBlob(location, 2, 8, 2, 8, CellType::FLOOR, CellType::UNKNOWN, true);
+      auto room = Room::makeBlob(location, 8, 3, 8, 3, CellType::FLOOR, CellType::UNKNOWN, true);
       for (auto c : room->cells) {
         if (c->type != CellType::FLOOR) {
           continue;
