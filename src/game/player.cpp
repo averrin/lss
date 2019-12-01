@@ -12,6 +12,7 @@
 #include "lss/game/slot.hpp"
 #include "lss/game/spell.hpp"
 #include "lss/game/terrain.hpp"
+#include "lss/game/trigger.hpp"
 #include "lss/utils.hpp"
 
 DigEvent::DigEvent(eb::ObjectPtr s, std::shared_ptr<Cell> c)
@@ -254,10 +255,14 @@ void Player::onEvent(PickCommandEvent &e) {
                                     o->currentCell == currentCell;
                            });
   if (item != currentLocation->objects.end()) {
-    if (auto t = std::dynamic_pointer_cast<Terrain>(*item);
-        t && t->type == TerrainType::TORCH_STAND) {
-      pick(Prototype::TORCH->clone());
-      currentLocation->removeObject(*item);
+    if (auto t = std::dynamic_pointer_cast<Terrain>(*item); t) {
+      for (auto trg : t->triggers) {
+        auto trigger = std::dynamic_pointer_cast<PickTrigger>(trg);
+        if (trigger) {
+          auto ptr = shared_from_this();
+          trigger->activate(std::dynamic_pointer_cast<Player>(ptr));
+        }
+      }
     } else {
       pick(std::dynamic_pointer_cast<Item>(*item));
     }

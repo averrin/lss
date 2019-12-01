@@ -23,8 +23,8 @@ public:
     width = c.front().size();
     for (auto r : c) {
       for (auto cell : r) {
-        if (cell->type == CellType::UNKNOWN)
-          continue;
+        // if (cell->type == CellType::UNKNOWN)
+        //   continue;
         cells.push_back(cell);
       }
     }
@@ -52,6 +52,130 @@ public:
     auto cells = mapUtils::fill(rh, rw, type);
     auto room = std::make_shared<Room>(RoomType::HALL, cells);
     return room;
+  }
+
+  static void paste(std::shared_ptr<Room> inner,
+            std::shared_ptr<Room> outer, int x, int y) {
+    for (auto cell : inner->cells) {
+      if (cell->type == CellType::UNKNOWN)
+        continue;
+      auto r = y + cell->y;
+      auto c = x + cell->x;
+      outer->cells.at(r*outer->width + c) = cell;
+      cell->x = c;
+      cell->y = r;
+    }
+  }
+
+  std::vector<std::shared_ptr<Cell>> getNeighbors(std::shared_ptr<Cell> cell) {
+    std::vector<std::shared_ptr<Cell>> nbrs;
+    if (cell->x > 0) {
+      if (cell->y > 0) {
+        nbrs.push_back(cells[(cell->y - 1)*width+(cell->x - 1)]);
+        nbrs.push_back(cells[(cell->y - 1)*width+(cell->x)]);
+        nbrs.push_back(cells[(cell->y)*width+(cell->x - 1)]);
+
+        if (cell->x < int(width - 1)) {
+          nbrs.push_back(cells[(cell->y - 1)*width+(cell->x + 1)]);
+          nbrs.push_back(cells[(cell->y)*width+(cell->x + 1)]);
+        }
+      }
+      if (cell->y < int(height-1)) {
+        if (cell->x < int(width-1)) {
+          nbrs.push_back(cells[(cell->y + 1)*width+(cell->x + 1)]);
+          nbrs.push_back(cells[(cell->y + 1)*width+(cell->x - 1)]);
+        }
+        nbrs.push_back(cells[(cell->y + 1)*width+(cell->x)]);
+      }
+    }
+    return nbrs;
+
+  }
+
+
+
+  static std::shared_ptr<Room> makeBlob(std::shared_ptr<Location> location, int hMax = 11, int hMin = 3, int wMax = 15,
+                                int wMin = 3, CellSpec type = CellType::FLOOR, CellSpec outerType = CellType::UNKNOWN, bool smooth = true) {
+    auto room = Room::makeRoom(hMax, hMin, wMax, wMin, outerType);
+    auto outerRoom = Room::makeRoom(room->height+2, room->height+2, room->width+2, room->width+2, outerType);
+
+    for (auto c : room->cells) {
+      if (R::R() > 0.35) {
+        c->type = type;
+        c->passThrough = type.passThrough;
+        c->seeThrough = type.seeThrough;
+      }
+    }
+
+    Room::paste(room, outerRoom, 1, 1);
+
+    for (auto c : room->cells) {
+      auto n = outerRoom->getNeighbors(c);
+      auto vn =
+          std::count_if(n.begin(), n.end(), [type](std::shared_ptr<Cell> nc) {
+            return nc->type == type;
+          });
+      vn += 8 - n.size();
+
+      if (c->type == type) {
+        if (vn < 4) {
+          c->type = outerType;
+          c->passThrough = outerType.passThrough;
+          c->seeThrough = outerType.seeThrough;
+        } else if (c->type != type) {
+          if (vn >= 6) {
+            c->type = type;
+            c->passThrough = type.passThrough;
+            c->seeThrough = type.seeThrough;
+          }
+        }
+      }
+    }
+
+    if (smooth) {
+      for (auto n = 0; n < 5; n++) {
+        for (auto c : room->cells) {
+          if (c->type == outerType) {
+            auto n = outerRoom->getNeighbors(c);
+            auto fn =
+                std::count_if(n.begin(), n.end(), [=](std::shared_ptr<Cell> nc) {
+                  return nc->type == type;
+                });
+            if (fn == 0) {
+              c->type = CellType::UNKNOWN;
+            } else if (fn >= 3) {
+              c->type = type;
+            }
+          }
+        }
+      }
+
+    }
+
+    // room->print();
+    return room;
+  }
+
+  void print() {
+    auto n = 0;
+
+    fmt::print("Room stats: {}x{} = {} @ {}.{}\n", width, height, cells.size(), x, y);
+    for (auto c : cells) {
+      if (n % width == 0 && n > 0) {
+        fmt::print("\n");
+      }
+      if (c->type == CellType::WALL) {
+        fmt::print("#");
+      } else if (c->type == CellType::FLOOR) {
+        fmt::print(".");
+      } else if (c->type == CellType::UNKNOWN) {
+        fmt::print(" ");
+      } else {
+        fmt::print("?");
+      }
+      n++;
+    }
+    fmt::print("\n");
   }
 };
 
@@ -106,7 +230,7 @@ namespace RoomTemplates {
         location->addObject<Enemy>(enemy);
       }
 
-      cell->triggers.push_back(std::make_shared<UseTrigger>(Prototype::QUEST_ITEM->type, [=]{
+      cell->triggers.push_back(std::make_shared<UseItemTrigger>(Prototype::QUEST_ITEM->type, [=]{
         return Triggers::ALTAR_TRIGGER(cell, location);
       }));
 
@@ -122,6 +246,7 @@ namespace RoomTemplates {
 
       return room;
     });
+
   const auto STATUE_ROOM = std::make_shared<RoomTemplate>(
     /*
             ...
@@ -143,6 +268,42 @@ namespace RoomTemplates {
           bones->setCurrentCell(n);
           location->addObject<Item>(bones);
         }
+      }
+      return room;
+    });
+
+  const auto BONES = std::make_shared<RoomTemplate>(
+    /*
+             %%
+            %%%%
+             %%%
+    */
+    [](std::shared_ptr<Location> location) {
+      auto room = Room::makeBlob(location, 2, 5, 2, 5, CellType::FLOOR, CellType::UNKNOWN, false);
+      for (auto c : room->cells) {
+        if (c->type != CellType::FLOOR) {
+          continue;
+        }
+        auto bones = std::make_shared<Item>(ItemType::BONES, rand() % 3 + 1);
+        bones->setCurrentCell(c);
+        location->addObject<Item>(bones);
+      }
+      return room;
+    });
+
+  const auto ICE = std::make_shared<RoomTemplate>(
+    /*
+             %%
+            %%%%
+             %%%
+    */
+    [](std::shared_ptr<Location> location) {
+      auto room = Room::makeBlob(location, 2, 8, 2, 8, CellType::FLOOR, CellType::UNKNOWN, true);
+      for (auto c : room->cells) {
+        if (c->type != CellType::FLOOR) {
+          continue;
+        }
+        c->addFeature(CellFeature::FROST);
       }
       return room;
     });

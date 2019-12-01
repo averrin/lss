@@ -33,6 +33,14 @@ public:
     apLeft = t.apLeft;
     destructable = t.destructable;
   }
+  Terrain(TerrainSpec t, std::vector<std::shared_ptr<Trigger>> ts) : Object(ts), type(t) {
+    seeThrough = t.seeThrough;
+    passThrough = t.passThrough;
+    zIndex = 2;
+    light = t.light;
+    apLeft = t.apLeft;
+    destructable = t.destructable;
+  }
   Terrain(TerrainSpec t, int z) : Object(), type(t) {
     seeThrough = t.seeThrough;
     passThrough = t.passThrough;
@@ -49,6 +57,11 @@ public:
     }
     return std::make_optional<LightSpec>(light);
   };
+};
+
+class UsableTerrain: public Terrain {
+  public:
+    UsableTerrain(TerrainSpec t, std::vector<std::shared_ptr<Trigger>> ts): Terrain(t, ts) {}
 };
 
 namespace TerrainType {

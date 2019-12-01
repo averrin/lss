@@ -137,7 +137,7 @@ const std::map<EnemySpec, std::string> enemyColors = {
     {EnemyType::SNAKE, COLORS::GRAY},
     {EnemyType::VIPER, "#006400"},
     {EnemyType::BAT_LARGE, "#a9a9a9"},
-    {EnemyType::GOBLIN_ROCKTHROWER, "#2020e0"},
+    {EnemyType::GOBLIN_ROCKTHROWER, "#5050e0"},
     {EnemyType::GOBLIN, "#00f000"},
     {EnemyType::ORK, "#22aa22"},
     {EnemyType::ORK_BERSERK, "#aa2222"},

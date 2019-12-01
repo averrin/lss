@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <string>
 #include <utility>
+#include <cstdlib>
 
 #include "lss/LSSApp.hpp"
 #include "lss/eventReactor.hpp"
@@ -18,8 +19,10 @@ std::string VERSION = "0.1.2 by Averrin";
 int HOffset = 24;
 int VOffset = 24;
 
-void LSSApp::setup() {
-  srand(time(NULL));
+void LSSApp::setup(int s) {
+  seed = s;
+  fmt::print("Seed: {}\n", seed);
+  srand(seed);
   pango::Surface::setTextRenderer(pango::TextRenderer::FREETYPE);
 
   int rc = SDL_Init(SDL_INIT_VIDEO);
@@ -731,7 +734,11 @@ LSSApp::~LSSApp() {
 
 int main(int argc, char *argv[]) {
   auto app = std::make_shared<LSSApp>();
-  app->setup();
+  auto seed = time(NULL);
+  if (argc > 1) {
+    seed = std::atoi(argv[1]);
+  }
+  app->setup(seed);
   Uint32 lastTick = SDL_GetTicks();
   while (app->running) {
     Uint32 now = SDL_GetTicks();

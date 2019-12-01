@@ -10,9 +10,11 @@
 
 #include <fmt/format.h>
 
+class Trigger;
 class Object : public eb::Object, public std::enable_shared_from_this<Object> {
 public:
   Object() {}
+  Object(std::vector<std::shared_ptr<Trigger>> ts): triggers(ts) {}
   Object(std::string n) : name(n) {}
   ~Object() { clearHandlers(); }
   void clearHandlers() {
@@ -39,6 +41,8 @@ public:
 
   std::vector<eb::HandlerRegistrationPtr> handlers;
   std::shared_ptr<Cell> currentCell;
+
+  std::vector<std::shared_ptr<Trigger>> triggers = std::vector<std::shared_ptr<Trigger>>{};
 
   void removeCell() {
     if (currentCell != nullptr) {

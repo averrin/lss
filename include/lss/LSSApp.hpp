@@ -48,6 +48,7 @@
 class EventReactor;
 class LSSApp : public std::enable_shared_from_this<LSSApp> {
 public:
+  int seed;
   LibLog::Logger &log = LibLog::Logger::getInstance();
   static const int MAX_LEVELS = 10;
 
@@ -55,7 +56,7 @@ public:
   SDL_DisplayMode dm;
   int getWindowWidth() { return dm.w; }
   int getWindowHeight() { return dm.h; }
-  void setup();
+  void setup(int);
   void update();
   void keyDown(KeyEvent event);
   void keyUp(KeyEvent event);

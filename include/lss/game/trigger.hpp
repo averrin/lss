@@ -12,14 +12,22 @@
 #include "lss/game/content/items.hpp"
 
 typedef std::function<bool()> TriggerCallback;
+typedef std::function<bool(std::shared_ptr<Player>)> TriggerHeroCallback;
 class Trigger {
     TriggerCallback callback;
+    TriggerHeroCallback heroCallback;
 public:
         Trigger(TriggerCallback cb) : callback(cb) {}
+        Trigger(TriggerHeroCallback cb) : heroCallback(cb) {}
         bool enabled = true;
         void activate() {
             if (enabled) {
                 enabled = callback();
+            }
+        }
+        void activate(std::shared_ptr<Player> hero) {
+            if (enabled) {
+                enabled = heroCallback(hero);
             }
         }
     virtual ~Trigger() = default;
@@ -34,9 +42,15 @@ class SearchTrigger : public Trigger {
 class SeenTrigger : public Trigger {
     public: SeenTrigger(TriggerCallback cb) : Trigger(cb) {}
 };
+class PickTrigger : public Trigger {
+    public: PickTrigger(TriggerHeroCallback cb) : Trigger(cb) {}
+};
 class UseTrigger : public Trigger {
+    public: UseTrigger(TriggerCallback cb) : Trigger(cb) {}
+};
+class UseItemTrigger : public Trigger {
     public:
-        UseTrigger(ItemSpec i, TriggerCallback cb) : Trigger(cb), item(i) {}
+        UseItemTrigger(ItemSpec i, TriggerCallback cb) : Trigger(cb), item(i) {}
         ItemSpec item;
 };
 
@@ -82,6 +96,12 @@ namespace Triggers {
             }));
         }
         location->player->commit("trigger effect", 0);
+        return false;
+    };
+
+    const auto TORCH_STAND_TRIGGER = [](std::shared_ptr<Player> hero, std::shared_ptr<Terrain> terrain) {
+        hero->pick(Prototype::TORCH->clone());
+        hero->currentLocation->removeObject(terrain);
         return false;
     };
 }

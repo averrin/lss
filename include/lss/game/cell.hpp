@@ -70,6 +70,7 @@ public:
     }
   std::vector<CellFeature> features;
 
+  std::vector<std::shared_ptr<Trigger>> triggers = std::vector<std::shared_ptr<Trigger>>{};
   std::set<std::shared_ptr<Object>> lightSources;
   std::shared_ptr<Object> nearestLightEmitter;
   std::shared_ptr<Room> room;
@@ -79,7 +80,6 @@ public:
 
   bool passThrough = false;
   bool seeThrough = false;
-    std::vector<std::shared_ptr<Trigger>> triggers = std::vector<std::shared_ptr<Trigger>>{};
 
   bool damaged = true;
   void invalidate(std::string reason);

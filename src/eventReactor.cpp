@@ -133,7 +133,7 @@ void EventReactor::onEvent(UseCommandEvent &e) {
     if (std::dynamic_pointer_cast<Usable>(e.item) &&
         app->hero->currentCell->triggers.size() != 0) {
       for (auto t : app->hero->currentCell->triggers) {
-        auto trigger = std::dynamic_pointer_cast<UseTrigger>(t);
+        auto trigger = std::dynamic_pointer_cast<UseItemTrigger>(t);
         if (trigger && trigger->item == e.item->type) {
           trigger->activate();
         }

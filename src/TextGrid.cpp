@@ -24,10 +24,11 @@ void TextGrid::setFragment(int x, int y, std::string f) {
   } else {
     auto s = pango::Surface::create(renderer);
     s->setDefaultTextColor(SDL_Color{0xcc, 0xcc, 0xcc, 0xFF});
+    s->setMinSize(w, h);
     s->setMaxSize(w, h);
-    // s->setDefaultTextSize(12);
+    s->setDefaultTextSize(12);
     s->setText(
-        fmt::format("<tt><span rise='5000' gravity='north'>{}</span></tt>", f));
+        fmt::format("<tt><span rise='2000' gravity='north'>{}</span></tt>", f));
     fragments[y][x] = s;
     cache[f] = s;
   }

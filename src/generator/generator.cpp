@@ -570,6 +570,14 @@ Generator::getRandomLocation(std::shared_ptr<Player> hero, int depth,
   return l;
 }
 
+std::shared_ptr<Terrain> makeTorch() {
+    auto torch = std::make_shared<Terrain>(TerrainType::TORCH_STAND);
+    torch->triggers.push_back(std::make_shared<PickTrigger>([=](std::shared_ptr<Player> hero){
+      return Triggers::TORCH_STAND_TRIGGER(hero, torch);
+    }));
+    return torch;
+}
+
 void placeTorches(std::shared_ptr<Location> location) {
   dlog("place torches");
   auto tc = rand() % 7 + 3;
@@ -584,18 +592,18 @@ void placeTorches(std::shared_ptr<Location> location) {
           return nc->type == CellType::WALL;
         }) == ngs.end())
       continue;
-    auto torch = std::make_shared<Terrain>(TerrainType::TORCH_STAND);
+    auto torch = makeTorch();
     torch->setCurrentCell(cell);
     location->addObject<Terrain>(torch);
     n++;
   }
   auto nbrs = location->getNeighbors(location->exitCell);
-  auto torch = std::make_shared<Terrain>(TerrainType::TORCH_STAND);
+  auto torch = makeTorch();
   torch->setCurrentCell(nbrs[rand() % nbrs.size()]);
   location->addObject<Terrain>(torch);
 
   nbrs = location->getNeighbors(location->enterCell);
-  torch = std::make_shared<Terrain>(TerrainType::TORCH_STAND);
+  torch = makeTorch();
   torch->setCurrentCell(nbrs[rand() % nbrs.size()]);
   location->addObject<Terrain>(torch);
 
@@ -878,40 +886,48 @@ void makeCavePassage(std::shared_ptr<Location> location) {
   }
 }
 
+void placeTemplateInRoom(std::shared_ptr<Location> location, std::shared_ptr<RoomTemplate> rtp) {
+  auto room = rtp->generate(location);
+
+  //TODO: shuffle suitable rooms and select
+  auto target = location->rooms[rand() % location->rooms.size()];
+  auto n = 0;
+  while (target->width - 2 < room->width || target->height -2 < room->height || target->x == 0) {
+    target = location->rooms[rand() % location->rooms.size()];
+    if (n > 30) {
+      location->log.warn(lu::green("MAPGEN"), "cannot place template");
+      return;
+    }
+    n++;
+  }
+
+  mapUtils::paste(room->cells, location, target->x+1, target->y+1);
+
+  location->rooms.push_back(room);
+}
+
+void placeTemplate(std::shared_ptr<Location> location, std::shared_ptr<RoomTemplate> rtp) {
+  auto room = rtp->generate(location);
+
+  //TODO: shuffle suitable rooms and select
+  auto ltcr = getRandomCell(location, CellType::FLOOR);
+  while (!ltcr || (*ltcr)->x + room->width >= WIDTH ||
+         (*ltcr)->y + room->height >= HEIGHT) {
+    ltcr = getRandomCell(location, CellType::FLOOR);
+  }
+  auto ltc = *ltcr;
+  mapUtils::paste(room->cells, location, ltc->x, ltc->y);
+
+  location->rooms.push_back(room);
+}
+
+
 void placeStatue(std::shared_ptr<Location> location) {
-  //TODO: smarter placement
-  dlog("place statue");
-  auto room = location->rooms[rand() % location->rooms.size()];
-  while (room->type != RoomType::HALL && room->type != RoomType::CAVERN) {
-    room = location->rooms[rand() % location->rooms.size()];
-  }
-  auto cr = getRandomCell(room, CellType::FLOOR);
-  while (!cr || location->getObjects(*cr).size() != 0) {
-    cr = getRandomCell(room, CellType::FLOOR);
-  }
-  auto cell = *cr;
-
-  auto sr = RoomTemplates::STATUE_ROOM->generate(location);
-  mapUtils::paste(sr->cells, location, cell->x, cell->y);
-
+  placeTemplateInRoom(location, RoomTemplates::STATUE_ROOM);
 }
 
 void placeAltar(std::shared_ptr<Location> location) {
-  //TODO: smarter placement
-  dlog("place altar");
-  auto room = location->rooms[rand() % location->rooms.size()];
-  while (room->type != RoomType::HALL && room->type != RoomType::CAVERN) {
-    room = location->rooms[rand() % location->rooms.size()];
-  }
-  auto cr = getRandomCell(room, CellType::FLOOR);
-  while (!cr || location->getObjects(*cr).size() != 0) {
-    cr = getRandomCell(room, CellType::FLOOR);
-  }
-  auto cell = *cr;
-
-  auto ar = RoomTemplates::ALTAR_ROOM->generate(location);
-  mapUtils::paste(ar->cells, location, cell->x, cell->y);
-
+  placeTemplateInRoom(location, RoomTemplates::ALTAR_ROOM);
 }
 
 std::shared_ptr<Room> placeBlob(std::shared_ptr<Location> location,
@@ -1097,6 +1113,9 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
     end = std::chrono::system_clock::now();
     timings["placeAltar"] = end - start;
   }
+
+  // placeTemplateInRoom(location, RoomTemplates::BONES);
+  placeTemplate(location, RoomTemplates::ICE);
 
   start = std::chrono::system_clock::now();
   placeWalls(location);
