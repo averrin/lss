@@ -895,6 +895,7 @@ void makeCavePassage(std::shared_ptr<Location> location) {
 
 void placeTemplateInRoom(std::shared_ptr<Location> location, std::shared_ptr<RoomTemplate> rtp) {
   auto room = rtp->generate(location);
+  Room::printRoom(location, room);
 
   //TODO: shuffle suitable rooms and select
   auto target = location->rooms[rand() % location->rooms.size()];

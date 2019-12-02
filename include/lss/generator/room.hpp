@@ -44,6 +44,27 @@ public:
     return cells[x + y * width];
   }
 
+  void rotate() {
+    std::vector<std::shared_ptr<Cell>> result(cells.size());
+    auto n = 0;
+    for (auto c : cells) {
+      auto cx = n % width;
+      auto cy = n / width;
+      auto nx = height - (cy + 1);
+      auto ny = cx;
+      auto nn = nx + height*ny;
+      result[nn] = c;
+      c->x = nx;
+      c->y = ny;
+      n++;
+    }
+    cells = result;
+    auto w = width;
+    auto h = height;
+    width = h;
+    height = w;
+  }
+
 std::optional<std::shared_ptr<Cell>> getRandomCell(CellSpec type) {
   std::vector<std::shared_ptr<Cell>> result(cells.size());
   auto it = std::copy_if(cells.begin(), cells.end(), result.begin(),
@@ -177,33 +198,40 @@ std::optional<std::shared_ptr<Cell>> getRandomCell(CellSpec type) {
     return room;
   }
 
-  void print() {
-    auto n = 0;
 
-    fmt::print("Room stats: {}x{} = {} @ {}.{}\n", width, height, cells.size(), x, y);
-    for (auto c : cells) {
-      if (n % width == 0 && n > 0) {
-        fmt::print("\n");
+    static void printRoom(std::shared_ptr<Location> location, std::shared_ptr<Room> room) {
+      auto n = 0;
+
+      fmt::print("Room stats: {}x{} = {} @ {}.{}\n", room->width, room->height, room->cells.size(), room->x, room->y);
+      for (auto c : room->cells) {
+        if (n % room->width == 0 && n > 0) {
+          fmt::print("\n");
+        }
+        auto o = location->getObjects(c);
+        if (o.size() > 0) {
+          fmt::print("o");
+          n++;
+          continue;
+        }
+        if (c->type == CellType::WALL) {
+          fmt::print("#");
+        } else if (c->type == CellType::FLOOR) {
+          fmt::print(".");
+        } else if (c->type == CellType::UNKNOWN) {
+          fmt::print(" ");
+        } else if (c->type == CellType::VOID) {
+          fmt::print("⌄");
+        } else if (c->type == CellType::WATER) {
+          fmt::print("=");
+        } else {
+          fmt::print("?");
+        }
+        n++;
       }
-      if (c->type == CellType::WALL) {
-        fmt::print("#");
-      } else if (c->type == CellType::FLOOR) {
-        fmt::print(".");
-      } else if (c->type == CellType::UNKNOWN) {
-        fmt::print(" ");
-      } else if (c->type == CellType::VOID) {
-        fmt::print("⌄");
-      } else if (c->type == CellType::WATER) {
-        fmt::print("=");
-      } else {
-        fmt::print("?");
-      }
-      n++;
+      fmt::print("\n");
     }
-    fmt::print("\n");
-  }
-};
 
+};
 
 typedef std::function<std::shared_ptr<Room>(std::shared_ptr<Location>)> RoomGenerator;
 class RoomTemplate {
@@ -268,6 +296,11 @@ namespace RoomTemplates {
       s = std::make_shared<Terrain>(TerrainType::TORCH_STAND);
       s->setCurrentCell(cell);
       location->addObject<Terrain>(s);
+
+      auto n = rand() % 4;
+      for (auto i = 0; i < n; i++) {
+        room->rotate();
+      }
 
       return room;
     });
@@ -348,9 +381,14 @@ namespace RoomTemplates {
         return Triggers::HEAL_STAND_TRIGGER(hero, s);
       }));
 
+      auto n = rand() % 4;
+      for (auto i = 0; i < n; i++) {
+        room->rotate();
+      }
       return room;
     });
 
+  //TODO: fix missed lights
   const auto MANA_STAND_ROOM = std::make_shared<RoomTemplate>(
     /*
             .*.
@@ -374,6 +412,10 @@ namespace RoomTemplates {
         return Triggers::MANA_STAND_TRIGGER(hero, s);
       }));
 
+      auto n = rand() % 4;
+      for (auto i = 0; i < n; i++) {
+        room->rotate();
+      }
       return room;
     });
 
