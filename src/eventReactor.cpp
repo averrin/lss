@@ -135,7 +135,7 @@ void EventReactor::onEvent(UseCommandEvent &e) {
       for (auto t : app->hero->currentCell->triggers) {
         auto trigger = std::dynamic_pointer_cast<UseItemTrigger>(t);
         if (trigger && trigger->item == e.item->type) {
-          trigger->activate();
+          trigger->activate(app->hero);
         }
       }
     }
@@ -547,12 +547,20 @@ void EventReactor::onEvent(ThrowCommandEvent &e) {
 }
 
 void EventReactor::onEvent(EnterCellEvent &e) {
-    auto hero = std::dynamic_pointer_cast<Player>(e.getSender());
-    if (hero && e.cell->triggers.size() > 0) {
+    auto actor = std::dynamic_pointer_cast<Creature>(e.getSender());
+    if (actor) {
       for (auto t : e.cell->triggers) {
         auto trigger = std::dynamic_pointer_cast<EnterTrigger>(t);
         if (trigger) {
-          trigger->activate();
+          trigger->activate(actor);
+        }
+      }
+      for (auto o : app->hero->currentLocation->getObjects(e.cell)) {
+        for (auto t : o->triggers) {
+          auto trigger = std::dynamic_pointer_cast<EnterTrigger>(t);
+          if (trigger) {
+            trigger->activate(actor);
+          }
         }
       }
     }

@@ -8,26 +8,19 @@
 #include "lss/game/cell.hpp"
 #include "lss/game/location.hpp"
 #include "lss/game/events.hpp"
+#include "lss/game/damage.hpp"
 #include "lss/game/player.hpp"
 #include "lss/game/content/items.hpp"
 
-typedef std::function<bool()> TriggerCallback;
-typedef std::function<bool(std::shared_ptr<Player>)> TriggerHeroCallback;
+typedef std::function<bool(std::shared_ptr<Creature>)> TriggerCallback;
 class Trigger {
     TriggerCallback callback;
-    TriggerHeroCallback heroCallback;
 public:
         Trigger(TriggerCallback cb) : callback(cb) {}
-        Trigger(TriggerHeroCallback cb) : heroCallback(cb) {}
         bool enabled = true;
-        void activate() {
+        void activate(std::shared_ptr<Creature> actor) {
             if (enabled) {
-                enabled = callback();
-            }
-        }
-        void activate(std::shared_ptr<Player> hero) {
-            if (enabled) {
-                enabled = heroCallback(hero);
+                enabled = callback(actor);
             }
         }
     virtual ~Trigger() = default;
@@ -43,11 +36,10 @@ class SeenTrigger : public Trigger {
     public: SeenTrigger(TriggerCallback cb) : Trigger(cb) {}
 };
 class PickTrigger : public Trigger {
-    public: PickTrigger(TriggerHeroCallback cb) : Trigger(cb) {}
+    public: PickTrigger(TriggerCallback cb) : Trigger(cb) {}
 };
 class UseTrigger : public Trigger {
     public: UseTrigger(TriggerCallback cb) : Trigger(cb) {}
-    public: UseTrigger(TriggerHeroCallback cb) : Trigger(cb) {}
 };
 class UseItemTrigger : public Trigger {
     public:
@@ -92,7 +84,7 @@ namespace Triggers {
             n->features.push_back(CellFeature::BLOOD);
             n->invalidate();
 
-            n->triggers.push_back(std::make_shared<EnterTrigger>([=]{
+            n->triggers.push_back(std::make_shared<EnterTrigger>([=](std::shared_ptr<Creature> actor){
                 return TEST_ENTER_TRIGGER(n, location);
             }));
         }
@@ -131,6 +123,19 @@ namespace Triggers {
         hero->commit("trigger effect", 0);
         return false;
     };
+
+    const auto ACID_POOL_TRIGGER = [](std::shared_ptr<Creature> c, std::shared_ptr<Location> location) {
+        fmt::print("apt start\n");
+
+        auto damage = DamageSpec(0, 2, 6, DamageType::ACID);
+        c->applyDamage(
+          std::dynamic_pointer_cast<Object>(location),
+          damage.getDamage(1));
+        location->player->commit("trigger effect", 0);
+        fmt::print("apt end\n");
+        return true;
+    };
 }
+
 
 #endif // __TRIGGER_H_

@@ -9,6 +9,8 @@
 #include "lss/utils.hpp"
 
 Enemy::Enemy(EnemySpec t) : Creature(), type(t) {
+  zIndex = 2;
+
   hp = type.baseHP;
   hp_max = type.baseHP;
   mp = type.baseMP;

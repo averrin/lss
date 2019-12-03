@@ -579,7 +579,8 @@ Generator::getRandomLocation(std::shared_ptr<Player> hero, int depth,
 
 std::shared_ptr<Terrain> makeTorch() {
     auto torch = std::make_shared<Terrain>(TerrainType::TORCH_STAND);
-    torch->triggers.push_back(std::make_shared<PickTrigger>([=](std::shared_ptr<Player> hero){
+    torch->triggers.push_back(std::make_shared<PickTrigger>([=](std::shared_ptr<Creature> actor){
+      auto hero = std::dynamic_pointer_cast<Player>(actor);
       return Triggers::TORCH_STAND_TRIGGER(hero, torch);
     }));
     return torch;
@@ -841,7 +842,7 @@ void placeCaves(std::shared_ptr<Location> location) {
           auto s = std::make_shared<Terrain>(TerrainType::BUSH);
           s->setCurrentCell(c);
           location->addObject<Terrain>(s);
-          c->triggers.push_back(std::make_shared<EnterTrigger>([=](){
+          s->triggers.push_back(std::make_shared<EnterTrigger>([=](std::shared_ptr<Creature> actor){
             return Triggers::BUSH_TRIGGER(c, location);
           }));
         } else {

@@ -274,7 +274,7 @@ bool Creature::attack(Direction d) {
 // TODO: apply durning effect with non-zero fire damage
 void Creature::applyDamage(std::shared_ptr<Object> a,
                            std::shared_ptr<Damage> damage) {
-  auto attacker = std::dynamic_pointer_cast<Creature>(a);
+  fmt::print("ad start\n");
   auto def = R::Z(0, DEF(this));
   if (damage->spec.type == DamageType::ACID && !hasTrait(Traits::ACID_IMMUNE)) {
     def /= 2;
@@ -298,12 +298,17 @@ void Creature::applyDamage(std::shared_ptr<Object> a,
     damage->damage *= 1.5;
     damage->defTraits.push_back(VULNERABLES.at(damage->spec.type));
   }
+  fmt::print("ad mid\n");
 
   hp -= damage->damage;
-  onDamage(attacker, damage);
+  if (auto attacker = std::dynamic_pointer_cast<Creature>(a);
+    attacker) {
+    onDamage(attacker, damage);
+  }
   if (hp <= 0) {
     onDie();
   }
+  fmt::print("ad end\n");
 }
 
 std::shared_ptr<Slot> Creature::getSlot(WearableType type) {

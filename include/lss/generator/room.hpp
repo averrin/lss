@@ -283,7 +283,7 @@ namespace RoomTemplates {
         location->addObject<Enemy>(enemy);
       }
 
-      cell->triggers.push_back(std::make_shared<UseItemTrigger>(Prototype::QUEST_ITEM->type, [=]{
+      cell->triggers.push_back(std::make_shared<UseItemTrigger>(Prototype::QUEST_ITEM->type, [=](std::shared_ptr<Creature> actor){
         return Triggers::ALTAR_TRIGGER(cell, location);
       }));
 
@@ -377,7 +377,8 @@ namespace RoomTemplates {
       fb->setName("heal_light");
       location->addObject(fb);
 
-      s->triggers.push_back(std::make_shared<UseTrigger>([=](std::shared_ptr<Player> hero){
+      s->triggers.push_back(std::make_shared<UseTrigger>([=](std::shared_ptr<Creature> actor){
+        auto hero = std::dynamic_pointer_cast<Player>(actor);
         return Triggers::HEAL_STAND_TRIGGER(hero, s);
       }));
 
@@ -407,7 +408,8 @@ namespace RoomTemplates {
       fb->setName("mana_light");
       location->addObject(fb);
 
-      s->triggers.push_back(std::make_shared<UseTrigger>([=](std::shared_ptr<Player> hero){
+      s->triggers.push_back(std::make_shared<UseTrigger>([=](std::shared_ptr<Creature> actor){
+        auto hero = std::dynamic_pointer_cast<Player>(actor);
         return Triggers::MANA_STAND_TRIGGER(hero, s);
       }));
 

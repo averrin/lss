@@ -324,32 +324,33 @@ void LSSApp::updateCell(std::shared_ptr<Cell> c) {
       f->setAlpha(c->illumination);
       break;
     }
-  } else {
+  } else if (hero->canSee(c)) {
     std::sort(objects.begin(), objects.end(),
               [](auto a, auto b) { return a->zIndex < b->zIndex; });
-    for (auto o : objects) {
+    // for (auto o : objects) {
+    auto o = objects.back();
+    //TODO: fix enemy behind acidpool
       if (auto e = std::dynamic_pointer_cast<Enemy>(o)) {
-        if (debug) {
-          unsigned size = e->path.size();
-          for (int k = 0; k < size; ++k) {
-            auto dot = e->path[k];
-            auto i =
-                dot->y * (hero->currentLocation->cells.front().size() + 1) +
-                dot->x;
-            state->setFragment(i, std::make_shared<ItemSign>(c, ItemType::ROCK));
-          }
-        }
+        // if (debug) {
+        //   unsigned size = e->path.size();
+        //   for (int k = 0; k < size; ++k) {
+        //     auto dot = e->path[k];
+        //     auto i =
+        //         dot->y * (hero->currentLocation->cells.front().size() + 1) +
+        //         dot->x;
+        //     state->setFragment(i, std::make_shared<ItemSign>(c, ItemType::ROCK));
+        //   }
+        // }
 
-        if (!hero->canSee(c) && !hero->monsterSense)
-          continue;
+        // if (!hero->canSee(c) && !hero->monsterSense)
+          // continue;
 
         auto f = std::make_shared<EnemySign>(c, e->type);
         state->setFragment(index, f);
         f->setAlpha(c->illumination);
 
       } else if (auto d = std::dynamic_pointer_cast<Door>(o);
-                 d && (hero->canSee(c) ||
-                       c->visibilityState == VisibilityState::SEEN)) {
+                 d && (c->visibilityState == VisibilityState::SEEN)) {
         std::shared_ptr<Fragment> f = std::make_shared<DoorSign>(d->opened);
         if (!d->opened && d->hidden) {
           auto fake_wall = std::make_shared<Cell>(CellType::WALL);
@@ -363,12 +364,12 @@ void LSSApp::updateCell(std::shared_ptr<Cell> c) {
         state->setFragment(index, f);
         f->setAlpha(c->illumination);
       } else if (auto i = std::dynamic_pointer_cast<Item>(o);
-                 i && hero->canSee(c)) {
+                 i) {
         auto f = std::make_shared<ItemSign>(c, i->type);
         state->setFragment(index, f);
         f->setAlpha(c->illumination);
       } else if (auto t = std::dynamic_pointer_cast<Terrain>(o);
-                 t && hero->canSee(c)) {
+                 t) {
         auto f = std::make_shared<TerrainSign>(c, t->type);
         state->setFragment(index, f);
         f->setAlpha(c->illumination);
@@ -376,7 +377,7 @@ void LSSApp::updateCell(std::shared_ptr<Cell> c) {
           f->setAlpha(100);
         }
       }
-    }
+    // }
   }
 
   if (c == hero->currentCell) {
