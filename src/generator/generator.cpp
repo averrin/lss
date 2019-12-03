@@ -673,13 +673,11 @@ bool placeStairs(std::shared_ptr<Location> location) {
 
   delete pather;
 
-  if (location->objects.size() > 0) {
-    // TODO: location->removeObject
-    location->objects.erase(std::remove_if(
-        location->objects.begin(), location->objects.end(), [location](auto o) {
-          return o->currentCell == location->exitCell ||
-                 o->currentCell == location->enterCell;
-        }));
+  for (auto o: location->objects) {
+      if (o->currentCell == location->exitCell ||
+          o->currentCell == location->enterCell) {
+        location->removeObject(o);
+      }
   }
 
   location->exitCell->type = CellType::DOWNSTAIRS;
@@ -895,7 +893,7 @@ void makeCavePassage(std::shared_ptr<Location> location) {
 
 void placeTemplateInRoom(std::shared_ptr<Location> location, std::shared_ptr<RoomTemplate> rtp) {
   auto room = rtp->generate(location);
-  Room::printRoom(location, room);
+  // Room::printRoom(location, room);
 
   //TODO: shuffle suitable rooms and select
   auto target = location->rooms[rand() % location->rooms.size()];
@@ -1036,11 +1034,13 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
   if (location->hasFeature(LocationFeature::MANA)) {
     placeTemplateInRoom(location, RoomTemplates::MANA_STAND_ROOM);
   }
+
   // if (location->hasFeature(LocationFeature::ICE)) {
   //   placeTemplateInRoom(location, RoomTemplates::TREASURE_ROOM);
   // }
   start = std::chrono::system_clock::now();
   auto success = placeStairs(location);
+
   if (!success) {
     // log.info(lu::green("MAPGEN"), "regen location");
     dlog("regen location");

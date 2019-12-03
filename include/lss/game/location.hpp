@@ -138,7 +138,7 @@ public:
 
     return locationFeatures;
   }
-
+    
   std::vector<std::shared_ptr<Cell>> getNeighbors(std::shared_ptr<Cell> cell) {
     return getNeighbors(cell.get());
   }

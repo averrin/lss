@@ -388,7 +388,6 @@ namespace RoomTemplates {
       return room;
     });
 
-  //TODO: fix missed lights
   const auto MANA_STAND_ROOM = std::make_shared<RoomTemplate>(
     /*
             .*.
