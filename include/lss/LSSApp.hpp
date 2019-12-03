@@ -50,7 +50,7 @@ class LSSApp : public std::enable_shared_from_this<LSSApp> {
 public:
   int seed;
   LibLog::Logger &log = LibLog::Logger::getInstance();
-  static const int MAX_LEVELS = 10;
+  static const int MAX_LEVELS = 2;
 
   ~LSSApp();
   SDL_DisplayMode dm;

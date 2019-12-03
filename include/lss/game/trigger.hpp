@@ -110,7 +110,7 @@ namespace Triggers {
     };
 
     const auto HEAL_STAND_TRIGGER = [](std::shared_ptr<Player> hero, std::shared_ptr<UsableTerrain> terrain) {
-        Creature::heal(hero, 50, 100);
+        hero->heal(50, 100);
 
         auto light = *hero->currentLocation->getObject<Terrain>("heal_light");
         hero->currentLocation->removeObject(light);
@@ -122,7 +122,7 @@ namespace Triggers {
 
     //TODO: fix glow from removed light source
     const auto MANA_STAND_TRIGGER = [](std::shared_ptr<Player> hero, std::shared_ptr<UsableTerrain> terrain) {
-        Creature::restoreMana(hero, 25, 50);
+        hero->restoreMana(25, 50);
 
         auto light = *hero->currentLocation->getObject<Terrain>("mana_light");
         hero->currentLocation->removeObject(light);

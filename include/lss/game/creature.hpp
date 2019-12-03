@@ -249,29 +249,28 @@ public:
   void commit(std::string reason, int ap, bool s = false);
   int waitedAP = 0;
 
-  //TODO: make method
-  static void heal(std::shared_ptr<Creature> caster, int min, int max) {
-    auto heal = R::Z(caster->HP_MAX(caster.get()) / 100 * min,
-                    caster->HP_MAX(caster.get()) / 100 * max);
-    caster->hp += heal;
-    if (caster->HP(caster.get()) > caster->HP_MAX(caster.get())) {
-      caster->hp = caster->HP_MAX(caster.get());
+  void heal(int min, int max) {
+    auto heal = R::Z(HP_MAX(this) / 100 * min,
+                    HP_MAX(this) / 100 * max);
+    hp += heal;
+    if (HP(this) > HP_MAX(this)) {
+      hp = HP_MAX(this);
     }
-    caster->commit("heal", 0);
-    auto a = std::make_shared<ColorAnimation>(caster, Color::fromHexString("#2222ff"), 8, true);
+    commit("heal", 0);
+    auto a = std::make_shared<ColorAnimation>(shared_from_this(), Color::fromHexString("#2222ff"), 8, true);
     AnimationEvent ae(a);
     eb::EventBus::FireEvent(ae);
   }
 
-  static void restoreMana(std::shared_ptr<Creature> caster, int min, int max) {
-    auto heal = R::Z(caster->MP_MAX(caster.get()) / 100 * min,
-                    caster->MP_MAX(caster.get()) / 100 * max);
-    caster->mp += heal;
-    if (caster->MP(caster.get()) > caster->MP_MAX(caster.get())) {
-      caster->mp = caster->MP_MAX(caster.get());
+  void restoreMana(int min, int max) {
+    auto heal = R::Z(MP_MAX(this) / 100 * min,
+                    MP_MAX(this) / 100 * max);
+    mp += heal;
+    if (MP(this) > MP_MAX(this)) {
+      mp = MP_MAX(this);
     }
-    caster->commit("manaRestore", 0);
-    auto a = std::make_shared<ColorAnimation>(caster, Color::fromHexString("#2222ff"), 8, true);
+    commit("manaRestore", 0);
+    auto a = std::make_shared<ColorAnimation>(shared_from_this(), Color::fromHexString("#2222ff"), 8, true);
     AnimationEvent ae(a);
     eb::EventBus::FireEvent(ae);
   }

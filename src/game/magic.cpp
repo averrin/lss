@@ -58,7 +58,6 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
   if (*spell == *Spells::REVEAL) {
     hero->currentLocation->reveal();
     hero->monsterSense = true;
-    hero->commit("reveal", 0);
     hero->monsterSense = false;
     // TODO: move monster sense to toggle trait
   } else if (*spell == *Spells::MONSTER_SENSE) {
@@ -76,23 +75,19 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
     auto items = lt.open();
     items.front()->setCurrentCell(c);
     hero->currentLocation->addObject(items.front());
-    hero->commit("summon thing", 0);
   } else if (*spell == *Spells::HEAL_LESSER) {
-    Creature::heal(caster, 10, 25);
+    caster->heal(10, 25);
   } else if (*spell == *Spells::HEAL) {
-    Creature::heal(caster, 25, 50);
+    caster->heal(25, 50);
   } else if (*spell == *Spells::HEAL_GREATER) {
-    Creature::heal(caster, 50, 100);
+    caster->heal(50, 100);
   } else if (*spell == *Spells::RESTORE_MANA) {
-    Creature::restoreMana(caster, 25, 50);
+    caster->restoreMana(25, 50);
   } else if (*spell == *Spells::TELEPORT_RANDOM) {
     auto room = caster->currentLocation
                     ->rooms[rand() % caster->currentLocation->rooms.size()];
     auto cell = room->cells[rand() % room->cells.size()];
     caster->setCurrentCell(cell);
-    if (auto hero = std::dynamic_pointer_cast<Player>(caster)) {
-      hero->commit("Teleport", 0);
-    }
   } else if (auto tspell = std::dynamic_pointer_cast<ToggleTraitSpell>(spell)) {
     toggleTrait(caster, tspell);
   } else if (auto espell = std::dynamic_pointer_cast<EffectSpell>(spell)) {
@@ -104,6 +99,9 @@ void Magic::castSpell(std::shared_ptr<Creature> caster,
     castLineSpell(caster, lspell);
   } else if (auto tspell = std::dynamic_pointer_cast<TargetSpell>(spell)) {
     castTargetSpell(caster, tspell);
+  }
+  if (auto hero = std::dynamic_pointer_cast<Player>(caster)) {
+    hero->commit("spell effect", 0);
   }
 }
 

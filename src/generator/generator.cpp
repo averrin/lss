@@ -684,14 +684,14 @@ bool placeStairs(std::shared_ptr<Location> location) {
   auto n = location->getNeighbors(location->exitCell);
   // FIXME: crash
   std::for_each(n.begin(), n.end(), [location](auto c) {
-    makeFloor(c);
+    mapUtils::makeFloor(c);
     c->room = location->exitCell->room;
     c->room->cells.push_back(c);
   });
   location->enterCell->type = CellType::UPSTAIRS;
   n = location->getNeighbors(location->enterCell);
   std::for_each(n.begin(), n.end(), [location](auto c) {
-    makeFloor(c);
+    mapUtils::makeFloor(c);
     c->room = location->enterCell->room;
     c->room->cells.push_back(c);
   });
