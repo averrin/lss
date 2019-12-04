@@ -4,10 +4,10 @@
 #include <deque>
 #include <string>
 
-#include "lss/fragment.hpp"
 #include "lss/game/events.hpp"
 #include "lss/game/player.hpp"
-#include "lss/state.hpp"
+#include "ui/fragment.hpp"
+#include "ui/state.hpp"
 
 #include "EventHandler.hpp"
 

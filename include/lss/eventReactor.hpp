@@ -3,9 +3,9 @@
 
 #include "EventBus.hpp"
 #include "EventHandler.hpp"
-#include "lss/LSSApp.hpp"
 #include "lss/game/events.hpp"
 
+class LSSApp;
 class EventReactor : public eb::EventHandler<EquipCommandEvent>,
                      public eb::EventHandler<DropCommandEvent>,
                      public eb::EventHandler<UseCommandEvent>,

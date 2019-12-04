@@ -1,8 +1,9 @@
-#include "lss/ui/normalMode.hpp"
-#include "lss/LSSApp.hpp"
-#include "lss/fragment.hpp"
+#include "ui/normalMode.hpp"
+#include "ui/LSSApp.hpp"
+#include "ui/fragment.hpp"
 #include "lss/game/content/enemies.hpp"
 #include "lss/utils.hpp"
+#include "ui/utils.hpp"
 
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 
@@ -38,7 +39,7 @@ bool NormalMode::processKey(KeyEvent event) {
   case SDL_SCANCODE_B:
   case SDL_SCANCODE_N: {
     if (!app->hero->hasTrait(Traits::CONFUSED)) {
-      auto d = utils::getDir(event.getCode());
+      auto d = ui_utils::getDir(event.getCode());
       if (!d)
         break;
       app->processCommand(*d);

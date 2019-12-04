@@ -8,10 +8,10 @@
 #include <utility>
 #include <cstdlib>
 
-#include "lss/LSSApp.hpp"
 #include "lss/eventReactor.hpp"
 #include "lss/game/terrain.hpp"
-#include "lss/keyEvent.hpp"
+#include "ui/LSSApp.hpp"
+#include "ui/keyEvent.hpp"
 #include "lss/utils.hpp"
 
 std::string VERSION = "0.1.2 by Averrin";

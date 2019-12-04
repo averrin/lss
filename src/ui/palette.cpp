@@ -1,4 +1,4 @@
-#include "lss/palette.hpp"
+#include "ui/palette.hpp"
 using namespace std::string_literals;
 
 const Palette palettes::DARK = Palette{"dark"s,

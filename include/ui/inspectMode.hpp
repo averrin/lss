@@ -1,7 +1,7 @@
 #ifndef __INSPECTMODE_H_
 #define __INSPECTMODE_H_
-#include "lss/keyEvent.hpp"
-#include "lss/modes.hpp"
+#include "ui/keyEvent.hpp"
+#include "ui/modes.hpp"
 
 class InspectMode : public Mode {
 public:

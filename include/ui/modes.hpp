@@ -6,9 +6,9 @@
 #include <boost/sml.hpp>
 namespace sml = boost::sml;
 
-#include "lss/actions.hpp"
-#include "lss/keyEvent.hpp"
-#include "lss/state.hpp"
+#include "ui/actions.hpp"
+#include "ui/keyEvent.hpp"
+#include "ui/state.hpp"
 
 #include <SDL.h>
 #include <liblog/liblog.hpp>

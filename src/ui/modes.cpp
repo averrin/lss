@@ -1,11 +1,12 @@
 #include <memory>
 
-#include "lss/LSSApp.hpp"
-#include "lss/actions.hpp"
-#include "lss/commands.hpp"
-#include "lss/generator/room.hpp"
-#include "lss/modes.hpp"
+#include "ui/LSSApp.hpp"
+#include "ui/actions.hpp"
+#include "ui/modes.hpp"
+#include "ui/utils.hpp"
 #include "lss/utils.hpp"
+#include "lss/generator/room.hpp"
+#include "lss/commands.hpp"
 
 #include "lss/game/content/enemies.hpp"
 #include "lss/game/content/items.hpp"
@@ -79,7 +80,7 @@ bool TargetMode::processKey(KeyEvent event) {
   case SDL_SCANCODE_U:
   case SDL_SCANCODE_B:
   case SDL_SCANCODE_N: {
-    auto d = utils::getDir(event.getCode());
+    auto d = ui_utils::getDir(event.getCode());
     if (d == std::nullopt)
       break;
     auto nc = app->hero->currentLocation->getCell(
@@ -182,7 +183,7 @@ bool GameOverMode::processKey(KeyEvent event) {
 }
 
 bool DirectionMode::processKey(KeyEvent event) {
-  std::optional<std::string> dirName = utils::getDir(event.getCode());
+  std::optional<std::string> dirName = ui_utils::getDir(event.getCode());
   if (dirName != std::nullopt) {
     app->modeManager.toNormal();
     app->statusLine->setContent(State::normal_mode);

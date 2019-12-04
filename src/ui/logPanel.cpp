@@ -1,6 +1,6 @@
-#include "lss/ui/logPanel.hpp"
 #include "lss/game/events.hpp"
 #include "lss/game/player.hpp"
+#include "ui/logPanel.hpp"
 #include "lss/utils.hpp"
 
 // TODO: add logging of casted spells

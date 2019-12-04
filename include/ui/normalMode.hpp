@@ -1,7 +1,7 @@
 #ifndef __NORMALMODE_H_
 #define __NORMALMODE_H_
-#include "lss/keyEvent.hpp"
-#include "lss/modes.hpp"
+#include "ui/keyEvent.hpp"
+#include "ui/modes.hpp"
 
 class NormalMode : public Mode {
 public:

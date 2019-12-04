@@ -56,17 +56,17 @@ set( SRC_FILES
 
     ${MP_DIR}/micropather.cpp
     
-	${SRC_DIR}/keyEvent.cpp
+	${SRC_DIR}/ui/keyEvent.cpp
+	${SRC_DIR}/ui/fragment.cpp
+	${SRC_DIR}/ui/palette.cpp
+	${SRC_DIR}/ui/state.cpp
 
-	${SRC_DIR}/fragment.cpp
-	${SRC_DIR}/palette.cpp
-	${SRC_DIR}/state.cpp
-	${SRC_DIR}/animation.cpp
+	${SRC_DIR}/ui/modes.cpp
+	${SRC_DIR}/ui/inspectMode.cpp
+	${SRC_DIR}/ui/normalMode.cpp
 
-	${SRC_DIR}/modes.cpp
-	${SRC_DIR}/inspectMode.cpp
-	${SRC_DIR}/normalMode.cpp
 	${SRC_DIR}/commands.cpp
+	${SRC_DIR}/eventReactor.cpp
 
 	${SRC_DIR}/game/cell.cpp
 	${SRC_DIR}/game/fov.cpp
@@ -87,14 +87,16 @@ set( SRC_FILES
 	${SRC_DIR}/game/damageSpec.cpp
 	${SRC_DIR}/game/spell.cpp
 
+	${SRC_DIR}/animation.cpp
+
 	# ${SRC_DIR}/generator/triggers.cpp
 	${SRC_DIR}/generator/generator.cpp
 
-	${SRC_DIR}/statusLine.cpp
-	${SRC_DIR}/heroLine.cpp
-	${SRC_DIR}/logPanel.cpp
-	${SRC_DIR}/eventReactor.cpp
-	${SRC_DIR}/LSSApp.cpp
+	${SRC_DIR}/ui/statusLine.cpp
+	${SRC_DIR}/ui/heroLine.cpp
+	${SRC_DIR}/ui/logPanel.cpp
+	${SRC_DIR}/ui/LSSApp.cpp
+
 
 	${SRC_DIR}/SDLPango.cpp
 	${SRC_DIR}/TextGrid.cpp

@@ -2,7 +2,7 @@
 #include "lss/game/content/items.hpp"
 #include "lss/game/itemSpec.hpp"
 #include "lss/game/terrain.hpp"
-#include "lss/state.hpp"
+#include "ui/state.hpp"
 
 const std::map<TerrainSpec, std::string> terrainSigns = {
     {TerrainType::TORCH_STAND, "*"},

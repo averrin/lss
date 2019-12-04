@@ -1,8 +1,9 @@
-#include "lss/ui/inspectMode.hpp"
-#include "lss/LSSApp.hpp"
-#include "lss/fragment.hpp"
+#include "ui/inspectMode.hpp"
+#include "ui/LSSApp.hpp"
+#include "ui/fragment.hpp"
 #include "lss/generator/room.hpp"
 #include "lss/utils.hpp"
+#include "ui/utils.hpp"
 
 auto F = [](std::string c) { return std::make_shared<Fragment>(c); };
 
@@ -32,7 +33,7 @@ bool InspectMode::processKey(KeyEvent event) {
   case SDL_SCANCODE_U:
   case SDL_SCANCODE_B:
   case SDL_SCANCODE_N: {
-    auto d = utils::getDir(event.getCode());
+    auto d = ui_utils::getDir(event.getCode());
     if (d == std::nullopt)
       break;
     auto nc = app->hero->currentLocation->getCell(

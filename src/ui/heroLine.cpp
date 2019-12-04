@@ -1,4 +1,4 @@
-#include "lss/ui/heroLine.hpp"
+#include "ui/heroLine.hpp"
 #include "lss/game/events.hpp"
 #include "lss/game/location.hpp"
 #include "lss/game/player.hpp"

@@ -24,9 +24,10 @@
 
 #include "lss/animation.hpp"
 #include "lss/commands.hpp"
-#include "lss/keyEvent.hpp"
-#include "lss/modes.hpp"
-#include "lss/state.hpp"
+
+#include "ui/keyEvent.hpp"
+#include "ui/modes.hpp"
+#include "ui/state.hpp"
 #include <TextGrid.hpp>
 
 #include "lss/game/door.hpp"
@@ -34,11 +35,11 @@
 #include "lss/game/magic.hpp"
 #include "lss/game/player.hpp"
 
-#include "lss/ui/heroLine.hpp"
-#include "lss/ui/inspectMode.hpp"
-#include "lss/ui/logPanel.hpp"
-#include "lss/ui/normalMode.hpp"
-#include "lss/ui/statusLine.hpp"
+#include "ui/heroLine.hpp"
+#include "ui/inspectMode.hpp"
+#include "ui/logPanel.hpp"
+#include "ui/normalMode.hpp"
+#include "ui/statusLine.hpp"
 
 #include "lss/generator/generator.hpp"
 

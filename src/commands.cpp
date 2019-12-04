@@ -2,8 +2,8 @@
 #include <utility>
 
 #include "lss/commands.hpp"
-#include "lss/game/events.hpp"
 #include "lss/utils.hpp"
+#include "lss/game/events.hpp"
 
 #include "EventBus.hpp"
 

@@ -3,8 +3,11 @@
 #include "lss/game/spell.hpp"
 #include "lss/game/trigger.hpp"
 #include "lss/generator/room.hpp"
-#include "lss/state.hpp"
 #include "lss/utils.hpp"
+
+#include "ui/state.hpp"
+//TODO: remove app dependency from eventReactor
+#include "ui/LSSApp.hpp"
 
 std::shared_ptr<Fragment> F(std::string c) {
   return std::make_shared<Fragment>(c);

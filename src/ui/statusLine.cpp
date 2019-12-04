@@ -1,4 +1,4 @@
-#include "lss/ui/statusLine.hpp"
+#include "ui/statusLine.hpp"
 #include "lss/game/events.hpp"
 #include "lss/utils.hpp"
 #include <fmt/format.h>

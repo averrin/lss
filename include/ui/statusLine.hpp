@@ -3,10 +3,10 @@
 
 #include <string>
 
-#include "lss/actions.hpp"
-#include "lss/fragment.hpp"
+#include "ui/actions.hpp"
+#include "ui/fragment.hpp"
+#include "ui/state.hpp"
 #include "lss/game/events.hpp"
-#include "lss/state.hpp"
 
 #include "EventHandler.hpp"
 

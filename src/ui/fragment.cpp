@@ -2,9 +2,9 @@
 
 #include "Jinja2CppLight.h"
 #include "lss/color.hpp"
-#include "lss/fragment.hpp"
 #include "lss/game/terrain.hpp"
-#include "lss/state.hpp"
+#include "ui/fragment.hpp"
+#include "ui/state.hpp"
 #include "signs.cpp"
 
 using namespace Jinja2CppLight;
