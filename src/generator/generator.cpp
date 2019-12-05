@@ -46,7 +46,7 @@ float BLOOD = 0.01;
 float POND = 0.007;
 float BONES = 0.004;
 float SECRET_DOOR = 0.2;
-float CRATE = 0.01;
+float CRATE = 0.005;
 
 float STATUE = 0.1;
 float ALTAR = 0.1;
@@ -1096,7 +1096,7 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
     for (auto c : r) {
       if (c->type == CellType::FLOOR && R::R() < P::BLOOD) {
         c->features.push_back(CellFeature::BLOOD);
-      } else if (c->type == CellType::FLOOR && R::R() < P::CRATE) {
+      } else if (c->room != nullptr && c->room->type == RoomType::HALL && c->type == CellType::FLOOR && R::R() < P::CRATE) {
         auto crate = std::make_shared<Terrain>(TerrainType::CRATE);
         crate->setCurrentCell(c);
         crate->triggers.push_back(std::make_shared<AttackTrigger>([=](std::shared_ptr<Creature> actor){
