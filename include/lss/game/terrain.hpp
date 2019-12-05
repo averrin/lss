@@ -2,6 +2,7 @@
 #define __TERRAIN_H_
 #include "lss/game/object.hpp"
 
+class Creature;
 struct TerrainSpec {
   std::string name;
   bool seeThrough;
@@ -51,6 +52,8 @@ public:
   }
   TerrainSpec type;
 
+  bool interact(std::shared_ptr<Creature> actor);
+
   std::optional<LightSpec> getGlow() override {
     if (light.distance <= 0) {
       return std::nullopt;
@@ -75,6 +78,7 @@ const auto TORCH_STAND =
 const auto STATUE = TerrainSpec{
     "statue", false, false, -1, true, LightSpec{1.5, LightType::MAGIC}};
 const auto ALTAR = TerrainSpec{"altar", true, true, -1, false};
+const auto CRATE = TerrainSpec{"crate", true, false};
 const auto BUSH = TerrainSpec{"bush", false, true};
 const auto FIREBALL =
     TerrainSpec{"fireball", true,  true,

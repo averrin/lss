@@ -349,8 +349,7 @@ void LSSApp::updateCell(std::shared_ptr<Cell> c) {
         state->setFragment(index, f);
         f->setAlpha(c->illumination);
 
-      } else if (auto d = std::dynamic_pointer_cast<Door>(o);
-                 d && (c->visibilityState == VisibilityState::SEEN)) {
+      } else if (auto d = std::dynamic_pointer_cast<Door>(o); d) {
         std::shared_ptr<Fragment> f = std::make_shared<DoorSign>(d->opened);
         if (!d->opened && d->hidden) {
           auto fake_wall = std::make_shared<Cell>(CellType::WALL);

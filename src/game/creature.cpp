@@ -257,13 +257,23 @@ bool Creature::attack(Direction d) {
   auto opit = std::find_if(
       currentLocation->objects.begin(), currentLocation->objects.end(),
       [&](std::shared_ptr<Object> o) {
-        return o->currentCell == nc && std::dynamic_pointer_cast<Creature>(o);
+        return o->currentCell == nc && (std::dynamic_pointer_cast<Creature>(o) || std::dynamic_pointer_cast<Terrain>(o));
       });
   if (opit == currentLocation->objects.end() &&
       currentLocation->player->currentCell != nc) {
     MessageEvent me(shared_from_this(), "There is no target.");
     eb::EventBus::FireEvent(me);
     return false;
+  }
+  if (auto terrain = std::dynamic_pointer_cast<Terrain>(*opit)) {
+    auto ptr = std::dynamic_pointer_cast<Creature>(shared_from_this());
+    for (auto t : terrain->triggers) {
+        auto trigger = std::dynamic_pointer_cast<AttackTrigger>(t);
+        if (trigger) {
+            trigger->activate(ptr);
+        }
+    }
+
   }
   auto opponent =
       opit == currentLocation->objects.end() ? currentLocation->player : *opit;
@@ -362,6 +372,10 @@ bool Creature::move(Direction d, bool autoAction) {
     if (autoAction && hasObstacles && !(*obstacle)->passThrough) {
       if (std::dynamic_pointer_cast<Enemy>(*obstacle)) {
         return attack(d);
+      }
+      if (auto t = std::dynamic_pointer_cast<Terrain>(*obstacle); t) {
+        auto ptr = std::dynamic_pointer_cast<Creature>(shared_from_this());
+        return t->interact(ptr);
       }
       return !(*obstacle)->interact(shared_from_this());
     }

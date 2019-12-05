@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "lss/game/itemSpec.hpp"
+#include "lss/game/lootBox.hpp"
 #include "EventBus.hpp"
 #include "lss/game/cell.hpp"
 #include "lss/game/location.hpp"
@@ -41,6 +42,12 @@ class PickTrigger : public Trigger {
 class UseTrigger : public Trigger {
     public: UseTrigger(TriggerCallback cb) : Trigger(cb) {}
 };
+class InteractTrigger : public Trigger {
+    public: InteractTrigger(TriggerCallback cb) : Trigger(cb) {}
+};
+class AttackTrigger : public Trigger {
+    public: AttackTrigger(TriggerCallback cb) : Trigger(cb) {}
+};
 class UseItemTrigger : public Trigger {
     public:
         UseItemTrigger(ItemSpec i, TriggerCallback cb) : Trigger(cb), item(i) {}
@@ -49,6 +56,51 @@ class UseItemTrigger : public Trigger {
 
 
 namespace Triggers {
+    const auto CRATE_TRIGGER = [](std::shared_ptr<Creature> c, std::shared_ptr<Terrain> terrain, std::shared_ptr<Location> location) {
+        for (auto r : location->cells) {
+            for (auto cell : r) {
+                auto objects = location->getObjects(cell);
+                if (std::find_if(objects.begin(), objects.end(), [=](auto o){
+                    return o->id == terrain->id;
+                }) != objects.end()) {
+                    //TODO: change lootbox
+                    auto box = LootBoxes::LOOT_TIER_3;
+                    for (auto item : box.open(true)) {
+                        item->setCurrentCell(cell);
+                        location->addObject<Item>(item);
+                    }
+                    location->removeObject(terrain);
+                    location->invalidate();
+                    return false;
+                }
+            }
+        }
+
+            return false;
+    };
+    const auto CRATE_MOVE_TRIGGER = [](std::shared_ptr<Creature> actor, std::shared_ptr<Terrain> terrain, std::shared_ptr<Location> location) {
+        for (auto r : location->cells) {
+            for (auto cell : r) {
+                auto objects = location->getObjects(cell);
+            if (std::find_if(objects.begin(), objects.end(), [=](auto o){
+                return o->id == terrain->id;
+            }) != objects.end()) {
+                auto dir = location->getDirFromCell(cell, actor->currentCell);
+                auto nc = location->getCell(cell, *dir);
+                if (location->getObjects(*nc).size() > 0) {
+                    return true;
+                }
+
+                fmt::print("move {}: {}.{} -> {}.{}\n", utils::getDirectionName(*dir), cell->x, cell->y, (*nc)->x, (*nc)->y);
+                terrain->setCurrentCell(*nc);
+                location->invalidate();
+                return true;
+
+            }
+            }
+        }
+            return true;
+    };
     const auto BUSH_TRIGGER = [](std::shared_ptr<Cell> c, std::shared_ptr<Location> location) {
         for (auto t : utils::castObjects<Terrain>(location->objects)) {
             if (t->type == TerrainType::BUSH && c == t->currentCell) {

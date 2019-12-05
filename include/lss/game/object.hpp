@@ -13,9 +13,9 @@
 class Trigger;
 class Object : public eb::Object, public std::enable_shared_from_this<Object> {
 public:
-  Object() {}
-  Object(std::vector<std::shared_ptr<Trigger>> ts): triggers(ts) {}
-  Object(std::string n) : name(n) {}
+    Object();
+    Object(std::vector<std::shared_ptr<Trigger>> ts);
+    Object(std::string n);
   ~Object() { clearHandlers(); }
   void clearHandlers() {
     for (auto r : handlers) {
@@ -27,6 +27,7 @@ public:
   bool passThrough = true;
   bool seeThrough = true;
   std::string name;
+  int id;
   void setName(std::string n) {
     name = n;
   }

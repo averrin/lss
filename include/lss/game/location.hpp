@@ -56,7 +56,7 @@ public:
   LocationSpec type;
   Cells cells;
   Objects objects{};
-  std::map<std::shared_ptr<Cell>, Objects> cellObjects;
+    std::map<std::shared_ptr<Cell>, Objects> cellObjects = std::map<std::shared_ptr<Cell>, Objects>{};
   std::shared_ptr<Player> player;
   int depth = 0;
   std::shared_ptr<AiManager> aiManager;
@@ -264,13 +264,13 @@ public:
       dir = Direction::W;
     } else if (start->x > end->x && start->y == end->y) {
       dir = Direction::E;
-    } else if (start->x < end->x && start->y > end->y) {
-      dir = Direction::NW;
-    } else if (start->x > end->x && start->y > end->y) {
-      dir = Direction::NE;
     } else if (start->x < end->x && start->y < end->y) {
-      dir = Direction::SW;
+      dir = Direction::NW;
     } else if (start->x > end->x && start->y < end->y) {
+      dir = Direction::NE;
+    } else if (start->x < end->x && start->y > end->y) {
+      dir = Direction::SW;
+    } else if (start->x > end->x && start->y > end->y) {
       dir = Direction::SE;
     }
     return dir;

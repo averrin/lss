@@ -68,6 +68,7 @@ set( SRC_FILES
 	${SRC_DIR}/commands.cpp
 	${SRC_DIR}/eventReactor.cpp
 
+	${SRC_DIR}/game/object.cpp
 	${SRC_DIR}/game/cell.cpp
 	${SRC_DIR}/game/fov.cpp
 	${SRC_DIR}/game/aiManager.cpp
@@ -86,6 +87,7 @@ set( SRC_FILES
 	${SRC_DIR}/game/door.cpp
 	${SRC_DIR}/game/damageSpec.cpp
 	${SRC_DIR}/game/spell.cpp
+	${SRC_DIR}/game/terrain.cpp
 
 	${SRC_DIR}/animation.cpp
 

@@ -406,6 +406,9 @@ Objects Location::getObjects(std::shared_ptr<Cell> cell) {
   if (cell == nullptr) {
     throw std::runtime_error("who the fuck call like this?");
   }
+  if (cell->type == CellType::UNKNOWN) {
+    return {};
+  }
   Objects cellObjects(objects.size());
   auto it = std::copy_if(objects.begin(), objects.end(), cellObjects.begin(),
                          [cell](std::shared_ptr<Object> o) {

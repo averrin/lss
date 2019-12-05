@@ -5,6 +5,7 @@
 #include "lss/game/events.hpp"
 
 Door::Door() : Object("door") {
+  zIndex = 1;
   passThrough = false;
   seeThrough = false;
 };
