@@ -25,7 +25,7 @@ static const ItemCategory USABLE = {"Usable"};
 
 struct ItemSpec {
 public:
-  std::string name;
+  std::string name = "";
   ItemCategory category;
   WearableType wearableType = INVALID;
   int durability = -1;

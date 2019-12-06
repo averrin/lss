@@ -95,6 +95,27 @@ void Location::onEvent(CommitEvent &e) {
       }
     }
   }
+
+  for (auto r : cells) {
+    for (auto c : r) {
+      auto items = utils::castObjects<Item>(getObjects(c));
+      if (items.size() > 1) {
+        std::vector<std::shared_ptr<Item>> so;
+        for (auto o : items) {
+          if (std::find(so.begin(), so.end(), o) != so.end()) continue;
+          so.clear();
+          std::copy_if(items.begin(), items.end(), std::back_inserter(so), [&o](std::shared_ptr<Item> no) {
+            return no != o && no->name == o->name && no->type == o->type;
+          });
+          for (auto no : so) {
+            o->count += no->count;
+            removeObject(no);
+          }
+        }
+      }
+    }
+  }
+
   apAccomulator += e.actionPoints;
   if (apAccomulator >= 100000 / (type.threat+1) && !player->hasTrait(Traits::MIND_SIGHT)) {
     apAccomulator = 0;

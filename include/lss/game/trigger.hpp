@@ -57,49 +57,27 @@ class UseItemTrigger : public Trigger {
 
 namespace Triggers {
     const auto CRATE_TRIGGER = [](std::shared_ptr<Creature> c, std::shared_ptr<Terrain> terrain, std::shared_ptr<Location> location) {
-        for (auto r : location->cells) {
-            for (auto cell : r) {
-                auto objects = location->getObjects(cell);
-                if (std::find_if(objects.begin(), objects.end(), [=](auto o){
-                    return o->id == terrain->id;
-                }) != objects.end()) {
-                    //TODO: change lootbox
-                    auto box = LootBoxes::CLUTTER;
-                    for (auto item : box.open()) {
-                        item->setCurrentCell(cell);
-                        location->addObject<Item>(item);
-                    }
-                    location->removeObject(terrain);
-                    location->invalidate();
-                    return false;
-                }
-            }
+        auto box = LootBoxes::CLUTTER;
+        for (auto item : box.open()) {
+            item->setCurrentCell(terrain->currentCell);
+            location->addObject<Item>(item);
         }
-
-            return false;
+        location->removeObject(terrain);
+        location->invalidate();
+        return false;
     };
     const auto CRATE_MOVE_TRIGGER = [](std::shared_ptr<Creature> actor, std::shared_ptr<Terrain> terrain, std::shared_ptr<Location> location) {
-        for (auto r : location->cells) {
-            for (auto cell : r) {
-                auto objects = location->getObjects(cell);
-            if (std::find_if(objects.begin(), objects.end(), [=](auto o){
-                return o->id == terrain->id;
-            }) != objects.end()) {
-                auto dir = location->getDirFromCell(cell, actor->currentCell);
-                auto nc = location->getCell(cell, *dir);
-                if (location->getObjects(*nc).size() > 0) {
-                    return true;
-                }
-
-                fmt::print("move {}: {}.{} -> {}.{}\n", utils::getDirectionName(*dir), cell->x, cell->y, (*nc)->x, (*nc)->y);
-                terrain->setCurrentCell(*nc);
-                location->invalidate();
-                return true;
-
-            }
-            }
-        }
+        auto cell = terrain->currentCell;
+        auto dir = location->getDirFromCell(cell, actor->currentCell);
+        auto nc = location->getCell(cell, *dir);
+        if (location->getObjects(*nc).size() > 0) {
             return true;
+        }
+
+        fmt::print("move {}: {}.{} -> {}.{}\n", utils::getDirectionName(*dir), cell->x, cell->y, (*nc)->x, (*nc)->y);
+        terrain->setCurrentCell(*nc);
+        location->invalidate();
+        return true;
     };
     const auto BUSH_TRIGGER = [](std::shared_ptr<Cell> c, std::shared_ptr<Location> location) {
         for (auto t : utils::castObjects<Terrain>(location->objects)) {

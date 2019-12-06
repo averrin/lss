@@ -55,8 +55,8 @@ public:
 
   bool equipped = false;
   bool identified = false;
-  std::string unidName;
-  std::string name;
+  std::string unidName = "";
+  std::string name = "";
 
   bool interact(std::shared_ptr<Object>);
   std::string getTitle(bool force = false);
