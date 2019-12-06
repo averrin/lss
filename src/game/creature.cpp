@@ -265,7 +265,7 @@ bool Creature::attack(Direction d) {
     eb::EventBus::FireEvent(me);
     return false;
   }
-  if (auto terrain = std::dynamic_pointer_cast<Terrain>(*opit)) {
+  if (auto terrain = std::dynamic_pointer_cast<Terrain>(*opit); terrain) {
     auto ptr = std::dynamic_pointer_cast<Creature>(shared_from_this());
     for (auto t : terrain->triggers) {
         auto trigger = std::dynamic_pointer_cast<AttackTrigger>(t);

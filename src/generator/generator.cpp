@@ -46,7 +46,8 @@ float BLOOD = 0.01;
 float POND = 0.007;
 float BONES = 0.004;
 float SECRET_DOOR = 0.2;
-float CRATE = 0.005;
+// float CRATE = 0.005;
+float CRATE = 0.05;
 
 float STATUE = 0.1;
 float ALTAR = 0.1;

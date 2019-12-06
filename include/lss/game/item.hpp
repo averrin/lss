@@ -16,31 +16,37 @@ public:
       : Object(), type(t), unidName(un), name(n), durability(type.durability),
         effects(e) {
     zIndex = 1;
+    identified = type.identified;
   }
   Item(ItemSpec t, int c = -1)
       : Object(), type(t), count(c), unidName(t.name), name(t.name),
         durability(type.durability) {
     zIndex = 1;
+    identified = type.identified;
   }
   Item(std::string n, ItemSpec t, int c = -1, Effects e = {})
       : Object(), type(t), count(c), unidName(t.name), name(n),
         durability(type.durability), effects(e) {
     zIndex = 1;
+    identified = type.identified;
   }
   Item(ItemSpec t, Effects e)
       : Object(), type(t), effects(e), unidName(t.name), name(t.name),
         durability(type.durability) {
     zIndex = 1;
+    identified = type.identified;
   }
   Item(ItemSpec t, int c, Effects e)
       : Object(), type(t), effects(e), unidName(t.name), name(t.name),
         durability(type.durability), count(c) {
     zIndex = 1;
+    identified = type.identified;
   }
   Item(std::string n, ItemSpec t, Effects e)
       : Object(), type(t), effects(e), unidName(t.name), name(n),
         durability(type.durability) {
     zIndex = 1;
+    identified = type.identified;
   }
   ItemSpec type;
   Effects effects;

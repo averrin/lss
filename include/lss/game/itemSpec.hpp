@@ -29,6 +29,7 @@ public:
   ItemCategory category;
   WearableType wearableType = INVALID;
   int durability = -1;
+  bool identified = false;
 
   friend bool operator<(const ItemSpec &lhs, const ItemSpec &rhs) {
     return lhs.name < rhs.name;

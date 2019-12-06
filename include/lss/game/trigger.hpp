@@ -64,8 +64,8 @@ namespace Triggers {
                     return o->id == terrain->id;
                 }) != objects.end()) {
                     //TODO: change lootbox
-                    auto box = LootBoxes::LOOT_TIER_3;
-                    for (auto item : box.open(true)) {
+                    auto box = LootBoxes::CLUTTER;
+                    for (auto item : box.open()) {
                         item->setCurrentCell(cell);
                         location->addObject<Item>(item);
                     }

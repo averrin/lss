@@ -76,6 +76,12 @@ const LootBox WEAPONS_TIER_1 = LootBox(Prototype::WEAPONS_1);
 const LootBox WEAPONS_TIER_2 = LootBox(Prototype::WEAPONS_2);
 const LootBox WEAPONS_TIER_3 = LootBox(Prototype::WEAPONS_3);
 
+const LootBox CLUTTER = LootBox(0.4, LootBox({
+    LootBox(0.6, LootBox(Prototype::CLUTTER)),
+    LootBox(0.01, POTIONS),
+    LootBox(0.01, SCROLLS),
+}));
+
 /* Enemy loot */
 const LootBox LOOT_TIER_0 = LootBox(Prototype::LOOT_0);
 const LootBox LOOT_TIER_1 = LootBox(

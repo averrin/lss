@@ -10,6 +10,7 @@ ItemSpec const POTION = {"potion", ItemCategories::CONSUMABLES};
 
 ItemSpec const ROCK = {"rock", ItemCategories::THROWABLE};
 ItemSpec const BONES = {"bones", ItemCategories::MISC};
+ItemSpec const CLUTTER = {"clutter", ItemCategories::MISC, WearableType::INVALID, -1, true};
 
 ItemSpec const ENEMY = {"enemy item", ItemCategories::MISC,
                         WearableType::ENEMY};

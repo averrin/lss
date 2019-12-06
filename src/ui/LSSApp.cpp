@@ -1,3 +1,10 @@
+#include "backward.hpp"
+#define BACKWARD_HAS_DW 1
+
+namespace backward {
+backward::SignalHandling sh;
+} // namespace backward
+
 #include <chrono>
 #include <cmath>
 #include <iostream>

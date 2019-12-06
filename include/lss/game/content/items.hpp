@@ -58,7 +58,39 @@ const auto PICK_AXE = std::make_shared<Item>(ItemType::PICK_AXE);
 
 const auto QUEST_ITEM = std::make_shared<Usable>(ItemType::EMPTY);
 
+const auto BROOM = std::make_shared<Item>("broom", ItemType::CLUTTER, 1);
+const auto FORK = std::make_shared<Item>("fork", ItemType::CLUTTER, 1);
+const auto SPOON = std::make_shared<Item>("spoon", ItemType::CLUTTER, 1);
+const auto PLATE = std::make_shared<Item>("plate", ItemType::CLUTTER, 1);
+const auto CLOTH = std::make_shared<Item>("cloth", ItemType::CLUTTER, 1);
+const auto BASKET = std::make_shared<Item>("basket", ItemType::CLUTTER, 1);
+const auto BELLOWS = std::make_shared<Item>("bellows", ItemType::CLUTTER, 1);
+const auto BUCKET = std::make_shared<Item>("bucket", ItemType::CLUTTER, 1);
+const auto DRUM = std::make_shared<Item>("drum", ItemType::CLUTTER, 1);
+const auto INKWELL = std::make_shared<Item>("inkwell", ItemType::CLUTTER, 1);
+const auto LUTE = std::make_shared<Item>("lute", ItemType::CLUTTER, 1);
+const auto SHOVEL = std::make_shared<Item>("shovel", ItemType::CLUTTER, 1);
+const auto PILLOW = std::make_shared<Item>("pillow", ItemType::CLUTTER, 1);
+const auto SKULL = std::make_shared<Item>("skull", ItemType::CLUTTER, 1);
+
 /* Kits */
+const std::vector<std::shared_ptr<Item>> CLUTTER = {
+    BROOM,
+    FORK,
+    SPOON,
+    PLATE,
+    CLOTH,
+    BASKET,
+    BELLOWS,
+    BUCKET,
+    DRUM,
+    INKWELL,
+    LUTE,
+    SHOVEL,
+    PILLOW,
+    SKULL,
+};
+
 const std::vector<std::shared_ptr<Item>> LOOT_0 = {
     DAGGER,
     THROWING_KNIVES->setCount(5),
