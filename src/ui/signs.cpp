@@ -66,10 +66,14 @@ const std::map<ItemSpec, std::string> itemSigns = {
 
     {ItemType::CORPSE, "%"},        {ItemType::THROWING_KNIVES, "↑"},
     {ItemType::CLUTTER, "-"},
+    {ItemType::EMPTY, "?"},
+    {ItemType::ENEMY, "?"},
 };
 
 const std::map<ItemSpec, std::string> itemColors = {
     {ItemType::BONES, "#aaa"},
+    {ItemType::EMPTY, "#aa22aa"},
+    {ItemType::ENEMY, "#ff0000"},
 
     {ItemType::CORPSE, "#ee1111"},
     {ItemType::ROCK, COLORS::GRAY},
@@ -207,4 +211,5 @@ const std::map<CellFeature, std::string> featureColors = {
     {CellFeature::CAVE, "#897546"},  {CellFeature::BLOOD, "#8b0000"},
     {CellFeature::FROST, "#aaaaff"}, {CellFeature::MARK1, "#0000ff"},
     {CellFeature::MARK2, "#00ff00"},
+    {CellFeature::CORRUPT, "#aa00aa"},
 };

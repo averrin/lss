@@ -36,6 +36,7 @@ struct CellSpec {
 };
 
 namespace CellType {
+const CellSpec EMPTY = CellSpec{"empty", true, true};
 const CellSpec UNKNOWN = CellSpec{"unknown", false, false};
 const CellSpec FLOOR = CellSpec{"floor", true, true};
 const CellSpec WALL = CellSpec{"wall", false, false};
@@ -47,7 +48,7 @@ const CellSpec VOID = CellSpec{"void", false, true, {Traits::FLY}};
 }; // namespace CellType
 
 enum class VisibilityState { UNKNOWN, SEEN, VISIBLE };
-enum class CellFeature { BLOOD, CAVE, FROST, MARK1, MARK2, ACID };
+enum class CellFeature { BLOOD, CAVE, FROST, MARK1, MARK2, ACID, CORRUPT };
 
 class Cell {
   LibLog::Logger &log = LibLog::Logger::getInstance();

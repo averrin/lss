@@ -108,6 +108,9 @@ std::string getColor(std::shared_ptr<Cell> cell) {
       if (cell->hasFeature(CellFeature::MARK2)) {
         color = featureColors.at(CellFeature::MARK2);
       }
+      if (cell->hasFeature(CellFeature::CORRUPT)) {
+        color = featureColors.at(CellFeature::CORRUPT);
+      }
     }
 
     // fmt::print("base color: {}\n", color);
@@ -149,6 +152,10 @@ std::tuple<std::string, int> getBgColor(std::shared_ptr<Cell> cell) {
   }
   if (cell->type == CellType::WATER) {
     return {"#8d8fc0", 50};
+  }
+
+  if (cell->hasFeature(CellFeature::CORRUPT)) {
+    return {"#8800aa", 50};
   }
 
   return {COLORS::BG, 100};

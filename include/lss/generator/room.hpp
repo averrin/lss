@@ -446,12 +446,22 @@ namespace RoomTemplates {
              %%%
     */
     [](std::shared_ptr<Location> location) {
-      auto room = Room::makeBlob(location, 8, 3, 8, 3, CellType::FLOOR, CellType::UNKNOWN, true);
+      auto room = Room::makeBlob(location, 10, 5, 10, 5, CellType::EMPTY, CellType::UNKNOWN, true);
       for (auto c : room->cells) {
-        if (c->type != CellType::FLOOR) {
-          continue;
-        }
         c->addFeature(CellFeature::FROST);
+      }
+      return room;
+    });
+  const auto CORRUPT = std::make_shared<RoomTemplate>(
+    /*
+             %%
+            %%%%
+             %%%
+    */
+    [](std::shared_ptr<Location> location) {
+      auto room = Room::makeBlob(location, 13, 5, 13, 5, CellType::EMPTY, CellType::UNKNOWN, true);
+      for (auto c : room->cells) {
+        c->addFeature(CellFeature::CORRUPT);
       }
       return room;
     });

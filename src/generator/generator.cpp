@@ -46,8 +46,7 @@ float BLOOD = 0.01;
 float POND = 0.007;
 float BONES = 0.004;
 float SECRET_DOOR = 0.2;
-// float CRATE = 0.005;
-float CRATE = 0.05;
+float CRATE = 0.009;
 
 float STATUE = 0.1;
 float ALTAR = 0.1;
@@ -55,6 +54,7 @@ float ALTAR = 0.1;
 float VOID = 0.5;
 float LAKE = 0.5;
 
+float CORRUPT = 0.3;
 float ICE = 0.2;
 float HEAL = 0.1;
 float MANA = 0.1;
@@ -97,6 +97,17 @@ void placeInRoom(std::shared_ptr<Location> location, std::shared_ptr<Room> room)
   }
   auto ltc = *ltcr;
   mapUtils::paste(room->cells, location, ltc->x, ltc->y);
+
+  location->rooms.push_back(room);
+}
+
+void placeStartInRoom(std::shared_ptr<Location> location, std::shared_ptr<Room> room) {
+  auto ltcr = *getRandomCell(location, CellType::FLOOR);
+  while (ltcr->x + room->width >= WIDTH ||
+         ltcr->y + room->height >= HEIGHT) {
+    ltcr = *getRandomCell(location, CellType::FLOOR);
+  }
+  mapUtils::paste(room->cells, location, ltcr->x, ltcr->y);
 
   location->rooms.push_back(room);
 }
@@ -563,6 +574,9 @@ Generator::getRandomLocation(std::shared_ptr<Player> hero, int depth,
   if (R::R() < P::ICE) {
     spec.features.push_back(LocationFeature::ICE);
   }
+  if (R::R() < P::CORRUPT) {
+    spec.features.push_back(LocationFeature::CORRUPT);
+  }
   if (R::R() < P::HEAL) {
     spec.features.push_back(LocationFeature::HEAL);
   }
@@ -676,9 +690,10 @@ bool placeStairs(std::shared_ptr<Location> location) {
 
   delete pather;
 
-  for (auto o: location->objects) {
-      if (o->currentCell == location->exitCell ||
-          o->currentCell == location->enterCell) {
+  auto _objects = location->objects;
+  for (auto o: _objects) {
+      if (o->currentCell != nullptr && (o->currentCell == location->exitCell ||
+          o->currentCell == location->enterCell)) {
         location->removeObject(o);
       }
   }
@@ -920,6 +935,10 @@ void placeTemplate(std::shared_ptr<Location> location, std::shared_ptr<RoomTempl
   placeRoom(location, room);
 }
 
+void placeStartTemplateInRoom(std::shared_ptr<Location> location, std::shared_ptr<RoomTemplate> rtp) {
+  auto room = rtp->generate(location);
+  placeStartInRoom(location, room);
+}
 
 void placeStatue(std::shared_ptr<Location> location) {
   placeTemplateInRoom(location, RoomTemplates::STATUE_ROOM);
@@ -1029,7 +1048,10 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
 
   // placeTemplateInRoom(location, RoomTemplates::BONES);
   if (location->hasFeature(LocationFeature::ICE)) {
-    placeTemplate(location, RoomTemplates::ICE);
+    placeStartTemplateInRoom(location, RoomTemplates::ICE);
+  }
+  if (location->hasFeature(LocationFeature::CORRUPT)) {
+    placeStartTemplateInRoom(location, RoomTemplates::CORRUPT);
   }
   if (location->hasFeature(LocationFeature::HEAL)) {
     placeTemplateInRoom(location, RoomTemplates::HEAL_STAND_ROOM);

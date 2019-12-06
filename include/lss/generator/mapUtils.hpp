@@ -34,7 +34,12 @@ static void paste(std::vector<std::shared_ptr<Cell>> room,
       continue;
     auto r = y + cell->y;
     auto c = x + cell->x;
-    location->cells.at(r).at(c) = cell;
+    if (cell->type != CellType::EMPTY) {
+      location->cells.at(r).at(c) = cell;
+    } else {
+      location->cells.at(r).at(c)->features = cell->features;
+      cell = location->cells.at(r).at(c);
+    }
     cell->x = c;
     cell->y = r;
   }
