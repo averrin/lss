@@ -420,14 +420,14 @@ namespace RoomTemplates {
       return room;
     });
 
-  const auto BONES = std::make_shared<RoomTemplate>(
+  const auto BONES_FIELD = std::make_shared<RoomTemplate>(
     /*
              %%
             %%%%
              %%%
     */
     [](std::shared_ptr<Location> location) {
-      auto room = Room::makeBlob(location, 7, 2, 7, 2, CellType::FLOOR, CellType::UNKNOWN, false);
+      auto room = Room::makeBlob(location, 8, 3, 8, 3, CellType::FLOOR, CellType::UNKNOWN, false);
       for (auto c : room->cells) {
         if (c->type != CellType::FLOOR) {
           continue;

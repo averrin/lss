@@ -58,6 +58,7 @@ float CORRUPT = 0.3;
 float ICE = 0.2;
 float HEAL = 0.1;
 float MANA = 0.1;
+float BONES_FIELD = 0.2;
 // float TREASURE_SMALL = 0.1;
 float TREASURE_SMALL = 0.25;
 
@@ -574,6 +575,9 @@ Generator::getRandomLocation(std::shared_ptr<Player> hero, int depth,
   if (R::R() < P::ICE) {
     spec.features.push_back(LocationFeature::ICE);
   }
+  if (R::R() < P::BONES_FIELD) {
+    spec.features.push_back(LocationFeature::BONES_FIELD);
+  }
   if (R::R() < P::CORRUPT) {
     spec.features.push_back(LocationFeature::CORRUPT);
   }
@@ -1046,7 +1050,9 @@ std::shared_ptr<Location> Generator::getLocation(LocationSpec spec) {
     timings["placeAltar"] = end - start;
   }
 
-  // placeTemplateInRoom(location, RoomTemplates::BONES);
+  if (location->hasFeature(LocationFeature::BONES_FIELD)) {
+    placeTemplateInRoom(location, RoomTemplates::BONES_FIELD);
+  }
   if (location->hasFeature(LocationFeature::ICE)) {
     placeStartTemplateInRoom(location, RoomTemplates::ICE);
   }

@@ -24,6 +24,7 @@ enum LocationFeature {
   MANA,
   TREASURE_SMALL,
   CORRUPT,
+  BONES_FIELD,
 };
 
 enum LocationType { DUNGEON, CAVERN };
@@ -130,6 +131,7 @@ public:
     {LocationFeature::MANA, "M"},
     {LocationFeature::TREASURE_SMALL, "t"},
     {LocationFeature::CORRUPT, "c"},
+    {LocationFeature::BONES_FIELD, "B"},
   };
     std::string locationFeatures = "";
     for (auto [f, l] : featureMap) {
